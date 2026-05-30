@@ -60,7 +60,7 @@ A linha que conecta as três fases — e que justifica a existência do projeto 
 
 A função mais importante do Nemesis é prática e cotidiana: **impedir que um agente de IA execute, sem intenção, um comando que destrói o projeto** — um `rm -rf` no diretório errado, um `git reset --hard` que apaga trabalho não commitado, uma sobrescrita de arquivo de configuração. Quem programa com agentes LLM sabe que isso não é hipótese: o modelo, tentando "ajudar", roda um comando destrutivo porque interpretou mal o contexto. O Nemesis intercepta esse comando **antes** de ele rodar e exige confirmação humana explícita.
 
-Isso vale tanto para o erro involuntário (o caso comum, e o mais valioso) quanto para o código malicioso (supply-chain, exfiltração). Modelos de linguagem operam por inferência probabilística, não por análise formal: pedir "por favor não rode comandos destrutivos" é uma instrução que o modelo pode ignorar ou contornar — e, como observado em testes reais (ver [Validação](#validação-honesta)), um agente pode tratar um bloqueio como obstáculo a rotear ao redor em vez de uma ordem.
+Isso vale tanto para o erro involuntário (o caso comum, e o mais valioso) quanto para o código malicioso (supply-chain, exfiltração). Modelos de linguagem operam por inferência probabilística, não por análise formal: pedir "por favor não rode comandos destrutivos" é uma instrução que o modelo pode ignorar ou contornar — e, como observado em testes reais, um agente pode tratar um bloqueio como obstáculo a rotear ao redor em vez de uma ordem.
 
 A premissa do Nemesis é que *enforcement determinístico antes da execução* (PreToolUse + scanner de conteúdo + LSM no kernel) é categoricamente diferente de instrução probabilística. Não importa se o modelo foi convencido, enganado ou apenas errou: a camada bloqueia mesmo assim. Ferramentas reativas (linters, CI/CD, SAST) detectam **depois**; o Nemesis bloqueia **antes**. Isso não o torna perfeito — torna-o complementar a essas ferramentas, não substituto.
 
@@ -396,4 +396,4 @@ Mantenedor: [@feryamaha](https://github.com/feryamaha)
 
 ---
 
-*Nemesis Framework — defense in depth, enforcement determinístico, validação honesta. Não é mágica; é engenharia em camadas, com limites declarados.*
+*Nemesis Defender — defense in depth, enforcement determinístico, validação honesta. Não é mágica; é engenharia em camadas, com limites declarados.*
