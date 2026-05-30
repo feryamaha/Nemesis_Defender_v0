@@ -1,0 +1,77 @@
+name: Release Nemesis Binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: macos-14
+            target: aarch64-apple-darwin
+            suffix: darwin-arm64
+          - os: macos-13
+            target: x86_64-apple-darwin
+            suffix: darwin-x64
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            suffix: linux-x64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            suffix: win32-x64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Build workspace
+        run: cd .nemesis && cargo build --release --workspace --target ${{ matrix.target }}
+
+      - name: Strip binaries (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          strip .nemesis/target/${{ matrix.target }}/release/nemesis-cli || true
+          strip .nemesis/target/${{ matrix.target }}/release/nemesis-pretool-check-unix || true
+          strip .nemesis/target/${{ matrix.target }}/release/nemesis-defender || true
+          strip .nemesis/target/${{ matrix.target }}/release/nemesis || true
+
+      - name: Create distribution (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p dist/bin dist/config
+          cp .nemesis/target/${{ matrix.target }}/release/nemesis-cli dist/bin/
+          cp .nemesis/target/${{ matrix.target }}/release/nemesis-pretool-check-* dist/bin/ 2>/dev/null || true
+          cp .nemesis/target/${{ matrix.target }}/release/nemesis-defender dist/bin/
+          cp .nemesis/target/${{ matrix.target }}/release/nemesis dist/bin/
+          cp .nemesis/workflow-enforcement/config/deny-list*.json dist/config/
+          cp .nemesis/nemesis-defender/config/denylist-defender.json dist/config/
+          tar -czf nemesis-v2.0-${{ matrix.suffix }}.tar.gz -C dist .
+          cp dist/bin/nemesis-cli nemesis-cli-${{ matrix.suffix }}
+
+      - name: Create distribution (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir dist\bin dist\config
+          copy .nemesis\target\${{ matrix.target }}\release\nemesis-cli.exe dist\bin\
+          copy .nemesis\target\${{ matrix.target }}\release\nemesis-pretool-check-windows.exe dist\bin\
+          copy .nemesis\target\${{ matrix.target }}\release\nemesis-defender.exe dist\bin\
+          copy .nemesis\target\${{ matrix.target }}\release\nemesis.exe dist\bin\
+          copy .nemesis\workflow-enforcement\config\deny-list*.json dist\config\
+          copy .nemesis\nemesis-defender\config\denylist-defender.json dist\config\
+          Compress-Archive -Path dist\* -DestinationPath nemesis-v2.0-${{ matrix.suffix }}.zip
+          copy dist\bin\nemesis-cli.exe nemesis-cli-${{ matrix.suffix }}.exe
+
+      - uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: |
+            nemesis-v2.0-*
+            nemesis-cli-*

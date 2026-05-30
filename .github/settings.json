@@ -1,0 +1,20 @@
+{
+    "github.copilot.chat.agent.plugins": [
+        {
+            "id": "nemesis-pretool-hook",
+            "name": "Nemesis Pre-Tool Guard",
+            "description": "Intercepta e valida chamadas de ferramentas de IA usando o ecossistema Nemesis.",
+            "command": "${workspaceFolder}/.nemesis/target/release/nemesis-pretool-check-unix",
+            "args": ["--mode", "vscode-agent"],
+            "hooks": {
+                "preToolCall": true,
+                "postToolCall": false
+            }
+        }
+    ],
+    "github.copilot.chat.experimental.preToolExecutionHook": "${workspaceFolder}/.nemesis/target/release/nemesis-pretool-check-unix",
+    "chat.agent.interceptors": [
+        "${workspaceFolder}/.nemesis/target/release/nemesis-pretool-check-unix"
+    ]
+}
+

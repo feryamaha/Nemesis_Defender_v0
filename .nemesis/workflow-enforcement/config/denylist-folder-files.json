@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "description": "Paths protegidos pelo Nemesis — edite para liberar/bloquear",
+  "absolute_block": {
+    "description": "Bloqueio total: leitura + escrita + deleção",
+    "paths": [
+      ".env",
+      ".env.local",
+      ".env.production",
+      ".windsurf/hooks.json",
+      ".claude/settings.json",
+      ".claude/settings.local.json",
+      ".openclaude/settings.json",
+      ".codex/config.toml",
+      ".codex/hooks.json",
+      ".cursor/hooks.json",
+      ".cursor/settings.json",
+      ".github/settings.json",
+      ".github/hooks/nemesis-pretool-hook.json",
+      ".vscode/settings.json",
+      ".bashrc",
+      ".zshrc",
+      ".bash_profile",
+      ".profile",
+      ".ssh/id_rsa",
+      ".ssh/authorized_keys",
+      ".nemesis/"
+    ],
+    "allowed_exceptions": ["/src/"]
+  },
+  "write_block": {
+    "description": "Bloqueio de escrita/edição - leitura permitida",
+    "files": [
+      "package.json",
+      "next.config.js",
+      "next.config.mjs",
+      "eslint.config.mjs",
+      ".eslintrc",
+      ".gitignore",
+      "proxy.ts",
+      ".nemesis/logs/violations.log",
+      ".nemesis/logs/defender.log",
+      ".nemesis/logs/output-audit.log",
+      ".nemesis/logs/session-events.jsonl"
+    ]
+  }
+}

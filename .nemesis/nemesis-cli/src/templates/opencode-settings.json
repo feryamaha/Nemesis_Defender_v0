@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Write|Edit|MultiEdit|Bash|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{NEMESIS_HOOK_PATH}}"
+          }
+        ]
+      }
+    ]
+  }
+}

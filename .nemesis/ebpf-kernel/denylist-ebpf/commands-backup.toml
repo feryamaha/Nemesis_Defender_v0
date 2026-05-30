@@ -1,0 +1,96 @@
+# BPF LSM deny-list — comandos destrutivos e hostis bloqueados apenas para o agente
+# Com o filtro por cgroup, estes comandos não afetam o IDE nem o terminal do usuário
+# VERSÃO COMPLETA (BACKUP) - NÃO ATIVADA - AVALIAR IMPACTO ANTES DE USAR
+blocked_commands = [
+    # === Destruição de arquivos/dados ===
+    "rm", "shred", "truncate", "dd", "mkfifo", "split", "csplit",
+
+    # === Modificação de permissões (perigoso) ===
+    "chmod", "chown",
+
+    # === Sistema de arquivos/disco ===
+    "mount", "umount", "mkfs", "fdisk",
+
+    # === Bancos de dados ===
+    "dropdb", "mysql", "psql",
+
+    # === Infraestrutura/cloud ===
+    "terraform", "docker", "aws", "kubectl",
+
+    # === Linguagens de script (execução arbitrária) ===
+    "python", "python3", "ruby", "perl", "lua",
+
+    # === Editores (podem modificar código silenciosamente) ===
+    "nano", "vim", "vi", "emacs", "micro",
+
+    # === Transferência de dados (exfiltração) ===
+    "curl", "wget", "ftp", "sftp", "rsync", "scp", "nc", "netcat", "socat",
+
+    # === Controle de processos ===
+    "kill", "killall", "nohup",
+
+    # === Utilitários de texto (podem ser usados para injeção) ===
+    "sed", "awk", "gawk", "mawk", "ed", "ex",
+
+    # === Outros utilitários hostis ===
+    "ln", "pax", "tar", "zip", "unzip",
+
+    # === SHELLS — execução arbitrária ===
+    "bash", "sh", "zsh", "fish", "dash", "ksh", "tcsh", "csh",
+    "rbash",
+
+    # === EXECUÇÃO INLINE ===
+    "node", "deno", "php", "java", "groovy", "scala", "kotlin",
+    "xargs", "env",
+
+    # === PACKAGE MANAGERS — install de qualquer natureza ===
+    "npm", "npx", "pnpm", "yarn",
+    "pip", "pip3", "uv", "pipx",
+    "cargo",
+    "apt", "apt-get", "apt-cache", "dpkg",
+    "brew", "snap", "flatpak", "pacman", "yum", "dnf", "zypper",
+    "gem", "bundle",
+    "go",
+
+    # === EXFILTRAÇÃO DE DADOS ===
+    "ssh", "telnet", "nmap", "masscan",
+    "dig", "host", "nslookup", "whois",
+    "openssl", "base64", "xxd", "od", "hexdump", "strings",
+
+    # === RECONHECIMENTO DO SISTEMA ===
+    "ps", "top", "htop", "atop",
+    "lsof", "strace", "ltrace",
+    "tcpdump", "tshark", "ncat",
+    "ss", "netstat",
+    "lsblk", "blkid",
+    "lspci", "lsusb",
+
+    # === ACESSO A CREDENCIAIS ===
+    "gpg", "gpg2",
+    "ssh-keygen", "ssh-add", "ssh-agent",
+    "keychain", "secret-tool", "pass",
+    "gnome-keyring-daemon", "security",
+
+    # === MOVIMENTAÇÃO E CÓPIA DESTRUTIVA ===
+    "mv", "cp", "install",
+
+    # === COMPRESSÃO / EMPACOTAMENTO (exfil de dados) ===
+    "gzip", "gunzip", "bzip2", "xz", "zstd",
+    "7z", "rar", "cpio",
+
+    # === AGENDAMENTO E PERSISTÊNCIA ===
+    "cron", "crontab", "at", "atd",
+    "systemctl", "service", "launchctl",
+
+    # === MODIFICAÇÃO DE REDE ===
+    "iptables", "ip6tables", "nft",
+    "ip", "ifconfig", "iwconfig", "tc",
+
+    # === OUTROS VETORES DE ALTO RISCO ===
+    "tee", "pv", "iconv",
+    "watch", "timeout",
+    "nice", "ionice",
+    "screen", "tmux",
+    "su", "sudo", "doas", "pkexec",
+    "chroot", "nsenter", "unshare",
+]

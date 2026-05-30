@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "matcher": "Shell|Read|Write|StrReplace|Glob|Grep|Delete|EditNotebook|Task|SemanticSearch|WebFetch|TabRead|TabWrite",
+        "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
+        "failClosed": false
+      }
+    ],
+    "postToolUse": [
+      {
+        "matcher": "Shell|Read|Write|StrReplace|Glob|Grep|Delete|EditNotebook|Task|SemanticSearch|WebFetch",
+        "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
+        "failClosed": false
+      }
+    ]
+  }
+}

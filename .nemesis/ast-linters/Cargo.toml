@@ -1,0 +1,22 @@
+[package]
+name = "ast-linters"
+version = "0.1.0"
+edition = "2021"
+description = "Nemesis AST Linters - Semantic code validation via tree-sitter"
+
+[dependencies]
+tree-sitter = "0.24"
+tree-sitter-typescript = "0.23"
+tree-sitter-javascript = "0.23"
+tree-sitter-python = "0.21"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "1"
+lru = "0.12"
+
+[build-dependencies]
+toml = "0.8"
+serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+serial_test = "3.0"

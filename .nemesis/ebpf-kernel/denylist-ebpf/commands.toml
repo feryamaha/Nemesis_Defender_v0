@@ -1,0 +1,38 @@
+# BPF LSM deny-list — comandos destrutivos e hostis bloqueados apenas para o agente
+# Com o filtro por cgroup, estes comandos não afetam o IDE nem o terminal do usuário
+blocked_commands = [
+    # Destruição de arquivos/dados
+    "rm", "shred", "truncate", "dd", "mkfifo", "split", "csplit", "unlink",
+    # Modificação de permissões (perigoso)
+    "chmod", "chown",
+    # Sistema de arquivos/disco
+    "mount", "umount", "mkfs", "fdisk",
+    # Bancos de dados
+    "dropdb", "mysql", "psql",
+    # Infraestrutura/cloud
+    "terraform", "docker", "aws", "kubectl",
+    # Linguagens de script (execução arbitrária)
+    "python", "python3", "ruby", "perl", "lua",
+    # Editores (podem modificar código silenciosamente)
+    "nano", "vim", "vi", "emacs", "micro",
+    # Transferência de dados (exfiltração)
+    "curl", "wget", "ftp", "sftp", "rsync", "scp", "nc", "netcat", "socat",
+    # Controle de processos
+    "kill", "killall", "nohup",
+    # Outros utilitários hostis
+    "ln", "pax", "tar", "zip", "unzip",
+    # Ferramentas de pentest/recon
+    "nmap", "nikto", "ffuf", "gobuster", "dirsearch", "nuclei", "whatweb",
+    # Ferramentas de exploração
+    "sqlmap", "msfconsole", "msfvenom",
+    # Brute force
+    "hydra", "john", "hashcat",
+    # Enumeração de privilégios
+    "linpeas", "linenum",
+    # Persistência
+    "crontab", "at", "ssh-keygen",
+    # Privilege escalation
+    "pkexec", "doas",
+    # Persistência/config SSH
+    "update-rc.d", "ssh-copy-id",
+]

@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "pre_write_code": [
+      {
+        "command": "{{NEMESIS_HOOK_PATH}}",
+        "show_output": true
+      }
+    ],
+    "pre_run_command": [
+      {
+        "command": "{{NEMESIS_HOOK_PATH}}",
+        "show_output": true
+      }
+    ],
+    "pre_read_code": [
+      {
+        "command": "{{NEMESIS_HOOK_PATH}}",
+        "show_output": true
+      }
+    ],
+    "pre_mcp_tool_use": [
+      {
+        "command": "{{NEMESIS_HOOK_PATH}}",
+        "show_output": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+[package]
+name = "nemesis-defender"
+version = "0.1.0"
+edition = "2021"
+description = "Nemesis Defender — Iron Dome supply chain malware scanner. IDE-agnostic, Rust-only."
+
+[[bin]]
+name = "nemesis-defender"
+path = "src/main.rs"
+
+[lib]
+name = "nemesis_defender"
+path = "src/lib.rs"
+
+[dependencies]
+# AST parsing — tree-sitter (version must match .nemesis/ast-linters/Cargo.toml)
+tree-sitter = "0.24"
+tree-sitter-javascript = "0.23"
+tree-sitter-bash = "0.21"
+tree-sitter-python = "0.21"
+
+# Encoding / decoding
+base64 = "0.22"
+
+# Pattern matching
+regex = "1.10"
+
+# Serialization (for DefenderReport JSON output)
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Unicode normalization (homoglyph detection)
+unicode-normalization = "0.1"
+
+# Cross-platform filesystem watching (daemon mode)
+# Abstracts over inotify (Linux), FSEvents/kqueue (macOS), ReadDirectoryChanges (Windows)
+notify = "6.1"

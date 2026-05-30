@@ -1,0 +1,446 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-04-08T00:20:00.000Z",
+  "generatedBy": "nemesis-harvest",
+  "projectStack": [
+    "react@19.2.3",
+    "next@16.2.0",
+    "typescript@5.9.3",
+    "tailwindcss@3.4.19",
+    "eslint@9.39.4",
+    "zod@3.24.2",
+    "react-hook-form@7.54.2",
+    "axios@1.13.6"
+  ],
+  "layers": {
+    "typescript": {
+      "description": "Viola\u00e7\u00f5es de tipagem TypeScript",
+      "source": "harvest + rules",
+      "patterns": [
+        {
+          "id": "typescript-000",
+          "pattern": ":\\s*any[\\s;,)\\]}>|&]|:\\s*any$|\\bas\\s+any\\b|<<any\\s*>|Record<<[^,]*,\\s*any\\s*>",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Uso de \"any\" detectado. Viola typescript-typing-convention.md.",
+          "suggestion": "Use tipos expl\u00edcitos, unknown, generics <T> ou tipos existentes em src/types/",
+          "rule": ".windsurf/rules/typescript-typing-convention.md",
+          "source": "harvest",
+          "enabled": true,
+          "eslintRule": "@typescript-eslint/no-explicit-any",
+          "stackOrigin": "@typescript-eslint/no-explicit-any@unknown"
+        },
+        {
+          "id": "typescript-001",
+          "pattern": "^import\\s+\\{[^}]*(Props|Type|Config|Interface|Options|Enum)[^}]*\\}\\s+from",
+          "type": "regex",
+          "severity": "high",
+          "message": "Import de tipo sem keyword \"type\". Use import type { ... }.",
+          "suggestion": "Substitua por: import type { NomeDoTipo } from \"...\",",
+          "rule": ".windsurf/rules/typescript-typing-convention.md",
+          "source": "harvest",
+          "enabled": true,
+          "eslintRule": "@typescript-eslint/consistent-type-imports",
+          "stackOrigin": "@typescript-eslint/consistent-type-imports@unknown"
+        },
+        {
+          "id": "typescript-002",
+          "pattern": "\\brequire\\s*\\(\\s*['\"][^'\"]+['\"]\\s*\\)",
+          "type": "regex",
+          "severity": "critical",
+          "message": "require() detectado em TypeScript. Use import ES6.",
+          "suggestion": "Substitua por: import NomeM\u00f3dulo from \"caminho\"",
+          "rule": ".windsurf/rules/typescript-typing-convention.md",
+          "source": "harvest",
+          "enabled": true,
+          "eslintRule": "@typescript-eslint/no-var-requires",
+          "stackOrigin": "@typescript-eslint/no-var-requires@unknown"
+        },
+        {
+          "id": "typescript-006",
+          "pattern": "module\\.(?:exports|[a-zA-Z_][a-zA-Z0-9_]*)\\s*=",
+          "type": "regex",
+          "severity": "critical",
+          "message": "module.exports detectado. Use export statements ES6.",
+          "suggestion": "Substitua por: export const nome = ... ou export default ...",
+          "rule": ".windsurf/rules/typescript-typing-convention.md",
+          "source": "harvest",
+          "enabled": true,
+          "eslintRule": "no-restricted-syntax",
+          "stackOrigin": "no-restricted-syntax@unknown"
+        },
+        {
+          "id": "typescript-003",
+          "pattern": "(?:fetch|axios\\.(?:get|post|put|delete))\\s*\\(\\s*[^)]+\\s*\\)(?![^;]*;\\s*(?:await|\\.then|\\.catch))",
+          "type": "regex",
+          "severity": "high",
+          "message": "Promise n\u00e3o tratada detectada.",
+          "suggestion": "Adicione await, .then() ou .catch().",
+          "rule": ".windsurf/rules/typescript-typing-convention.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "@typescript-eslint/no-floating-promises"
+        },
+        {
+          "id": "typescript-004",
+          "pattern": "\\b[^\\s]+!\\s*(?![!=])",
+          "type": "regex",
+          "severity": "medium",
+          "message": "Non-null assertion (!) detectado.",
+          "suggestion": "Use optional chaining (?.) ou verifica\u00e7\u00e3o expl\u00edcita.",
+          "rule": ".windsurf/rules/typescript-typing-convention.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "@typescript-eslint/no-non-null-assertion"
+        },
+        {
+          "id": "typescript-005",
+          "pattern": "@ts-(?:ignore|nocheck|expect-error)",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Comentario TypeScript bypass detectado.",
+          "suggestion": "Resolva o erro TypeScript em vez de ignorar.",
+          "rule": ".windsurf/rules/typescript-typing-convention.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "@typescript-eslint/ban-ts-comment"
+        },
+        {
+          "id": "typescript-007",
+          "pattern": "(?:const|let|var)\\s+\\w+\\s*(?::\\s*\\w+)?\\s*=\\s*[^;]+;(?![^]*\\w+)",
+          "type": "regex",
+          "severity": "medium",
+          "message": "Vari\u00e1vel declarada mas n\u00e3o utilizada.",
+          "suggestion": "Remova a vari\u00e1vel ou use prefixo _ para indicar uso intencional.",
+          "rule": ".windsurf/rules/typescript-typing-convention.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "@typescript-eslint/no-unused-vars"
+        },
+        {
+          "id": "rule-012",
+          "pattern": "export function Component\\(\\{ variant \\}: \\{ variant: 'a'\\|'b' \\}\\) \\{\\}",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Padr\u00e3o proibido detectado (typescript-typing-convention)",
+          "suggestion": "Veja o padr\u00e3o correto em .windsurf/rules/typescript-typing-convention.md",
+          "rule": ".windsurf/rules/typescript-typing-convention.md",
+          "source": "rules",
+          "enabled": true
+        },
+        {
+          "id": "typescript-prefer-template",
+          "pattern": "['\"][^'\"]*['\"]\\s*\\+\\s*[a-zA-Z_$][a-zA-Z0-9_$]*|[a-zA-Z_$][a-zA-Z0-9_$]*\\s*\\+\\s*['\"][^'\"]*['\"]",
+          "type": "regex",
+          "severity": "medium",
+          "message": "Concatena\u00e7\u00e3o de string com '+' detectada. Use template literal (backticks).",
+          "suggestion": "Substitua: 'text ' + var \u2192 `text ${var}`",
+          "rule": ".windsurf/rules/typescript-typing-convention.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "prefer-template"
+        }
+      ]
+    },
+    "react": {
+      "description": "Viola\u00e7\u00f5es de padr\u00f5es React e Hooks",
+      "source": "harvest + rules",
+      "patterns": [
+        {
+          "id": "react-003",
+          "pattern": "if[^{]*\\{[^}]*\\b(?:useState|useEffect|useReducer|useContext|useMemo|useCallback|useRef)\\s*\\(",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Hook condicional detectado. Viola\u00e7\u00e3o react-hooks/rules-of-hooks.",
+          "suggestion": "Mova todos os hooks para o topo do componente, antes de qualquer condicional.",
+          "rule": ".windsurf/rules/react-hooks-patterns-rules.md",
+          "source": "harvest",
+          "enabled": true,
+          "eslintRule": "react-hooks/rules-of-hooks",
+          "stackOrigin": "react-hooks/rules-of-hooks@unknown"
+        },
+        {
+          "id": "react-004",
+          "pattern": "useEffect\\s*\\([^,]+,\\s*\\[\\s*\\]\\s*\\)",
+          "type": "regex",
+          "severity": "medium",
+          "message": "useEffect com depend\u00eancias vazias e corpo n\u00e3o-trivial.",
+          "suggestion": "Revise as depend\u00eancias do useEffect. Considere se [] \u00e9 intencional.",
+          "rule": ".windsurf/rules/react-hooks-patterns-rules.md",
+          "source": "harvest",
+          "enabled": true,
+          "eslintRule": "react-hooks/exhaustive-deps",
+          "stackOrigin": "react-hooks/exhaustive-deps@unknown"
+        },
+        {
+          "id": "react-005",
+          "pattern": "\\.map\\(.*=>\\s*<[A-Z][^>]*(?!key=)",
+          "type": "regex",
+          "severity": "high",
+          "message": "Elemento em map sem key prop.",
+          "suggestion": "Adicione key={item.id} ao elemento.",
+          "rule": ".windsurf/rules/react-hooks-patterns-rules.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "react/jsx-key"
+        },
+        {
+          "id": "react-006",
+          "pattern": "dangerouslySetInnerHTML",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Uso de dangerouslySetInnerHTML detectado.",
+          "suggestion": "Evite HTML inseguro. Use sanitiza\u00e7\u00e3o se necess\u00e1rio.",
+          "rule": ".windsurf/rules/Conformidade.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "react/no-danger"
+        },
+        {
+          "id": "react-007",
+          "pattern": "key=\\{.*\\bindex\\b.*\\}",
+          "type": "regex",
+          "severity": "medium",
+          "message": "Array index usado como key.",
+          "suggestion": "Use ID \u00fanico do item como key.",
+          "rule": ".windsurf/rules/react-hooks-patterns-rules.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "react/no-array-index-key"
+        },
+        {
+          "id": "react-008",
+          "pattern": "<a\\s[^>]*target=\\s*['\"]_blank['\"][^>]*(?!rel=)",
+          "type": "regex",
+          "severity": "high",
+          "message": "Link com target=_blank sem rel=\"noopener noreferrer\".",
+          "suggestion": "Adicione rel=\"noopener noreferrer\" para seguran\u00e7a.",
+          "rule": ".windsurf/rules/Conformidade.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "react/jsx-no-target-blank"
+        },
+        {
+          "id": "react-009",
+          "pattern": "<button(?![^>]*(?:type=|disabled))",
+          "type": "regex",
+          "severity": "medium",
+          "message": "Bot\u00e3o sem atributo type.",
+          "suggestion": "Adicione type=\"button\", type=\"submit\" ou type=\"reset\".",
+          "rule": ".windsurf/rules/react-hooks-patterns-rules.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "react/button-has-type"
+        },
+        {
+          "id": "react-010",
+          "pattern": "<iframe(?![^>]*sandbox=)",
+          "type": "regex",
+          "severity": "high",
+          "message": "iframe sem atributo sandbox.",
+          "suggestion": "Adicione sandbox com permiss\u00f5es restritas.",
+          "rule": ".windsurf/rules/Conformidade.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "react/iframe-missing-sandbox"
+        },
+        {
+          "id": "rule-008",
+          "pattern": "if \\(condition\\) \\{ const \\[s, setS\\] = useState\\(\\) \\}",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Padr\u00e3o proibido detectado (react-hooks-patterns-rules)",
+          "suggestion": "Veja o padr\u00e3o correto em .windsurf/rules/react-hooks-patterns-rules.md",
+          "rule": ".windsurf/rules/react-hooks-patterns-rules.md",
+          "source": "rules",
+          "enabled": true
+        },
+        {
+          "id": "rule-009",
+          "pattern": "useEffect\\(\\(\\) => \\{ setActiveArrow\\(null\\) \\}, \\[isPlaying\\]\\)",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Padr\u00e3o proibido detectado (react-hooks-patterns-rules)",
+          "suggestion": "Veja o padr\u00e3o correto em .windsurf/rules/react-hooks-patterns-rules.md",
+          "rule": ".windsurf/rules/react-hooks-patterns-rules.md",
+          "source": "rules",
+          "enabled": true
+        },
+        {
+          "id": "rule-010",
+          "pattern": "let hasIcon = false",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Padr\u00e3o proibido detectado (react-hooks-patterns-rules)",
+          "suggestion": "Veja o padr\u00e3o correto em .windsurf/rules/react-hooks-patterns-rules.md",
+          "rule": ".windsurf/rules/react-hooks-patterns-rules.md",
+          "source": "rules",
+          "enabled": true
+        },
+        {
+          "id": "rule-011",
+          "pattern": "useEffect\\(\\(\\) => \\{ if \\(cond\\) openModal\\(\\) \\}, \\[cond\\]\\) // openModal missing",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Padr\u00e3o proibido detectado (react-hooks-patterns-rules)",
+          "suggestion": "Veja o padr\u00e3o correto em .windsurf/rules/react-hooks-patterns-rules.md",
+          "rule": ".windsurf/rules/react-hooks-patterns-rules.md",
+          "source": "rules",
+          "enabled": true
+        },
+        {
+          "id": "react-state-ui-001",
+          "pattern": "\\buseState\\b|\\buseEffect\\b|\\buseReducer\\b|\\buseContext\\b",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Hook de estado em componente UI puro bloqueado.",
+          "suggestion": "Mova l\u00f3gica para src/hooks/. Componentes em ui/ devem ser puros.",
+          "rule": ".windsurf/rules/ui-separation-convention.md",
+          "source": "rules",
+          "enabled": true,
+          "context": "/components/ui/",
+          "contextType": "path_contains"
+        }
+      ]
+    },
+    "nextjs": {
+      "description": "Viola\u00e7\u00f5es espec\u00edficas de Next.js App Router",
+      "source": "harvest + rules",
+      "patterns": [
+        {
+          "id": "nextjs-005",
+          "pattern": "import.*Head.*from.*['\"]next/head['\"]",
+          "type": "regex",
+          "severity": "critical",
+          "context": "_document",
+          "contextType": "path_contains",
+          "message": "Import de Head em _document. Use next/document.",
+          "suggestion": "Use import { Head } from \"next/document\" em arquivos _document.",
+          "rule": ".windsurf/rules/Arquitetura-pastas-arquivos.md",
+          "source": "harvest",
+          "enabled": true,
+          "eslintRule": "@next/next/no-head-import-in-document",
+          "stackOrigin": "@next/next/no-head-import-in-document@unknown"
+        },
+        {
+          "id": "nextjs-006",
+          "pattern": "<img(?![^>]*(?:src=.*\\.(?:png|jpg|jpeg|gif|webp|svg)|className=|alt=))",
+          "type": "regex",
+          "severity": "high",
+          "message": "Tag <img> detectada. Use <Image /> de next/image.",
+          "suggestion": "Substitua por: import Image from \"next/image\"",
+          "rule": ".windsurf/rules/design-system-convention.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "@next/next/no-img-element"
+        },
+        {
+          "id": "nextjs-007",
+          "pattern": "<script(?![^>]*(?:async|defer))",
+          "type": "regex",
+          "severity": "high",
+          "message": "Script s\u00edncrono detectado.",
+          "suggestion": "Adicione async ou defer ao script.",
+          "rule": ".windsurf/rules/Arquitetura-pastas-arquivos.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "@next/next/no-sync-scripts"
+        },
+        {
+          "id": "nextjs-008",
+          "pattern": "<link\\s+rel=[\"']stylesheet['\"]",
+          "type": "regex",
+          "severity": "critical",
+          "message": "CSS manual detectado.",
+          "suggestion": "Use classes Tailwind.",
+          "rule": ".windsurf/rules/design-system-convention.md",
+          "source": "manual",
+          "enabled": true,
+          "eslintRule": "@next/next/no-css-tags"
+        },
+        {
+          "id": "rule-007",
+          "pattern": "import Button from '@/components/ui/Button/Button'",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Padr\u00e3o proibido detectado (Arquitetura-pastas-arquivos)",
+          "suggestion": "Veja o padr\u00e3o correto em .windsurf/rules/Arquitetura-pastas-arquivos.md",
+          "rule": ".windsurf/rules/Arquitetura-pastas-arquivos.md",
+          "source": "rules",
+          "enabled": true
+        }
+      ]
+    },
+    "css": {
+      "description": "Viola\u00e7\u00f5es de design system e CSS",
+      "source": "harvest + rules",
+      "patterns": [
+        {
+          "id": "css-001",
+          "pattern": "style\\s*=\\s*\\{\\{",
+          "type": "regex",
+          "severity": "critical",
+          "message": "CSS inline (style={{...}}) detectado.",
+          "suggestion": "Use classes Tailwind. CSS inline apenas para valores din\u00e2micos calculados por JS.",
+          "rule": ".windsurf/rules/design-system-convention.md",
+          "source": "rules",
+          "enabled": true
+        },
+        {
+          "id": "css-002",
+          "pattern": "<style[\\s>]|<<style\\s+jsx|styled-jsx",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Tag style ou styled-jsx detectado.",
+          "suggestion": "Use classes Tailwind definidas no tailwind.config.ts.",
+          "rule": ".windsurf/rules/design-system-convention.md",
+          "source": "rules",
+          "enabled": true
+        },
+        {
+          "id": "css-003",
+          "pattern": "<link\\s+rel=[\"']stylesheet[\"']|@import\\s+url",
+          "type": "regex",
+          "severity": "critical",
+          "message": "CSS manual externo detectado.",
+          "suggestion": "Use classes Tailwind. CSS externo n\u00e3o \u00e9 permitido.",
+          "rule": ".windsurf/rules/design-system-convention.md",
+          "source": "rules",
+          "enabled": true
+        }
+      ]
+    },
+    "api": {
+      "description": "Viola\u00e7\u00f5es de arquitetura BFF e API",
+      "source": "harvest + rules",
+      "patterns": [
+        {
+          "id": "api-001",
+          "pattern": "(?:fetch|axios\\.(?:get|post|put|delete))\\s*\\(\\s*['\"]https?:\\/\\/",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Chamada HTTP direta em componente detectada.",
+          "suggestion": "Use route handlers em src/app/api/. Viola\u00e7\u00e3o do padr\u00e3o BFF.",
+          "rule": ".windsurf/rules/API-convention.md",
+          "source": "rules",
+          "enabled": true,
+          "context": "/components/",
+          "contextType": "path_contains"
+        },
+        {
+          "id": "api-002",
+          "pattern": "localStorage\\.|sessionStorage\\.|\\.getItem\\(|\\.setItem\\(",
+          "type": "regex",
+          "severity": "high",
+          "message": "Storage direto detectado em hook.",
+          "suggestion": "Use context providers. Viola\u00e7\u00e3o da arquitetura BFF.",
+          "rule": ".windsurf/rules/API-convention.md",
+          "source": "rules",
+          "enabled": true,
+          "context": "/hooks/",
+          "contextType": "path_contains"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{NEMESIS_HOOK_PATH}}",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

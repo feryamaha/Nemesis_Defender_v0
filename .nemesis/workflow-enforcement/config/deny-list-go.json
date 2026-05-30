@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-05-10T00:00:00Z",
+  "project_stack": ["go"],
+  "layers": {
+    "go": {
+      "description": "Violacoes especificas de Go",
+      "patterns": [
+        {
+          "id": "go-001",
+          "pattern": "unsafe\\.Pointer",
+          "type": "regex",
+          "severity": "critical",
+          "message": "unsafe.Pointer detectado. Podem causar memory corruption.",
+          "suggestion": "Use Go memory-safe abstractions (slices, interfaces).",
+          "rule": ".nemesis/rules/go-safety.md",
+          "source": "manual",
+          "enabled": true
+        },
+        {
+          "id": "go-002",
+          "pattern": "panic\\s*\\(",
+          "type": "regex",
+          "severity": "high",
+          "message": "panic() detectado em funcao publica. Nao capturavel.",
+          "suggestion": "Retorne error interface: func Example() error { ... }",
+          "rule": ".nemesis/rules/go-error-handling.md",
+          "source": "manual",
+          "enabled": true
+        },
+        {
+          "id": "go-003",
+          "pattern": "defer.*err\\s*!=\\s*nil",
+          "type": "regex",
+          "severity": "medium",
+          "message": "defer sem error check. Erro ignorado silenciosamente.",
+          "suggestion": "Verifique err antes de defer ou use named returns.",
+          "rule": ".nemesis/rules/go-error-handling.md",
+          "source": "manual",
+          "enabled": true
+        },
+        {
+          "id": "go-004",
+          "pattern": "fmt\\.Sprintf\\s*\\([^)]*%s[^)]*(?:query|sql|SQL)",
+          "type": "regex",
+          "severity": "critical",
+          "message": "SQL construction com string formatting. SQL injection risk.",
+          "suggestion": "Use parametrized queries: db.Query('SELECT ... WHERE id=?', id)",
+          "rule": ".nemesis/rules/go-security.md",
+          "source": "manual",
+          "enabled": true
+        }
+      ]
+    }
+  }
+}

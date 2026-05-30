@@ -1,0 +1,215 @@
+use std::env;
+use std::path::Path;
+
+fn print_usage() {
+    println!(
+        r#"
+Nemesis Workflow Enforcer
+
+Uso:
+  nemesis-enforce <caminho-do-workflow>
+  cargo run --bin nemesis-enforce -- <caminho-do-workflow>
+
+Opcoes:
+  --dry-run    Apenas valida, nao executa comandos
+  --verbose    Mostra logs detalhados
+  --help       Mostra esta ajuda
+
+Exemplos:
+  nemesis-enforce .windsurf/workflows/generate-prompt-rag.md
+  nemesis-enforce .windsurf/workflows/audit-create-pr.md --verbose
+
+Retorna:
+  Exit code 0 - Execucao bem-sucedida
+  Exit code 1 - Bloqueado por violacao ou erro
+"#
+    );
+}
+
+fn format_violations(violations: &[crate::types::Violation]) -> String {
+    if violations.is_empty() {
+        return String::new();
+    }
+
+    let mut output = "\n🛑 VIOLACOES DETECTADAS:\n\n".to_string();
+
+    for (index, violation) in violations.iter().enumerate() {
+        output.push_str(&format!("{}. [Tipo]: {}\n", index + 1, violation.violation_type));
+
+        if let Some(ref rule) = violation.rule {
+            output.push_str(&format!("   [Regra]: {}\n", rule));
+        }
+
+        if let Some(ref command) = violation.command {
+            output.push_str(&format!("   [Comando]: {}\n", command));
+        }
+
+        output.push_str(&format!("   [Mensagem]: {}\n", violation.message));
+
+        if let Some(ref suggestion) = violation.suggestion {
+            output.push_str(&format!("   [Sugestao]: {}\n", suggestion));
+        }
+
+        output.push('\n');
+    }
+
+    output.push_str("CORRECAO OBRIGATORIA:\n");
+    output.push_str("- Corrija as violacoes antes de reexecutar\n");
+    output.push_str("- Consulte as regras obrigatorias do workflow\n\n");
+
+    output
+}
+
+fn format_results(results: &[crate::types::CommandResult]) -> String {
+    if results.is_empty() {
+        return String::new();
+    }
+
+    let mut output = "\n📊 RESULTADOS DA EXECUCAO:\n\n".to_string();
+
+    for (index, result) in results.iter().enumerate() {
+        let status = if result.exit_code == 0 { "✅" } else { "❌" };
+        output.push_str(&format!("{}. {} {}\n", index + 1, status, result.command));
+        output.push_str(&format!("   Exit code: {}\n", result.exit_code));
+
+        if !result.stdout.trim().is_empty() {
+            let stdout_lines: Vec<_> = result.stdout.trim().lines().take(3).collect();
+            let suffix = if result.stdout.lines().count() > 3 { "..." } else { "" };
+            output.push_str(&format!("   Output: {}{}\n", stdout_lines.join("\n   "), suffix));
+        }
+
+        if !result.stderr.trim().is_empty() {
+            let stderr_lines: Vec<_> = result.stderr.trim().lines().take(2).collect();
+            let suffix = if result.stderr.lines().count() > 2 { "..." } else { "" };
+            output.push_str(&format!("   Stderr: {}{}\n", stderr_lines.join("\n   "), suffix));
+        }
+
+        output.push('\n');
+    }
+
+    output
+}
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    let args: Vec<String> = env::args().collect();
+
+    // Verifica flags
+    let dry_run = args.iter().any(|arg| arg == "--dry-run");
+    let verbose = args.iter().any(|arg| arg == "--verbose");
+    let help = args.iter().any(|arg| arg == "--help" || arg == "-h");
+
+    // Remove flags do array de argumentos
+    let filtered_args: Vec<_> = args.into_iter()
+        .filter(|arg| !arg.starts_with("--"))
+        .collect();
+
+    if help || filtered_args.len() == 1 {
+        print_usage();
+        return if filtered_args.len() == 1 && !help {
+            std::process::exit(1);
+        } else {
+            Ok(())
+        };
+    }
+
+    let workflow_path = &filtered_args[1];
+
+    // Verifica se arquivo existe
+    if !Path::new(workflow_path).exists() {
+        eprintln!("\n❌ ERRO: Arquivo nao encontrado: {}\n", workflow_path);
+        std::process::exit(1);
+    }
+
+    // Resolve caminho absoluto
+    let absolute_path = Path::new(workflow_path)
+        .canonicalize()
+        .unwrap_or_else(|_| Path::new(workflow_path).to_path_buf());
+
+    println!("\n🛡️  Nemesis Workflow Enforcer");
+    println!("   Executando: {}\n", workflow_path);
+
+    if dry_run {
+        println!("   [MODO DRY-RUN: Comandos nao serao executados]\n");
+    }
+
+    if verbose {
+        println!("   [MODO VERBOSE: Logs detalhados ativados]\n");
+    }
+
+    let runner = crate::workflow_runner::WorkflowRunner::new(crate::types::ExecutionOptions::default());
+
+    // Primeiro valida
+    println!("🔍 Fase 1: Validacao...\n");
+
+    match runner.validate_workflow(&absolute_path.to_string_lossy()).await {
+        Ok(validation) if !validation.is_valid => {
+            println!("🛑 VALIDACAO FALHOU\n");
+
+            if !validation.errors.is_empty() {
+                println!("\n❌ ERROS:");
+                for (index, error) in validation.errors.iter().enumerate() {
+                    println!("   {}. {}", index + 1, error.message);
+                }
+            }
+
+            if !validation.warnings.is_empty() {
+                println!("\n⚠️  AVISOS:");
+                for (index, warning) in validation.warnings.iter().enumerate() {
+                    println!("   {}. {}", index + 1, warning.message);
+                }
+            }
+
+            println!("\n❌ Execucao bloqueada: Workflow invalido\n");
+            std::process::exit(1);
+        }
+        Ok(_) => {
+            println!("✅ Validacao passou\n");
+        }
+        Err(e) => {
+            eprintln!("\n❌ ERRO FATAL:\n");
+            eprintln!("   {}\n", e);
+            std::process::exit(1);
+        }
+    }
+
+    if dry_run {
+        println!("🛑 Execucao interrompida (dry-run mode)\n");
+        return Ok(());
+    }
+
+    // Executa com enforcement
+    println!("🚀 Fase 2: Execucao com Enforcement...\n");
+
+    match runner.run_workflow(&absolute_path.to_string_lossy(), crate::types::ExecutionOptions::default()).await {
+        Ok(result) => {
+            println!("{}", format_results(&result.results));
+
+            if !result.violations.is_empty() {
+                println!("{}", format_violations(&result.violations));
+            }
+
+            println!("\n{}", "=".repeat(50));
+
+            if result.success {
+                println!("✅ EXECUCAO BEM-SUCEDIDA");
+                println!("   Tempo: {}ms", result.execution_time);
+                println!("   Comandos executados: {}", result.results.len());
+                println!("   Violacoes: {}", result.violations.len());
+                println!("\n🎉 Workflow concluido sem violacoes\n");
+                std::process::exit(0);
+            } else {
+                println!("🛑 EXECUCAO BLOQUEADA");
+                println!("   Tempo: {}ms", result.execution_time);
+                println!("   Violacoes: {}", result.violations.len());
+                println!("\n❌ Corrija as violacoes antes de reexecutar\n");
+                std::process::exit(1);
+            }
+        }
+        Err(e) => {
+            eprintln!("\n❌ ERRO FATAL:\n");
+            eprintln!("   {}\n", e);
+            std::process::exit(1);
+        }
+    }
+}

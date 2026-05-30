@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-05-10T00:00:00Z",
+  "project_stack": ["java"],
+  "layers": {
+    "java": {
+      "description": "Violacoes especificas de Java",
+      "patterns": [
+        {
+          "id": "java-001",
+          "pattern": "Runtime\\.getRuntime\\s*\\(\\)\\.exec|ProcessBuilder",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Runtime.exec() ou ProcessBuilder detectado. Command injection risk.",
+          "suggestion": "Use ProcessBuilder com lista de argumentos (array, nao string).",
+          "rule": ".nemesis/rules/java-security.md",
+          "source": "manual",
+          "enabled": true
+        },
+        {
+          "id": "java-002",
+          "pattern": "reflect\\.Method\\.invoke|forName\\s*\\(",
+          "type": "regex",
+          "severity": "high",
+          "message": "Reflection dinamica detectada. Pode causar security issues.",
+          "suggestion": "Use dependency injection ou factory patterns.",
+          "rule": ".nemesis/rules/java-security.md",
+          "source": "manual",
+          "enabled": true
+        },
+        {
+          "id": "java-003",
+          "pattern": "Statement\\.executeQuery\\s*\\([^)]*\\+|String\\s+query\\s*=.*\\+",
+          "type": "regex",
+          "severity": "critical",
+          "message": "SQL com string concatenation. SQL injection risk.",
+          "suggestion": "Use PreparedStatement: stmt.setString(1, userInput); stmt.executeQuery();",
+          "rule": ".nemesis/rules/java-security.md",
+          "source": "manual",
+          "enabled": true
+        },
+        {
+          "id": "java-004",
+          "pattern": "ObjectInputStream|readObject\\s*\\(\\)|ObjectInput",
+          "type": "regex",
+          "severity": "critical",
+          "message": "Java deserialization detectada. RCE risk.",
+          "suggestion": "Use JSON (Jackson, Gson) ou protocol buffers. Nunca deserialize dados nao-confiáveis.",
+          "rule": ".nemesis/rules/java-security.md",
+          "source": "manual",
+          "enabled": true
+        }
+      ]
+    }
+  }
+}

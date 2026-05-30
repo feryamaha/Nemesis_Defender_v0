@@ -1,0 +1,7 @@
+{
+	"version": "2.0",
+	"description": "Workflow sequence enforcement desativado. SDD pipeline migrou para skills fluidas.",
+	"workflows": {},
+	"approvalArtifacts": [],
+	"_note": "Todos os workflows determinísticos removidos. Code quality enforcement (AST + eBPF + pretool + deny-list) permanece ativo."
+}

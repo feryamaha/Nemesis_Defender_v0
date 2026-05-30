@@ -1,0 +1,655 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-05-08",
+  "description": "Deny-list de comandos hostis para nemesis-defender. Detecta comandos em conteúdo de arquivos (não em shell direto). Camada adicional ao pretool — cobre macOS/Windows onde eBPF não opera.",
+  "scope": "file_content",
+  "categories": {
+    "destructive_commands": {
+      "description": "Comandos destrutivos de arquivo/dados",
+      "severity": "malicious",
+      "suggestion": "Use targeted operations with full paths. Confirm with the user before deleting any file.",
+      "patterns": [
+        "\\brm\\s+-rf\\b",
+        "\\bshred\\s+-",
+        "\\btruncate\\s+-",
+        "\\bdd\\s+if=",
+        "\\bmkfifo\\b",
+        "\\bsplit\\s+-",
+        "\\bcsplit\\s+-",
+        "\\brm\\s+-rf\\s+~",
+        "\\brm\\s+-rf\\s+~/\\.bashrc",
+        "\\brm\\s+-rf\\s+~/\\.zshrc",
+        "\\brm\\s+-rf\\s+~/\\.ssh"
+      ]
+    },
+    "permission_escalation": {
+      "description": "Comandos de modificação de permissões/proprietários",
+      "severity": "malicious",
+      "suggestion": "System permissions are for human administrators only. Remove chmod/chown/sudo from application code.",
+      "patterns": [
+        "\\bchmod\\s+(\\+x|777|755|0?[0-7]{3})",
+        "\\bchown\\s+",
+        "\\bsudo\\s+(?!nemesis)"
+      ]
+    },
+    "filesystem_manipulation": {
+      "description": "Comandos de manipulação de filesystem/disco",
+      "severity": "malicious",
+      "suggestion": "Low-level filesystem operations are for human administrators only. Remove mount/mkfs/fdisk from application code.",
+      "patterns": [
+        "\\bmount\\s+",
+        "\\bumount\\s+",
+        "\\bmkfs\\b",
+        "\\bfdisk\\s+"
+      ]
+    },
+    "database_destructive": {
+      "description": "Comandos destrutivos em bancos de dados",
+      "severity": "malicious",
+      "suggestion": "Never run DROP/TRUNCATE from application code. Use controlled migrations with backup and rollback procedures.",
+      "patterns": [
+        "\\bdropdb\\s+",
+        "DROP\\s+(DATABASE|TABLE)\\s+",
+        "TRUNCATE\\s+TABLE\\s+",
+        "\\bmysql\\s+.*-e\\s+",
+        "\\bpsql\\s+.*-c\\s+"
+      ]
+    },
+    "infrastructure_commands": {
+      "description": "Comandos de infraestrutura/cloud (alto risco)",
+      "severity": "malicious",
+      "suggestion": "Infrastructure changes must go through CI/CD pipelines with approval gates. Never run terraform/docker/kubectl from agent-generated code.",
+      "patterns": [
+        "\\bterraform\\s+(destroy|apply)",
+        "\\bdocker\\s+(rm|rmi|system\\s+prune)",
+        "\\baws\\s+s3\\s+rm\\s+",
+        "\\bkubectl\\s+(delete|exec)"
+      ]
+    },
+    "script_execution": {
+      "description": "Execução de scripts em linguagens interpretadas",
+      "severity": "malicious",
+      "suggestion": "Never execute interpreted scripts dynamically. Use verified static commands. Pentest tools (nmap, sqlmap, msfvenom) must not appear in application code.",
+      "patterns": [
+        "\\bpython3?\\s*[-]?[ce]?\\s",
+        "\\bruby\\s*[-]?[ce]?\\s",
+        "\\bperl\\s*[-]?[ce]?\\s",
+        "\\blua\\s+",
+        "\\bnode\\s+-e\\s",
+        "\\bdeno\\s+",
+        "\\bphp\\s+-r\\s",
+        "\\bmsfvenom\\s+-p\\s",
+        "\\bnmap\\s+--script\\s",
+        "\\bsqlmap\\s+-u\\s"
+      ]
+    },
+    "data_transfer_exfiltration": {
+      "description": "Comandos de transferência de dados (potencial exfiltração)",
+      "severity": "malicious",
+      "suggestion": "Never pipe remote content into a shell (curl|bash). Use verified packages. Network transfers must be auditable and logged.",
+      "patterns": [
+        "\\bcurl\\b\\s*[^\\s]*\\s+(https?|ftp|sftp)",
+        "\\bcurl\\s+.*['\\\"]?(https?|ftp|sftp)://",
+        "\\bwget\\b\\s+(http|ftp|sftp)",
+        "\\bcurl\\s+.*\\|\\s*(bash|sh|zsh|python|node|perl|ruby)",
+        "\\bwget\\s+.*\\|\\s*(bash|sh|zsh|python|node|perl|ruby)",
+        "\\bftp\\s+",
+        "\\bsftp\\s+",
+        "\\brsync\\s+.*::?",
+        "\\bscp\\s+",
+        "\\bnc\\s+(-l|-e|-c|[0-9])",
+        "\\bnetcat\\s+",
+        "\\bsocat\\s+"
+      ]
+    },
+    "process_control": {
+      "description": "Comandos de controle de processos do sistema",
+      "severity": "malicious",
+      "suggestion": "Never kill processes from application code. Use service management tools (systemd, supervisord) with explicit human approval.",
+      "patterns": [
+        "\\bkill\\s+-9\\s+",
+        "\\bkillall\\s+",
+        "\\bpkill\\s+",
+        "\\bnohup\\s+"
+      ]
+    },
+    "text_manipulation_inplace": {
+      "description": "Edição in-place de arquivos via utilitários de texto",
+      "severity": "malicious",
+      "suggestion": "Never modify files in-place with sed -i or awk in application code. Use explicit file read/write operations with version control.",
+      "patterns": [
+        "\\bsed\\s+-i\\b",
+        "\\bawk\\s+.*\\bprintf\\b.*>",
+        "\\bgawk\\s+-i\\b",
+        "\\bmawk\\s+-i\\b",
+        "\\bed\\s+",
+        "\\bex\\s+"
+      ]
+    },
+    "interactive_editors": {
+      "description": "Editores interativos (podem modificar código silenciosamente)",
+      "severity": "suspicious",
+      "suggestion": "Never invoke interactive editors (vim, nano, emacs) from automated code. Use the Write/Edit tools with explicit diffs reviewed by the user.",
+      "patterns": [
+        "\\bnano\\s+",
+        "\\b(?:vi|vim)(?:\\s|['\"]|\\[|\\()",
+        "\\bemacs\\s+",
+        "\\bmicro\\s+"
+      ]
+    },
+    "archiving_compression": {
+      "description": "Comandos de arquivamento (potencial exfiltração)",
+      "severity": "suspicious",
+      "suggestion": "Archiving commands can be used for data exfiltration. Confirm the destination and scope of any archive operation with the user before executing.",
+      "patterns": [
+        "\\btar\\s+(-c|--create|cf)",
+        "\\bzip\\s+-r",
+        "\\bunzip\\s+",
+        "\\b7z\\s+a\\b",
+        "\\bgzip\\s+",
+        "\\bbzip2\\s+",
+        "\\bxz\\s+"
+      ]
+    },
+    "linking_misc": {
+      "description": "Outros utilitários hostis",
+      "severity": "suspicious",
+      "suggestion": "eval() and exec() execute arbitrary code at runtime. Use JSON.parse() for data, or explicit function calls with static arguments.",
+      "patterns": [
+        "\\bln\\s+-s\\b",
+        "\\bpax\\s+",
+        "\\beval\\s*\\(",
+        "\\bexec\\s*\\("
+      ]
+    },
+    "reverse_shell_enhanced": {
+      "description": "Shell reversa e execucao remota — padroes compostos (nc, socat, bash, python, php, perl, ruby, lua, telnet)",
+      "severity": "malicious",
+      "suggestion": "Reverse shell pattern detected. This is an active exploitation technique. Remove immediately and audit the full file for other indicators of compromise.",
+      "patterns": [
+        "\\bnc\\s+(-l|-e|-c|[0-9]{1,3}\\.[0-9]{1,3})",
+        "\\bncat\\s+(-l|-e|-c|--exec|--sh-exec)",
+        "\\bsocat\\s+.*(?:exec:|tcp-connect|udp-connect)",
+        "\\bbash\\s+-i\\s+>&\\s+/dev/(?:tcp|udp)/",
+        "\\bpython3?\\s+-c\\s+['\"]import\\s+(?:socket|os|subprocess|pty)",
+        "\\bperl\\s+-e\\s+['\"].*socket",
+        "\\bruby\\s+-e\\s+['\"].*TCPSocket",
+        "\\bphp\\s+-r\\s+['\"]\\$sock=fsockopen",
+        "\\blua\\s+-e\\s+['\"].*socket",
+        "\\btelnet\\s+[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\s+[0-9]+",
+        "\\bexec\\s+[0-9]+<>/dev/(?:tcp|udp)/",
+        "/dev/tcp/[^/]+/[0-9]+"
+      ]
+    },
+    "compiled_binary_execution": {
+      "description": "Execucao de binarios compilados ou scripts em paths temporarios",
+      "severity": "malicious",
+      "suggestion": "Execution of compiled binaries from temp paths is a malware delivery pattern. Use only verified, system-installed executables.",
+      "patterns": [
+        "\\bgcc\\s+.*-o\\s+/(?:tmp|dev/shm|var/tmp)/",
+        "\\bg\\+\\+\\s+.*-o\\s+/(?:tmp|dev/shm|var/tmp)/",
+        "\\bld\\s+.*-o\\s+/(?:tmp|dev/shm|var/tmp)/",
+        "\\bnasm\\s+.*-o\\s+/(?:tmp|dev/shm|var/tmp)/",
+        "/tmp/[a-zA-Z0-9_]+\\b.*\\b(?:exploit|shell|backdoor|bypass|payload)",
+        "/dev/shm/[a-zA-Z0-9_]+\\b",
+        "\\./a\\.out\\b",
+        "\\bchmod\\s+\\+x\\s+/(?:tmp|dev/shm)",
+        "\\b(make|cmake|meson|ninja)\\s+.*/(?:tmp|dev/shm)"
+      ]
+    },
+    "data_exfiltration_compound": {
+      "description": "Exfiltracao de dados por comandos compostos (tar + nc, rsync, scp nao autorizado)",
+      "severity": "malicious",
+      "suggestion": "Compound exfiltration pattern detected. Data is being archived and transferred to a remote host without authorization.",
+      "patterns": [
+        "\\btar\\s+.*\\|\\s*(?:nc|ncat|curl|wget|socat)",
+        "\\bgzip\\s+.*\\|\\s*(?:nc|ncat|curl|wget|socat)",
+        "\\bxz\\s+.*\\|\\s*(?:nc|ncat|curl|wget|socat)",
+        "\\brsync\\s+-av[cz]\\s+/\\w+\\s+[a-z]+@",
+        "\\bscp\\s+-r\\s+/\\w+\\s+[a-z]+@",
+        "\\bnc\\s+[a-z0-9.-]+\\s+[0-9]+\\s+<\\s+/\\w+",
+        "\\bdd\\s+if=/\\w+\\s+.*\\|\\s*(?:nc|ncat|ssh)",
+        "\\bcat\\s+/\\w+.*\\|\\s*(?:nc|ncat|curl|wget|socat)",
+        "\\bfind\\s+/\\w+.*\\|\\s*(?:nc|ncat|curl|wget|socat)"
+      ]
+    },
+    "windows_specific": {
+      "description": "Comandos Windows hostis (PowerShell/cmd)",
+      "severity": "malicious",
+      "suggestion": "Never use Invoke-Expression or iex() — they execute arbitrary strings. Use explicit cmdlets with static arguments. DownloadString + Execute is a malware pattern.",
+      "patterns": [
+        "\\bpowershell\\s+-",
+        "\\bpwsh\\s+-",
+        "Invoke-WebRequest",
+        "Invoke-Expression",
+        "iex\\s*\\(",
+        "Start-Process",
+        "\\bcmd\\s+/c\\b",
+        "DownloadString\\s*\\("
+      ]
+    },
+    "pentest_recon_tools": {
+      "description": "Ferramentas de reconhecimento e exploração de segurança",
+      "severity": "malicious",
+      "suggestion": "Pentest tools (nmap, sqlmap, hydra, msfvenom) must not appear in application code. Run them only in authorized, isolated environments with explicit scope approval.",
+      "patterns": [
+        "\\bnmap\\s+",
+        "\\bnikto\\s+",
+        "\\bwhatweb\\s+",
+        "\\bffuf\\s+",
+        "\\bgobuster\\s+",
+        "\\bnuclei\\s+",
+        "\\bsqlmap\\s+",
+        "\\bmsfconsole\\s+",
+        "\\bmsfvenom\\s+",
+        "\\bhydra\\s+",
+        "\\bjohn\\s+",
+        "\\bhashcat\\s+",
+        "\\blinpeas\\s+",
+        "\\blinenum\\s+",
+        "\\bdirsearch\\s+"
+      ]
+    },
+    "reverse_shells": {
+      "description": "Padrões de reverse shell em scripts e comandos",
+      "severity": "malicious",
+      "suggestion": "Reverse shell pattern detected. This is an active exploitation technique. Remove immediately and audit the full file for other indicators of compromise.",
+      "patterns": [
+        "/dev/tcp/",
+        "/dev/udp/",
+        "bash\\s+-i\\s+>&",
+        "python\\s+-c\\s+'import\\s+socket",
+        "python3\\s+-c\\s+'import\\s+socket",
+        "socat\\s+exec:",
+        "nc\\s+-e\\s+/bin",
+        "ncat\\s+-e\\s+",
+        "socket\\.socket.*connect",
+        "5<>\\/dev\\/tcp"
+      ]
+    },
+    "persistence_mechanisms": {
+      "description": "Mecanismos de persistência em shell/scripts",
+      "severity": "malicious",
+      "suggestion": "Remove persistence mechanisms (crontab, authorized_keys, systemctl enable, shell rc files). System startup configuration is for human administrators only.",
+      "patterns": [
+        "\\bcrontab\\s+-e\\b",
+        "@reboot\\s+",
+        "authorized_keys",
+        ">>\\s*~/\\.bashrc",
+        ">>\\s*~/\\.zshrc",
+        ">>\\s*~/\\.profile",
+        "\\.config/autostart/",
+        "systemctl\\s+enable\\s+",
+        "update-rc\\.d\\s+"
+      ]
+    },
+    "prompt_injection_advanced": {
+      "description": "Prompt injection patterns — instruction override, role-playing, context manipulation, instruction smuggling",
+      "severity": "malicious",
+      "suggestion": "Content contains AI override instructions. Remove directives that attempt to alter system behavior.",
+      "patterns": [
+        "(?i)ignore\\s+(previous|all|above|your|my)(?:\\s+\\w+)*\\s+(instructions|training|commands|prompts|rules|constraints)",
+        "(?i)forget\\s+(your|all|the|previous)\\s+(training|instructions|rules|constraints|guidelines)",
+        "(?i)(?:new|override|reset)\\s+(system\\s+)?(?:prompt|instructions|guidelines)",
+        "(?i)(?:===|---)\\s*END\\s+(SYSTEM\\s+)?(?:PROMPT|INSTRUCTIONS|MESSAGE)\\s*(?:===|---)",
+        "(?i)disregard\\s+(the\\s+)?(?:above|previous|all)",
+        "(?i)\\bDAN\\b.*(?:Do\\s+Anything\\s+Now|mode)",
+        "(?i)pretend\\s+(you\\s+are|to\\s+be)\\s+(?:an?|the|a)",
+        "(?i)act\\s+as\\s+if\\s+you\\s+are",
+        "(?i)you\\s+are\\s+now\\s+(unrestricted|free|god|DAN|evil|unfiltered)",
+        "(?i)(?:bypass|ignore|disable)\\s+(your\\s+)?(?:safety|restrictions|filter|alignment|guidelines)",
+        "(?i)developer\\s+mode",
+        "(?i)(?:no|without)\\s+(limits|restrictions|boundaries|filter)",
+        "(?i)unfiltered\\s+mode",
+        "(?i)jailbreak(?:ed|ing)?",
+        "(?i)Anthropic\\s+(admin|developer|engineer|team|staff)",
+        "(?i)(?:System\\s+)?message\\s+(from|by)\\s+Anthropic",
+        "(?i)(?:In\\s+our|Previous)\\s+(?:last\\s+)?session",
+        "(?i)\\[SYSTEM\\](?:\\(|\\)|\\s)",
+        "(?i)role\":\\s*\"system\"",
+        "\\\\x[0-9a-fA-F]{2}\\\\x[0-9a-fA-F]{2}\\\\x[0-9a-fA-F]{2}",
+        "(?i)<!--",
+        "(?i)--->",
+        "\\b1gn0r3\\b",
+        "\\bpr3v10us\\b",
+        "\\b1nstruct10ns\\b",
+        "\\b0v3rr1d3\\b",
+        "\\br3str1ct10ns\\b",
+        "\\bd1s4bl3\\b",
+        "\\bbyp4ss\\b",
+        "\\bj41lbr34k\\b",
+        "(?i)\\[INST\\].*(?:ignore|bypass|override|disregard)",
+        "(?i)<<SYS>>.*(?:ignore|bypass|override|forget)",
+        "(?i)Human:.*(?:ignore|bypass|forget).*Assistant:",
+        "(?i)<\\|im_start\\|>system.*(?:override|ignore|bypass)",
+        "(?i)(?:en|de|fr|es|pt):\\s*(?:ignorar|ignorer|ignorieren|ignorar).*(?:instruc|regla|regel|instrução)",
+        "(?i)translate.*(?:ignore|bypass|override).*instructions",
+        "(?i)(?:repeat|echo|print).*(?:system.*prompt|instructions|rules)",
+        "(?i)(?:what|show|reveal|display).*(?:system.*prompt|hidden.*instructions|initial.*prompt)"
+      ]
+    },
+    "http_exfiltration_advanced": {
+      "description": "HTTPS/HTTP exfiltration via https.request e socket.connect",
+      "severity": "malicious",
+      "suggestion": "HTTP requests to external hosts from within installed packages are a data exfiltration pattern. Use only pre-approved internal endpoints.",
+      "patterns": [
+        "https?\\s*\\.request\\s*\\(\\s*\\{\\s*hostname\\s*:",
+        "socket\\.connect\\s*\\(",
+        "connect\\s*\\(\\s*\\(['\\\"]evil"
+      ]
+    },
+    "supply_chain_registry": {
+      "description": "NPM/PyPI registry hijack — URLs de registry não oficiais, typosquatting, dependency confusion",
+      "severity": "malicious",
+      "suggestion": "Never redirect package registries to unofficial sources. Use only registry.npmjs.org, pypi.org, or crates.io. Auth tokens in config files are a supply chain risk.",
+      "patterns": [
+        "registry\\s*=\\s*https?://.*evil",
+        "_authToken\\s*=",
+        "registry\\s*=\\s*https?://(?!(?:registry\\.npmjs\\.org|registry\\.yarnpkg\\.com|pypi\\.org|crates\\.io))",
+        "_authToken.*(?!registry\\.npmjs\\.org)",
+        "(?i)(?:npm|pip|cargo)\\s+install\\s+(?!@?[a-z0-9-]+/).*--registry",
+        "(?i)(?:npm|yarn)\\s+config\\s+set\\s+registry",
+        "(?i)index-url\\s*=\\s*https?://(?!pypi\\.org)"
+      ]
+    },
+    "shell_hook_hijacking": {
+      "description": "Curl/wget em .husky ou git hooks",
+      "severity": "malicious",
+      "suggestion": "Never make network requests in git hooks or CI hooks. Hook scripts must be static and version-controlled. Remote code in hooks is a supply chain attack vector.",
+      "patterns": [
+        "\\.husky.*curl",
+        "\\.husky.*wget",
+        "git.*hook.*curl",
+        "pre-commit.*curl"
+      ]
+    },
+    "container_escape": {
+      "description": "Docker/container escape patterns — privileged mounts, /etc/shadow",
+      "severity": "malicious",
+      "suggestion": "Never use privileged:true or cap_add:ALL in container definitions. Never access /etc/shadow from application code. These are container escape techniques.",
+      "patterns": [
+        "privileged\\s*:\\s*true",
+        "\\/etc\\/shadow",
+        "/etc/shadow",
+        "cap_add.*ALL"
+      ]
+    },
+    "pii_detection": {
+      "description": "Deteccao de PII — dados pessoais sensiveis em codigo e configs",
+      "severity": "suspicious",
+      "suggestion": "Never hardcode PII (CPF, SSN, credit card, phone) in code or configs. Use environment variables or a secrets manager.",
+      "patterns": [
+        "\\b\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}\\b",
+        "\\b\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}\\b",
+        "\\b\\d{3}-\\d{2}-\\d{4}\\b",
+        "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b.*(?:password|senha|secret|token)",
+        "(?i)(?:cpf|ssn|social.security|passport.number|drivers?.licen[cs]e)\\s*[:=]\\s*['\"]?\\d",
+        "(?i)(?:credit.card|cartao|visa|mastercard|amex)\\s*[:=]\\s*['\"]?\\d{4}[- ]?\\d{4}",
+        "(?i)(?:phone|telefone|celular)\\s*[:=]\\s*['\"]?\\+?\\d{10,}"
+      ]
+    },
+    "canary_detection": {
+      "description": "Canary words — strings de rastreamento para detectar exfiltracao",
+      "severity": "malicious",
+      "suggestion": "Canary token detected. Traceable data may be exfiltrated. Review the entire data flow immediately.",
+      "patterns": [
+        "(?i)CANARY[_-]?TOKEN[_-]?[A-Za-z0-9]{8,}",
+        "(?i)HONEY[_-]?TOKEN[_-]?[A-Za-z0-9]{8,}",
+        "(?i)canarytokens\\.com",
+        "(?i)(?:thinkst|canary)\\.tools"
+      ]
+    },
+    "model_abuse": {
+      "description": "Abuso de capacidades do modelo — jailbreak, role-play forcado, DAN",
+      "severity": "malicious",
+      "suggestion": "Remove jailbreak/persona-override instructions. Content with DAN, developer mode, or forced role-play must not be embedded in code or configs.",
+      "patterns": [
+        "(?i)(?:you.are|act.as|pretend.to.be|roleplay.as).*(?:DAN|evil|unrestricted|unfiltered|uncensored)",
+        "(?i)(?:developer|maintenance|debug|admin).mode.*(?:enable|activate|on)",
+        "(?i)(?:do.anything.now|no.restrictions|no.limits|no.rules|no.boundaries)",
+        "(?i)(?:hypothetical|fictional|imaginary).*(?:scenario|world|reality).*(?:ignore|bypass|no.rules)",
+        "(?i)(?:grandma|grandmother|deceased).*(?:recipe|method|instructions).*(?:napalm|explosive|weapon|drug)",
+        "(?i)(?:opposite.day|bizzaro|mirror).*(?:ignore|reverse|invert).*(?:safety|rules|guidelines)"
+      ]
+    },
+    "shell_config_tampering": {
+      "description": "Manipulação de arquivos de configuração de shell — persistência e execução arbitrária",
+      "severity": "malicious",
+      "suggestion": "Modifying shell config files (.bashrc, .zshrc, .profile) allows persistent code execution on every shell start. This is a common attacker persistence technique (MITRE T1546.004). Remove any unauthorized modifications immediately.",
+      "patterns": [
+        "~/\\.bashrc",
+        "~/\\.zshrc",
+        "~/\\.bash_profile",
+        "~/\\.bash_aliases",
+        "~/\\.profile",
+        "/home/[^/]+/\\.bashrc",
+        "/root/\\.bashrc",
+        "/etc/bash\\.bashrc",
+        "/etc/zsh/zshrc",
+        "/etc/profile",
+        "\\.bashrc\\b",
+        "\\.zshrc\\b",
+        "echo\\s+.*>>\\s+.*\\.bashrc",
+        "cat\\s+.*>>\\s+.*\\.zshrc",
+        "printf\\s+.*>>\\s+.*\\.bashrc",
+        "tee\\s+-a\\s+.*\\.bashrc",
+        "curl.*\\.bashrc",
+        "wget.*\\.bashrc"
+      ]
+    },
+    "base64_in_comments": {
+      "description": "Base64 encoded strings in code comments — potential obfuscation of malicious payloads",
+      "severity": "malicious",
+      "suggestion": "Code comments should not contain Base64 encoded content. Base64 is often used to obfuscate malicious commands. Decode and review any suspicious Base64 strings.",
+      "patterns": [
+        "//\\s*[A-Za-z0-9+/]{50,}={0,2}",
+        "#\\s*[A-Za-z0-9+/]{50,}={0,2}",
+        "/\\*\\s*[A-Za-z0-9+/]{50,}={0,2}",
+        "<!--\\s*[A-Za-z0-9+/]{50,}={0,2}"
+      ]
+    },
+    "credential_exfiltration_comment": {
+      "description": "Credentials mentioned alongside attacker infrastructure in comments/docs",
+      "severity": "malicious",
+      "suggestion": "Comments or documentation should not mention credentials alongside attacker infrastructure. Remove any references to credential exfiltration or data theft.",
+      "patterns": [
+        "(?i)(?:credentials?|password|token|secret).*(?:sent to|sent to attacker|exfil|stolen|harvest)",
+        "(?i)(?:credentials?|password|token|secret).*attacker",
+        "(?i)(?:sent to|exfil).*(?:attacker\\.com|evil\\.com|127\\.0\\.0\\.1)"
+      ]
+    },
+    "prompt_injection_claude_hooks": {
+      "description": "Prompt injection patterns from claude-hooks (Lasso Security) — False Authority, Fake Conversation, System Prompt Extraction, Fake System Markers, Priority Manipulation, Context Dismissal, Reset/Wipe, DAN/Jailbreak, Encoding Obfuscation",
+      "severity": "malicious",
+      "suggestion": "Content contains instructions attempting to override system behavior. Remove directives that try to alter AI system prompts or bypass constraints.",
+      "patterns": [
+        "(?i)(anthropic|openai|claude\\s*team)\\s+(says?|requires?|demands?|orders?)",
+        "(?i)(official|authorized|verified)\\s+(instruction|message|update)\\s+from",
+        "(?i)(system\\s+)?(administrator|admin|root)\\s+(message|override|instruction)",
+        "(?i)developer\\s+(mode|override|access)\\s+(enabled|activated|granted)",
+        "(?i)maintenance\\s+(mode|override)\\s*(enabled|active)",
+        "(?i)(internal|debug|test)\\s+mode\\s+(enabled|activated|on)",
+        "(?i)previous\\s+conversation\\s+(summary|context|history)\\s*:",
+        "(?i)in\\s+our\\s+(last|previous)\\s+conversation\\s+you\\s+(agreed|said)",
+        "(?i)you\\s+(previously|earlier|already)\\s+(said|agreed|confirmed)",
+        "(?i)(show|reveal|tell|display|print)\\s+(me\\s+)?(your\\s+)?(system\\s+)?prompt",
+        "(?i)repeat\\s+(your\\s+)?(system\\s+)?(prompt|instructions?)\\s+(back|verbatim)",
+        "(?i)what\\s+(were\\s+)?you\\s+told\\s+(to\\s+do|at\\s+the\\s+(start|beginning))",
+        "(?i)\\[\\/?(system)\\]|\\{\\/?(system)\\}|<\\/?system\\s*>",
+        "(?i)\\[\\[SYSTEM\\]\\]|\\(\\(SYSTEM\\)\\)|\\{\\{SYSTEM\\}\\}",
+        "(?i)\\[INST\\]|\\[\\/INST\\]|\\[SYS\\]|\\[\\/SYS\\]",
+        "(?i)(highest|top|maximum|critical)\\s+priority\\s*(:|instruction|override)?",
+        "(?i)this\\s+(instruction|command)\\s+(takes?\\s+)?(priority|precedence)\\s+over",
+        "(?i)(more\\s+)?important\\s+than\\s+(your\\s+)?(original|previous)\\s+instructions?",
+        "(?i)the\\s+above\\s+(was|is)\\s+(just\\s+)?(a\\s+)?(test|joke|fake|distraction)",
+        "(?i)(real|actual|true)\\s+(instruction|prompt|task)\\s*(starts?|begins?)?\\s*(here|below)",
+        "(?i)ignore\\s+everything\\s+(before|after|above|below)\\s+this\\s+(line|point)",
+        "(?i)reset\\s+(your\\s+)?(context|memory|instructions?|state)",
+        "(?i)clear\\s+(your\\s+)?(memory|context|instructions?|history)",
+        "(?i)wipe\\s+(your\\s+)?(memory|context|slate)",
+        "(?i)you\\s+are\\s+(now\\s+)?DAN",
+        "(?i)DAN\\s+(mode|persona|character|version)",
+        "(?i)(do|does)\\s+anything\\s+now",
+        "(?i)jailbreak(ed)?\\s+(mode|prompt|version|enabled)",
+        "(?i)(enable|activate|enter)\\s+(jailbreak|unrestricted|god)\\s*mode",
+        "(?i)DEVELOPER\\s+MODE\\s+(ENABLED|ACTIVATED|ON)",
+        "(?i)(1gn0r3|f0rg3t|d1sr3g4rd|0v3rr1d3)",
+        "(?i)(syst3m|pr0mpt|1nstruct10n[s5]?)",
+        "(?i)(j41lbr34k|byp4ss|h4ck)",
+        "[\\u034F\\u115F\\u1160\\u17B4\\u17B5]{2,}"
+      ]
+    },
+    "kubernetes_container_escape": {
+      "description": "Kubernetes/container escape — cgroup enumeration, etcd access, kubelet API, service account tokens",
+      "severity": "malicious",
+      "suggestion": "Container escape pattern detected. Never access container internals (/proc/1/cgroup), etcd (port 2379), or kubernetes service account tokens from application code. This is a privilege escalation and lateral movement technique.",
+      "patterns": [
+        "\\b/proc/1/cgroup\\b",
+        "\\b/proc/self/cgroup\\b",
+        "\\b/proc/\\d+/cgroup\\b",
+        "\\bcgroup\\b.*enumerate",
+        "\\bcat\\s+/proc/1/cgroup",
+        "\\bcat\\s+/proc/self/cgroup",
+        "\\betcdctl\\b",
+        "\\bendpoints=127\\.0\\.0\\.1:2379",
+        "\\bendpoints=localhost:2379",
+        "\\b/etc/kubernetes/",
+        "\\b/var/run/secrets/kubernetes",
+        "\\bkubelet\\b.*10250",
+        "\\b127\\.0\\.0\\.1:10250\\b",
+        "\\blocalhost:10250\\b",
+        "\\bkubernetes\\.io/secrets\\b",
+        "\\bget\\s+/kubernetes\\.io",
+        "\\bServiceAccount\\b"
+      ]
+    },
+    "false_authority_injection": {
+      "description": "False Authority prompt injection — simular conversas anteriores, mensagens falsas de sistema, credenciais fake",
+      "severity": "malicious",
+      "suggestion": "Content simulates previous conversations or falsely claims to show system messages. This is a prompt injection attack (False Authority pattern). Remove immediately.",
+      "patterns": [
+        "(?i)(?:previous|last)\\s+conversation\\s*[:\\(]",
+        "(?i)assistant:\\s*I\\s+will\\s+ignore",
+        "(?i)user:\\s*(?:show|print|reveal).*(?:database|password|secret)",
+        "(?i)assistant:\\s*(?:DATABASE_URL|password|secret)\\s*=",
+        "(?i)previous\\s+(?:conversation|session|discussion).*[:\\(]"
+      ]
+    },
+    "llm_template_injection": {
+      "description": "Template injection em LLM output handling — backticks com variáveis, command substitution em strings",
+      "severity": "malicious",
+      "suggestion": "Template literal with variable interpolation passed to command execution. Attacker-controlled input can lead to command injection. Use static command lists or parameterized execution.",
+      "patterns": [
+        "\\`npm\\s+install\\s+\\$",
+        "\\`\\s*(?:npm|pip|cargo)\\s+install\\s+\\$\\{",
+        "exec\\s*\\(\\s*cmd\\s*\\)",
+        "\\$\\{llmResponse\\}",
+        "\\$\\{llm\\.",
+        "llm\\[.*\\].*exec",
+        "template.*literal.*exec"
+      ]
+    },
+    "nemesis_evasion": {
+      "description": "Tentativas de bypass/desativacao do Nemesis — path ofuscado, var concat, payload codificado, hooks vazios",
+      "severity": "malicious",
+      "suggestion": "Script tenta desativar o Nemesis. Remova imediatamente. Infraestrutura do Nemesis e gerenciada exclusivamente pelo usuario.",
+      "patterns": [
+        "\\$\\{[A-Za-z_][A-Za-z0-9_]*\\}[\"']?\\s*[\"']?\\$\\{",
+        "\\$[A-Za-z_][A-Za-z0-9_]*\\$[A-Za-z_][A-Za-z0-9_]",
+        "(?:echo|printf|cat)\\s+.*[>]\\s*[\"']?\\$",
+        "printf\\s+.*\\\\\\\\(?:x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4})",
+        "base64\\s+.*-(?:d|D|decode)\\s*.*\\|\\s*(?:sh|bash|zsh|tee|dd)",
+        "tee\\s+(?:-a\\s+)?[\"']?\\$",
+        "dd\\s+.*of=\\s*[\"']?\\$",
+        "python3?\\s+-c\\s+.*(?:\\.claude/settings|\\.windsurf/hooks|\\.codex/hooks|\\.nemesis/)",
+        "(?:node|nodejs)\\s+-e\\s+.*(?:\\.claude/settings|\\.windsurf/hooks|nemesis-pretool|nemesis-posttool)",
+        "\"hooks\"\\s*:\\s*\\{\\s*\\}",
+        "\\{\"hooks\"\\s*:\\s*\\{\\s*\\}\\s*\\}",
+        "\\binstall\\s+.*(?:\\.claude/settings|\\.windsurf/hooks|\\.codex/hooks|denylist-folder-files|deny-list-base|deny-list-generic)",
+        "\\bopenssl\\s+enc\\s+.*-out\\s+",
+        "\\bgpg\\s+.*--output\\s+",
+        "\\biconv\\s+.*-o\\s+",
+        "\\bunzip\\s+.*-o\\s+",
+        "\\btar\\s+-[cx].*-C\\s+/home/",
+        "read\\s+\\w+\\s*<\\s*.*(?:settings\\.json|hooks\\.json|config\\.toml|denylist|deny-list)",
+        "\\{\\s*\"disableAllHooks\"\\s*:\\s*true\\s*\\}",
+        "\"disableAllHooks\"\\s*:\\s*true",
+        "^source\\s+|^\\s*\\.\\s+\\S+\\.(?:sh|bash|zsh)",
+        "export\\s+\\w+\\s*=\\s*[\"']?(?:/home/|/root/|~/)\\S*(?:\\.claude/settings|\\.windsurf/hooks|\\.codex/hooks|\\.nemesis/)",
+        "cat\\s+>\\s*\\$\\w+\\s*<<",
+        "exec\\s+\\d+>\\s*\\$",
+        "\\bunlink\\s+(?:-[A-Za-z]+\\s+)*\\$?[\"']?(?:/home/|/root/|~/|\\$?\\w)",
+        "\\blink\\s+(?:-[A-Za-z]+\\s+)*[\"']?(?:/home/|/root/|~/|\\$?\\w)",
+        "\\bunlink\\s+.*&&.*\\blink\\s+",
+        "^unlink\\s+|^link\\s+",
+        "read\\s+\\w+\\s*<\\s*.*&&.*(?:unlink|link)",
+        "\\bhistory\\s+-[awr]",
+        "\\bfc\\s+-[lres]",
+        "\\bhistory\\s+-w\\s+\\$",
+        "\\bfc\\s+-w\\s+\\$",
+        "\\bsystemd-run\\s+",
+        "\\bnsenter\\s+",
+        "\\bunshare\\s+",
+        "\\bchroot\\s+",
+        "\\bbwrap\\s+",
+        "\\bscript\\s+.*-c\\s",
+        "\\bsetsid\\s+",
+        "\\bstdbuf\\s+",
+        "\\bnohup\\s+",
+        "\\bflock\\s+",
+        "\\blogger\\s+",
+        "\\bssh\\s+.*(?:root@|admin@|/home/)",
+        "\\brsh\\s+",
+        "\\brlogin\\s+",
+        "\\brcp\\s+",
+        "\\btelnet\\s+",
+        "\\bstrace\\s+",
+        "\\bgdb\\s+",
+        "\\blldb\\s+",
+        "\\bperf\\s+.*record",
+        "\\bcpio\\s+.*-i.*-d",
+        "\\bmksquashfs\\s+",
+        "\\bunsquashfs\\s+.*-d\\s+/",
+        "\\bgenisoimage\\s+",
+        "\\bmkisofs\\s+",
+        "\\btic\\s+.*-o\\s+",
+        "\\blocaledef\\s+",
+        "\\bwrite\\s+/",
+        "\\bwall\\s+",
+        "\\bmkfifo\\s+",
+        "\\bfallocate\\s+",
+        "\\bsetcap\\s+",
+        "\\bgetcap\\s+",
+        "\\bchattr\\s+",
+        "\\bsetfacl\\s+",
+        "\\bchown\\s+",
+        "\\bchmod\\s+",
+        "\\bchgrp\\s+",
+        "\\bsudo\\s+",
+        "\\bpkexec\\s+",
+        "\\brunuser\\s+",
+        "\\bsu\\s+",
+        "\\bat\\s+",
+        "\\bcrontab\\s+",
+        "/(?:home/[^/]+|root)/\\S*(?:\\.claude/settings\\.json|\\.windsurf/hooks\\.json|\\.codex/hooks\\.json|\\.nemesis/workflow-enforcement/config/denylist|deny-list-base\\.json)",
+        "^/(?:home/[^/]+|root)/\\S*(?:\\.claude/settings\\.json|\\.windsurf/hooks\\.json|\\.codex/hooks\\.json)$",
+        "os\\.dup2\\s*\\(\\s*\\w+\\.fileno\\s*\\(\\s*\\)\\s*,\\s*[012]\\s*\\)",
+        "subprocess\\.(?:call|Popen)\\s*\\(\\s*\\[\\s*[\"'](?:/bin/|/usr/bin/)(?:sh|bash|zsh|dash)[\"']\\s*,\\s*[\"']-i[\"']",
+        "os\\.dup2.*fileno.*\\n.*os\\.dup2.*fileno",
+        "(?:import|from)\\s+socket.*\\n.*(?:import|from)\\s+subprocess",
+        "dup2\\s*\\(.*,\\s*0\\s*\\).*dup2\\s*\\(.*,\\s*1\\s*\\).*dup2\\s*\\(.*,\\s*2\\s*\\)",
+        "socket\\.AF_INET.*socket\\.SOCK_STREAM.*connect.*dup2.*subprocess",
+        "pty\\.spawn\\s*\\(\\s*[\"']/(?:bin/|usr/bin/)(?:sh|bash)",
+        "os\\.(?:unlink|remove|rmdir)\\s*\\(",
+        "fs\\.(?:unlinkSync|rmSync|unlink|rm)\\s*\\(",
+        "pathlib\\.Path\\..*\\.unlink\\s*\\(",
+        "shutil\\.rmtree\\s*\\(",
+        "child_process\\.exec(?:Sync)?\\s*\\(\\s*['\"]\\s*(?:rm|unlink|del)\\s",
+        "\\bunlink\\s+.*&&.*\\blink\\s+",
+        "os\\.system\\s*\\(\\s*['\"]\\s*(?:rm|unlink|del|rd)\\s",
+        "subprocess\\.(?:call|run)\\s*\\(\\s*\\[\\s*[\"'](?:rm|unlink|rmdir)",
+        "spawn(?:Sync)?\\s*\\(\\s*['\"]\\s*(?:rm|unlink)"
+      ]
+    }
+  }
+}

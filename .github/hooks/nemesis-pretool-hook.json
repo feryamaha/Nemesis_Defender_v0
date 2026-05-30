@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "./.nemesis/target/release/nemesis-pretool-check-unix"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "./.nemesis/target/release/nemesis-posttool-check-unix"
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+# Nemesis AST Linters - DSL para definição de regras
+#
+# Este arquivo define regras AST usando uma DSL TOML simples.
+# O build script gera automaticamente o código Rust dos visitors
+# a partir destas definições.
+
+# Exemplo de regra para detectar uso de `any`
+[rule.no-explicit-any]
+query = "(type_annotation (any)) @any"
+message = "Unexpected any. Use unknown or specific type."
+severity = "error"
+languages = ["typescript", "tsx"]
+
+# Exemplo de regra para detectar promises não tratadas
+[rule.no-floating-promises]
+query = "(call_expression function: (identifier) @fn) @call"
+message = "Floating promise detected. Use await or .then()."
+severity = "error"
+languages = ["typescript", "tsx", "javascript", "jsx"]
+
+# Exemplo de regra para detectar atribuição unsafe
+[rule.no-unsafe-assignment]
+query = "(variable_declarator value: (as_expression type: (identifier) @type)) @decl"
+message = "Unsafe assignment detected. Avoid using as any."
+severity = "error"
+languages = ["typescript", "tsx"]
+
+# Exemplo de regra para detectar console.log
+[rule.no-console]
+query = "(call_expression function: (member_expression object: (identifier) property: (property_identifier) @prop)) @call"
+message = "Console statement detected. Remove console.log in production code."
+severity = "warning"
+languages = ["typescript", "tsx", "javascript", "jsx"]

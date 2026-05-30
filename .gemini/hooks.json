@@ -1,0 +1,32 @@
+{
+  "nemesis-pretool-hook": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  },
+  "nemesis-posttool-hook": {
+    "enabled": true,
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

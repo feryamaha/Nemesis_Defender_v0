@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/fernando/devproj/Nemesis_Rust_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/fernando/devproj/Nemesis_Rust_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

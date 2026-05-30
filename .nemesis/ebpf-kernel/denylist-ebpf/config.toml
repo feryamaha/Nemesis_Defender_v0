@@ -1,0 +1,4 @@
+enabled = true
+block_commands = true
+block_write_paths = true
+log_to_user_space = true

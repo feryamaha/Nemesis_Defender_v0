@@ -1,0 +1,5 @@
+{
+	"_comment": "Workflow sequence enforcement desativado. SDD pipeline migrou para skills fluidas. Code quality enforcement (AST + deny-list + eBPF) permanece ativo.",
+	"_version": "2.0.0",
+	"workflows": {}
+}

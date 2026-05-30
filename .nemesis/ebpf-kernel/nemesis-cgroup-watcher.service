@@ -1,0 +1,16 @@
+[Unit]
+Description=Nemesis Cgroup Watcher — auto-assigns LLM agent processes to nemesis-agent cgroup
+After=nemesis-ebpf.service
+Requires=nemesis-ebpf.service
+
+[Service]
+Type=simple
+ExecStart={{NEMESIS_ROOT}}/.nemesis/target/release/nemesis-cgroup-watcher
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nemesis-cgroup-watcher
+
+[Install]
+WantedBy=multi-user.target

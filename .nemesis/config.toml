@@ -1,0 +1,25 @@
+[nemesis]
+auto_gitignore = true
+backup_existing = true
+verbose_output = false
+create_config = true
+
+[workflows]
+generate_prompt_rag = true
+audit_create_pr = true
+auditoria_conformidade = true
+
+[skills]
+vercel_agent_skills = true
+react_best_practices = true
+web_design_guidelines = true
+
+[ide_detection]
+auto_detect = true
+fallback_to_prompt = true
+supported_ides = ["windsurf", "cursor", "copilot", "claude", "aider"]
+
+[feature_documentation]
+create_issues_folder = true
+create_pr_folder = true
+create_prompts_folder = true

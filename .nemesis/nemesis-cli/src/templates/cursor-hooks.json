@@ -1,0 +1,7 @@
+{
+  "hooks": {
+    "preToolUse": {
+      "command": "{{NEMESIS_HOOK_PATH}}"
+    }
+  }
+}

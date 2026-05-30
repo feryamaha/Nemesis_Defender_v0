@@ -1,0 +1,38 @@
+[Unit]
+Description=Nemesis eBPF LSM Daemon — kernel-level enforcement for LLM agent
+Documentation=file://{{NEMESIS_ROOT}}/.nemesis/ebpf-kernel/info.md
+After=local-fs.target
+ConditionPathExists=/sys/fs/cgroup
+
+[Service]
+Type=simple
+WorkingDirectory={{NEMESIS_ROOT}}
+
+# Criar o cgroup do agente antes de iniciar
+ExecStartPre=+/bin/mkdir -p /sys/fs/cgroup/nemesis-agent
+
+# Delegar capabilities ao binário
+ExecStartPre=+/sbin/setcap cap_bpf,cap_perfmon,cap_sys_resource+eip {{NEMESIS_ROOT}}/.nemesis/target/release/nemesis-ebpf-daemon
+
+# Iniciar o daemon (roda como usuario nao-root, systemd fornece AmbientCapabilities)
+ExecStart={{NEMESIS_ROOT}}/.nemesis/target/release/nemesis-ebpf-daemon --start
+User={{NEMESIS_USER}}
+
+# AUTO-CGROUP: colocar o daemon no cgroup do agente imediatamente apos iniciar
+# O + prefix roda como root, o $MAINPID e o PID do daemon
+ExecStartPost=+/bin/bash -c 'echo $MAINPID > /sys/fs/cgroup/nemesis-agent/cgroup.procs'
+
+# Permitir capabilities mesmo rodando como usuario comum
+AmbientCapabilities=CAP_BPF CAP_PERFMON CAP_SYS_RESOURCE
+
+# Remover o cgroup ao parar
+ExecStopPost=+/bin/rmdir /sys/fs/cgroup/nemesis-agent
+
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nemesis-ebpf
+
+[Install]
+WantedBy=multi-user.target

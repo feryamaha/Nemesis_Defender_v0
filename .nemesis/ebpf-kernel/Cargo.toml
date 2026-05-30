@@ -1,0 +1,32 @@
+[package]
+name = "nemesis-ebpf-kernel"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "nemesis_ebpf_kernel"
+path = "src/lib.rs"
+
+[[bin]]
+name = "nemesis-ebpf-daemon"
+path = "src/main.rs"
+
+[[bin]]
+name = "nemesis-cgroup-watcher"
+path = "src/cgroup_watcher.rs"
+
+[dependencies]
+anyhow = "1"
+bytemuck = { version = "1", features = ["derive"] }
+chrono = { version = "0.4", features = ["serde"] }
+libc = "0.2"
+nemesis = { path = ".." }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "io-util"] }
+toml = "0.8"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+landlock = "0.4"
+libbpf-rs = "0.24"
+seccompiler = "0.4"
