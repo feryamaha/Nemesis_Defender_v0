@@ -1,6 +1,0 @@
-# Paths excluidos do scan do Nemesis Defender
-# Arquivos nestas pastas NAO serao escaneados, logados ou removidos.
-# Contem payloads de documentacao de teste (pentests).
-# Formato: um path por linha (substring match)
-pentest-nemesis-control
-PENTEST-NEMESIS

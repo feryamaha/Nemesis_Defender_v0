@@ -1,4 +1,4 @@
-# Nemesis Framework
+# Nemesis Defender
 
 **Defense-in-depth contra malware de supply-chain e abuso de agentes LLM em ambientes de desenvolvimento.**
 
@@ -6,9 +6,22 @@ Versão: `2.0` · Workspace: `8.2.0` · Plataforma principal: Linux (eBPF) com f
 
 ---
 
-> **Aviso honesto de escopo.** O Nemesis é um sistema de enforcement robusto, projetado em camadas independentes para **elevar significativamente o custo de um ataque**. Ele **não** é — e nenhum sistema de segurança é — "impenetrável". Esta documentação descreve o que o Nemesis faz, contra qual modelo de ameaça, e — igualmente importante — **o que ele não faz**. Se você procura uma garantia de proteção total, ela não existe aqui nem em nenhum outro lugar.
+> ## ⚠️ LEIA ANTES DE INSTALAR — isto não é um brinquedo
+>
+> O Nemesis Defender é um sistema de segurança que **age, não pergunta.** Ele não negocia, não abre concessões e não é uma democracia — é 0 ou 1.
+>
+> **FAÇA BACKUP DO SEU PROJETO ANTES DE INSTALAR.** Ao ser instalado em um projeto que já contém código com violações (credenciais expostas, comandos destrutivos embutidos, anti-padrões graves), a camada de scanner pode **remover os arquivos infratores** — em um caso real, removeu 24 arquivos de um projeto que não havia sido desenvolvido sob o Nemesis. Se o projeto estiver versionado (Git), o código removido permanece no controle de versão da IDE e é recuperável. Se **não** estiver versionado, a perda é definitiva.
+>
+> Isto é intencional. O Nemesis intercepta operações destrutivas e inseguras **independentemente de quem as origina — IA ou humano.** No Linux, com a camada eBPF ativa, nem você pelo terminal consegue rodar um `rm -rf`. É a natureza de um sistema que existe para forçar disciplina de qualidade e segurança.
+>
+> **Use o Nemesis se você quer um harness rígido que obriga código limpo e seguro.** Se você segue as regras, ele é um aliado poderoso. Se você pisa fora da caixa, ele pune — por isso se chama Nemesis. Requer conhecimento técnico mínimo para configurar e operar; não é plug-and-play.
 
 ---
+
+> **Aviso honesto de escopo.** O Nemesis Defender é um sistema de enforcement robusto, projetado em camadas independentes para **elevar significativamente o custo de um ataque**. Ele **não** é — e nenhum sistema de segurança é — "impenetrável". Esta documentação descreve o que o Nemesis faz, contra qual modelo de ameaça, e — igualmente importante — **o que ele não faz**. Se você procura uma garantia de proteção total, ela não existe aqui nem em nenhum outro lugar.
+
+---
+
 
 ## O que é
 
@@ -73,9 +86,13 @@ Essa fronteira não depende da boa vontade do modelo — é imposta pelas camada
 | 2 — Defender (content scanner) | Em file-write e em comandos | 6 layers de scanning + 12 visitors | Windows, macOS, Linux |
 | 3 — eBPF Kernel LSM | Syscalls no kernel | BPF LSM (`bprm_check_security`) | **Linux apenas** |
 
-### Camada 1 — Pretool Hook
+### Camada 1 — Pretool / Posttool Hook
 
-Intercepta comandos antes da execução, valida contra `deny-list.json` e regras de escopo. Bloqueio é *hard-gate*: sem aprovação humana explícita, o fluxo não prossegue (exit code `2`).
+Intercepta comandos **antes** da execução (`PreToolUse`), valida contra `deny-list.json` e regras de escopo. Bloqueio é *hard-gate*: sem aprovação humana explícita, o fluxo não prossegue (exit code `2`).
+
+Há também um hook **`PostToolUse`** que roda **depois** da execução: ele nunca bloqueia (a ferramenta já rodou), mas escaneia o output gerado e registra violações em `output-audit.log`. Serve de auditoria e rede de detecção para o que passou.
+
+E um `nemesis-pretool-fallback` que opera em **fail-closed**: se o binário esperado não existe (config quebrada, caminho errado), ele **bloqueia tudo** em vez de deixar passar. Segurança que falha fechando, não abrindo.
 
 ### Camada 2 — Nemesis Defender
 
@@ -157,6 +174,39 @@ Existem deny-lists de qualidade **específicas por linguagem**, cada uma com reg
 - **Genérico** — credenciais hardcoded (OWASP A02), arquivos de secrets, debug output, `TODO`/`FIXME`.
 
 **Importante, e dito sem rodeio:** esta camada (`ast-linters`) está **ativa, mas em amadurecimento** — precisa de ajustes e melhorias. E ela **não substitui ESLint ou Biome.** É um complemento de bloqueio em tempo de execução, não um linter completo. Use suas ferramentas de lint normais; o Nemesis apenas adiciona uma barreira de bloqueio para o subconjunto que toca segurança e estabilidade.
+
+---
+
+## Como o Defender age — e por que ele é perigoso
+
+Esta seção é a mais importante para quem vai instalar. Leia inteira.
+
+O **Nemesis Defender** (a Camada 2) não apenas avisa: ele **age**. Quando detecta um arquivo com violação grave — credencial exposta, script com comando destrutivo embutido, anti-padrão de segurança sério — ele pode **remover o arquivo infrator** (`rm -rf`). Isso intercepta tanto a IA quanto, no Linux com eBPF, o próprio humano.
+
+**O cenário real que você precisa entender:** ao instalar o Nemesis em um projeto que **não** foi desenvolvido sob ele, esse projeto provavelmente já contém violações acumuladas. Na primeira varredura, o Defender encontrou e removeu **24 arquivos** de um projeto assim — porque continham exatamente o que ele existe para barrar. Não foi bug; foi o sistema fazendo o trabalho dele.
+
+Duas consequências práticas:
+
+- **Se o projeto está versionado (Git):** os arquivos removidos continuam no controle de versão / source control da IDE. Você recupera.
+- **Se o projeto NÃO está versionado:** a perda é definitiva. Por isso, **backup antes de instalar, sempre.**
+
+**Por que não há uma pasta de quarentena?** Mover infratores para `quarantine/` em vez de remover seria mais suave, e é uma melhoria reconhecida no roadmap. Mas a decisão de design atual é deliberada: quem desenvolve **sob** o Nemesis desde o início nunca chega a ter esses arquivos — o código nasce limpo, porque o Defender bloqueia a violação no momento da escrita. A dureza na instalação é o preço de um sistema que existe para forçar disciplina, não para administrar bagunça pré-existente.
+
+**O Nemesis é um harness, não só um escudo.** Ele intercepta operações destrutivas e inseguras **independentemente da origem — IA ou humano.** No Linux, a camada eBPF impede até você, no terminal, de rodar um `rm -rf` (porque humano também é alvo de engenharia social). Para deletar algo no Linux sob o Nemesis, você precisa fazê-lo manualmente pela própria IDE/gerenciador de arquivos — uma fricção intencional, que evita tanto o ataque quanto o acidente (o clássico comando errado no terminal que apaga o que não devia). Em macOS e Windows, sem eBPF, o humano mantém liberdade total no terminal; a proteção se concentra nas ações da IA.
+
+O efeito colateral pretendido: quem usa o Nemesis no desenvolvimento **passa a escrever código de qualidade e seguro** — não por escolha, mas porque a alternativa é ser bloqueado. Ele é um balizador. Se você segue as regras, é um aliado. Se pisa fora da borda da caixa, ele pune. É por isso que se chama Nemesis.
+
+---
+
+## Componentes legados (funcionam, mas precisam de melhorias)
+
+Por honestidade técnica, dois componentes históricos seguem no código, funcionais, mas obsoletos e fora do foco atual:
+
+- **Auto-harvest** (`nemesis-harvest`). Foi um salto importante na evolução: o sistema lia o `node_modules`, detectava a stack do projeto e as regras de ESLint/Biome instaladas, e **se auto-municiava** — convertia essas regras em patterns, gerando deny-lists automaticamente (inicialmente gerava regras em markdown; depois, deny-lists JSON). Hoje está **desatualizado e precisa de melhorias**, mas ainda funciona. Não é o foco no momento, porque a arquitetura atual já opera bem com as deny-lists JSON em `config/` — os módulos (incluindo o ast-linter) consultam essas listas para bloquear ou liberar: se há regex/regra para o padrão, decide; se não há, passa.
+
+- **`nemesis-install` (CLI).** Criado para instalar o Nemesis via linha de comando, detectando a IDE e gerando as configs de hooks. **Funciona, mas ficou desorganizado e não teve continuidade** — a instalação hoje é mais confiável feita manualmente (build + configuração de caminho, como descrito em [Instalação](#instalação-e-requisitos)). É um ponto de retomada futura, não uma via recomendada agora.
+
+Documentá-los como legados é proposital: um projeto de segurança honesto declara o que está maduro e o que não está.
 
 ---
 
@@ -244,15 +294,43 @@ A biblioteca Rust (`nemesis-defender`) é agnóstica de IDE. Cada IDE contribui 
 
 ---
 
-## Instalação
+## Instalação e requisitos
 
-**Pré-requisitos:** Rust 1.70+, Cargo. Linux para a Camada 3 (eBPF); macOS/Windows rodam Camadas 1–2.
+> **Antes de tudo: faça backup do projeto.** Veja o aviso no topo deste documento. Em um projeto pré-existente com código que viola as regras, o scanner pode remover arquivos infratores na primeira execução.
+
+### Requisitos mínimos
+
+**Hardware:** o Nemesis é leve em CPU/RAM no dia a dia (os hooks rodam por evento, em milissegundos). O custo real é de disco e build: compilar o workspace Rust exige espaço e tempo de compilação. Recomendado: 4 GB de RAM livres para o build, ~2 GB de disco para toolchain + binários. Em uso normal, o daemon de filesystem consome pouco.
+
+**Software:** Rust 1.70+ e Cargo (toolchain estável). Clang/LLVM para compilar o core. Em projetos JS/TS, Node disponível para o harvest legado (opcional — veja abaixo).
+
+**Kernel / eBPF (apenas Camada 3, Linux):** kernel Linux **5.8+** com **BPF LSM habilitado**. Em muitas distros o BPF LSM não vem ligado por padrão e precisa ser adicionado na linha de comando do kernel (GRUB: `lsm=...,bpf`), com reboot. Sem isso, a Camada 3 não carrega — e o Nemesis cai para as Camadas 1 e 2.
+
+**Sistema operacional por camada:**
+
+| Camada | Linux | macOS | Windows |
+|--------|:-----:|:-----:|:-------:|
+| 1 — Pretool/Posttool Hook | ✅ | ✅ | ✅ |
+| 2 — Defender (scanner) | ✅ | ✅ | ✅ |
+| 3 — eBPF Kernel LSM | ✅ | ❌ | ❌ |
+
+No Linux você tem as três camadas, incluindo a proteção de kernel que vale **inclusive contra você mesmo** no terminal. Em macOS e Windows, sem eBPF, você opera com as Camadas 1 e 2 — e o humano mantém liberdade total de comandos destrutivos no terminal (a proteção ali se aplica às ações da IA via hooks da IDE).
+
+### Build
 
 ```bash
 cd .nemesis
 cargo build --release --workspace
 # Gera os binários em .nemesis/target/release/
 ```
+
+### Configuração obrigatória — o Nemesis NÃO é plug-and-play
+
+Esta é a parte que mais gera confusão, então seja claro consigo mesmo: **o Nemesis só funciona se você configurar o caminho corretamente.** Os hooks de pre/post-tool de cada IDE (`settings.json`, `hooks.json`, conforme a IDE) precisam apontar para o **caminho absoluto do binário** do Nemesis no seu projeto. Se o caminho estiver errado ou ausente, a IDE não invoca o hook e **o Nemesis simplesmente não roda** — você fica desprotegido sem perceber.
+
+Por isso há um `nemesis-pretool-fallback` que opera em **fail-closed**: se o binário esperado não for encontrado, ele **bloqueia tudo** em vez de deixar passar. É proteção contra config quebrada, mas o correto é configurar o caminho certo desde o início.
+
+Isso exige conhecimento técnico mínimo — lógica de programação e noção de caminhos de arquivo. Não é um defeito; é a natureza de uma ferramenta de segurança. Configurá-la errado e depois dizer que "o Nemesis é complicado" é como culpar o cinto de segurança por não estar afivelado.
 
 ### Comandos úteis
 
@@ -286,7 +364,7 @@ tail -20 .nemesis/logs/violations.log | jq .
 - **Agnóstico de IDE** — roda em qualquer IDE que exponha hooks.
 - **Validação empírica e contínua** — cobertura é tratada como incompleta por padrão e expandida conforme novos vetores aparecem.
 
-> **Sobre workflow de desenvolvimento.** Versões antigas do Nemesis incluíam um enforcement de workflow sequencial (`.nemesis/workflow-enforcement/`) que impedia o modelo de pular etapas — spec → plano → análise de regras —, o que reduziu entropia e dívida técnica no projeto onde o Nemesis nasceu. Esse modelo era engessado e específico daquele processo; foi migrado para skills com pipeline mais probabilístico, que dão liberdade à criatividade do modelo. **Importante:** processo de desenvolvimento é de cada equipe — não é uma regra do Nemesis. O que o Nemesis impõe é o enforcement de segurança e qualidade (AST + deny-list + eBPF + pretool), que permanece ativo independentemente do fluxo de trabalho adotado.
+> **Sobre workflow de desenvolvimento.** Versões antigas do Nemesis incluíam um enforcement de workflow sequencial (`.nemesis/workflow-enforcement/`) que funcionava como um harness de SDD: cada fragmento do fluxo só era liberado quando o anterior havia sido executado, porque os modelos não liam as regras, pulavam etapas e isso introduzia dívida técnica no projeto em desenvolvimento. Depois que o Nemesis amadureceu, passei a usar **skills SDD apenas para criar spec e planos** em tarefas que dependem de IA — porque, na maioria dos casos, o desenvolvimento é humano e a IA é assistente. Então relaxei o harness sequencial. **O módulo continua no código** e pode ser usado para automatizar alguma tarefa quando fizer sentido. **Importante:** processo de desenvolvimento é de cada equipe — não é uma regra do Nemesis. O que o Nemesis impõe é o enforcement de segurança e qualidade (AST + deny-list + eBPF + pretool/posttool), que permanece ativo independentemente do fluxo de trabalho adotado.
 
 ---
 
