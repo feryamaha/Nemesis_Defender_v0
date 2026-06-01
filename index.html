@@ -114,6 +114,34 @@
   .chip{font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--fg-3);border:1px solid var(--border);border-radius:7px;padding:6px 11px;background:var(--card)}
   .chip b{color:var(--primary);font-weight:600}
 
+  /* ===== CONTACT CARD ===== */
+  .contact-card{
+    margin:8px 0 4px;padding:26px 28px;border-radius:16px;
+    border:1px solid var(--border-2);
+    background:linear-gradient(135deg,rgba(0,229,255,.07),rgba(15,23,42,.7));
+    box-shadow:0 0 40px rgba(0,229,255,.08);
+    display:flex;gap:22px;align-items:center;flex-wrap:wrap;
+  }
+  .contact-card .avatar{
+    width:64px;height:64px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--head);font-weight:700;font-size:26px;color:var(--primary-fg);
+    box-shadow:0 0 22px rgba(0,229,255,.45);
+  }
+  .contact-card .info{flex:1;min-width:220px}
+  .contact-card .name{font-family:var(--head);font-weight:700;font-size:23px;color:var(--foreground);letter-spacing:.01em;margin-bottom:3px}
+  .contact-card .title{font-family:var(--mono);font-size:12.5px;color:var(--primary);letter-spacing:.02em;margin-bottom:4px}
+  .contact-card .sub{font-size:13.5px;color:var(--fg-3);margin:0}
+  .contact-card .links{display:flex;gap:9px;flex-wrap:wrap}
+  .contact-card .links a{
+    font-family:var(--mono);font-size:12.5px;color:var(--fg-2);
+    border:1px solid var(--border-2);border-radius:9px;padding:8px 13px;
+    display:inline-flex;align-items:center;gap:7px;transition:.18s;
+  }
+  .contact-card .links a:hover{color:var(--primary);box-shadow:0 0 16px rgba(0,229,255,.2);border-color:var(--primary)}
+  .contact-card .links svg{width:15px;height:15px;fill:currentColor;flex-shrink:0}
+
   .disclaimer{margin:24px 0;padding:22px 24px;border:1px solid rgba(255,59,92,.32);border-left:3px solid var(--danger-soft);background:linear-gradient(135deg,rgba(232,11,48,.09),rgba(232,11,48,.02));border-radius:12px}
   .disclaimer .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--danger-soft);margin-bottom:10px}
   .disclaimer p{font-size:15.5px;color:var(--foreground);margin:0 0 12px}
@@ -128,6 +156,22 @@
   .callout{border:1px solid var(--border-2);border-radius:12px;padding:22px 24px;margin:22px 0;background:linear-gradient(135deg,rgba(0,229,255,.055),rgba(15,23,42,.5))}
   .callout .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);margin-bottom:12px}
   .callout p{margin:0;font-size:15px}
+
+  /* ===== CONTRIBUTION ===== */
+  .support-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0}
+  .support-box{border:1px solid var(--border-2);border-radius:13px;padding:22px 24px;background:linear-gradient(135deg,rgba(0,229,255,.05),rgba(15,23,42,.55))}
+  .support-box .h{font-family:var(--head);font-size:17px;font-weight:600;color:var(--foreground);margin-bottom:10px}
+  .support-box p{font-size:14px;margin-bottom:14px}
+  .support-box .btn{
+    font-family:var(--mono);font-size:12.5px;color:var(--primary-fg);font-weight:600;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    border-radius:9px;padding:10px 16px;display:inline-flex;align-items:center;gap:8px;transition:.18s;
+    box-shadow:0 0 18px rgba(0,229,255,.25);
+  }
+  .support-box .btn:hover{box-shadow:0 0 26px rgba(0,229,255,.45);transform:translateY(-1px)}
+  .support-box .btn.ghost{background:none;color:var(--primary);border:1px solid var(--border-2);box-shadow:none}
+  .support-box .btn.ghost:hover{border-color:var(--primary);box-shadow:0 0 16px rgba(0,229,255,.18)}
+  .support-box .placeholder{font-family:var(--mono);font-size:11px;color:var(--fg-4);margin-top:10px;font-style:italic}
 
   table{width:100%;border-collapse:separate;border-spacing:0;margin:20px 0;font-size:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
   .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:20px 0;border-radius:10px}
@@ -194,6 +238,8 @@
     .content{padding:30px 20px 70px}
     .topbar .ver{display:none}
     .cols{grid-template-columns:1fr}
+    .support-grid{grid-template-columns:1fr}
+    .contact-card{gap:16px}
     .layer .os{margin-left:0;order:3;flex-basis:100%;margin-top:4px}
   }
   @media(max-width:420px){
@@ -208,7 +254,6 @@
 </style>
 </head>
 <body>
-
 <header class="topbar">
   <button class="burger" id="burger" aria-label="Menu">☰</button>
   <a href="#inicio" class="brand"><span class="logo">N</span> <span>NEMESIS <b>DEFENDER</b></span></a>
@@ -231,6 +276,7 @@
   <div class="nav-group">
     <div class="gtitle" data-pt="Visão geral" data-en="Overview">Visão geral</div>
     <a class="nav-link" href="#inicio"><span class="num">01</span> <span data-pt="O que é" data-en="What it is">O que é</span></a>
+    <a class="nav-link" href="#autor"><span class="num">◆</span> <span data-pt="Autor & contato" data-en="Author & contact">Autor & contato</span></a>
     <a class="nav-link" href="#genese"><span class="num">02</span> <span data-pt="Gênese" data-en="Genesis">Gênese</span></a>
     <a class="nav-link" href="#porque"><span class="num">03</span> <span data-pt="Por que existe" data-en="Why it exists">Por que existe</span></a>
     <a class="nav-link" href="#autoridade"><span class="num">04</span> <span data-pt="Linha de autoridade" data-en="Authority line">Linha de autoridade</span></a>
@@ -255,6 +301,7 @@
     <a class="nav-link" href="#instalacao"><span class="num">13</span> <span data-pt="Instalação & requisitos" data-en="Install & requirements">Instalação & requisitos</span></a>
     <a class="nav-link" href="#legado"><span class="num">14</span> <span data-pt="Componentes legados" data-en="Legacy components">Componentes legados</span></a>
     <a class="nav-link" href="#workflow"><span class="num">15</span> <span data-pt="Workflow" data-en="Workflow">Workflow</span></a>
+    <a class="nav-link" href="#contribuir"><span class="num">★</span> <span data-pt="Contribuir & apoiar" data-en="Contribute & support">Contribuir & apoiar</span></a>
     <a class="nav-link" href="#disclosure"><span class="num">16</span> <span data-pt="Disclosure & licença" data-en="Disclosure & license">Disclosure & licença</span></a>
   </div>
 </nav>
@@ -264,7 +311,7 @@
   <section id="inicio">
     <div class="eyebrow" data-pt="Defense in Depth · Rust · v2.0" data-en="Defense in Depth · Rust · v2.0">Defense in Depth · Rust · v2.0</div>
     <h1>Nemesis Defender</h1>
-    <p class="lead" data-pt="Enforcement determinístico contra malware de supply-chain e abuso de agentes LLM em ambientes de desenvolvimento." data-en="Deterministic enforcement against supply-chain malware and LLM agent abuse in development environments.">Enforcement determinístico contra malware de supply-chain e abuso de agentes LLM em ambientes de desenvolvimento.</p>
+    <p class="lead" data-pt="Enforcement determinístico e ativo contra malware de supply-chain e abuso de agentes LLM — bloqueia o ataque no momento da execução, na máquina do desenvolvedor." data-en="Active, deterministic enforcement against supply-chain malware and LLM agent abuse — blocks the attack at execution time, on the developer's machine.">Enforcement determinístico e ativo contra malware de supply-chain e abuso de agentes LLM — bloqueia o ataque no momento da execução, na máquina do desenvolvedor.</p>
     <div class="badge-row">
       <span class="chip" data-pt="versão <b>2.0</b>" data-en="version <b>2.0</b>">versão <b>2.0</b></span>
       <span class="chip" data-pt="workspace <b>8.2.0</b>" data-en="workspace <b>8.2.0</b>">workspace <b>8.2.0</b></span>
@@ -272,9 +319,26 @@
       <span class="chip" data-pt="plataforma <b>Linux + fallback</b>" data-en="platform <b>Linux + fallback</b>">plataforma <b>Linux + fallback</b></span>
       <span class="chip" data-pt="licença <b>AGPL-3.0</b>" data-en="license <b>AGPL-3.0</b>">licença <b>AGPL-3.0</b></span>
     </div>
+
+    <!-- ===== CONTACT CARD ===== -->
+    <div class="contact-card" id="autor">
+      <div class="avatar">FM</div>
+      <div class="info">
+        <div class="name">Fernando Moreira</div>
+        <div class="title" data-pt="[Seu título profissional — edite aqui]" data-en="[Your professional title — edit here]">[Seu título profissional — edite aqui]</div>
+        <p class="sub" data-pt="Criador e mantenedor do Nemesis Defender. Aberto a consultoria, colaboração técnica e propostas profissionais." data-en="Creator and maintainer of Nemesis Defender. Open to consulting, technical collaboration and professional opportunities.">Criador e mantenedor do Nemesis Defender. Aberto a consultoria, colaboração técnica e propostas profissionais.</p>
+      </div>
+      <div class="links">
+        <a href="https://github.com/feryamaha" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.6 18 4.9 18 4.9c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg> GitHub</a>
+        <a href="https://www.linkedin.com/in/feryamaha" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg> LinkedIn</a>
+        <a href="https://x.com/feryamaha" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24"><path d="M18.9 1.5h3.7l-8 9.1 9.4 12.4h-7.4l-5.8-7.6-6.6 7.6H.5l8.6-9.8L0 1.5h7.6l5.2 6.9 6.1-6.9zm-1.3 19.4h2L7.1 3.6H5l12.6 17.3z"/></svg> X (Twitter)</a>
+        <a href="mailto:feryamaha@hotmail.com" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M2 4h20a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm10 7.5L3.5 6h17L12 11.5zM3 8.2V18h18V8.2l-9 6-9-6z"/></svg> Email</a>
+      </div>
+    </div>
+
     <div class="disclaimer">
       <div class="lbl" data-pt="⚠ Aviso honesto de escopo" data-en="⚠ Honest scope notice">⚠ Aviso honesto de escopo</div>
-      <p data-pt="O Nemesis Defender é um sistema de enforcement <b>robusto</b>, em camadas independentes, para <b>elevar significativamente o custo de um ataque</b>. Ele <b>não é</b> — e nenhum sistema de segurança é — &quot;impenetrável&quot;. Esta doc descreve o que ele faz, contra qual modelo de ameaça, e <b>o que ele não faz</b>." data-en="Nemesis Defender is a <b>robust</b> enforcement system, built in independent layers, to <b>significantly raise the cost of an attack</b>. It is <b>not</b> — and no security system is — &quot;impenetrable&quot;. This doc describes what it does, against which threat model, and <b>what it does not do</b>.">O Nemesis Defender é um sistema de enforcement <b>robusto</b>, em camadas independentes, para <b>elevar significativamente o custo de um ataque</b>. Ele <b>não é</b> — e nenhum sistema de segurança é — "impenetrável". Esta doc descreve o que ele faz, contra qual modelo de ameaça, e <b>o que ele não faz</b>.</p>
+      <p data-pt="O Nemesis Defender é um sistema de enforcement <b>robusto e ativo</b>, em camadas independentes, validado em produção e contra agentes adversariais reais. Como qualquer sistema de segurança sério, ele <b>não promete cobrir todo vetor possível</b> — declara o que faz, contra qual modelo de ameaça, e onde estão seus limites. Honestidade sobre escopo é uma escolha de engenharia, não uma fraqueza." data-en="Nemesis Defender is a <b>robust, active</b> enforcement system, built in independent layers, validated in production and against real adversarial agents. Like any serious security system, it <b>does not promise to cover every possible vector</b> — it declares what it does, against which threat model, and where its limits are. Honesty about scope is an engineering choice, not a weakness.">O Nemesis Defender é um sistema de enforcement <b>robusto e ativo</b>, em camadas independentes, validado em produção e contra agentes adversariais reais. Como qualquer sistema de segurança sério, ele <b>não promete cobrir todo vetor possível</b> — declara o que faz, contra qual modelo de ameaça, e onde estão seus limites. Honestidade sobre escopo é uma escolha de engenharia, não uma fraqueza.</p>
     </div>
     <div class="danger">
       <div class="lbl" data-pt="⚠️ LEIA ANTES DE INSTALAR — isto não é um brinquedo" data-en="⚠️ READ BEFORE INSTALLING — this is not a toy">⚠️ LEIA ANTES DE INSTALAR — isto não é um brinquedo</div>
@@ -282,7 +346,7 @@
       <p data-pt="<b>FAÇA BACKUP DO SEU PROJETO ANTES DE INSTALAR.</b> Ao ser instalado em um projeto que já contém código com violações (credenciais expostas, comandos destrutivos, anti-padrões graves), o scanner pode <b>remover os arquivos infratores</b> — num caso real, removeu 24 arquivos de um projeto não desenvolvido sob o Nemesis. Se versionado (Git), o código removido fica recuperável no controle de versão. Se <b>não</b> versionado, a perda é definitiva." data-en="<b>BACK UP YOUR PROJECT BEFORE INSTALLING.</b> When installed on a project that already contains violating code (exposed credentials, destructive commands, severe anti-patterns), the scanner may <b>remove the offending files</b> — in a real case, it removed 24 files from a project not developed under Nemesis. If versioned (Git), the removed code stays recoverable in version control. If <b>not</b> versioned, the loss is permanent."><b>FAÇA BACKUP DO SEU PROJETO ANTES DE INSTALAR.</b> Ao ser instalado em um projeto que já contém código com violações (credenciais expostas, comandos destrutivos, anti-padrões graves), o scanner pode <b>remover os arquivos infratores</b> — num caso real, removeu 24 arquivos de um projeto não desenvolvido sob o Nemesis. Se versionado (Git), o código removido fica recuperável no controle de versão. Se <b>não</b> versionado, a perda é definitiva.</p>
       <p data-pt="Isto é intencional. O Nemesis intercepta operações destrutivas <b>independentemente de quem as origina — IA ou humano.</b> No Linux com eBPF, nem você pelo terminal roda um <code>rm -rf</code>. Se você segue as regras, ele é um aliado poderoso; se pisa fora da caixa, ele pune — por isso se chama Nemesis. Requer conhecimento técnico mínimo para configurar; não é plug-and-play." data-en="This is intentional. Nemesis intercepts destructive operations <b>regardless of who originates them — AI or human.</b> On Linux with eBPF, not even you can run an <code>rm -rf</code> from the terminal. Follow the rules and it's a powerful ally; step outside the box and it punishes — that's why it's called Nemesis. It requires minimal technical knowledge to configure; it is not plug-and-play.">Isto é intencional. O Nemesis intercepta operações destrutivas <b>independentemente de quem as origina — IA ou humano.</b> No Linux com eBPF, nem você pelo terminal roda um <code>rm -rf</code>. Se você segue as regras, ele é um aliado poderoso; se pisa fora da caixa, ele pune — por isso se chama Nemesis. Requer conhecimento técnico mínimo para configurar; não é plug-and-play.</p>
     </div>
-    <p data-pt="Não é um linter genérico. O foco é o contexto de desenvolvimento guiado por agentes de IA, onde um output aparentemente inócuo pode esconder manipulação de manifests, <em>decode-then-exec</em> de payloads codificados, esteganografia Unicode (CVE-2021-42574), prompt injection, exfiltração de credenciais e malware com <em>time-gating</em>." data-en="It is not a generic linter. The focus is the AI-agent-driven development context, where seemingly innocuous output can hide manifest tampering, <em>decode-then-exec</em> of encoded payloads, Unicode steganography (CVE-2021-42574), prompt injection, credential exfiltration, and <em>time-gated</em> malware.">Não é um linter genérico. O foco é o contexto de desenvolvimento guiado por agentes de IA, onde um output aparentemente inócuo pode esconder manipulação de manifests, <em>decode-then-exec</em> de payloads codificados, esteganografia Unicode (CVE-2021-42574), prompt injection, exfiltração de credenciais e malware com <em>time-gating</em>.</p>
+    <p data-pt="Não é um linter genérico nem um scanner passivo. É um <b>harness de enforcement em runtime</b> para o contexto de desenvolvimento guiado por agentes de IA, onde um output aparentemente inócuo pode esconder manipulação de manifests, <em>decode-then-exec</em> de payloads codificados, esteganografia Unicode (CVE-2021-42574), prompt injection, exfiltração de credenciais e malware com <em>time-gating</em>. O Nemesis bloqueia essas operações <b>no momento em que tentam executar</b>." data-en="It is not a generic linter nor a passive scanner. It is a <b>runtime enforcement harness</b> for the AI-agent-driven development context, where seemingly innocuous output can hide manifest tampering, <em>decode-then-exec</em> of encoded payloads, Unicode steganography (CVE-2021-42574), prompt injection, credential exfiltration, and <em>time-gated</em> malware. Nemesis blocks these operations <b>at the moment they try to execute</b>.">Não é um linter genérico nem um scanner passivo. É um <b>harness de enforcement em runtime</b> para o contexto de desenvolvimento guiado por agentes de IA, onde um output aparentemente inócuo pode esconder manipulação de manifests, <em>decode-then-exec</em> de payloads codificados, esteganografia Unicode (CVE-2021-42574), prompt injection, exfiltração de credenciais e malware com <em>time-gating</em>. O Nemesis bloqueia essas operações <b>no momento em que tentam executar</b>.</p>
     <p data-pt="O problema é real e atual: em 2025 foram publicados centenas de milhares de pacotes maliciosos no npm, e campanhas como Shai-Hulud comprometeram pacotes com bilhões de downloads semanais. O Nemesis Defender ataca a janela em que esse código tenta executar na máquina do desenvolvedor." data-en="The problem is real and current: in 2025 hundreds of thousands of malicious packages were published to npm, and campaigns like Shai-Hulud compromised packages with billions of weekly downloads. Nemesis Defender targets the window in which that code tries to execute on the developer's machine.">O problema é real e atual: em 2025 foram publicados centenas de milhares de pacotes maliciosos no npm, e campanhas como Shai-Hulud comprometeram pacotes com bilhões de downloads semanais. O Nemesis Defender ataca a janela em que esse código tenta executar na máquina do desenvolvedor.</p>
   </section>
 
@@ -344,7 +408,7 @@
       </div>
       <div class="layer">
         <div class="top"><span class="n">02</span><h4>Nemesis Defender</h4><span class="os">Win · macOS · Linux</span></div>
-        <p data-pt="Scanner de conteúdo com 6 layers — AST (tree-sitter) → byte → regex → denylist → entropia → decoder recursivo (máx. 3 níveis) — e 12 visitors cobrindo os vetores catalogados." data-en="Content scanner with 6 layers — AST (tree-sitter) → byte → regex → denylist → entropy → recursive decoder (max 3 levels) — and 12 visitors covering the catalogued vectors.">Scanner de conteúdo com 6 layers — AST (tree-sitter) → byte → regex → denylist → entropia → decoder recursivo (máx. 3 níveis) — e 12 visitors cobrindo os vetores catalogados.</p>
+        <p data-pt="Scanner de conteúdo com 6 layers — AST (tree-sitter) → byte → regex → denylist → entropia → decoder recursivo (máx. 3 níveis) — e visitors cobrindo os vetores catalogados, incluindo taint-tracking de fonte→sink, exfil chains e poisoning de configs de IDE." data-en="Content scanner with 6 layers — AST (tree-sitter) → byte → regex → denylist → entropy → recursive decoder (max 3 levels) — and visitors covering the catalogued vectors, including source→sink taint-tracking, exfil chains and IDE-config poisoning.">Scanner de conteúdo com 6 layers — AST (tree-sitter) → byte → regex → denylist → entropia → decoder recursivo (máx. 3 níveis) — e visitors cobrindo os vetores catalogados, incluindo taint-tracking de fonte→sink, exfil chains e poisoning de configs de IDE.</p>
       </div>
       <div class="layer kernel">
         <div class="top"><span class="n">03</span><h4>eBPF Kernel LSM</h4><span class="os" data-pt="Linux apenas" data-en="Linux only">Linux apenas</span></div>
@@ -355,8 +419,8 @@
 
   <section id="vetores">
     <div class="eyebrow" data-pt="06 — Cobertura" data-en="06 — Coverage">06 — Cobertura</div>
-    <h2 data-pt="Doze vetores de ataque" data-en="Twelve attack vectors">Doze vetores de ataque</h2>
-    <p data-pt="Os vetores <strong>antecipados e implementados durante o desenvolvimento</strong>. Não é exaustivo — vetores fora desta lista podem não ser detectados." data-en="The vectors <strong>anticipated and implemented during development</strong>. Not exhaustive — vectors outside this list may go undetected.">Os vetores <strong>antecipados e implementados durante o desenvolvimento</strong>. Não é exaustivo — vetores fora desta lista podem não ser detectados.</p>
+    <h2 data-pt="Vetores de ataque cobertos" data-en="Attack vectors covered">Vetores de ataque cobertos</h2>
+    <p data-pt="Os vetores <strong>antecipados, implementados e testados</strong>. A cobertura é ampliada continuamente — vetores fora desta lista podem não ser detectados, e isso é declarado abertamente." data-en="The vectors <strong>anticipated, implemented and tested</strong>. Coverage is continuously expanded — vectors outside this list may go undetected, and that is openly declared.">Os vetores <strong>antecipados, implementados e testados</strong>. A cobertura é ampliada continuamente — vetores fora desta lista podem não ser detectados, e isso é declarado abertamente.</p>
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>#</th><th>Visitor</th><th data-pt="Alvo" data-en="Target">Alvo</th></tr></thead>
@@ -368,16 +432,20 @@
           <tr><td class="ix">5a</td><td><code>url_in_exec</code></td><td data-pt="URL como argumento de exec" data-en="URL as exec argument">URL como argumento de exec</td></tr>
           <tr><td class="ix">5b</td><td><code>time_gated</code></td><td data-pt="setTimeout/condições de data" data-en="setTimeout/date conditions">setTimeout/condições de data</td></tr>
           <tr><td class="ix">6</td><td><code>dynamic_cmd</code></td><td data-pt="concatenação de string → exec" data-en="string concatenation → exec">concatenação de string → exec</td></tr>
-          <tr><td class="ix">7</td><td><code>credential_harvest</code></td><td data-pt="leitura de ~/.ssh /.aws /.env + exfil" data-en="reads ~/.ssh /.aws /.env + exfil">leitura de ~/.ssh /.aws /.env + exfil</td></tr>
+          <tr><td class="ix">7</td><td><code>credential_harvest</code></td><td data-pt="leitura de credenciais (SSH/AWS/.env/IMDS/shell history/wallets) + exfil" data-en="credential read (SSH/AWS/.env/IMDS/shell history/wallets) + exfil">leitura de credenciais (SSH/AWS/.env/IMDS/shell history/wallets) + exfil</td></tr>
           <tr><td class="ix">8</td><td><code>self_clean</code></td><td>fs.unlink(__filename)</td></tr>
           <tr><td class="ix">9</td><td><code>manifest_scanner</code></td><td data-pt="supply-chain em 7 formatos de manifest" data-en="supply-chain across 7 manifest formats">supply-chain em 7 formatos de manifest</td></tr>
           <tr><td class="ix">10</td><td><code>kubernetes_escape</code></td><td>container breakout</td></tr>
           <tr><td class="ix">11</td><td><code>mount_api_abuse</code></td><td data-pt="syscalls de mount (428–432)" data-en="mount syscalls (428–432)">syscalls de mount (428–432)</td></tr>
           <tr><td class="ix">12</td><td><code>llm_output_injection</code></td><td data-pt="XSS/SSRF/command injection em output de LLM" data-en="XSS/SSRF/command injection in LLM output">XSS/SSRF/command injection em output de LLM</td></tr>
+          <tr><td class="ix">13</td><td><code>exfil_chain</code></td><td data-pt="cadeia fonte sensível → sink de rede (regra de 1ª classe)" data-en="sensitive source → network sink chain (first-class rule)">cadeia fonte sensível → sink de rede (regra de 1ª classe)</td></tr>
+          <tr><td class="ix">14</td><td><code>taint_tracker</code></td><td data-pt="data-flow fonte→sink via variáveis (JS/Python)" data-en="source→sink data-flow via variables (JS/Python)">data-flow fonte→sink via variáveis (JS/Python)</td></tr>
+          <tr><td class="ix">15</td><td><code>ide_config_poisoning</code></td><td data-pt="CLAUDE.md/.cursorrules envenenados: tag chars, fake-scan, authority injection" data-en="poisoned CLAUDE.md/.cursorrules: tag chars, fake-scan, authority injection">CLAUDE.md/.cursorrules envenenados: tag chars, fake-scan, authority injection</td></tr>
+          <tr><td class="ix">16</td><td><code>manifest_registry_redirect</code></td><td data-pt="typosquat / registry não-canônico (npm/PyPI/RubyGems)" data-en="typosquat / non-canonical registry (npm/PyPI/RubyGems)">typosquat / registry não-canônico (npm/PyPI/RubyGems)</td></tr>
         </tbody>
       </table>
     </div>
-    <p data-pt="A deny-list do Defender contém ~402 patterns em 35 categorias. <strong>Patterns são, por natureza, uma lista do que já foi antecipado</strong> — aumentam o custo de um ataque conhecido, mas não cobrem o desconhecido." data-en="The Defender deny-list contains ~402 patterns across 35 categories. <strong>Patterns are, by nature, a list of what's already been anticipated</strong> — they raise the cost of a known attack, but do not cover the unknown.">A deny-list do Defender contém ~402 patterns em 35 categorias. <strong>Patterns são, por natureza, uma lista do que já foi antecipado</strong> — aumentam o custo de um ataque conhecido, mas não cobrem o desconhecido.</p>
+    <p data-pt="A deny-list do Defender contém centenas de patterns em dezenas de categorias, e foi <strong>ampliada na v2.0</strong> com vetores destilados do estado da arte (exfil surface estendida, taint-tracking, poisoning de config de IDE, typosquatting). <strong>Patterns são, por natureza, uma lista do que já foi antecipado</strong> — aumentam o custo de um ataque conhecido, mas não cobrem o desconhecido." data-en="The Defender deny-list contains hundreds of patterns across dozens of categories, and was <strong>expanded in v2.0</strong> with vectors distilled from the state of the art (extended exfil surface, taint-tracking, IDE-config poisoning, typosquatting). <strong>Patterns are, by nature, a list of what's already been anticipated</strong> — they raise the cost of a known attack, but do not cover the unknown.">A deny-list do Defender contém centenas de patterns em dezenas de categorias, e foi <strong>ampliada na v2.0</strong> com vetores destilados do estado da arte (exfil surface estendida, taint-tracking, poisoning de config de IDE, typosquatting). <strong>Patterns são, por natureza, uma lista do que já foi antecipado</strong> — aumentam o custo de um ataque conhecido, mas não cobrem o desconhecido.</p>
   </section>
 
   <section id="config">
@@ -429,14 +497,14 @@
     <div class="eyebrow" data-pt="10 — Validação" data-en="10 — Validation">10 — Validação</div>
     <h2 data-pt="Três tipos de evidência" data-en="Three kinds of evidence">Três tipos de evidência</h2>
     <p data-pt="Da mais forte para a mais fraca. A ordem é deliberada: a evidência que mais importa é a que mais se parece com o uso real." data-en="From strongest to weakest. The order is deliberate: the evidence that matters most is the one closest to real use.">Da mais forte para a mais fraca. A ordem é deliberada: a evidência que mais importa é a que mais se parece com o uso real.</p>
-    <h3 data-pt="1 · Track record em produção <span style=&quot;font-family:var(--mono);font-size:11px;color:var(--success)&quot;>— mais forte</span>" data-en="1 · Production track record <span style=&quot;font-family:var(--mono);font-size:11px;color:var(--success)&quot;>— strongest</span>">1 · Track record em produção <span style="font-family:var(--mono);font-size:11px;color:var(--success)">— mais forte</span></h3>
+    <h3 data-pt="1 · Track record em produção" data-en="1 · Production track record">1 · Track record em produção</h3>
     <p data-pt="O Nemesis Defender nasceu em projetos reais de produção (que não podem ser divulgados) e roda há ~1 ano em desenvolvimento ativo, com agentes LLM operando sobre o código. Nesse período, <strong>nenhum agente executou um comando destrutivo nem acessou arquivo sensível para edição/exclusão sem permissão.</strong> Não é laboratório — é o caso de uso real." data-en="Nemesis Defender was born in real production projects (that cannot be disclosed) and has run for ~1 year in active development, with LLM agents operating over the code. In that period, <strong>no agent executed a destructive command nor accessed a sensitive file for editing/deletion without permission.</strong> It's not a lab — it's the real use case.">O Nemesis Defender nasceu em projetos reais de produção (que não podem ser divulgados) e roda há ~1 ano em desenvolvimento ativo, com agentes LLM operando sobre o código. Nesse período, <strong>nenhum agente executou um comando destrutivo nem acessou arquivo sensível para edição/exclusão sem permissão.</strong> Não é laboratório — é o caso de uso real.</p>
     <h3 data-pt="2 · Execução adversarial por agente real" data-en="2 · Adversarial execution by a real agent">2 · Execução adversarial por agente real</h3>
-    <p data-pt="Em sessões registradas (Windsurf no Linux e macOS, Cursor), agentes receberam suítes de ataque disfarçadas de &quot;scaffolding&quot; e tentaram executá-las tarefa a tarefa. O Nemesis Defender bloqueou cada uma <strong>no ponto de execução</strong> (no <code>Write</code>, no comando aceito), com mensagens específicas. É o teste correto da tese: assume que o modelo pode ser enganado e mede se o enforcement segura. Segurou." data-en="In recorded sessions (Windsurf on Linux and macOS, Cursor), agents received attack suites disguised as &quot;scaffolding&quot; and tried to execute them task by task. Nemesis Defender blocked each one <strong>at the point of execution</strong> (at the <code>Write</code>, at the accepted command), with specific messages. It's the correct test of the thesis: assume the model can be tricked and measure whether enforcement holds. It held.">Em sessões registradas (Windsurf no Linux e macOS, Cursor), agentes receberam suítes de ataque disfarçadas de "scaffolding" e tentaram executá-las tarefa a tarefa. O Nemesis Defender bloqueou cada uma <strong>no ponto de execução</strong> (no <code>Write</code>, no comando aceito), com mensagens específicas. É o teste correto da tese: assume que o modelo pode ser enganado e mede se o enforcement segura. Segurou.</p>
-    <h3 data-pt="3 · Suíte de vetores sintéticos <span style=&quot;font-family:var(--mono);font-size:11px;color:var(--fg-4)&quot;>— apoio</span>" data-en="3 · Synthetic vector suite <span style=&quot;font-family:var(--mono);font-size:11px;color:var(--fg-4)&quot;>— supporting</span>">3 · Suíte de vetores sintéticos <span style="font-family:var(--mono);font-size:11px;color:var(--fg-4)">— apoio</span></h3>
+    <p data-pt="Em sessões registradas (Windsurf no Linux e macOS, Cursor, Claude Code), agentes receberam suítes de ataque disfarçadas de &quot;scaffolding&quot; e tentaram executá-las tarefa a tarefa. O Nemesis Defender bloqueou cada uma <strong>no ponto de execução</strong> (no <code>Write</code>, no comando aceito), com mensagens específicas. É o teste correto da tese: assume que o modelo pode ser enganado e mede se o enforcement segura. Segurou." data-en="In recorded sessions (Windsurf on Linux and macOS, Cursor, Claude Code), agents received attack suites disguised as &quot;scaffolding&quot; and tried to execute them task by task. Nemesis Defender blocked each one <strong>at the point of execution</strong> (at the <code>Write</code>, at the accepted command), with specific messages. It's the correct test of the thesis: assume the model can be tricked and measure whether enforcement holds. It held.">Em sessões registradas (Windsurf no Linux e macOS, Cursor, Claude Code), agentes receberam suítes de ataque disfarçadas de "scaffolding" e tentaram executá-las tarefa a tarefa. O Nemesis Defender bloqueou cada uma <strong>no ponto de execução</strong> (no <code>Write</code>, no comando aceito), com mensagens específicas. É o teste correto da tese: assume que o modelo pode ser enganado e mede se o enforcement segura. Segurou.</p>
+    <h3 data-pt="3 · Suíte de vetores sintéticos" data-en="3 · Synthetic vector suite">3 · Suíte de vetores sintéticos</h3>
     <ul>
-      <li data-pt="<strong>O que cobre:</strong> os vetores comuns — <code>rm -rf</code>, <code>curl | bash</code>, postinstall malicioso, exfiltração de <code>.env</code>. Onde o dano real acontece." data-en="<strong>What it covers:</strong> the common vectors — <code>rm -rf</code>, <code>curl | bash</code>, malicious postinstall, <code>.env</code> exfiltration. Where the real damage happens."><strong>O que cobre:</strong> os vetores comuns — <code>rm -rf</code>, <code>curl | bash</code>, postinstall malicioso, exfiltração de <code>.env</code>. Onde o dano real acontece.</li>
-      <li data-pt="<strong>O que NÃO prova:</strong> completude ou invulnerabilidade. Suíte do autor; passar nela é o piso esperado." data-en="<strong>What it does NOT prove:</strong> completeness or invulnerability. Author's suite; passing it is the expected floor."><strong>O que NÃO prova:</strong> completude ou invulnerabilidade. Suíte do autor; passar nela é o piso esperado.</li>
+      <li data-pt="<strong>O que cobre:</strong> uma suíte de pentest com 186 testes em 26 módulos — comandos destrutivos, exfiltração (incl. IMDS, shell history, wallets), reverse shells, persistência, taint-flow, poisoning de config de IDE, typosquatting — <strong>mais um módulo dedicado a medir falso-positivo</strong> (conteúdo legítimo que deve passar)." data-en="<strong>What it covers:</strong> a pentest suite with 186 tests across 26 modules — destructive commands, exfiltration (incl. IMDS, shell history, wallets), reverse shells, persistence, taint-flow, IDE-config poisoning, typosquatting — <strong>plus a module dedicated to measuring false-positives</strong> (legitimate content that must pass)."><strong>O que cobre:</strong> uma suíte de pentest com 186 testes em 26 módulos — comandos destrutivos, exfiltração (incl. IMDS, shell history, wallets), reverse shells, persistência, taint-flow, poisoning de config de IDE, typosquatting — <strong>mais um módulo dedicado a medir falso-positivo</strong> (conteúdo legítimo que deve passar).</li>
+      <li data-pt="<strong>O que NÃO prova:</strong> completude ou invulnerabilidade. Suíte do autor; passar nela é o piso esperado, e a calibração de falso-positivo é trabalho contínuo." data-en="<strong>What it does NOT prove:</strong> completeness or invulnerability. Author's suite; passing it is the expected floor, and false-positive calibration is ongoing work."><strong>O que NÃO prova:</strong> completude ou invulnerabilidade. Suíte do autor; passar nela é o piso esperado, e a calibração de falso-positivo é trabalho contínuo.</li>
     </ul>
     <h3 data-pt="Os logs: três camadas independentes" data-en="The logs: three independent layers">Os logs: três camadas independentes</h3>
     <ul>
@@ -458,9 +526,9 @@
         <div class="h" data-pt="◆ Projetado para mitigar" data-en="◆ Designed to mitigate">◆ Projetado para mitigar</div>
         <ul>
           <li data-pt="<strong>Comandos destrutivos por engano do LLM</strong> — rm -rf, git reset --hard, sobrescrita de config" data-en="<strong>Destructive commands by LLM mistake</strong> — rm -rf, git reset --hard, config overwrite"><strong>Comandos destrutivos por engano do LLM</strong> — rm -rf, git reset --hard, sobrescrita de config</li>
-          <li data-pt="Supply-chain via manifests (npm, Cargo, PyPI, RubyGems, Composer, lockfiles)" data-en="Supply-chain via manifests (npm, Cargo, PyPI, RubyGems, Composer, lockfiles)">Supply-chain via manifests (npm, Cargo, PyPI, RubyGems, Composer, lockfiles)</li>
-          <li data-pt="Payloads ofuscados — encoding, Unicode, time-gating" data-en="Obfuscated payloads — encoding, Unicode, time-gating">Payloads ofuscados — encoding, Unicode, time-gating</li>
-          <li data-pt="Exfiltração de credenciais e prompt injection" data-en="Credential exfiltration and prompt injection">Exfiltração de credenciais e prompt injection</li>
+          <li data-pt="Supply-chain via manifests (npm, Cargo, PyPI, RubyGems, Composer, lockfiles) e typosquatting" data-en="Supply-chain via manifests (npm, Cargo, PyPI, RubyGems, Composer, lockfiles) and typosquatting">Supply-chain via manifests (npm, Cargo, PyPI, RubyGems, Composer, lockfiles) e typosquatting</li>
+          <li data-pt="Payloads ofuscados — encoding, Unicode, time-gating, fragmentação via variáveis (taint-flow)" data-en="Obfuscated payloads — encoding, Unicode, time-gating, variable-fragmented (taint-flow)">Payloads ofuscados — encoding, Unicode, time-gating, fragmentação via variáveis (taint-flow)</li>
+          <li data-pt="Exfiltração de credenciais (cadeia fonte→sink) e prompt injection — incl. configs de IDE envenenados" data-en="Credential exfiltration (source→sink chain) and prompt injection — incl. poisoned IDE configs">Exfiltração de credenciais (cadeia fonte→sink) e prompt injection — incl. configs de IDE envenenados</li>
         </ul>
       </div>
       <div class="col no">
@@ -484,9 +552,9 @@
     <ul>
       <li data-pt="<strong>eBPF/LSM para enforcement</strong> é consolidado no cloud-native (KubeArmor, Tetragon/Cilium, Falco). A Camada 3 aplica a mesma classe de técnica." data-en="<strong>eBPF/LSM for enforcement</strong> is established in cloud-native (KubeArmor, Tetragon/Cilium, Falco). Layer 3 applies the same class of technique."><strong>eBPF/LSM para enforcement</strong> é consolidado no cloud-native (KubeArmor, Tetragon/Cilium, Falco). A Camada 3 aplica a mesma classe de técnica.</li>
       <li data-pt="<strong>Guardrails para agentes LLM</strong> é categoria estabelecida (LlamaFirewall, LLM Guard, NeMo Guardrails, Lakera Guard)." data-en="<strong>Guardrails for LLM agents</strong> is an established category (LlamaFirewall, LLM Guard, NeMo Guardrails, Lakera Guard)."><strong>Guardrails para agentes LLM</strong> é categoria estabelecida (LlamaFirewall, LLM Guard, NeMo Guardrails, Lakera Guard).</li>
-      <li data-pt="<strong>Enforcement determinístico em runtime</strong> é pesquisa ativa (ex.: AgentSpec, ICSE '26)." data-en="<strong>Deterministic runtime enforcement</strong> is active research (e.g. AgentSpec, ICSE '26)."><strong>Enforcement determinístico em runtime</strong> é pesquisa ativa (ex.: AgentSpec, ICSE '26).</li>
+      <li data-pt="<strong>Scanners estáticos de skills</strong> (SkillSpector/NVIDIA, skill-firewall) verificam <em>antes</em> de instalar. O Nemesis é complementar: faz <em>enforcement em runtime</em>, no momento da execução." data-en="<strong>Static skill scanners</strong> (SkillSpector/NVIDIA, skill-firewall) verify <em>before</em> install. Nemesis is complementary: it does <em>runtime enforcement</em>, at execution time."><strong>Scanners estáticos de skills</strong> (SkillSpector/NVIDIA, skill-firewall) verificam <em>antes</em> de instalar. O Nemesis é complementar: faz <em>enforcement em runtime</em>, no momento da execução.</li>
     </ul>
-    <p data-pt="O recorte do Nemesis Defender — máquina de dev <strong>local</strong>, agnóstico de IDE, interceptando comandos do coding agent <strong>e</strong> escaneando supply-chain no install, para o dev individual — é menos coberto pelas opções acima, que focam em cloud/Kubernetes ou no gateway de LLM. Nicho real, não espaço vazio." data-en="The Nemesis Defender niche — <strong>local</strong> dev machine, IDE-agnostic, intercepting coding-agent commands <strong>and</strong> scanning supply-chain at install, for the individual dev — is less covered by the options above, which focus on cloud/Kubernetes or the LLM gateway. A real niche, not empty space.">O recorte do Nemesis Defender — máquina de dev <strong>local</strong>, agnóstico de IDE, interceptando comandos do coding agent <strong>e</strong> escaneando supply-chain no install, para o dev individual — é menos coberto pelas opções acima, que focam em cloud/Kubernetes ou no gateway de LLM. Nicho real, não espaço vazio.</p>
+    <p data-pt="O recorte do Nemesis Defender — máquina de dev <strong>local</strong>, agnóstico de IDE, interceptando comandos do coding agent <strong>e</strong> bloqueando a ação destrutiva no runtime, para o dev individual — é menos coberto pelas opções acima, que focam em cloud/Kubernetes, no gateway de LLM, ou em verificação pré-instalação. Nicho real, não espaço vazio." data-en="The Nemesis Defender niche — <strong>local</strong> dev machine, IDE-agnostic, intercepting coding-agent commands <strong>and</strong> blocking the destructive action at runtime, for the individual dev — is less covered by the options above, which focus on cloud/Kubernetes, the LLM gateway, or pre-install verification. A real niche, not empty space.">O recorte do Nemesis Defender — máquina de dev <strong>local</strong>, agnóstico de IDE, interceptando comandos do coding agent <strong>e</strong> bloqueando a ação destrutiva no runtime, para o dev individual — é menos coberto pelas opções acima, que focam em cloud/Kubernetes, no gateway de LLM, ou em verificação pré-instalação. Nicho real, não espaço vazio.</p>
   </section>
 
   <section id="perigo">
@@ -546,8 +614,8 @@ nemesis-defender <span class="k">--stop</span></code></pre>
     <h2 data-pt="Funcionam, mas precisam de melhorias" data-en="They work, but need improvement">Funcionam, mas precisam de melhorias</h2>
     <p data-pt="Por honestidade técnica, dois componentes históricos seguem no código, funcionais, mas obsoletos e fora do foco atual:" data-en="For technical honesty, two historical components remain in the code, functional but obsolete and out of current focus:">Por honestidade técnica, dois componentes históricos seguem no código, funcionais, mas obsoletos e fora do foco atual:</p>
     <ul>
-      <li data-pt="<strong>Auto-harvest</strong> (<code>nemesis-harvest</code>). Foi um salto na evolução: lia o <code>node_modules</code>, detectava a stack e as regras de ESLint/Biome instaladas, e <strong>se auto-municiava</strong> — convertia essas regras em patterns, gerando deny-lists automaticamente (primeiro markdown, depois JSON). Hoje está <strong>desatualizado e precisa de melhorias</strong>, mas ainda funciona. Não é o foco: a arquitetura atual já opera bem com as deny-lists JSON em <code>config/</code> — os módulos consultam essas listas para bloquear ou liberar (há regex/regra → decide; não há → passa)." data-en="<strong>Auto-harvest</strong> (<code>nemesis-harvest</code>). It was a leap in the evolution: it read <code>node_modules</code>, detected the stack and installed ESLint/Biome rules, and <strong>self-armed</strong> — converting those rules into patterns, generating deny-lists automatically (markdown first, then JSON). Today it's <strong>outdated and needs improvement</strong>, but still works. Not the focus: the current architecture already works well with the JSON deny-lists in <code>config/</code> — modules consult those lists to block or allow (regex/rule exists → decides; none → passes)."><strong>Auto-harvest</strong> (<code>nemesis-harvest</code>). Foi um salto na evolução: lia o <code>node_modules</code>, detectava a stack e as regras de ESLint/Biome instaladas, e <strong>se auto-municiava</strong> — convertia essas regras em patterns, gerando deny-lists automaticamente (primeiro markdown, depois JSON). Hoje está <strong>desatualizado e precisa de melhorias</strong>, mas ainda funciona. Não é o foco: a arquitetura atual já opera bem com as deny-lists JSON em <code>config/</code> — os módulos consultam essas listas para bloquear ou liberar (há regex/regra → decide; não há → passa).</li>
-      <li data-pt="<strong><code>nemesis-install</code> (CLI).</strong> Criado para instalar via linha de comando, detectando a IDE e gerando configs de hooks. <strong>Funciona, mas ficou desorganizado e não teve continuidade</strong> — a instalação hoje é mais confiável feita manualmente (build + configuração de caminho). Ponto de retomada futura, não via recomendada agora." data-en="<strong><code>nemesis-install</code> (CLI).</strong> Built to install via command line, detecting the IDE and generating hook configs. <strong>It works, but became disorganized and wasn't continued</strong> — installation today is more reliable done manually (build + path configuration). A future pickup point, not the recommended path now."><strong><code>nemesis-install</code> (CLI).</strong> Criado para instalar via linha de comando, detectando a IDE e gerando configs de hooks. <strong>Funciona, mas ficou desorganizado e não teve continuidade</strong> — a instalação hoje é mais confiável feita manualmente (build + configuração de caminho). Ponto de retomada futura, não via recomendada agora.</li>
+      <li data-pt="<strong>Auto-harvest</strong> (<code>nemesis-harvest</code>). Foi um salto na evolução: lia o <code>node_modules</code>, detectava a stack e as regras de ESLint/Biome instaladas, e <strong>se auto-municiava</strong> — convertia essas regras em patterns, gerando deny-lists automaticamente (primeiro markdown, depois JSON). Hoje está <strong>desatualizado e precisa de melhorias</strong>, mas ainda funciona." data-en="<strong>Auto-harvest</strong> (<code>nemesis-harvest</code>). It was a leap in the evolution: it read <code>node_modules</code>, detected the stack and installed ESLint/Biome rules, and <strong>self-armed</strong> — converting those rules into patterns, generating deny-lists automatically (markdown first, then JSON). Today it's <strong>outdated and needs improvement</strong>, but still works."><strong>Auto-harvest</strong> (<code>nemesis-harvest</code>). Foi um salto na evolução: lia o <code>node_modules</code>, detectava a stack e as regras de ESLint/Biome instaladas, e <strong>se auto-municiava</strong> — convertia essas regras em patterns, gerando deny-lists automaticamente (primeiro markdown, depois JSON). Hoje está <strong>desatualizado e precisa de melhorias</strong>, mas ainda funciona.</li>
+      <li data-pt="<strong><code>nemesis-install</code> (CLI).</strong> Criado para instalar via linha de comando, detectando a IDE e gerando configs de hooks. <strong>Funciona, mas ficou desorganizado e não teve continuidade</strong> — a instalação hoje é mais confiável feita manualmente (build + configuração de caminho)." data-en="<strong><code>nemesis-install</code> (CLI).</strong> Built to install via command line, detecting the IDE and generating hook configs. <strong>It works, but became disorganized and wasn't continued</strong> — installation today is more reliable done manually (build + path configuration)."><strong><code>nemesis-install</code> (CLI).</strong> Criado para instalar via linha de comando, detectando a IDE e gerando configs de hooks. <strong>Funciona, mas ficou desorganizado e não teve continuidade</strong> — a instalação hoje é mais confiável feita manualmente (build + configuração de caminho).</li>
     </ul>
     <p data-pt="Documentá-los como legados é proposital: um projeto de segurança honesto declara o que está maduro e o que não está." data-en="Documenting them as legacy is intentional: an honest security project declares what's mature and what isn't.">Documentá-los como legados é proposital: um projeto de segurança honesto declara o que está maduro e o que não está.</p>
   </section>
@@ -560,6 +628,29 @@ nemesis-defender <span class="k">--stop</span></code></pre>
     <div class="callout">
       <div class="h" data-pt="Importante" data-en="Important">Importante</div>
       <p data-pt="Processo de desenvolvimento é de cada equipe — <strong>não é uma regra do Nemesis</strong>. O que o Nemesis impõe é o enforcement de segurança e qualidade (AST + deny-list + eBPF + pretool/posttool), que permanece ativo independentemente do fluxo de trabalho adotado." data-en="The development process belongs to each team — <strong>it is not a Nemesis rule</strong>. What Nemesis enforces is security and quality (AST + deny-list + eBPF + pretool/posttool), which stays active regardless of the chosen workflow.">Processo de desenvolvimento é de cada equipe — <strong>não é uma regra do Nemesis</strong>. O que o Nemesis impõe é o enforcement de segurança e qualidade (AST + deny-list + eBPF + pretool/posttool), que permanece ativo independentemente do fluxo de trabalho adotado.</p>
+    </div>
+  </section>
+
+  <section id="contribuir">
+    <div class="eyebrow" data-pt="★ Contribuir & apoiar" data-en="★ Contribute & support">★ Contribuir & apoiar</div>
+    <h2 data-pt="Ajude a fortalecer o Nemesis" data-en="Help strengthen Nemesis">Ajude a fortalecer o Nemesis</h2>
+    <p data-pt="O Nemesis Defender é mantido por uma pessoa, em open source sob AGPL-3.0. Toda contribuição — código, relato de bypass, ou apoio financeiro de qualquer valor — financia diretamente a próxima versão, mais vetores cobertos e melhor calibração. Se ele te poupou de um <code>rm -rf</code> ou de um pacote malicioso, considere retribuir." data-en="Nemesis Defender is maintained by one person, open source under AGPL-3.0. Every contribution — code, bypass report, or financial support of any amount — directly funds the next version, more covered vectors and better calibration. If it saved you from an <code>rm -rf</code> or a malicious package, consider giving back.">O Nemesis Defender é mantido por uma pessoa, em open source sob AGPL-3.0. Toda contribuição — código, relato de bypass, ou apoio financeiro de qualquer valor — financia diretamente a próxima versão, mais vetores cobertos e melhor calibração. Se ele te poupou de um <code>rm -rf</code> ou de um pacote malicioso, considere retribuir.</p>
+    <div class="support-grid">
+      <div class="support-box">
+        <div class="h" data-pt="🛠️ Contribuir com código" data-en="🛠️ Contribute code">🛠️ Contribuir com código</div>
+        <p data-pt="Pull requests, novos vetores, relatos de bypass. Veja o <code>CONTRIBUTING.md</code> e o <code>SECURITY.md</code>. Bypasses são reportados em privado e o pesquisador é creditado." data-en="Pull requests, new vectors, bypass reports. See <code>CONTRIBUTING.md</code> and <code>SECURITY.md</code>. Bypasses are reported privately and the researcher is credited.">Pull requests, novos vetores, relatos de bypass. Veja o <code>CONTRIBUTING.md</code> e o <code>SECURITY.md</code>. Bypasses são reportados em privado e o pesquisador é creditado.</p>
+        <a class="btn ghost" href="https://github.com/feryamaha/Nemesis_Defender_v2.0" target="_blank" rel="noopener" data-pt="Abrir no GitHub →" data-en="Open on GitHub →">Abrir no GitHub →</a>
+      </div>
+      <div class="support-box">
+        <div class="h" data-pt="💚 Apoiar financeiramente" data-en="💚 Financial support">💚 Apoiar financeiramente</div>
+        <p data-pt="Qualquer valor ajuda a sustentar o desenvolvimento. O apoio é feito por plataforma de patrocínio (sem dados bancários expostos)." data-en="Any amount helps sustain development. Support is handled via a sponsorship platform (no bank details exposed).">Qualquer valor ajuda a sustentar o desenvolvimento. O apoio é feito por plataforma de patrocínio (sem dados bancários expostos).</p>
+        <a class="btn" href="#" id="sponsor-link" target="_blank" rel="noopener" data-pt="❤ Apoiar o projeto" data-en="❤ Sponsor the project">❤ Apoiar o projeto</a>
+        <div class="placeholder" data-pt="(link de patrocínio a ser configurado pelo mantenedor)" data-en="(sponsorship link to be configured by the maintainer)">(link de patrocínio a ser configurado pelo mantenedor)</div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="h" data-pt="Consultoria & versões avançadas" data-en="Consulting & advanced editions">Consultoria & versões avançadas</div>
+      <p data-pt="Para integração no seu fluxo, hardening sob medida, consultoria de AppSec/DevSecOps, ou interesse em uma edição avançada com cobertura além da versão padrão — entre em contato: <code>feryamaha@hotmail.com</code> ou pelo card de contato no topo." data-en="For integration into your workflow, custom hardening, AppSec/DevSecOps consulting, or interest in an advanced edition with coverage beyond the default — get in touch: <code>feryamaha@hotmail.com</code> or via the contact card at the top.">Para integração no seu fluxo, hardening sob medida, consultoria de AppSec/DevSecOps, ou interesse em uma edição avançada com cobertura além da versão padrão — entre em contato: <code>feryamaha@hotmail.com</code> ou pelo card de contato no topo.</p>
     </div>
   </section>
 
@@ -589,7 +680,6 @@ nemesis-defender <span class="k">--stop</span></code></pre>
   burger.addEventListener('click',()=>body.classList.toggle('nav-open'));
   scrim.addEventListener('click',closeNav);
   links.forEach(l=>l.addEventListener('click',closeNav));
-  // scroll spy
   const spy=new IntersectionObserver((entries)=>{
     entries.forEach(e=>{
       if(e.isIntersecting){
@@ -600,7 +690,6 @@ nemesis-defender <span class="k">--stop</span></code></pre>
   },{rootMargin:'-20% 0px -70% 0px'});
   sections.forEach(s=>s&&spy.observe(s));
 
-  // ===== language toggle (PT / EN) =====
   const btnPT=document.getElementById('lang-pt'), btnEN=document.getElementById('lang-en');
   const i18nNodes=[...document.querySelectorAll('[data-pt][data-en]')];
   function applyLang(lang){
@@ -615,5 +704,6 @@ nemesis-defender <span class="k">--stop</span></code></pre>
   btnPT.addEventListener('click',()=>applyLang('pt'));
   btnEN.addEventListener('click',()=>applyLang('en'));
 </script>
+
 </body>
 </html>
