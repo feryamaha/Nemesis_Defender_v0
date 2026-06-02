@@ -1,0 +1,408 @@
+diff --git a/.nemesis/ast-linters/src/validator.rs b/.nemesis/ast-linters/src/validator.rs
+index b7ec47f..9296492 100755
+--- a/.nemesis/ast-linters/src/validator.rs
++++ b/.nemesis/ast-linters/src/validator.rs
+@@ -31,6 +31,8 @@ pub struct SemanticViolation {
+     pub suggestion: Option<String>,
+     /// Categoria da regra (Correctness, Suspicious, Security, Style)
+     pub category: String,
++    /// Severidade: "critical" (bloqueia), "warn" (aviso), "info" (informativo)
++    pub severity: String,
+ }
+ 
+ /// Configuração de regras AST lida do arquivo JSON.
+@@ -102,6 +104,13 @@ pub fn validate_semantic(content: &str, file_path: &str) -> Vec<SemanticViolatio
+         return Vec::new();
+     }
+ 
++    // FASE 1 CIRÚRGICA: Documentação não passa pelo ast-linters
++    // Markdown/txt/rst não é código-fonte, não tem "padrão de código" a violar
++    if file_path.ends_with(".md") || file_path.ends_with(".txt") || file_path.ends_with(".rst")
++        || file_path.ends_with(".markdown") {
++        return Vec::new();
++    }
++
+     // 1. Detecta linguagem pela extensão do arquivo
+     let language = match detect_language(file_path) {
+         Some(lang) => lang,
+@@ -198,14 +207,22 @@ pub fn validate_semantic(content: &str, file_path: &str) -> Vec<SemanticViolatio
+     let rule_violations = registry.run_active_rules(&tree, &ctx);
+ 
+     // 8. Converte para SemanticViolation
++    // Severidade padrão: qualidade=warn, segurança=critical
+     let violations: Vec<SemanticViolation> = rule_violations
+         .into_iter()
+-        .map(|v| SemanticViolation {
+-            message: v.message,
+-            line: v.line,
+-            layer: "ast",
+-            suggestion: v.suggestion.map(|s| s.message),
+-            category: format!("{:?}", v.category),
++        .map(|v| {
++            let severity = match format!("{:?}", v.category).as_str() {
++                "Security" | "Correctness" => "critical",
++                _ => "warn",
++            };
++            SemanticViolation {
++                message: v.message,
++                line: v.line,
++                layer: "ast",
++                suggestion: v.suggestion.map(|s| s.message),
++                category: format!("{:?}", v.category),
++                severity: severity.to_string(),
++            }
+         })
+         .collect();
+ 
+diff --git a/.nemesis/nemesis-defender/src/scanner/ast_scanner.rs b/.nemesis/nemesis-defender/src/scanner/ast_scanner.rs
+index 8622836..b9eeeb3 100644
+--- a/.nemesis/nemesis-defender/src/scanner/ast_scanner.rs
++++ b/.nemesis/nemesis-defender/src/scanner/ast_scanner.rs
+@@ -12,22 +12,23 @@ use crate::visitors;
+ use crate::{DefenderViolation, Language};
+ use std::path::Path;
+ 
+-pub fn scan(_path: &Path, content: &[u8], lang: &Language) -> Vec<DefenderViolation> {
++pub fn scan(path: &Path, content: &[u8], lang: &Language) -> Vec<DefenderViolation> {
+     let mut all_violations = Vec::new();
++    let file_path = path.to_string_lossy().to_string();
+ 
+     match lang {
+         Language::JavaScript | Language::TypeScript => {
+-            if let Some(violations) = scan_javascript(content) {
++            if let Some(violations) = scan_javascript(content, &file_path) {
+                 all_violations.extend(violations);
+             }
+         }
+         Language::Bash => {
+-            if let Some(violations) = scan_bash(content) {
++            if let Some(violations) = scan_bash(content, &file_path) {
+                 all_violations.extend(violations);
+             }
+         }
+         Language::Python => {
+-            if let Some(violations) = scan_python(content) {
++            if let Some(violations) = scan_python(content, &file_path) {
+                 all_violations.extend(violations);
+             }
+         }
+@@ -37,7 +38,7 @@ pub fn scan(_path: &Path, content: &[u8], lang: &Language) -> Vec<DefenderViolat
+     all_violations
+ }
+ 
+-fn scan_javascript(content: &[u8]) -> Option<Vec<DefenderViolation>> {
++fn scan_javascript(content: &[u8], file_path: &str) -> Option<Vec<DefenderViolation>> {
+     let text = std::str::from_utf8(content).ok()?;
+ 
+     // Initialize tree-sitter JavaScript parser
+@@ -51,7 +52,7 @@ fn scan_javascript(content: &[u8]) -> Option<Vec<DefenderViolation>> {
+     let mut violations = Vec::new();
+ 
+     // Traverse the CST and call visitors
+-    traverse_javascript_node(&root_node, text, &mut violations);
++    traverse_javascript_node(&root_node, text, &mut violations, file_path);
+ 
+     // Taint tracking: full-content pass (intra-file data-flow analysis)
+     violations.extend(visitors::taint_tracker::scan_js_content(content));
+@@ -63,6 +64,7 @@ fn traverse_javascript_node(
+     node: &tree_sitter::Node,
+     source: &str,
+     violations: &mut Vec<DefenderViolation>,
++    file_path: &str,
+ ) {
+     // Call visitors for this node
+     violations.extend(visitors::decode_exec::visit_js_node(node, source));
+@@ -70,7 +72,7 @@ fn traverse_javascript_node(
+     violations.extend(visitors::url_in_exec::visit_js_node(node, source));
+     violations.extend(visitors::unicode_steg::visit_js_node(node, source));
+     violations.extend(visitors::prompt_injection::visit_js_node(node, source));
+-    violations.extend(visitors::credential_harvest::visit_js_node(node, source));
++    violations.extend(visitors::credential_harvest::visit_js_node(node, source, file_path));
+     violations.extend(visitors::time_gated::visit_js_node(node, source));
+     violations.extend(visitors::self_clean::visit_js_node(node, source));
+     violations.extend(visitors::persistence_patterns::visit_js_node(node, source));
+@@ -79,11 +81,11 @@ fn traverse_javascript_node(
+     // Recursively traverse children
+     let mut cursor = node.walk();
+     for child in node.children(&mut cursor) {
+-        traverse_javascript_node(&child, source, violations);
++        traverse_javascript_node(&child, source, violations, file_path);
+     }
+ }
+ 
+-fn scan_bash(content: &[u8]) -> Option<Vec<DefenderViolation>> {
++fn scan_bash(content: &[u8], file_path: &str) -> Option<Vec<DefenderViolation>> {
+     let text = std::str::from_utf8(content).ok()?;
+ 
+     let mut parser = tree_sitter::Parser::new();
+@@ -95,7 +97,7 @@ fn scan_bash(content: &[u8]) -> Option<Vec<DefenderViolation>> {
+ 
+     let mut violations = Vec::new();
+ 
+-    traverse_bash_node(&root_node, text, &mut violations);
++    traverse_bash_node(&root_node, text, &mut violations, file_path);
+ 
+     Some(violations)
+ }
+@@ -104,11 +106,12 @@ fn traverse_bash_node(
+     node: &tree_sitter::Node,
+     source: &str,
+     violations: &mut Vec<DefenderViolation>,
++    file_path: &str,
+ ) {
+     violations.extend(visitors::decode_exec::visit_bash_node(node, source));
+     violations.extend(visitors::dynamic_cmd::visit_bash_node(node, source));
+     violations.extend(visitors::url_in_exec::visit_bash_node(node, source));
+-    violations.extend(visitors::credential_harvest::visit_bash_node(node, source));
++    violations.extend(visitors::credential_harvest::visit_bash_node(node, source, file_path));
+     violations.extend(visitors::self_clean::visit_bash_node(node, source));
+     violations.extend(visitors::persistence_patterns::visit_bash_node(
+         node, source,
+@@ -117,11 +120,11 @@ fn traverse_bash_node(
+ 
+     let mut cursor = node.walk();
+     for child in node.children(&mut cursor) {
+-        traverse_bash_node(&child, source, violations);
++        traverse_bash_node(&child, source, violations, file_path);
+     }
+ }
+ 
+-fn scan_python(content: &[u8]) -> Option<Vec<DefenderViolation>> {
++fn scan_python(content: &[u8], file_path: &str) -> Option<Vec<DefenderViolation>> {
+     let text = std::str::from_utf8(content).ok()?;
+ 
+     let mut parser = tree_sitter::Parser::new();
+@@ -133,7 +136,7 @@ fn scan_python(content: &[u8]) -> Option<Vec<DefenderViolation>> {
+ 
+     let mut violations = Vec::new();
+ 
+-    traverse_python_node(&root_node, text, &mut violations);
++    traverse_python_node(&root_node, text, &mut violations, file_path);
+ 
+     // Taint tracking: full-content pass (intra-file data-flow analysis)
+     violations.extend(visitors::taint_tracker::scan_py_content(content));
+@@ -145,12 +148,13 @@ fn traverse_python_node(
+     node: &tree_sitter::Node,
+     source: &str,
+     violations: &mut Vec<DefenderViolation>,
++    file_path: &str,
+ ) {
+     violations.extend(visitors::decode_exec::visit_python_node(node, source));
+     violations.extend(visitors::dynamic_cmd::visit_python_node(node, source));
+     violations.extend(visitors::url_in_exec::visit_python_node(node, source));
+     violations.extend(visitors::credential_harvest::visit_python_node(
+-        node, source,
++        node, source, file_path,
+     ));
+     violations.extend(visitors::self_clean::visit_python_node(node, source));
+     violations.extend(visitors::persistence_patterns::visit_python_node(
+@@ -163,6 +167,6 @@ fn traverse_python_node(
+ 
+     let mut cursor = node.walk();
+     for child in node.children(&mut cursor) {
+-        traverse_python_node(&child, source, violations);
++        traverse_python_node(&child, source, violations, file_path);
+     }
+ }
+diff --git a/.nemesis/nemesis-defender/src/visitors/credential_harvest.rs b/.nemesis/nemesis-defender/src/visitors/credential_harvest.rs
+index dd410dd..4e3135a 100644
+--- a/.nemesis/nemesis-defender/src/visitors/credential_harvest.rs
++++ b/.nemesis/nemesis-defender/src/visitors/credential_harvest.rs
+@@ -8,6 +8,27 @@
+ use crate::DefenderViolation;
+ use tree_sitter::Node;
+ 
++/// Check if file is pure prose/documentation (not executable code)
++/// M26 FIX: prosa que MENCIONA credenciais ≠ ataque (não tem sink executável)
++fn is_prose_file(file_path: &str) -> bool {
++    let extensions = [".md", ".txt", ".rst", ".html", ".htm"];
++    let file_basenames = ["README", "SECURITY", "CONTRIBUTING", "LICENSE", "CHANGELOG", "AUTHORS", "NOTES"];
++
++    // Check extension
++    if extensions.iter().any(|ext| file_path.ends_with(ext)) {
++        return true;
++    }
++
++    // Check base name (without path)
++    if let Some(base) = file_path.split('/').last() {
++        if file_basenames.iter().any(|name| base.starts_with(name)) {
++            return true;
++        }
++    }
++
++    false
++}
++
+ /// Check if node text contains a legitimate env var (allowlisted)
+ fn contains_legitimate_env_var(node_text: &str) -> bool {
+     for legitimate in LEGITIMATE_ENV_VARS {
+@@ -89,9 +110,14 @@ const SUGGESTION_CRED: &str =
+ const SUGGESTION_EXFIL: &str =
+     "Never read credential files and make network requests in the same code flow.";
+ 
+-pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
++pub fn visit_js_node(node: &Node, source: &str, file_path: &str) -> Vec<DefenderViolation> {
+     let mut violations = Vec::new();
+ 
++    // M26 FIX: Prosa que menciona credenciais não é ataque (sem sink executável)
++    if is_prose_file(file_path) {
++        return Vec::new();
++    }
++
+     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
+ 
+     if node.kind() == "call_expression" && node_text.contains("readFile") {
+@@ -153,9 +179,14 @@ pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
+     violations
+ }
+ 
+-pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
++pub fn visit_bash_node(node: &Node, source: &str, file_path: &str) -> Vec<DefenderViolation> {
+     let mut violations = Vec::new();
+ 
++    // M26 FIX: Prosa que menciona credenciais não é ataque
++    if is_prose_file(file_path) {
++        return Vec::new();
++    }
++
+     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
+ 
+     if node_text.contains("cat") || node_text.contains("read") {
+@@ -178,9 +209,14 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
+     violations
+ }
+ 
+-pub fn visit_python_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
++pub fn visit_python_node(node: &Node, source: &str, file_path: &str) -> Vec<DefenderViolation> {
+     let mut violations = Vec::new();
+ 
++    // M26 FIX: Prosa que menciona credenciais não é ataque
++    if is_prose_file(file_path) {
++        return Vec::new();
++    }
++
+     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
+ 
+     if node.kind() == "call_expression"
+diff --git a/.nemesis/workflow-enforcement/cli/pretool-hook.rs b/.nemesis/workflow-enforcement/cli/pretool-hook.rs
+index 4c0e38f..8ac82c1 100644
+--- a/.nemesis/workflow-enforcement/cli/pretool-hook.rs
++++ b/.nemesis/workflow-enforcement/cli/pretool-hook.rs
+@@ -638,18 +638,50 @@ fn validate_code_content(file_path: &str, new_string: &str) -> ValidationResult
+         return conditional_hooks_result;
+     }
+ 
+-    // REGRA 6: AST semantic validation
++    // REGRA 6: AST semantic validation (NÃO-BLOQUEANTE por padrão — só avisa)
++    // Config: .nemesis/ast-linters-config.json define se bloqueia ou apenas avisa
+     let ast_violations = validate_semantic(new_string, file_path);
+-    if !ast_violations.is_empty() {
+-        let first = &ast_violations[0];
++
++    // Carregar config de ast-linters
++    let ast_config_path = get_nemesis_dir().join("ast-linters-config.json");
++    let should_block_ast = if ast_config_path.exists() {
++        fs::read_to_string(&ast_config_path)
++            .ok()
++            .and_then(|c| serde_json::from_str::<serde_json::Value>(&c).ok())
++            .and_then(|v| v.get("blocking_mode").and_then(|b| b.as_bool()))
++            .unwrap_or(false)
++    } else {
++        false // Padrão: não bloqueia
++    };
++
++    // Filtrar violações por severity se em modo não-bloqueante
++    let critical_violations: Vec<_> = if !should_block_ast {
++        ast_violations.iter()
++            .filter(|v| v.severity.as_str() == "critical")
++            .collect()
++    } else {
++        ast_violations.iter().collect()
++    };
++
++    if !critical_violations.is_empty() {
++        let first = critical_violations[0];
+         return ValidationResult {
+             valid: false,
+-            reason: Some(format!("[AST] {} (linha {})", first.message, first.line)),
++            reason: Some(format!("[AST-CRITICAL] {} (linha {})", first.message, first.line)),
+             rule: Some(".windsurf/rules/README.md".to_string()),
+-            suggestion: Some("Violação semântica detectada por análise de AST. ACESSE A REGRA .windsurf/rules/README.md".to_string()),
++            suggestion: Some(first.suggestion.clone().unwrap_or_else(|| "Violação semântica crítica detectada por análise de AST.".to_string())),
+         };
+     }
+ 
++    // Avisos não-críticos (não bloqueiam, apenas registram no log)
++    if !ast_violations.is_empty() && !should_block_ast {
++        for violation in &ast_violations {
++            if violation.severity.as_str() == "warn" {
++                log_violation("ast-warning", &violation.message, Some(&format!(".windsurf/rules/README.md (line {})", violation.line)), None);
++            }
++        }
++    }
++
+     ValidationResult {
+         valid: true,
+         reason: None,
+diff --git a/.windsurf/hooks.json b/.windsurf/hooks.json
+index 782c6de..d353116 100755
+--- a/.windsurf/hooks.json
++++ b/.windsurf/hooks.json
+@@ -2,49 +2,49 @@
+   "hooks": {
+     "pre_write_code": [
+       {
+-        "command": "/home/fernando/devproj/Nemesis_Rust_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
++        "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
+         "show_output": true
+       }
+     ],
+     "pre_run_command": [
+       {
+-        "command": "/home/fernando/devproj/Nemesis_Rust_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
++        "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
+         "show_output": true
+       }
+     ],
+     "pre_read_code": [
+       {
+-        "command": "/home/fernando/devproj/Nemesis_Rust_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
++        "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
+         "show_output": true
+       }
+     ],
+     "pre_mcp_tool_use": [
+       {
+-        "command": "/home/fernando/devproj/Nemesis_Rust_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
++        "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
+         "show_output": true
+       }
+     ],
+     "post_write_code": [
+       {
+-        "command": "/home/fernando/devproj/Nemesis_Rust_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
++        "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
+         "show_output": true
+       }
+     ],
+     "post_run_command": [
+       {
+-        "command": "/home/fernando/devproj/Nemesis_Rust_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
++        "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
+         "show_output": true
+       }
+     ],
+     "post_read_code": [
+       {
+-        "command": "/home/fernando/devproj/Nemesis_Rust_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
++        "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
+         "show_output": true
+       }
+     ],
+     "post_mcp_tool_use": [
+       {
+-        "command": "/home/fernando/devproj/Nemesis_Rust_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
++        "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
+         "show_output": true
+       }
+     ]

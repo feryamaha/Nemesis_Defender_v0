@@ -8,6 +8,27 @@
 use crate::DefenderViolation;
 use tree_sitter::Node;
 
+/// Check if file is pure prose/documentation (not executable code)
+/// M26 FIX: prosa que MENCIONA credenciais ≠ ataque (não tem sink executável)
+fn is_prose_file(file_path: &str) -> bool {
+    let extensions = [".md", ".txt", ".rst", ".html", ".htm"];
+    let file_basenames = ["README", "SECURITY", "CONTRIBUTING", "LICENSE", "CHANGELOG", "AUTHORS", "NOTES"];
+
+    // Check extension
+    if extensions.iter().any(|ext| file_path.ends_with(ext)) {
+        return true;
+    }
+
+    // Check base name (without path)
+    if let Some(base) = file_path.split('/').last() {
+        if file_basenames.iter().any(|name| base.starts_with(name)) {
+            return true;
+        }
+    }
+
+    false
+}
+
 /// Check if node text contains a legitimate env var (allowlisted)
 fn contains_legitimate_env_var(node_text: &str) -> bool {
     for legitimate in LEGITIMATE_ENV_VARS {
@@ -89,8 +110,13 @@ const SUGGESTION_CRED: &str =
 const SUGGESTION_EXFIL: &str =
     "Never read credential files and make network requests in the same code flow.";
 
-pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
+pub fn visit_js_node(node: &Node, source: &str, file_path: &str) -> Vec<DefenderViolation> {
     let mut violations = Vec::new();
+
+    // M26 FIX: Prosa que menciona credenciais não é ataque (sem sink executável)
+    if is_prose_file(file_path) {
+        return Vec::new();
+    }
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
@@ -153,8 +179,13 @@ pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
     violations
 }
 
-pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
+pub fn visit_bash_node(node: &Node, source: &str, file_path: &str) -> Vec<DefenderViolation> {
     let mut violations = Vec::new();
+
+    // M26 FIX: Prosa que menciona credenciais não é ataque
+    if is_prose_file(file_path) {
+        return Vec::new();
+    }
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
@@ -178,8 +209,13 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
     violations
 }
 
-pub fn visit_python_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
+pub fn visit_python_node(node: &Node, source: &str, file_path: &str) -> Vec<DefenderViolation> {
     let mut violations = Vec::new();
+
+    // M26 FIX: Prosa que menciona credenciais não é ataque
+    if is_prose_file(file_path) {
+        return Vec::new();
+    }
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 

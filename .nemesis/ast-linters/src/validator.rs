@@ -31,6 +31,8 @@ pub struct SemanticViolation {
     pub suggestion: Option<String>,
     /// Categoria da regra (Correctness, Suspicious, Security, Style)
     pub category: String,
+    /// Severidade: "critical" (bloqueia), "warn" (aviso), "info" (informativo)
+    pub severity: String,
 }
 
 /// Configuração de regras AST lida do arquivo JSON.
@@ -99,6 +101,13 @@ fn create_configured_registry() -> RuleRegistry {
 pub fn validate_semantic(content: &str, file_path: &str) -> Vec<SemanticViolation> {
     // 0. Se o conteúdo estiver vazio, não há o que validar
     if content.is_empty() || file_path.is_empty() {
+        return Vec::new();
+    }
+
+    // FASE 1 CIRÚRGICA: Documentação não passa pelo ast-linters
+    // Markdown/txt/rst não é código-fonte, não tem "padrão de código" a violar
+    if file_path.ends_with(".md") || file_path.ends_with(".txt") || file_path.ends_with(".rst")
+        || file_path.ends_with(".markdown") {
         return Vec::new();
     }
 
@@ -198,14 +207,22 @@ pub fn validate_semantic(content: &str, file_path: &str) -> Vec<SemanticViolatio
     let rule_violations = registry.run_active_rules(&tree, &ctx);
 
     // 8. Converte para SemanticViolation
+    // Severidade padrão: qualidade=warn, segurança=critical
     let violations: Vec<SemanticViolation> = rule_violations
         .into_iter()
-        .map(|v| SemanticViolation {
-            message: v.message,
-            line: v.line,
-            layer: "ast",
-            suggestion: v.suggestion.map(|s| s.message),
-            category: format!("{:?}", v.category),
+        .map(|v| {
+            let severity = match format!("{:?}", v.category).as_str() {
+                "Security" | "Correctness" => "critical",
+                _ => "warn",
+            };
+            SemanticViolation {
+                message: v.message,
+                line: v.line,
+                layer: "ast",
+                suggestion: v.suggestion.map(|s| s.message),
+                category: format!("{:?}", v.category),
+                severity: severity.to_string(),
+            }
         })
         .collect();
 

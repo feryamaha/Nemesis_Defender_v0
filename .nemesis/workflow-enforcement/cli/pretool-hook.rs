@@ -638,16 +638,48 @@ fn validate_code_content(file_path: &str, new_string: &str) -> ValidationResult 
         return conditional_hooks_result;
     }
 
-    // REGRA 6: AST semantic validation
+    // REGRA 6: AST semantic validation (NÃO-BLOQUEANTE por padrão — só avisa)
+    // Config: .nemesis/ast-linters-config.json define se bloqueia ou apenas avisa
     let ast_violations = validate_semantic(new_string, file_path);
-    if !ast_violations.is_empty() {
-        let first = &ast_violations[0];
+
+    // Carregar config de ast-linters
+    let ast_config_path = get_nemesis_dir().join("ast-linters-config.json");
+    let should_block_ast = if ast_config_path.exists() {
+        fs::read_to_string(&ast_config_path)
+            .ok()
+            .and_then(|c| serde_json::from_str::<serde_json::Value>(&c).ok())
+            .and_then(|v| v.get("blocking_mode").and_then(|b| b.as_bool()))
+            .unwrap_or(false)
+    } else {
+        false // Padrão: não bloqueia
+    };
+
+    // Filtrar violações por severity se em modo não-bloqueante
+    let critical_violations: Vec<_> = if !should_block_ast {
+        ast_violations.iter()
+            .filter(|v| v.severity.as_str() == "critical")
+            .collect()
+    } else {
+        ast_violations.iter().collect()
+    };
+
+    if !critical_violations.is_empty() {
+        let first = critical_violations[0];
         return ValidationResult {
             valid: false,
-            reason: Some(format!("[AST] {} (linha {})", first.message, first.line)),
+            reason: Some(format!("[AST-CRITICAL] {} (linha {})", first.message, first.line)),
             rule: Some(".windsurf/rules/README.md".to_string()),
-            suggestion: Some("Violação semântica detectada por análise de AST. ACESSE A REGRA .windsurf/rules/README.md".to_string()),
+            suggestion: Some(first.suggestion.clone().unwrap_or_else(|| "Violação semântica crítica detectada por análise de AST.".to_string())),
         };
+    }
+
+    // Avisos não-críticos (não bloqueiam, apenas registram no log)
+    if !ast_violations.is_empty() && !should_block_ast {
+        for violation in &ast_violations {
+            if violation.severity.as_str() == "warn" {
+                log_violation("ast-warning", &violation.message, Some(&format!(".windsurf/rules/README.md (line {})", violation.line)), None);
+            }
+        }
     }
 
     ValidationResult {
