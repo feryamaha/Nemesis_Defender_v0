@@ -174,7 +174,7 @@ fn nemesis_block(reason: &str, instruction: Option<&str>) -> ! {
             let _ = io::stdout().flush();
         }
     });
-    eprintln!("[NEMESIS BLOCKED] {}", reason);
+    eprintln!("{}", reason);
     if let Some(instr) = instruction {
         eprintln!("→ {}", instr);
     }
@@ -786,7 +786,7 @@ fn check_folder_file_access(
 
             if !is_exception {
                 return Some((
-                    format!("ARQUIVO PROTEGIDO: \"{}\". Acesso bloqueado.", rel_path),
+                    format!("NEMESIS SEC - {} - ARQUIVO PROTEGIDO · {}", if is_write { "ACESSO NEGADO" } else { "LEITURA NEGADA" }, rel_path),
                     "Arquivos protegidos sao gerenciados exclusivamente pelo usuario.".into(),
                 ));
             }
@@ -798,7 +798,7 @@ fn check_folder_file_access(
         for blocked in &denylist.write_block.files {
             if rel_path.ends_with(blocked) || rel_path == *blocked {
                 return Some((
-                    format!("ARQUIVO PROTEGIDO: \"{}\". Edicao bloqueada.", rel_path),
+                    format!("NEMESIS SEC - ACESSO NEGADO - ARQUIVO PROTEGIDO · {}", rel_path),
                     "Arquivos de configuracao do projeto sao gerenciados exclusivamente pelo usuario.".into(),
                 ));
             }
@@ -1271,7 +1271,7 @@ fn run_pretool() {
 
                                 if is_parent_blocked || is_parent_write_blocked {
                                     nemesis_block(
-                                        &format!("Wildcard/glob em diretório protegido: \"{}\". Acesso a diretórios com conteúdo protegido via glob é bloqueado.", p),
+                                        &format!("NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO · {}", p),
                                         Some("Não use wildcards (*, ?) para acessar diretórios protegidos. Especifique arquivos individualmente com caminho explícito.")
                                     );
                                 }
@@ -1412,7 +1412,7 @@ fn run_pretool() {
                     for segment in &all_segments {
                         if re.is_match(segment) {
                             nemesis_block(
-                                &format!("Comando '{}' bloqueado pela lista canônica do eBPF.", blocked_cmd),
+                                "NEMESIS SEC - COMANDO NAO PERMITIDO",
                                 Some("Este comando está na denylist do Nemesis eBPF.")
                             );
                         }
@@ -1427,11 +1427,11 @@ fn run_pretool() {
         {
             let defender_result = nemesis_defender::scan_command(&bash_command);
             if defender_result.severity == nemesis_defender::Severity::Malicious {
-                let evidence: Vec<String> = defender_result.violations.iter()
+                let _evidence: Vec<String> = defender_result.violations.iter()
                     .map(|v| format!("[{}] {}", v.visitor, v.message))
                     .collect();
                 nemesis_block(
-                    &format!("Comando bloqueado pelo Nemesis Defender: {}", evidence.join("; ")),
+                    "NEMESIS SEC - COMANDO NAO PERMITIDO",
                     Some("Payloads ofuscados ou maliciosos sao bloqueados pelo Domo de Ferro.")
                 );
             }
@@ -1442,7 +1442,7 @@ fn run_pretool() {
             // Redirect TS/TSX
             if let Some(violation) = validate_redirect_content(segment) {
                 nemesis_block(
-                    &format!("Bypass via redirect bloqueado — violacao: {}", violation),
+                    "NEMESIS SEC - COMANDO NAO PERMITIDO",
                     Some("Use a edit tool do IDE para escrever arquivos TypeScript")
                 );
             }
@@ -1474,7 +1474,7 @@ fn run_pretool() {
         let scan_result = nemesis_defender::scan_content(path, content_str.as_bytes());
 
         if scan_result.severity == nemesis_defender::Severity::Malicious {
-            let evidence: Vec<String> = scan_result.violations.iter()
+            let _evidence: Vec<String> = scan_result.violations.iter()
                 .map(|v| {
                     let fix = v.suggestion.as_deref()
                         .map(|s| format!(" → FIX: {}", s))
@@ -1484,7 +1484,7 @@ fn run_pretool() {
                 .collect();
             write_session_event("Write", file_path_str, true, 2);
             nemesis_block(
-                &format!("Conteudo bloqueado pelo Nemesis Defender: {}", evidence.join("; ")),
+                "NEMESIS SEC - CONTEUDO MALICIOSO DETECTADO",
                 Some("O arquivo contem padroes maliciosos detectados pelo Domo de Ferro. Revise o conteudo.")
             );
         }

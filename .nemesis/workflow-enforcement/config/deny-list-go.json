@@ -1,7 +1,9 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-05-10T00:00:00Z",
-  "project_stack": ["go"],
+  "project_stack": [
+    "go"
+  ],
   "layers": {
     "go": {
       "description": "Violacoes especificas de Go",
@@ -11,9 +13,9 @@
           "pattern": "unsafe\\.Pointer",
           "type": "regex",
           "severity": "critical",
-          "message": "unsafe.Pointer detectado. Podem causar memory corruption.",
-          "suggestion": "Use Go memory-safe abstractions (slices, interfaces).",
-          "rule": ".nemesis/rules/go-safety.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -22,9 +24,9 @@
           "pattern": "panic\\s*\\(",
           "type": "regex",
           "severity": "high",
-          "message": "panic() detectado em funcao publica. Nao capturavel.",
-          "suggestion": "Retorne error interface: func Example() error { ... }",
-          "rule": ".nemesis/rules/go-error-handling.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -33,9 +35,9 @@
           "pattern": "defer.*err\\s*!=\\s*nil",
           "type": "regex",
           "severity": "medium",
-          "message": "defer sem error check. Erro ignorado silenciosamente.",
-          "suggestion": "Verifique err antes de defer ou use named returns.",
-          "rule": ".nemesis/rules/go-error-handling.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -44,9 +46,9 @@
           "pattern": "fmt\\.Sprintf\\s*\\([^)]*%s[^)]*(?:query|sql|SQL)",
           "type": "regex",
           "severity": "critical",
-          "message": "SQL construction com string formatting. SQL injection risk.",
-          "suggestion": "Use parametrized queries: db.Query('SELECT ... WHERE id=?', id)",
-          "rule": ".nemesis/rules/go-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         }

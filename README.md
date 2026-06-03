@@ -165,7 +165,7 @@ O ponto crítico: **só um humano comuta essas permissões.** Precisa relaxar um
 
 A primeira versão do Nemesis nasceu como controle de qualidade de código. Na evolução de Node/TS para Rust, o foco virou **100% segurança** — e a camada de qualidade foi reduzida ao que **afeta ou pode afetar segurança e estabilidade**: exposição de API/credenciais, aninhamento de tags que quebra build/deploy, e falhas graves que derrubam a aplicação.
 
-Existem deny-lists de qualidade **específicas por linguagem**, cada uma com regras que apontam para um arquivo de regra `.md`:
+Existem deny-lists de qualidade **específicas por linguagem**. O campo `rule` — que apontava para um arquivo de regra `.md` específico do ambiente do autor — vem **em branco** nas deny-lists distribuídas: assim cada usuário aponta para a própria documentação de regras, sem herdar caminhos que só existiam no ambiente original. As categorias cobertas:
 
 - **Rust** — chain de 3+ `unwrap()`, `unsafe` block em library code, `panic!()`/`process::exit()` em lib, `println!` em lib.
 - **Python** — `eval()`, `exec()`, `pickle.loads()`, `os.system()`/`shell=True`, f-string com SQL, `yaml.load()` inseguro, MD5.
@@ -224,6 +224,17 @@ Em sessões registradas em dois ambientes (Windsurf no Linux e no macOS, Cursor)
 
 Este é o teste correto da tese do Nemesis: ele assume que o modelo pode ser enganado, e mede se o enforcement segura mesmo assim. Nesses logs, segurou.
 
+**Mensagens de bloqueio padronizadas.** Toda interceptação emite uma de seis mensagens fixas e categorizadas, para que o agente — e o humano — saiba exatamente *por que* foi bloqueado. As cinco primeiras são da trilha de **segurança** (pretool/posttool/Defender/eBPF); a última é da trilha de **qualidade** (ast-linters). Quando útil, a mensagem traz o alvo no fim (`· arquivo` ou `· comando`).
+
+| Categoria | Mensagem |
+|-----------|----------|
+| Comando bloqueado | `NEMESIS SEC - COMANDO NAO PERMITIDO` |
+| Escrita em arquivo/path protegido | `NEMESIS SEC - ACESSO NEGADO - ARQUIVO PROTEGIDO` |
+| Leitura de arquivo protegido | `NEMESIS SEC - LEITURA NEGADA - ARQUIVO PROTEGIDO` |
+| Conteúdo malicioso no arquivo | `NEMESIS SEC - CONTEUDO MALICIOSO DETECTADO` |
+| Escrita fora do escopo/workflow | `NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO` |
+| Violação de padrão de código | `NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!` |
+
 ### 3. Suíte de vetores sintéticos (evidência de apoio)
 
 O Nemesis inclui uma suíte de **140 vetores autorais** (M1–M20: comandos compostos, exfiltração, reverse shells, persistência, obfuscação, supply-chain multi-ecossistema, etc.). Sobre ela, sendo honesto:
@@ -235,7 +246,7 @@ O Nemesis inclui uma suíte de **140 vetores autorais** (M1–M20: comandos comp
 
 Os logs de runtime do Nemesis (`violations.log`, `defender.log`) mostram as três camadas trabalhando de forma separada e registrada, em execução real:
 
-- **Camada 3 (eBPF/kernel)** — `violations.log` registra mais de 2.000 bloqueios reais com `"layer":"ebpf"`, `"type":"permission_denied"`, cobrindo `rm`, `shred`, `dd`, `truncate`, `kill`, `chmod`, `mount`, `nc`, e a execução de runtimes arbitrários (`python3`, `perl`). Estes são bloqueios no kernel, não dependentes de deny-list em userspace.
+- **Camada 3 (eBPF/kernel)** — `violations.log` registra mais de 2.000 bloqueios de pentestes reais com `"layer":"ebpf"`, `"type":"permission_denied"`, cobrindo `rm`, `shred`, `dd`, `truncate`, `kill`, `chmod`, `mount`, `nc`, e a execução de runtimes arbitrários (`python3`, `perl`). Estes são bloqueios no kernel, não dependentes de deny-list em userspace.
 - **Camada 2 (Defender / classificador)** — `defender.log` registra vereditos de classificação nomeados (ex.: `[MALICIOUS] ... denylist-defender / reverse_shells`), com a evidência capturada (`bash -i >&`, `/dev/tcp/`) e a instrução de correção.
 - **Correlação e escalação** — o Defender também correlaciona eventos ao longo do tempo: detecta brute force ("N tentativas maliciosas bloqueadas em 300s") e padrões compostos ("leitura de arquivo sensível seguida de comando de rede"). Isso é detecção comportamental, acima do casamento de padrão simples.
 

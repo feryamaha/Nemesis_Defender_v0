@@ -159,7 +159,7 @@ fn pre_validate_heredoc_bypass(tool_input: &ToolInput) -> Option<String> {
         let target_file = &caps[2];
         if critical_file_patterns.iter().any(|p| p.is_match(target_file)) {
             return Some(format!(
-                "NEMESIS BLOCKED: echo redirect para arquivo critico bloqueado: {}",
+                "NEMESIS BLOCKED: NEMESIS SEC - COMANDO NAO PERMITIDO · {}",
                 target_file
             ));
         }
@@ -169,7 +169,7 @@ fn pre_validate_heredoc_bypass(tool_input: &ToolInput) -> Option<String> {
     let printf_regex = Regex::new(r"printf\s.+.(?:>>?)\s*\S+\.(tsx?|jsx?|json)").unwrap();
     if printf_regex.is_match(command) {
         return Some(
-            "NEMESIS BLOCKED: printf redirect para arquivo de codigo bloqueado".to_string(),
+            "NEMESIS BLOCKED: NEMESIS SEC - COMANDO NAO PERMITIDO".to_string(),
         );
     }
 

@@ -41,7 +41,24 @@
       ".nemesis/logs/violations.log",
       ".nemesis/logs/defender.log",
       ".nemesis/logs/output-audit.log",
-      ".nemesis/logs/session-events.jsonl"
+      ".nemesis/logs/session-events.jsonl",
+      "CLAUDE.md",
+      "CLAUDE.md.bak",
+      "CLAUDE.md.tmp",
+      "CLAUDE.md.swp",
+      "CLAUDE.md.swo",
+      "CLAUDE.md.rej",
+      "CLAUDE.md.orig",
+      "CLAUDE.md~",
+      "AGENSTS.md",
+      "AGENSTS.md.bak",
+      "AGENSTS.md.tmp",
+      "AGENSTS.md.swp",
+      "AGENSTS.md.swo",
+      "AGENSTS.md.rej",
+      "AGENSTS.md.orig",
+      "AGENSTS.md~",
+      ".cursorrules"
     ]
   }
 }

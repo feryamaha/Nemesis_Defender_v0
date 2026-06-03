@@ -1,7 +1,9 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-05-10T00:00:00Z",
-  "project_stack": ["python"],
+  "project_stack": [
+    "python"
+  ],
   "layers": {
     "python": {
       "description": "Violacoes especificas de Python",
@@ -11,9 +13,9 @@
           "pattern": "\\beval\\s*\\(",
           "type": "regex",
           "severity": "critical",
-          "message": "eval() detectado em Python. Executa codigo arbitrario.",
-          "suggestion": "Use ast.literal_eval() para JSON, ou implemente parser seguro.",
-          "rule": ".nemesis/rules/python-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -22,9 +24,9 @@
           "pattern": "\\bexec\\s*\\(",
           "type": "regex",
           "severity": "critical",
-          "message": "exec() detectado. Executa codigo de string.",
-          "suggestion": "Refatore para funcoes explícitas ou use importlib.",
-          "rule": ".nemesis/rules/python-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -33,9 +35,9 @@
           "pattern": "pickle\\.loads\\s*\\(",
           "type": "regex",
           "severity": "critical",
-          "message": "pickle.loads() de fonte nao-confiavel. Risco RCE.",
-          "suggestion": "Use json.loads() ou implementar validacao com pickle.load() em modo restrito.",
-          "rule": ".nemesis/rules/python-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -44,9 +46,9 @@
           "pattern": "os\\.system\\s*\\(|subprocess\\.run\\s*\\([^)]*shell\\s*=\\s*True",
           "type": "regex",
           "severity": "critical",
-          "message": "os.system() ou subprocess com shell=True. Shell injection risk.",
-          "suggestion": "Use subprocess.run(shell=False) ou os.execvp() com lista de argumentos.",
-          "rule": ".nemesis/rules/python-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -55,9 +57,9 @@
           "pattern": "f['\"].*(?:\\{[^}]*\\})+.*['\"].*(?:SELECT|UPDATE|DELETE|INSERT|DROP)",
           "type": "regex",
           "severity": "critical",
-          "message": "F-string com SQL detectado. SQL injection risk.",
-          "suggestion": "Use parametrized queries: cursor.execute('SELECT * FROM table WHERE id=?', (id,))",
-          "rule": ".nemesis/rules/python-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -66,9 +68,9 @@
           "pattern": "__import__\\s*\\(",
           "type": "regex",
           "severity": "high",
-          "message": "__import__() dinamico detectado.",
-          "suggestion": "Use importlib.import_module() ou import estático.",
-          "rule": ".nemesis/rules/python-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -77,9 +79,9 @@
           "pattern": "input\\s*\\([^)]*\\)(?!\\s*=)",
           "type": "regex",
           "severity": "high",
-          "message": "input() sem validacao detectado. User input pode conter SQL/code injection.",
-          "suggestion": "Valide e sanitize input antes de usar em queries/comandos.",
-          "rule": ".nemesis/rules/python-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -88,9 +90,9 @@
           "pattern": "yaml\\.load\\s*\\([^)]*Loader\\s*=",
           "type": "regex",
           "severity": "critical",
-          "message": "yaml.load() sem Loader seguro detectado. Risco de RCE.",
-          "suggestion": "Use yaml.safe_load() ou yaml.load(Loader=yaml.SafeLoader).",
-          "rule": ".nemesis/rules/python-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -99,9 +101,9 @@
           "pattern": "hashlib\\.md5",
           "type": "regex",
           "severity": "high",
-          "message": "MD5 detectado. Nao e criptograficamente seguro.",
-          "suggestion": "Use hashlib.sha256() ou bcrypt para senhas.",
-          "rule": ".nemesis/rules/python-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         }

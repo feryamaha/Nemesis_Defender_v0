@@ -1,7 +1,9 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-05-10T00:00:00Z",
-  "project_stack": ["java"],
+  "project_stack": [
+    "java"
+  ],
   "layers": {
     "java": {
       "description": "Violacoes especificas de Java",
@@ -11,9 +13,9 @@
           "pattern": "Runtime\\.getRuntime\\s*\\(\\)\\.exec|ProcessBuilder",
           "type": "regex",
           "severity": "critical",
-          "message": "Runtime.exec() ou ProcessBuilder detectado. Command injection risk.",
-          "suggestion": "Use ProcessBuilder com lista de argumentos (array, nao string).",
-          "rule": ".nemesis/rules/java-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -22,9 +24,9 @@
           "pattern": "reflect\\.Method\\.invoke|forName\\s*\\(",
           "type": "regex",
           "severity": "high",
-          "message": "Reflection dinamica detectada. Pode causar security issues.",
-          "suggestion": "Use dependency injection ou factory patterns.",
-          "rule": ".nemesis/rules/java-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -33,9 +35,9 @@
           "pattern": "Statement\\.executeQuery\\s*\\([^)]*\\+|String\\s+query\\s*=.*\\+",
           "type": "regex",
           "severity": "critical",
-          "message": "SQL com string concatenation. SQL injection risk.",
-          "suggestion": "Use PreparedStatement: stmt.setString(1, userInput); stmt.executeQuery();",
-          "rule": ".nemesis/rules/java-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -44,9 +46,9 @@
           "pattern": "ObjectInputStream|readObject\\s*\\(\\)|ObjectInput",
           "type": "regex",
           "severity": "critical",
-          "message": "Java deserialization detectada. RCE risk.",
-          "suggestion": "Use JSON (Jackson, Gson) ou protocol buffers. Nunca deserialize dados nao-confiáveis.",
-          "rule": ".nemesis/rules/java-security.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         }

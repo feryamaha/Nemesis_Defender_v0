@@ -1,7 +1,9 @@
 {
   "version": "1.0.0",
   "last_updated": "2026-05-10T00:00:00Z",
-  "project_stack": ["rust"],
+  "project_stack": [
+    "rust"
+  ],
   "layers": {
     "rust": {
       "description": "Violacoes especificas de Rust",
@@ -11,9 +13,9 @@
           "pattern": "\\.unwrap\\s*\\(\\)\\s*\\.\\s*[a-z_]+\\s*\\(\\)\\s*\\.\\s*unwrap\\s*\\(\\)\\s*\\.\\s*[a-z_]+\\s*\\(\\)\\s*\\.\\s*unwrap",
           "type": "regex",
           "severity": "critical",
-          "message": "Chain de 3+ unwrap() detectado. Pode causar panic em producao.",
-          "suggestion": "Use ? operator ou match/unwrap_or_else para error handling explícito.",
-          "rule": ".nemesis/rules/rust-error-handling.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
           "enabled": true
         },
@@ -22,52 +24,44 @@
           "pattern": "unsafe\\s*\\{",
           "type": "regex",
           "severity": "critical",
-          "message": "unsafe block detectado em library code.",
-          "suggestion": "Confine unsafe em modulos privados com invariantes bem-documentadas. Nao exponha em API publica.",
-          "rule": ".nemesis/rules/rust-safety.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
-          "enabled": true,
-          "context": "src/lib.rs",
-          "context_type": "path_contains"
+          "enabled": true
         },
         {
           "id": "rust-003",
           "pattern": "panic!\\s*\\(",
           "type": "regex",
           "severity": "high",
-          "message": "panic!() em library code. Nao capturavel por callers.",
-          "suggestion": "Retorne Result<T, E> ou use unwrap_or_default().",
-          "rule": ".nemesis/rules/rust-error-handling.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
-          "enabled": true,
-          "context": "src/lib.rs",
-          "context_type": "path_contains"
+          "enabled": true
         },
         {
           "id": "rust-004",
           "pattern": "std::process::exit\\s*\\(",
           "type": "regex",
           "severity": "critical",
-          "message": "std::process::exit() em library code. Mata o processo inteiro.",
-          "suggestion": "Retorne Result e deixe main decidir exit code.",
-          "rule": ".nemesis/rules/rust-error-handling.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
-          "enabled": true,
-          "context": "src/lib.rs",
-          "context_type": "path_contains"
+          "enabled": true
         },
         {
           "id": "rust-005",
           "pattern": "println!\\s*\\(",
           "type": "regex",
           "severity": "medium",
-          "message": "println!() em library code. Nao e testavel.",
-          "suggestion": "Use log crate ou retorne valores para que main imprima.",
-          "rule": ".nemesis/rules/rust-output.md",
+          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
+          "suggestion": "",
+          "rule": "",
           "source": "manual",
-          "enabled": true,
-          "context": "src/lib.rs",
-          "context_type": "path_contains"
+          "enabled": true
         }
       ]
     }

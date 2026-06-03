@@ -387,7 +387,7 @@ fn validate_file_scope(file_path: &str) -> ValidationResult {
             if normalized_relative == normalized_blocked || normalized_relative.ends_with(&normalized_blocked) {
                 return ValidationResult {
                     valid: false,
-                    reason: Some(format!("Arquivo explicitamente bloqueado pelo escopo: {}", normalized_relative)),
+                    reason: Some(format!("NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO · {}", normalized_relative)),
                     rule: Some(".windsurf/rules/README.md".to_string()),
                     suggestion: Some(".windsurf/rules/README.md".to_string()),
                 };
@@ -442,7 +442,7 @@ fn validate_file_scope(file_path: &str) -> ValidationResult {
     let allowed_list = if allowed_list.is_empty() { "nenhum especificado".to_string() } else { allowed_list };
     ValidationResult {
         valid: false,
-        reason: Some(format!("BLOQUEADO! {}", normalized_relative)),
+        reason: Some(format!("NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO · {}", normalized_relative)),
         rule: Some(".windsurf/rules/README.md".to_string()),
         suggestion: Some(format!(".windsurf/rules/README.md: {}", allowed_list)),
     }
@@ -664,12 +664,12 @@ fn validate_code_content(file_path: &str, new_string: &str) -> ValidationResult 
     };
 
     if !critical_violations.is_empty() {
-        let first = critical_violations[0];
+        let _first = critical_violations[0];
         return ValidationResult {
             valid: false,
-            reason: Some(format!("[AST-CRITICAL] {} (linha {})", first.message, first.line)),
+            reason: Some("NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!".to_string()),
             rule: Some(".windsurf/rules/README.md".to_string()),
-            suggestion: Some(first.suggestion.clone().unwrap_or_else(|| "Violação semântica crítica detectada por análise de AST.".to_string())),
+            suggestion: Some("Violação semântica crítica detectada por análise de AST.".to_string()),
         };
     }
 
@@ -768,7 +768,7 @@ fn check_any_usage(new_string: &str) -> ValidationResult {
 
                 return ValidationResult {
                     valid: false,
-                    reason: Some(format!(r#"Uso de "any" detectado. Linha: "{}""#, context)),
+                    reason: Some("NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!".to_string()),
                     rule: Some(".windsurf/rules/typescript-typing-convention.md".to_string()),
                     suggestion: Some("Use tipos explicitos, unknown, generics ou tipos existentes em src/types/".to_string()),
                 };
@@ -810,7 +810,7 @@ fn check_ui_hooks(normalized_path: &str, file_name: &str, new_string: &str) -> V
             if re.is_match(new_string) {
                 return ValidationResult {
                     valid: false,
-                    reason: Some(format!(r#"Hook "{}" detectado em componente UI puro: {}"#, name, file_name)),
+                    reason: Some("NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!".to_string()),
                     rule: Some(".windsurf/rules/ui-separation-convention.md - Secao 4.1".to_string()),
                     suggestion: Some(format!("Mova logica de estado para src/hooks/. {}", ui_exceptions.join(", "))),
                 };
@@ -854,7 +854,7 @@ fn check_inline_types(normalized_path: &str, file_name: &str, new_string: &str) 
                     if re.is_match(line) && !line.trim().starts_with("import") {
                         return ValidationResult {
                             valid: false,
-                            reason: Some(format!("Definicao de tipo inline em componente reutilizavel: {}", file_name)),
+                            reason: Some("NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!".to_string()),
                             rule: Some(".windsurf/rules/typescript-typing-convention.md - Secao 4".to_string()),
                             suggestion: Some("Mova tipos para src/types/. Use import type bo barrel (index) { ... } no componente.".to_string()),
                         };
@@ -884,7 +884,7 @@ fn check_css_inline(new_string: &str) -> ValidationResult {
             if re.is_match(new_string) {
                 return ValidationResult {
                     valid: false,
-                    reason: Some(format!("{} detectado. Proibido por design-system-convention.md", name)),
+                    reason: Some("NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!".to_string()),
                     rule: Some(".windsurf/rules/design-system-convention.md - Secao 5".to_string()),
                     suggestion: Some("Use classes Tailwind definidas no tailwind.config.ts. CSS manual e proibido.".to_string()),
                 };
@@ -943,7 +943,7 @@ fn check_conditional_hooks(new_string: &str) -> ValidationResult {
                 if re.is_match(&context_text) {
                     return ValidationResult {
                         valid: false,
-                        reason: Some(format!("Hook condicional detectado. Linha {}: \"{}\"", i + 1, &line[..line.len().min(60)])),
+                        reason: Some("NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!".to_string()),
                         rule: Some(".windsurf/rules/react-hooks-patterns-rules.md - Secao 3.1".to_string()),
                         suggestion: Some("Mova todos os hooks para o topo do componente, antes de qualquer condicional. Hooks nunca podem ser chamados dentro de if/else/ternary/early-return.".to_string()),
                     };
@@ -1169,7 +1169,7 @@ fn check_src_lock(file_path: &str) -> Option<ValidationResult> {
         return Some(ValidationResult {
             valid: false,
             reason: Some(format!(
-                "workflow-state.json ausente — escrita em path protegido \"{}\" bloqueada. Execute o tracker start antes de qualquer escrita em paths protegidos.",
+                "NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO · {}",
                 file_path
             )),
             rule: Some(".windsurf/workflows — tracker start obrigatório antes de escrever em src/, app/, Feature-Documentation/".to_string()),
@@ -1185,7 +1185,7 @@ fn check_src_lock(file_path: &str) -> Option<ValidationResult> {
         return Some(ValidationResult {
             valid: false,
             reason: Some(format!(
-                "Escrita em \"{}\" bloqueada: nenhum workflow aprovado encontrado em .nemesis/runtime/.",
+                "NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO · {}",
                 file_path
             )),
             rule: Some(".windsurf/workflows — src/ requer workflow aprovado".to_string()),
@@ -1239,8 +1239,8 @@ fn check_src_lock(file_path: &str) -> Option<ValidationResult> {
         return Some(ValidationResult {
             valid: false,
             reason: Some(format!(
-                "Escrita em \"{}\" bloqueada: artifact de aprovação específico ausente. Necessário: {} em .nemesis/runtime/.",
-                file_path, approval_needed
+                "NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO · {}",
+                file_path
             )),
             rule: Some(".windsurf/workflows — aprovação específica por path protegido".to_string()),
             suggestion: Some(format!("Execute o workflow correspondente. Artifact necessário: {}", required_artifacts.get(0).cloned().unwrap_or_else(|| "work-*-approved.txt".to_string()))),
@@ -1256,7 +1256,7 @@ fn check_src_lock(file_path: &str) -> Option<ValidationResult> {
     Some(ValidationResult {
         valid: false,
         reason: Some(format!(
-            "Escrita em \"{}\" bloqueada: nenhum workflow aprovado encontrado. Artifact de aprovação ausente em .nemesis/runtime/.",
+            "NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO · {}",
             file_path
         )),
         rule: Some(".windsurf/workflows — src/ e app/ requerem workflow aprovado".to_string()),
@@ -1421,8 +1421,8 @@ fn check_workflow_sequence(file_path: &str) -> Option<ValidationResult> {
         return Some(ValidationResult {
             valid: false,
             reason: Some(format!(
-                "Violação de sequência de workflow: tentativa de criar \"{}\" sem \"{}\" existir em .nemesis/runtime/. Execute a fase anterior antes de prosseguir.",
-                artifact_name, required
+                "NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO · {}",
+                artifact_name
             )),
             rule: Some(".windsurf/workflows — sequência obrigatória de gates".to_string()),
             suggestion: Some(format!("Crie primeiro: {}. A sequência é definida pelo workflow e não pode ser alterada.", required)),
@@ -2051,7 +2051,8 @@ fn check_nemesis_protected_path(file_path: &str, is_write: bool) -> Option<Valid
         return Some(ValidationResult {
             valid: false,
             reason: Some(format!(
-                "Path protegido do Nemesis: \"{}\". Apenas .nemesis/runtime/ e .nemesis/logs/ sao acessiveis pela IA.",
+                "NEMESIS SEC - {} - ARQUIVO PROTEGIDO · {}",
+                if is_write { "ACESSO NEGADO" } else { "LEITURA NEGADA" },
                 rel_path
             )),
             rule: Some(".nemesis/NemesisFrameworkDocumentation — infrastructure protection".to_string()),
@@ -2163,7 +2164,7 @@ fn check_folder_file_access(
                 return Some(ValidationResult {
                     valid: false,
                     reason: Some(format!(
-                        "ARQUIVO PROTEGIDO: \"{}\". Edicao bloqueada (write_block).",
+                        "NEMESIS SEC - ACESSO NEGADO - ARQUIVO PROTEGIDO · {}",
                         rel_path
                     )),
                     rule: Some("denylist-folder-files.json".to_string()),
@@ -2189,7 +2190,8 @@ fn check_folder_file_access(
                 return Some(ValidationResult {
                     valid: false,
                     reason: Some(format!(
-                        "ARQUIVO PROTEGIDO: \"{}\". Acesso bloqueado (absolute_block).",
+                        "NEMESIS SEC - {} - ARQUIVO PROTEGIDO · {}",
+                        if is_write { "ACESSO NEGADO" } else { "LEITURA NEGADA" },
                         rel_path
                     )),
                     rule: Some("denylist-folder-files.json".to_string()),
@@ -2240,7 +2242,7 @@ fn validate_file_operation(file_path: &str, action: &str, content: Option<&str>)
         return ValidationResult {
             valid: false,
             reason: Some(format!(
-                "ARQUIVO PROTEGIDO: \"{}\". Edicao bloqueada.",
+                "NEMESIS SEC - ACESSO NEGADO - ARQUIVO PROTEGIDO · {}",
                 cfg_file_name
             )),
             rule: Some(".windsurf/rules/README.md".to_string()),
@@ -2255,7 +2257,7 @@ fn validate_file_operation(file_path: &str, action: &str, content: Option<&str>)
         return ValidationResult {
             valid: false,
             reason: Some(format!(
-                "ARQUIVO PROTEGIDO: {}. Sobrescrita direta por IA é proibida.",
+                "NEMESIS SEC - ACESSO NEGADO - ARQUIVO PROTEGIDO · {}",
                 file_name
             )),
             rule: Some(".windsurf/rules/README.md".to_string()),
@@ -2278,7 +2280,7 @@ fn validate_file_operation(file_path: &str, action: &str, content: Option<&str>)
         if !allowed_paths.iter().any(|p| path_str.starts_with(p)) {
             return ValidationResult {
                 valid: false,
-                reason: Some(format!("PADRAO DE CODIGO VIOLA REGRAS!: {}", file_path)),
+                reason: Some(format!("NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO · {}", file_path)),
                 rule: Some(".windsurf/rules/README.md".to_string()),
                 suggestion: Some("IDENTIFIQUE QUAL REGRA VOCE ESTA VIOLANDO .windsurf/rules/README.md".to_string()),
             };
@@ -2318,7 +2320,7 @@ fn validate_file_operation(file_path: &str, action: &str, content: Option<&str>)
         if !allowed {
             return ValidationResult {
                 valid: false,
-                reason: Some(reason),
+                reason: Some("NEMESIS SEC - ACESSO NEGADO - ARQUIVO PROTEGIDO".to_string()),
                 rule: Some(".windsurf/rules/Conformidade.md - Secao 3 (Protecao de Dados)".to_string()),
                 suggestion: Some("Arquivos de configuracao requerem autorizacao explicita do Step 7.".to_string()),
             };
@@ -2543,7 +2545,7 @@ fn validate_command(command: &str) -> ValidationResult {
     if let Some((message, suggestion)) = validate_full_command(command, &patterns, &ebpf_cmds) {
         return ValidationResult {
             valid: false,
-            reason: Some(message),
+            reason: Some("NEMESIS SEC - COMANDO NAO PERMITIDO".to_string()),
             rule: Some(".nemesis/ebpf-kernel/denylist-ebpf/commands.toml".to_string()),
             suggestion: Some(suggestion),
         };
@@ -2554,12 +2556,12 @@ fn validate_command(command: &str) -> ValidationResult {
         let defender_result = nemesis_defender::scan_command(command);
         match defender_result.severity {
             nemesis_defender::Severity::Malicious => {
-                let msgs: Vec<String> = defender_result.violations.iter()
+                let _msgs: Vec<String> = defender_result.violations.iter()
                     .map(|v| format!("[{}] {}", v.visitor, v.message))
                     .collect();
                 return ValidationResult {
                     valid: false,
-                    reason: Some(format!("Comando malicioso detectado pelo Defender: {}", msgs.join("; "))),
+                    reason: Some("NEMESIS SEC - COMANDO NAO PERMITIDO".to_string()),
                     rule: Some(".nemesis/nemesis-defender — deep command scan".to_string()),
                     suggestion: Some("Payloads ofuscados ou maliciosos sao bloqueados.".to_string()),
                 };
@@ -2637,16 +2639,13 @@ async fn async_main() -> anyhow::Result<i32> {
                         let defender_result = nemesis_defender::scan_content(&path_buf, content.as_bytes());
 
                         if defender_result.severity == nemesis_defender::Severity::Malicious {
-                            let evidence: Vec<String> = defender_result.violations.iter()
+                            let _evidence: Vec<String> = defender_result.violations.iter()
                                 .map(|v| format!("[{}] {} (linha {})", v.visitor, v.message, v.line))
                                 .collect();
 
                             ValidationResult {
                                 valid: false,
-                                reason: Some(format!(
-                                    "Conteudo bloqueado pelo Nemesis Defender: {}",
-                                    evidence.join("; ")
-                                )),
+                                reason: Some("NEMESIS SEC - CONTEUDO MALICIOSO DETECTADO".to_string()),
                                 rule: Some("nemesis-defender::scan_content".to_string()),
                                 suggestion: Some(
                                     "O conteudo do arquivo contem padroes maliciosos detectados pelo Nemesis Defender. Revise o conteudo e tente novamente.".to_string()
@@ -2693,7 +2692,7 @@ async fn async_main() -> anyhow::Result<i32> {
         let suggestion_text = result.suggestion.clone();
         let command_or_file = data.tool_info.command_line.clone().or(data.tool_info.file_path.clone());
 
-        eprintln!("[NEMESIS BLOCKED] {}", reason_text);
+        eprintln!("{}", reason_text);
         if let Some(suggestion) = suggestion_text {
             eprintln!("→ {}", suggestion);
         }

@@ -433,8 +433,7 @@ fn main() {
     println!("[NEMESIS] Analisando: {} em {}", action.action_type, action.target);
 
     if !is_file_allowed(&action.target) {
-        println!("[NEMESIS BLOCKED] Arquivo critico de infraestrutura — requer autorizacao explicita do usuario");
-        println!("[NEMESIS] Arquivo bloqueado: {}", action.target);
+        println!("[NEMESIS BLOCKED] NEMESIS SEC - ACESSO NEGADO - ARQUIVO PROTEGIDO · {}", action.target);
         println!("[NEMESIS] Para modificar arquivos do enforcement engine, obtenha autorizacao explicita.");
         std::process::exit(2);
     }
@@ -448,8 +447,7 @@ fn main() {
         }
         std::process::exit(0);
     } else {
-        println!("[NEMESIS BLOCKED] Acao bloqueada — violacao de regra detectada");
-        println!("[NEMESIS] Motivo: {}", result.reason);
+        println!("[NEMESIS BLOCKED] {}", result.reason);
         println!("[NEMESIS] Regras violadas: {}", result.violated_rules.join(", "));
         println!("[NEMESIS] Como corrigir: {}", result.suggestions.join("; "));
         log_violation(&action, &result);
