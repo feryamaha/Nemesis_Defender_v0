@@ -3,31 +3,128 @@
 # Este arquivo define regras AST usando uma DSL TOML simples.
 # O build script gera automaticamente o código Rust dos visitors
 # a partir destas definições.
+#
+# Schema:
+#   query      = tree-sitter S-expression (obrigatório)
+#   message    = mensagem de violação (obrigatório)
+#   severity   = "error" | "warning" | "info" (obrigatório)
+#   category   = "correctness" | "suspicious" | "security" | "style" (opcional, default: correctness)
+#   languages  = ["typescript", "tsx", ...] (obrigatório)
+#   suggestion = mensagem de correção (opcional)
 
-# Exemplo de regra para detectar uso de `any`
-[rule.no-explicit-any]
-query = "(type_annotation (any)) @any"
-message = "Unexpected any. Use unknown or specific type."
+# PoC: detecta debugger statements
+[rule.no-debugger-statement]
+query = "(debugger_statement) @debugger"
+message = "Debugger statement detected. Remove before production deployment."
 severity = "error"
-languages = ["typescript", "tsx"]
+category = "suspicious"
+languages = ["typescript", "tsx", "javascript", "jsx"]
+suggestion = "Remove the debugger statement; use breakpoints in DevTools instead."
 
-# Exemplo de regra para detectar promises não tratadas
-[rule.no-floating-promises]
+# Go: unsafe.Pointer (security)
+[rule.go-no-unsafe-pointer]
+query = "(selector_expression field: (field_identifier) @field) @sel"
+message = "unsafe.Pointer detected. Avoid unsafe operations in production code."
+severity = "error"
+category = "security"
+languages = ["go"]
+suggestion = "Use safe Go idioms; avoid the unsafe package unless strictly necessary."
+
+# Go: panic() (suspicious)
+[rule.go-no-panic]
 query = "(call_expression function: (identifier) @fn) @call"
-message = "Floating promise detected. Use await or .then()."
+message = "panic() detected. Use explicit error handling instead."
 severity = "error"
-languages = ["typescript", "tsx", "javascript", "jsx"]
+category = "suspicious"
+languages = ["go"]
+suggestion = "Return errors as values; use panic only for unrecoverable programmer errors."
 
-# Exemplo de regra para detectar atribuição unsafe
-[rule.no-unsafe-assignment]
-query = "(variable_declarator value: (as_expression type: (identifier) @type)) @decl"
-message = "Unsafe assignment detected. Avoid using as any."
-severity = "error"
-languages = ["typescript", "tsx"]
-
-# Exemplo de regra para detectar console.log
-[rule.no-console]
-query = "(call_expression function: (member_expression object: (identifier) property: (property_identifier) @prop)) @call"
-message = "Console statement detected. Remove console.log in production code."
+# Go: defer with unchecked error (correctness)
+[rule.go-defer-unchecked-err]
+query = "(defer_statement) @defer"
+message = "Defer statement with potentially unchecked error. Verify error handling."
 severity = "warning"
-languages = ["typescript", "tsx", "javascript", "jsx"]
+category = "correctness"
+languages = ["go"]
+suggestion = "Check and handle errors explicitly in deferred calls."
+
+# Go: SQL injection via fmt.Sprintf (security)
+[rule.go-sql-sprintf-injection]
+query = "(call_expression function: (selector_expression field: (field_identifier) @method)) @call"
+message = "Potential SQL injection via fmt.Sprintf. Use parameterized queries."
+severity = "error"
+category = "security"
+languages = ["go"]
+suggestion = "Use placeholders ($1, $2) with database/sql instead of fmt.Sprintf for query strings."
+
+# Java: Runtime.exec / ProcessBuilder (security)
+[rule.java-no-runtime-exec]
+query = "(method_invocation) @call"
+message = "Runtime.exec() or ProcessBuilder detected. Validate all inputs to prevent command injection."
+severity = "error"
+category = "security"
+languages = ["java"]
+suggestion = "Use ProcessBuilder with input validation; avoid passing unsanitized user input to shell commands."
+
+# Java: Reflection (suspicious)
+[rule.java-no-reflection]
+query = "(method_invocation) @call"
+message = "Reflection usage detected (Method.invoke / Class.forName). Avoid unless strictly necessary."
+severity = "error"
+category = "suspicious"
+languages = ["java"]
+suggestion = "Use direct method calls instead of reflection; if unavoidable, validate all reflective access."
+
+# Java: SQL injection via Statement (security)
+[rule.java-sql-injection]
+query = "(method_invocation) @call"
+message = "Potential SQL injection via Statement.executeQuery with string concatenation. Use PreparedStatement."
+severity = "error"
+category = "security"
+languages = ["java"]
+suggestion = "Use PreparedStatement with parameterized queries instead of string concatenation."
+
+# Java: ObjectInputStream deserialization (security)
+[rule.java-no-objectinputstream]
+query = "(object_creation_expression) @new"
+message = "ObjectInputStream or readObject() detected. Unsafe deserialization can lead to RCE."
+severity = "error"
+category = "security"
+languages = ["java"]
+suggestion = "Use safe deserialization with input validation; consider JSON or other safe formats."
+
+# Rust: unwrap() chains (suspicious)
+[rule.rust-no-unwrap-chain]
+query = "(call_expression) @call"
+message = "Multiple chained unwrap() calls detected. Use proper error handling with ? operator or combinators."
+severity = "error"
+category = "suspicious"
+languages = ["rust"]
+suggestion = "Use the ? operator for error propagation, or combinators like .map(), .and_then(), .unwrap_or()."
+
+# Rust: unsafe block (security)
+[rule.rust-no-unsafe]
+query = "(unsafe_block) @unsafe"
+message = "Unsafe block detected. Avoid unsafe code in production unless strictly necessary."
+severity = "error"
+category = "security"
+languages = ["rust"]
+suggestion = "Minimize unsafe code; wrap in safe abstractions with thorough documentation and testing."
+
+# Rust: panic!() (suspicious)
+[rule.rust-no-panic]
+query = "(macro_invocation) @macro"
+message = "panic!() detected. Use Result-based error handling instead of panicking."
+severity = "error"
+category = "suspicious"
+languages = ["rust"]
+suggestion = "Return Result<T, E> and use the ? operator for error propagation."
+
+# Rust: std::process::exit (suspicious)
+[rule.rust-no-process-exit]
+query = "(call_expression) @call"
+message = "std::process::exit() detected. Abrupt termination can skip cleanup and drop implementations."
+severity = "error"
+category = "suspicious"
+languages = ["rust"]
+suggestion = "Use proper error propagation to main() and let the program exit naturally."

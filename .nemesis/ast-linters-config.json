@@ -1,18 +1,14 @@
 {
   "version": "1.0.0",
   "description": "Configuração de severidade para ast-linters (qualidade). Regras não bloqueam; apenas alertam.",
-  "blocking_mode": false,
+  "blocking_mode": true,
   "blocking_severity_threshold": "critical",
   "rules": {
     "any_via_alias": "warn",
     "conditional_hooks": "warn",
-    "floating_promise": "warn",
-    "console_log": "warn",
-    "jsx_target_blank_no_rel": "warn",
-    "unsafe_assignment": "warn",
-    "inline_types_in_shared_components": "warn",
-    "hooks_in_ui_components": "warn",
-    "css_inline": "warn",
-    "ui_state_in_presentation": "warn"
+    "no_floating_promises": "warn",
+    "no_console": "warn",
+    "jsx_no_target_blank": "warn",
+    "no_unsafe_assignment": "warn"
   }
 }

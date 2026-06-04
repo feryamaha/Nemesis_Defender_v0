@@ -65,6 +65,7 @@ fn load_ast_rules_config() -> Option<AstRulesConfig> {
 fn create_default_registry() -> RuleRegistry {
     let mut registry = RuleRegistry::new();
     rule_wrappers::register_default_rules(&mut registry);
+    crate::register_generated_rules(&mut registry);
     registry
 }
 

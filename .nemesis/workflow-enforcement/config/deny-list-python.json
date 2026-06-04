@@ -9,61 +9,6 @@
       "description": "Violacoes especificas de Python",
       "patterns": [
         {
-          "id": "python-001",
-          "pattern": "\\beval\\s*\\(",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "python-002",
-          "pattern": "\\bexec\\s*\\(",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "python-003",
-          "pattern": "pickle\\.loads\\s*\\(",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "python-004",
-          "pattern": "os\\.system\\s*\\(|subprocess\\.run\\s*\\([^)]*shell\\s*=\\s*True",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "python-005",
-          "pattern": "f['\"].*(?:\\{[^}]*\\})+.*['\"].*(?:SELECT|UPDATE|DELETE|INSERT|DROP)",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
           "id": "python-006",
           "pattern": "__import__\\s*\\(",
           "type": "regex",
@@ -79,17 +24,6 @@
           "pattern": "input\\s*\\([^)]*\\)(?!\\s*=)",
           "type": "regex",
           "severity": "high",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "python-008",
-          "pattern": "yaml\\.load\\s*\\([^)]*Loader\\s*=",
-          "type": "regex",
-          "severity": "critical",
           "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
           "suggestion": "",
           "rule": "",

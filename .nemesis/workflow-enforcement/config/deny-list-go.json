@@ -5,54 +5,5 @@
     "go"
   ],
   "layers": {
-    "go": {
-      "description": "Violacoes especificas de Go",
-      "patterns": [
-        {
-          "id": "go-001",
-          "pattern": "unsafe\\.Pointer",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "go-002",
-          "pattern": "panic\\s*\\(",
-          "type": "regex",
-          "severity": "high",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "go-003",
-          "pattern": "defer.*err\\s*!=\\s*nil",
-          "type": "regex",
-          "severity": "medium",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "go-004",
-          "pattern": "fmt\\.Sprintf\\s*\\([^)]*%s[^)]*(?:query|sql|SQL)",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        }
-      ]
-    }
   }
 }

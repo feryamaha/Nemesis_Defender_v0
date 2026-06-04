@@ -7,30 +7,8 @@
       "description": "Padroes universais (secrets, TODO, debug output)",
       "patterns": [
         {
-          "id": "generic-001",
-          "pattern": "(?:password|passwd|pwd|secret|token|api.?key|apikey)\\s*[:=]\\s*['\"]?[a-zA-Z0-9]{8,}['\"]?",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "generic-002",
-          "pattern": "//\\s*TODO|//\\s*FIXME|//\\s*XXX|//\\s*HACK",
-          "type": "regex",
-          "severity": "medium",
-          "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
           "id": "generic-003",
-          "pattern": "console\\.log|console\\.error|print\\s*\\(|println!|eprintln!|fmt\\.Println|log\\.Println",
+          "pattern": "print\\s*\\(|println!|eprintln!|fmt\\.Println|log\\.Println",
           "type": "regex",
           "severity": "medium",
           "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",

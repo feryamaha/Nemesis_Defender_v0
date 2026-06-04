@@ -5,54 +5,5 @@
     "java"
   ],
   "layers": {
-    "java": {
-      "description": "Violacoes especificas de Java",
-      "patterns": [
-        {
-          "id": "java-001",
-          "pattern": "Runtime\\.getRuntime\\s*\\(\\)\\.exec|ProcessBuilder",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "java-002",
-          "pattern": "reflect\\.Method\\.invoke|forName\\s*\\(",
-          "type": "regex",
-          "severity": "high",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "java-003",
-          "pattern": "Statement\\.executeQuery\\s*\\([^)]*\\+|String\\s+query\\s*=.*\\+",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "java-004",
-          "pattern": "ObjectInputStream|readObject\\s*\\(\\)|ObjectInput",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        }
-      ]
-    }
   }
 }

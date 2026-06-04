@@ -519,28 +519,6 @@ impl LintRule for NoVoidTypeReturnRule {
 
 // ===== COMPLEXITY =====
 
-pub struct NoExcessiveCognitiveComplexityRule;
-
-impl LintRule for NoExcessiveCognitiveComplexityRule {
-    fn name(&self) -> &str { "no-excessive-cognitive-complexity" }
-    fn category(&self) -> RuleCategory { RuleCategory::Suspicious }
-    fn default_severity(&self) -> Severity { Severity::Warning }
-    fn visit(&self, tree: &ParsedTree, ctx: &Context) -> Vec<Violation> {
-        visitors::no_excessive_cognitive_complexity::visit(tree, ctx.source)
-    }
-}
-
-pub struct UseMaxParamsRule;
-
-impl LintRule for UseMaxParamsRule {
-    fn name(&self) -> &str { "use-max-params" }
-    fn category(&self) -> RuleCategory { RuleCategory::Suspicious }
-    fn default_severity(&self) -> Severity { Severity::Warning }
-    fn visit(&self, tree: &ParsedTree, ctx: &Context) -> Vec<Violation> {
-        visitors::use_max_params::visit(tree, ctx.source)
-    }
-}
-
 pub struct NoExtraBooleanCastRule;
 
 impl LintRule for NoExtraBooleanCastRule {
@@ -554,17 +532,6 @@ impl LintRule for NoExtraBooleanCastRule {
 
 // ===== PERFORMANCE =====
 
-pub struct NoDeleteRule;
-
-impl LintRule for NoDeleteRule {
-    fn name(&self) -> &str { "no-delete" }
-    fn category(&self) -> RuleCategory { RuleCategory::Suspicious }
-    fn default_severity(&self) -> Severity { Severity::Warning }
-    fn visit(&self, tree: &ParsedTree, ctx: &Context) -> Vec<Violation> {
-        visitors::no_delete::visit(tree, ctx.source)
-    }
-}
-
 pub struct NoAwaitInLoopsRule;
 
 impl LintRule for NoAwaitInLoopsRule {
@@ -573,22 +540,6 @@ impl LintRule for NoAwaitInLoopsRule {
     fn default_severity(&self) -> Severity { Severity::Error }
     fn visit(&self, tree: &ParsedTree, ctx: &Context) -> Vec<Violation> {
         visitors::no_await_in_loops::visit(tree, ctx.source)
-    }
-}
-
-// ===== ACCESSIBILITY =====
-
-pub struct JsxImgAltRule;
-
-impl LintRule for JsxImgAltRule {
-    fn name(&self) -> &str { "jsx-img-alt" }
-    fn category(&self) -> RuleCategory { RuleCategory::Correctness }
-    fn default_severity(&self) -> Severity { Severity::Warning }
-    fn visit(&self, tree: &ParsedTree, ctx: &Context) -> Vec<Violation> {
-        visitors::jsx_img_alt::visit(tree, ctx.source)
-    }
-    fn supported_languages(&self) -> &[crate::language::Language] {
-        &[crate::language::Language::TypeScriptReact, crate::language::Language::JavaScriptReact]
     }
 }
 
@@ -727,14 +678,9 @@ pub fn register_default_rules(registry: &mut crate::rule_registry::RuleRegistry)
     registry.register(Box::new(NoUnsafeOptionalChainingRule));
     registry.register(Box::new(NoVoidTypeReturnRule));
     // Complexity
-    registry.register(Box::new(NoExcessiveCognitiveComplexityRule));
-    registry.register(Box::new(UseMaxParamsRule));
     registry.register(Box::new(NoExtraBooleanCastRule));
     // Performance
-    registry.register(Box::new(NoDeleteRule));
     registry.register(Box::new(NoAwaitInLoopsRule));
-    // Accessibility
-    registry.register(Box::new(JsxImgAltRule));
 
     // Python Security
     registry.register(Box::new(PythonNoEvalExecRule));

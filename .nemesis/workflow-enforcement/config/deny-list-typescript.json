@@ -18,109 +18,10 @@
       "source": "harvest + rules",
       "patterns": [
         {
-          "id": "typescript-000",
-          "pattern": ":\\s*any[\\s;,)\\]}>|&]|:\\s*any$|\\bas\\s+any\\b|<<any\\s*>|Record<<[^,]*,\\s*any\\s*>",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "Use tipos explícitos, ou tipos existentes em src/types/",
-          "rule": "",
-          "source": "harvest",
-          "enabled": true
-        },
-        {
-          "id": "typescript-001",
-          "pattern": "^import\\s+\\{[^}]*(Props|Type|Config|Interface|Options|Enum)[^}]*\\}\\s+from",
-          "type": "regex",
-          "severity": "high",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "harvest",
-          "enabled": true
-        },
-        {
-          "id": "typescript-002",
-          "pattern": "\\brequire\\s*\\(\\s*['\"][^'\"]+['\"]\\s*\\)",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "harvest",
-          "enabled": true
-        },
-        {
-          "id": "typescript-006",
-          "pattern": "module\\.(?:exports|[a-zA-Z_][a-zA-Z0-9_]*)\\s*=",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "harvest",
-          "enabled": true
-        },
-        {
-          "id": "typescript-003",
-          "pattern": "(?:fetch|axios\\.(?:get|post|put|delete))\\s*\\(\\s*[^)]+\\s*\\)(?![^;]*;\\s*(?:await|\\.then|\\.catch))",
-          "type": "regex",
-          "severity": "high",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "typescript-004",
-          "pattern": "\\b[^\\s]+!\\s*(?![!=])",
-          "type": "regex",
-          "severity": "medium",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
           "id": "typescript-005",
           "pattern": "@ts-(?:ignore|nocheck|expect-error)",
           "type": "regex",
           "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "typescript-007",
-          "pattern": "(?:const|let|var)\\s+\\w+\\s*(?::\\s*\\w+)?\\s*=\\s*[^;]+;(?![^]*\\w+)",
-          "type": "regex",
-          "severity": "medium",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "rule-012",
-          "pattern": "export function Component\\(\\{ variant \\}: \\{ variant: 'a'\\|'b' \\}\\) \\{\\}",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "rules",
-          "enabled": true
-        },
-        {
-          "id": "typescript-prefer-template",
-          "pattern": "['\"][^'\"]*['\"]\\s*\\+\\s*[a-zA-Z_$][a-zA-Z0-9_$]*|[a-zA-Z_$][a-zA-Z0-9_$]*\\s*\\+\\s*['\"][^'\"]*['\"]",
-          "type": "regex",
-          "severity": "medium",
           "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
           "suggestion": "",
           "rule": "",
@@ -167,32 +68,10 @@
           "enabled": true
         },
         {
-          "id": "react-006",
-          "pattern": "dangerouslySetInnerHTML",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
           "id": "react-007",
           "pattern": "key=\\{.*\\bindex\\b.*\\}",
           "type": "regex",
           "severity": "medium",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "react-008",
-          "pattern": "<a\\s[^>]*target=\\s*['\"]_blank['\"][^>]*(?!rel=)",
-          "type": "regex",
-          "severity": "high",
           "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
           "suggestion": "",
           "rule": "",
@@ -215,113 +94,6 @@
           "pattern": "<iframe(?![^>]*sandbox=)",
           "type": "regex",
           "severity": "high",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "rule-008",
-          "pattern": "if \\(condition\\) \\{ const \\[s, setS\\] = useState\\(\\) \\}",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "rules",
-          "enabled": true
-        },
-        {
-          "id": "rule-009",
-          "pattern": "useEffect\\(\\(\\) => \\{ setActiveArrow\\(null\\) \\}, \\[isPlaying\\]\\)",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "rules",
-          "enabled": true
-        },
-        {
-          "id": "rule-010",
-          "pattern": "let hasIcon = false",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "rules",
-          "enabled": true
-        },
-        {
-          "id": "rule-011",
-          "pattern": "useEffect\\(\\(\\) => \\{ if \\(cond\\) openModal\\(\\) \\}, \\[cond\\]\\) // openModal missing",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "rules",
-          "enabled": true
-        },
-        {
-          "id": "react-state-ui-001",
-          "pattern": "\\buseState\\b|\\buseEffect\\b|\\buseReducer\\b|\\buseContext\\b",
-          "type": "regex",
-          "severity": "critical",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "rules",
-          "enabled": true
-        }
-      ]
-    },
-    "nextjs": {
-      "description": "Violações específicas de Next.js App Router",
-      "source": "harvest + rules",
-      "patterns": [
-        {
-          "id": "nextjs-005",
-          "pattern": "import.*Head.*from.*['\"]next/head['\"]",
-          "type": "regex",
-          "severity": "critical",
-          "context": "_document",
-          "contextType": "path_contains",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "harvest",
-          "enabled": true
-        },
-        {
-          "id": "nextjs-006",
-          "pattern": "<img(?![^>]*(?:src=.*\\.(?:png|jpg|jpeg|gif|webp|svg)|className=|alt=))",
-          "type": "regex",
-          "severity": "high",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "Substitua por: import Image from \"next/image\"",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "nextjs-007",
-          "pattern": "<script(?![^>]*(?:async|defer))",
-          "type": "regex",
-          "severity": "high",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "manual",
-          "enabled": true
-        },
-        {
-          "id": "nextjs-008",
-          "pattern": "<link\\s+rel=[\"']stylesheet['\"]",
-          "type": "regex",
-          "severity": "critical",
           "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
           "suggestion": "",
           "rule": "",

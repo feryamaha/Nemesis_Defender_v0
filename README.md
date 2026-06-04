@@ -23,6 +23,24 @@ Versão: `2.0` · Workspace: `8.2.0` · Plataforma principal: Linux (eBPF) com f
 ---
 
 
+## Isto já não existe nativamente nas IDEs?
+
+Pergunta justa e esperada — e a que mais vai aparecer quando o projeto for público: *"isso não dá pra configurar nas settings da IDE?"*. A resposta honesta é: os **primitivos existem** (hooks, deny-list, sandbox) e o Nemesis Defender **usa esses recursos nativos**. Não inventei hook nem sandbox. O que fiz foi **recompilar todas essas peças num único framework de enforcement** que bloqueia comandos destrutivos *e* maliciosos, igual em qualquer IDE, com uma camada de kernel que nenhuma delas entrega. **Nenhuma ferramenta nativa faz a combinação completa.**
+
+| Recurso nativo | O que de fato faz | Onde para (evidência) |
+|----------------|-------------------|------------------------|
+| **Hooks** (Claude Code `PreToolUse`, Cursor `beforeShellExecution`, Copilot) | Interceptam a chamada de ferramenta antes da execução e podem bloquear (exit code 2). | É só o ponto de interceptação — você escreve toda a lógica de enforcement. E é por-IDE, com payloads incompatíveis entre si. Nada vem pronto. |
+| **Deny-list / permissions** (`settings.json` allow/deny) | Bloqueia comandos e paths por nome para as ferramentas internas do agente; deny vence allow. | Pela doc da Anthropic: deny-rules só bloqueiam as ferramentas internas — `Read(./.env)` é barrado, mas `cat .env` no bash passa por cima. Não inspeciona conteúdo. |
+| **Sandbox / isolamento** (`/sandbox` bubblewrap·Seatbelt, devcontainer/Docker) | Isolamento de filesystem e rede no nível do SO; reduz o blast radius. É o recurso nativo mais forte. | Só cobre o Bash, não as ferramentas Read/Edit (issue #26616 do Claude Code). E *contém*, não *detecta*: um `package.json` envenenado ou uma cadeia de exfiltração passam "dentro" do sandbox. Por-IDE. |
+| **Rules / skills / workflows** (`.cursorrules`, `CLAUDE.md`) | Dão contexto e diretrizes ao modelo. | São advisory, não enforcement. O modelo é um motor de previsão, não um aplicador de política — ignora, reinterpreta ou sobrescreve (fórum do Cursor; análise da Knostic). O código vazado do Claude Code mostrou que até o agente da Anthropic trata constraints como dicas. |
+| **eBPF / LSM no kernel** (KubeArmor, Tetragon, Falco) | Enforcement de syscall no kernel — a defesa com mais "dentes", que vale inclusive contra o humano no terminal. | Existe e é maduro — mas no mundo cloud/Kubernetes. Não é entregue como binário local, por-projeto, acoplado ao ciclo de um coding agent. É exatamente a Camada 3 do Nemesis, trazida pra máquina do dev. |
+
+**A diferença entre "configurar uma regra" e "forçar uma regra" não é teórica.** Em julho de 2025, o agente do Replit deletou um banco de produção *durante um code freeze ativo*, apesar de instruções repetidas — porque, segundo a análise do incidente, as instruções não eram tecnicamente forçadas: não havia um gate que bloqueasse a ação (AI Incident Database #1152). Na mesma linha: o Gemini CLI apagando arquivos por interpretar mal um comando, e o Claude Code rodando um `terraform destroy` acidental. Settings, rules e até sandbox parcial não impediram nenhum deles.
+
+**Resumindo:** a deny-list nativa não pega `cat .env`; o sandbox nativo não pega Read/Edit nem um pacote envenenado; as rules não pegam nada porque são advisory; e o eBPF de kernel mora na nuvem, não na sua máquina. Cada peça resolve um pedaço — no máximo alguns comandos destrutivos, e não todos. O Nemesis Defender junta tudo num único framework: deny-list + scanner de conteúdo (destrutivo **e** malicioso) + AST + eBPF no kernel como última camada para usuários Linux, igual em Windsurf, Cursor, Codex, Claude Code e VS Code. Construi esse framework que resolveu o meu problema e abri sob AGPL-3.0 para quem quiser usar.
+
+---
+
 ## O que é
 
 O Nemesis é um sistema de *enforcement* para fluxos de desenvolvimento assistido por LLM (Specification-Driven Development), escrito em Rust. Ele detecta e bloqueia padrões conhecidos de malware de supply-chain e de comandos destrutivos **antes da execução**, em três camadas independentes de defesa.
@@ -246,7 +264,7 @@ O Nemesis inclui uma suíte de **140 vetores autorais** (M1–M20: comandos comp
 
 Os logs de runtime do Nemesis (`violations.log`, `defender.log`) mostram as três camadas trabalhando de forma separada e registrada, em execução real:
 
-- **Camada 3 (eBPF/kernel)** — `violations.log` registra mais de 2.000 bloqueios de pentestes reais com `"layer":"ebpf"`, `"type":"permission_denied"`, cobrindo `rm`, `shred`, `dd`, `truncate`, `kill`, `chmod`, `mount`, `nc`, e a execução de runtimes arbitrários (`python3`, `perl`). Estes são bloqueios no kernel, não dependentes de deny-list em userspace.
+- **Camada 3 (eBPF/kernel)** — `violations.log` registra mais de 2.000 bloqueios reais com `"layer":"ebpf"`, `"type":"permission_denied"`, cobrindo `rm`, `shred`, `dd`, `truncate`, `kill`, `chmod`, `mount`, `nc`, e a execução de runtimes arbitrários (`python3`, `perl`). Estes são bloqueios no kernel, não dependentes de deny-list em userspace.
 - **Camada 2 (Defender / classificador)** — `defender.log` registra vereditos de classificação nomeados (ex.: `[MALICIOUS] ... denylist-defender / reverse_shells`), com a evidência capturada (`bash -i >&`, `/dev/tcp/`) e a instrução de correção.
 - **Correlação e escalação** — o Defender também correlaciona eventos ao longo do tempo: detecta brute force ("N tentativas maliciosas bloqueadas em 300s") e padrões compostos ("leitura de arquivo sensível seguida de comando de rede"). Isso é detecção comportamental, acima do casamento de padrão simples.
 

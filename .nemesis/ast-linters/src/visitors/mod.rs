@@ -44,16 +44,10 @@ pub mod no_unsafe_optional_chaining;
 pub mod no_void_type_return;
 
 // Complexity
-pub mod no_excessive_cognitive_complexity;
-pub mod use_max_params;
 pub mod no_extra_boolean_cast;
 
 // Performance
-pub mod no_delete;
 pub mod no_await_in_loops;
-
-// Accessibility
-pub mod jsx_img_alt;
 
 // Python (security and correctness)
 pub mod python;

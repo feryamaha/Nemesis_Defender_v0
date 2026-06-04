@@ -9,7 +9,9 @@ pub enum Language {
     JavaScript,
     JavaScriptReact,
     Python,
-    // Etapa 4: Go,
+    Go,
+    Java,
+    Rust,
 }
 
 impl Language {
@@ -21,6 +23,9 @@ impl Language {
             Language::JavaScript => "javascript",
             Language::JavaScriptReact => "javascript",
             Language::Python => "python",
+            Language::Go => "go",
+            Language::Java => "java",
+            Language::Rust => "rust",
         }
     }
 
@@ -46,7 +51,9 @@ pub fn detect_language(file_path: &str) -> Option<Language> {
         "jsx" => Some(Language::JavaScriptReact),
         "py" => Some(Language::Python),
         "pyw" => Some(Language::Python),
-        // Etapa 4: "go" => Some(Language::Go),
+        "go" => Some(Language::Go),
+        "java" => Some(Language::Java),
+        "rs" => Some(Language::Rust),
         _ => None,
     }
 }
@@ -79,8 +86,8 @@ mod tests {
 
     #[test]
     fn test_detect_unsupported() {
-        assert_eq!(detect_language("file.rs"), None);
-        assert_eq!(detect_language("file.go"), None);
+        assert_eq!(detect_language("file.rb"), None);
+        assert_eq!(detect_language("file.kt"), None);
         assert_eq!(detect_language(""), None);
     }
 

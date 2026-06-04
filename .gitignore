@@ -55,7 +55,6 @@ yarn-error.log*
 
 # Nemesis specific
 .nemesis/target/
-.nemesis/**/target/
 .claude/target/
 .openclaude/target/
 .nemesis/logs/
