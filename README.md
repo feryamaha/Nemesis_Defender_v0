@@ -60,7 +60,7 @@ A premissa técnica: instrução em texto (`"não rode comandos destrutivos"`) �
 |--------|-----------|-----------|-----|
 | **Pretool / Posttool Hook** | Antes do `Bash.run()` / file-write | Deny-list JSON + exit code 2 | Windows, macOS, Linux |
 | **Nemesis Defender** (scanner) | Em file-write e em comandos | 6 layers: AST, byte, regex, denylist, entropia, decoder | Windows, macOS, Linux |
-| **ast-linters** (qualidade) | Em file-write de código | Visitors tree-sitter + `rules.toml` | Windows, macOS, Linux |
+| **ast-linters** (qualidade) | Em file-write de código | Visitors tree-sitter + modelo semântico próprio + `rules.toml` | Windows, macOS, Linux |
 | **eBPF Kernel LSM** | Syscalls no kernel | BPF LSM (`bprm_check_security`), retorna `-EPERM` | **Linux apenas** |
 
 **Tudo parte do Pretool.** Sem o pretool configurado, o Nemesis não roda - as trilhas de segurança (Defender) e de qualidade (ast-linters) são acionadas por ele. A camada **eBPF** é a única independente: opera no kernel como rede de contenção adicional, segurando comandos destrutivos caso o pretool seja desligado ou contornado. Em macOS e Windows, sem eBPF, a defesa se concentra nas trilhas do pretool.
