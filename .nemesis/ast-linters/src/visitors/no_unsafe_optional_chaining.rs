@@ -22,7 +22,7 @@ fn visit_node(cursor: &mut tree_sitter::TreeCursor, source: &str, violations: &m
     }
 }
 
-fn check_optional_chain(node: &tree_sitter::Node, source: &str, violations: &mut Vec<Violation>) {
+fn check_optional_chain(node: &tree_sitter::Node, _source: &str, violations: &mut Vec<Violation>) {
     let parent = node.parent();
     if parent.is_none() { return; }
     let parent = parent.unwrap();

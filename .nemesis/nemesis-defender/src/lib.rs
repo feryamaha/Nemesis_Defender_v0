@@ -89,22 +89,22 @@ impl DefenderResult {
 // PATH EXCLUSIONS
 // ─────────────────────────────────────────────
 
-/// Paths/substrings that are exempt from scanning.
-/// Defender não deve escanear, alertar ou remover estes arquivos.
+/// Paths/substrings que são isentos de scan. O defender não deve escanear,
+/// alertar ou remover estes arquivos.
 ///
-/// Duas categorias, mesmo mecanismo (substring no path completo):
-/// 1. Pastas de pentest/documentação de teste (payloads catalogados).
-/// 2. Documentação canônica do projeto, mantida exclusivamente por humanos.
-///    Estes arquivos descrevem os próprios comandos que o Nemesis bloqueia
-///    (ex.: `rm -rf`, `curl | bash`, configs de IDE, exemplos de prompt
-///    injection) como conteúdo de documentação — não como payload real.
-///    Sem esta isenção, o daemon gera falso positivo e deleta README/index.
-const EXCLUDED_PATH_SUBSTRINGS: &[&str] = &[
-    // 1. Pentest / documentação de teste
+/// Marcadores de pasta de pentest/documentação de teste (payloads catalogados).
+/// Casados como substring em qualquer ponto do path.
+const EXCLUDED_DIR_MARKERS: &[&str] = &[
     "pentest-nemesis-control",
     "PENTEST-NEMESIS",
     "defender-exclude.txt",
-    // 2. Documentação canônica do projeto
+];
+
+/// Documentação canônica do projeto, mantida exclusivamente por humanos.
+/// Estes nomes só são isentados quando o arquivo está na RAIZ do projeto —
+/// NUNCA em subpastas (ex.: `docs/CONTRIBUTING.md`, `src/docs/SECURITY.md`),
+/// pois um atacante poderia esconder payloads reutilizando estes nomes.
+const CANONICAL_ROOT_DOCS: &[&str] = &[
     "README.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
@@ -113,14 +113,35 @@ const EXCLUDED_PATH_SUBSTRINGS: &[&str] = &[
     "index.html",
 ];
 
+/// Verifica se o diretório-pai de `path` é a raiz do projeto
+/// (contém marcador `.git` ou `.nemesis`).
+fn parent_is_project_root(path: &Path) -> bool {
+    let parent = match path.parent() {
+        Some(p) if !p.as_os_str().is_empty() => p.to_path_buf(),
+        // Path relativo sem componente de diretório (ex.: "README.md") → raiz (cwd).
+        _ => std::env::current_dir().unwrap_or_else(|_| PathBuf::from(".")),
+    };
+    parent.join(".git").exists() || parent.join(".nemesis").exists()
+}
+
 /// Returns true if the path should be skipped by the defender.
 pub fn is_path_excluded(path: &Path) -> bool {
     let path_str = path.to_string_lossy();
-    for substr in EXCLUDED_PATH_SUBSTRINGS {
+
+    // 1. Pastas de pentest/documentação de teste — isentas em qualquer nível.
+    for substr in EXCLUDED_DIR_MARKERS {
         if path_str.contains(substr) {
             return true;
         }
     }
+
+    // 2. Documentação canônica — isenta APENAS na raiz do projeto.
+    if let Some(basename) = path.file_name().and_then(|n| n.to_str()) {
+        if CANONICAL_ROOT_DOCS.contains(&basename) && parent_is_project_root(path) {
+            return true;
+        }
+    }
+
     false
 }
 

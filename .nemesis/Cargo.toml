@@ -4,6 +4,7 @@ members = [
     "ast-linters",
     "ebpf-kernel",
     "nemesis-defender",
+    "nemesis-doctor",
 ]
 
 [package]

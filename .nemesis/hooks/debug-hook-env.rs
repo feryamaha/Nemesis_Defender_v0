@@ -13,6 +13,7 @@
 use std::env;
 use std::fs::OpenOptions;
 use std::io::{self, Read, Write};
+use std::path::PathBuf;
 use std::process::{Command, Stdio};
 
 fn main() {
@@ -76,8 +77,12 @@ fn main() {
     let _ = writeln!(log_file, "");
     let _ = writeln!(log_file, "=== ENCADEANDO NEMESIS ===");
     
-    // Encadear para o hook real (mesmo caminho hardcoded do original)
-    let hook_path = "/Users/fernandomoreira/devproj/Portal-Dental-UNI_Auclan-Design/.nemesis/hooks/nemesis-pretool-check.sh";
+    // Encadear para o hook real (path relativo ao diretorio atual)
+    let hook_path = std::env::current_dir()
+        .map(|p| p.join(".nemesis").join("hooks").join("nemesis-pretool-check.sh"))
+        .unwrap_or_else(|_| PathBuf::from(".nemesis/hooks/nemesis-pretool-check.sh"))
+        .to_string_lossy()
+        .to_string();
     
     let output = Command::new("bash")
         .arg(hook_path)

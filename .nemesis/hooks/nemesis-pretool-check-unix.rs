@@ -323,9 +323,7 @@ fn translate_devin_to_nemesis(input_json: &str) -> Result<String, String> {
         "Shell" => "pre_run_command",
         "StrReplace" => "pre_write_code",
         "Glob" => "pre_read_code",
-        "Grep" => "pre_read_code",
         "Delete" => "pre_write_code",
-        "EditNotebook" => "pre_write_code",
         "SemanticSearch" => "pre_read_code",
         "Task" => "pre_run_command",
         "TabRead" => "pre_read_code",
@@ -403,43 +401,6 @@ fn translate_devin_to_nemesis(input_json: &str) -> Result<String, String> {
     serde_json::to_string(&nemesis_data).map_err(|e| e.to_string())
 }
 
-fn check_deny_list(deny_list_path: &Path, command: &str) -> Option<(String, String)> {
-    if !deny_list_path.exists() {
-        return None;
-    }
-
-    let content = match fs::read_to_string(deny_list_path) {
-        Ok(c) => c,
-        Err(_) => return None,
-    };
-
-    let deny_list: DenyList = match serde_json::from_str(&content) {
-        Ok(d) => d,
-        Err(_) => return None,
-    };
-
-    if let Some(layers) = deny_list.layers {
-        if let Some(commands_layer) = layers.get("commands") {
-            for pattern in &commands_layer.patterns {
-                if pattern.enabled == Some(false) {
-                    continue;
-                }
-                if pattern.pattern_type != "regex" {
-                    continue;
-                }
-
-                if let Ok(regex) = Regex::new(&pattern.pattern) {
-                    if regex.is_match(command) {
-                        return Some((pattern.message.clone(), pattern.suggestion.clone().unwrap_or_default()));
-                    }
-                }
-            }
-        }
-    }
-
-    None
-}
-
 /// Retorna todos os arquivos .json em um diretório (ordenados por nome para determinismo).
 fn get_all_json_files(dir: &Path) -> Vec<PathBuf> {
     let mut paths = Vec::new();
@@ -458,7 +419,7 @@ fn get_all_json_files(dir: &Path) -> Vec<PathBuf> {
 /// Valida o conteúdo de código contra TODAS as deny-lists da pasta config.
 /// Itera TODAS as layers (exceto "commands" que é para bash) e todos os patterns regex.
 /// Retorna o primeiro hit encontrado.
-fn check_content_all_deny_lists(file_path: &str, content: &str, config_dir: &Path) -> Option<DenyPattern> {
+fn check_content_all_deny_lists(_file_path: &str, content: &str, config_dir: &Path) -> Option<DenyPattern> {
     let deny_list_paths = get_all_json_files(config_dir);
 
     for path in deny_list_paths {
@@ -698,7 +659,7 @@ fn validate_redirect_content(command: &str) -> Option<String> {
         return None;
     }
 
-    let (target_file, content) = match extract_redirect_content(command) {
+    let (_target_file, content) = match extract_redirect_content(command) {
         Some(t) => t,
         None => return None,
     };
@@ -923,23 +884,9 @@ fn run_pretool() {
 
     let permission_state_file = project_dir.join(".nemesis").join("runtime").join("permission-gate.state.json");
 
-    let timestamp = chrono::Local::now().format("%Y-%m-%dT%H:%M:%S%.3f%:z").to_string();
+    let _timestamp = chrono::Local::now().format("%Y-%m-%dT%H:%M:%S%.3f%:z").to_string();
 
-    let deny_list_path = project_dir.join(".nemesis").join("denylist").join("deny-list.json");
-
-    // ============================================================
-    // DETECAO DE IDE
-    // ============================================================
-    let mut ide_type = "devin".to_string();
-
-    if env::var("CLAUDE_PROJECT_DIR").is_ok() || env::var("CLAUDE_CODE").is_ok() {
-        ide_type = "claude_code".to_string();
-    } else if env::var("VSCODE_AGENT_HOST").is_ok() || env::var("GITHUB_COPILOT_HOOK").is_ok() {
-        ide_type = "vscode_copilot".to_string();
-    } else if env::var("CURSOR_USER_DATA_DIR").is_ok() || env::var("CURSOR_TRACE").is_ok() {
-        ide_type = "cursor".to_string();
-    }
-
+    let _deny_list_path = project_dir.join(".nemesis").join("denylist").join("deny-list.json");
 
     // ============================================================
     // VERIFICACAO 1: Permission gate
@@ -1085,7 +1032,7 @@ fn run_pretool() {
     }
 
     if !stdin_peek.is_empty() {
-        let preview = &stdin_peek[..stdin_peek.len().min(100)];
+        let _preview = &stdin_peek[..stdin_peek.len().min(100)];
 
         match translate_devin_to_nemesis(&stdin_peek) {
             Ok(translated) => {
@@ -1461,7 +1408,7 @@ fn run_pretool() {
         // 3. Validadores específicos em TODOS os segmentos
         for segment in &all_segments {
             // Redirect TS/TSX
-            if let Some(violation) = validate_redirect_content(segment) {
+            if let Some(_violation) = validate_redirect_content(segment) {
                 nemesis_block(
                     "NEMESIS SEC - COMANDO NAO PERMITIDO",
                     Some("Use a edit tool do IDE para escrever arquivos TypeScript")
@@ -1518,7 +1465,7 @@ fn run_pretool() {
         // ============================================================
         let config_dir = project_dir.join(".nemesis").join("denylist");
         if let Some(quality_hit) = check_content_all_deny_lists(file_path_str, content_str, &config_dir) {
-            let rule_msg = quality_hit.rule.as_deref().unwrap_or(".devin/rules/README.md");
+            let _rule_msg = quality_hit.rule.as_deref().unwrap_or(".devin/rules/README.md");
             let suggestion = quality_hit.suggestion.as_deref().unwrap_or("Revise o padrao de codigo conforme as convencoes do projeto.");
             write_session_event("Write", file_path_str, true, 1);
             nemesis_block(

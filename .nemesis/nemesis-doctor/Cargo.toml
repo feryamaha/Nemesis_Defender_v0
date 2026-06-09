@@ -1,0 +1,13 @@
+[package]
+name = "nemesis-doctor"
+version = "8.2.0"
+edition = "2021"
+authors = ["Fernando Moreira"]
+description = "Nemesis Doctor - health diagnostics for the Nemesis Framework"
+
+[[bin]]
+name = "nemesis-doctor"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = "1"

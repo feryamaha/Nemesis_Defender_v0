@@ -1,5 +1,4 @@
 use regex::Regex;
-use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::path::Path;
@@ -33,7 +32,6 @@ struct ValidationResult {
     allowed: bool,
     reason: String,
     violated_rules: Vec<String>,
-    severity: String,
     suggestions: Vec<String>,
 }
 
@@ -218,7 +216,6 @@ fn basic_validation(action: &Action) -> ValidationResult {
                     allowed: true,
                     reason: "Sem conteudo para validar".to_string(),
                     violated_rules: vec![],
-                    severity: "info".to_string(),
                     suggestions: vec![],
                 };
             }
@@ -257,7 +254,6 @@ fn basic_validation(action: &Action) -> ValidationResult {
                 "Acao permitida".to_string()
             },
             violated_rules: violations,
-            severity: if has_violations { "error".to_string() } else { "info".to_string() },
             suggestions,
         };
     }
@@ -273,7 +269,6 @@ fn basic_validation(action: &Action) -> ValidationResult {
                     allowed: false,
                     reason,
                     violated_rules: vec![rule],
-                    severity: "error".to_string(),
                     suggestions: vec![
                         "Use a ferramenta Write ou Edit para criar arquivos com validacao de conteudo.".to_string(),
                         "Arquivos de configuracao criticos (tsconfig.json, package.json) nao podem ser sobrescritos via Bash.".to_string(),
@@ -288,7 +283,6 @@ fn basic_validation(action: &Action) -> ValidationResult {
                 allowed: false,
                 reason: format!(r#"NEMESIS BLOCKED: Atualizacao em massa de dependencias bloqueada — "{}""#, blocked_match),
                 violated_rules: vec!["mass-dependency-update-blocked".to_string()],
-                severity: "error".to_string(),
                 suggestions: vec![
                     "Atualizacoes em massa podem quebrar React, Next.js e TypeScript por incompatibilidade.".to_string(),
                     "Use atualizacao cirurgica: bun add [pacote]@[versao-minima-segura]".to_string(),
@@ -305,7 +299,6 @@ fn basic_validation(action: &Action) -> ValidationResult {
                 allowed: false,
                 reason: "NEMESIS BLOCKED: Comando bash destrutivo de sistema detectado".to_string(),
                 violated_rules: vec!["destructive-bash-command".to_string()],
-                severity: "error".to_string(),
                 suggestions: vec!["Evitar comandos destrutivos sem autorizacao explicita do usuario".to_string()],
             };
         }
@@ -315,7 +308,6 @@ fn basic_validation(action: &Action) -> ValidationResult {
         allowed: true,
         reason: "Acao permitida".to_string(),
         violated_rules: vec![],
-        severity: "info".to_string(),
         suggestions: vec![],
     }
 }

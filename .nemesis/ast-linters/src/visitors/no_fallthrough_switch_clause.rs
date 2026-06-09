@@ -115,7 +115,7 @@ fn check_switch_statement(
     }
 }
 
-fn has_statements(node: &tree_sitter::Node, source: &str) -> bool {
+fn has_statements(node: &tree_sitter::Node, _source: &str) -> bool {
     let mut cursor = node.walk();
     let children: Vec<_> = node.children(&mut cursor).collect();
     // A case has statements if it has more than just the 'case' keyword and value

@@ -26,6 +26,8 @@
 //! - Não permite avançar se alguma fase anterior declarou convergencia: NÃO
 //! Este é o mecanismo central do novo modelo de execução.
 
+#![allow(dead_code)]
+
 use chrono::Utc;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
@@ -614,8 +616,8 @@ fn validate_code_content(file_path: &str, new_string: &str) -> ValidationResult 
         };
     }
 
-    let file_name = path_buf.file_name().and_then(|n| n.to_str()).unwrap_or("").to_string();
-    let normalized_path = file_path.replace('\\', "/");
+    let _file_name = path_buf.file_name().and_then(|n| n.to_str()).unwrap_or("").to_string();
+    let _normalized_path = file_path.replace('\\', "/");
 
     // === DENY-LIST DINÂMICA ===
     if let Some(deny_hit) = check_content_deny_list(file_path, new_string) {
@@ -736,18 +738,17 @@ fn check_content_deny_list(file_path: &str, content: &str) -> Option<DenyPattern
 // VIOLATION LOGGER
 // =============================================================================
 
-static mut CURRENT_LLM_MODEL: Option<String> = None;
+static CURRENT_LLM_MODEL: std::sync::OnceLock<String> = std::sync::OnceLock::new();
 
 fn set_llm_model(model: &str) {
-    unsafe {
-        CURRENT_LLM_MODEL = Some(model.to_string());
-    }
+    let _ = CURRENT_LLM_MODEL.set(model.to_string());
 }
 
 fn get_current_llm_model() -> String {
-    unsafe {
-        CURRENT_LLM_MODEL.clone().unwrap_or_else(|| detect_devin_llm_model())
-    }
+    CURRENT_LLM_MODEL
+        .get()
+        .cloned()
+        .unwrap_or_else(|| detect_devin_llm_model())
 }
 
 fn ensure_log_directory() {
@@ -1007,7 +1008,7 @@ fn check_src_lock(file_path: &str) -> Option<ValidationResult> {
             return None;
         }
 
-        let approval_needed = required_artifacts.join(" ou ");
+        let _approval_needed = required_artifacts.join(" ou ");
         return Some(ValidationResult {
             valid: false,
             reason: Some(format!(
@@ -1976,7 +1977,7 @@ fn check_folder_file_access(
     None // Permitido
 }
 
-fn validate_file_operation(file_path: &str, action: &str, content: Option<&str>) -> ValidationResult {
+fn validate_file_operation(file_path: &str, action: &str, _content: Option<&str>) -> ValidationResult {
     if file_path.is_empty() {
         return ValidationResult {
             valid: false,
@@ -2088,7 +2089,7 @@ fn validate_file_operation(file_path: &str, action: &str, content: Option<&str>)
         }
 
         // Check permission gate
-        let (allowed, reason) = can_modify_file(file_path);
+        let (allowed, _reason) = can_modify_file(file_path);
         if !allowed {
             return ValidationResult {
                 valid: false,
@@ -2314,7 +2315,7 @@ fn validate_command(command: &str) -> ValidationResult {
 
     // DENY-LIST: validate_full_command (ponto único — decomposição total)
     let patterns = get_command_patterns();
-    if let Some((message, suggestion)) = validate_full_command(command, &patterns, &ebpf_cmds) {
+    if let Some((_message, suggestion)) = validate_full_command(command, &patterns, &ebpf_cmds) {
         return ValidationResult {
             valid: false,
             reason: Some("NEMESIS SEC - COMANDO NAO PERMITIDO".to_string()),
@@ -2366,7 +2367,7 @@ async fn async_main() -> anyhow::Result<i32> {
 
     let data: PreToolInput = match serde_json::from_str(&input) {
         Ok(d) => d,
-        Err(e) => {
+        Err(_e) => {
             eprintln!("NEMESIS ERROR: JSON invalido recebido");
             eprintln!("Input recebido: {}", &input[..input.len().min(200)]);
             return Ok(1);

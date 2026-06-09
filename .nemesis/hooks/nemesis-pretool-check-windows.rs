@@ -22,7 +22,6 @@
 
 use std::env;
 use std::io::{self, Read, Write};
-use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 // ============================================================
@@ -105,7 +104,7 @@ fn main() {
     match child.wait_with_output() {
         Ok(output) => {
             let exit_code = output.status.code().unwrap_or(0);
-            let stdout_str = String::from_utf8_lossy(&output.stdout);
+            let _stdout_str = String::from_utf8_lossy(&output.stdout);
             let stderr_str = String::from_utf8_lossy(&output.stderr);
 
             // Se exit code 2, bloquear com mensagem no stderr (formato para IA)

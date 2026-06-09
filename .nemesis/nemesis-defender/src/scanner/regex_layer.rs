@@ -52,6 +52,11 @@ const UNIVERSAL_PATTERNS: &[RegexPattern] = &[
         message: "String.fromCharCode array detected. Known obfuscation technique to reconstruct commands at runtime.",
     },
     RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"Buffer\.from\s*\(\s*['"][A-Za-z0-9+/=]+['"]\s*,\s*['"]base64['"]\s*\)\s*\.\s*toString"#,
+        message: "Base64 string literal decoded to text via Buffer.from(...).toString(). Runtime obfuscation primitive — the decoded string is typically passed to eval/exec in a later statement.",
+    },
+    RegexPattern {
         visitor: "self_clean",
         pattern: r#"(fs\.unlink|fs\.unlinkSync|require\('fs'\)\.unlink).*__filename"#,
         message: "Self-deletion pattern: unlinks own file (__filename). Forensic evasion — malware deletes itself after execution.",

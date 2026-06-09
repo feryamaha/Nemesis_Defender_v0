@@ -31,6 +31,7 @@ O Nemesis **age, não pergunta**. Quando instalado em um projeto que já contém
 - [Arquitetura em camadas](#arquitetura-em-camadas)
 - [Requisitos](#requisitos)
 - [Instalação](#instalação)
+- [Nemesis Doctor](#nemesis-doctor)
 - [Configuração do Pretool por IDE](#configuração-do-pretool-por-ide)
 - [Configuração da camada eBPF (Linux)](#configuração-da-camada-ebpf-linux)
 - [Controle de paths](#controle-de-paths)
@@ -112,6 +113,46 @@ ls -la .nemesis/target/release/ | grep nemesis
 Este é o passo que efetivamente liga o Nemesis. Cada IDE tem seu formato - ver a próxima seção. O ponto comum: o hook de pre-tool precisa apontar para o **caminho absoluto** do binário do Nemesis no seu projeto.
 
 > **Caminho errado ou ausente = o Nemesis não roda.** A IDE simplesmente não invoca o hook, e você fica desprotegido sem perceber. Sempre confirme que o caminho no `command` aponta para o binário real (`nemesis-pretool-check-unix`) no seu projeto.
+
+> **Manual de operações unificado:** para instruções completas de compilação por módulo, configuração do eBPF, operação do daemon, pentest e checklist de instalação em nova máquina, consulte [`.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md`](.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md).
+
+---
+
+## Nemesis Doctor
+
+O **Nemesis Doctor** é o diagnóstico automatizado de saúde do framework. Ele executa 7 verificações estruturadas e emite um veredito global (`SAUDAVEL`, `ATENCAO` ou `CRITICO`).
+
+### Como executar
+
+```bash
+cd .nemesis && cargo build --release -p nemesis-doctor
+./target/release/nemesis-doctor
+```
+
+Modo rápido (pula compilação, testes e pentest):
+```bash
+./target/release/nemesis-doctor --quick
+```
+
+### O que ele verifica
+
+| Grupo | O que verifica |
+|-------|----------------|
+| **G1** | Compilação (`cargo check --workspace`) — 0 erros, 0 warnings |
+| **G2** | Testes unitários (`cargo test --workspace`) — pass/fail |
+| **G3** | Inventário de binários em `target/release/` (11 esperados) |
+| **G4** | Scaffold da IDE — hooks pretool/posttool configurados |
+| **G5** | eBPF Kernel LSM (Linux) — BPF LSM ativo, capabilities, cgroup |
+| **G6** | Daemon `nemesis-defender` — PID vivo, inotify ativo |
+| **G7** | Pentest Red-Team — taxa de bloqueio contra 178 casos de ataque |
+
+### Vereditos
+
+- **SAUDAVEL** — todos os grupos OK. Sistema pronto.
+- **ATENCAO** — um ou mais grupos com WARN (ex.: capabilities ausentes). Funciona, mas merece atenção.
+- **CRITICO** — erro bloqueante (compilação falhou, daemon morto, pentest < 90%). Não lançar.
+
+> **Regra:** após qualquer recompilação que afete o `nemesis-ebpf-daemon`, **reaplique as capabilities** (`setcap`) — elas se perdem quando o inode do binário é recriado.
 
 ---
 

@@ -22,7 +22,7 @@ struct Backend {
 
 #[tower_lsp::async_trait]
 impl LanguageServer for Backend {
-    async fn initialize(&self, params: InitializeParams) -> Result<InitializeResult> {
+    async fn initialize(&self, _params: InitializeParams) -> Result<InitializeResult> {
         eprintln!("[NEMESIS-LSP] Initializing server");
         
         Ok(InitializeResult {

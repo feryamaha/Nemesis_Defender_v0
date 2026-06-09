@@ -1,0 +1,209 @@
+# NEMESIS — Manual de Operação Unificado
+
+> **Documento canônico de operação do Nemesis Framework v2.0.**
+> Substitui `doc-cargo-compile-binary.md` e `pentest-nemesis-control/instruction-daemon+ebpf-info.md` (obsoletos).
+> Todos os caminhos são relativos à raiz do projeto: `/home/fernando/devproj/Nemesis_Defender_v2.0`.
+
+---
+
+## 0. Diagnóstico automático (recomendado)
+
+Antes de qualquer checagem manual, rode o diagnóstico estruturado:
+
+```bash
+# Diagnóstico completo (compilação + testes + inventário + scaffold + eBPF + daemon + pentest)
+.nemesis/target/release/nemesis-doctor
+
+# Modo rápido (pula G1 compile, G2 testes e G7 pentest)
+.nemesis/target/release/nemesis-doctor --quick
+```
+
+O `nemesis-doctor` retorna um relatório com 7 grupos e um veredito global
+(`SAUDAVEL` / `ATENCAO` / `CRITICO`) e exit code (0 = ok/warn, 1 = crítico).
+
+| Grupo | O que verifica |
+|-------|----------------|
+| G1 | Compilação (`cargo check --workspace`) |
+| G2 | Testes unitários (`cargo test --workspace`) |
+| G3 | Inventário de binários em `target/release` |
+| G4 | Scaffold da IDE (`hooks.json`/`settings.json` pretool/posttool) |
+| G5 | eBPF Kernel LSM (somente Linux) |
+| G6 | Daemon `nemesis-defender` (PID + inotify) |
+| G7 | Pentest Red-Team (`run-pentest.sh` + parse CSV) |
+
+As seções abaixo são o **checklist manual** para inspeção pontual.
+
+---
+
+## 1. Estrutura do Workspace
+
+Workspace Cargo `nemesis` (v8.2.0) com membros:
+
+```
+.nemesis/
+├── Cargo.toml          # workspace + pacote raiz (hooks/CLI)
+├── ast-linters/        # análise semântica AST (lib, sem binário)
+├── ebpf-kernel/        # enforcement eBPF (Linux)
+├── nemesis-defender/   # Iron Dome scanner + daemon
+└── nemesis-doctor/     # diagnóstico de saúde
+```
+
+### Binários esperados (11) em `.nemesis/target/release/`
+
+| Origem | Binários |
+|--------|----------|
+| pacote `nemesis` | `nemesis-pretool-check`, `nemesis-pretool-check-unix`, `nemesis-pretool-check-windows`, `nemesis-pretool-hook`, `nemesis-posttool-check-unix`, `pre-edit-hook`, `debug-hook-env`, `nemesis-lsp` |
+| `nemesis-defender` | `nemesis-defender` |
+| `ebpf-kernel` | `nemesis-ebpf-daemon`, `nemesis-cgroup-watcher` |
+| `ast-linters` | (lib — sem binário) |
+| `nemesis-doctor` | `nemesis-doctor` |
+
+---
+
+## 2. Compilação
+
+### Workspace completo
+
+```bash
+cd .nemesis && cargo build --release --workspace
+```
+
+### Por módulo
+
+```bash
+cd .nemesis && cargo build --release -p nemesis-defender
+cd .nemesis && cargo build --release -p nemesis-doctor
+cd .nemesis && cargo build --release -p nemesis-ebpf-kernel
+cd .nemesis && cargo build --release -p ast-linters
+```
+
+### Verificação rápida (sem gerar binário)
+
+```bash
+cd .nemesis && cargo check --workspace
+```
+
+**O que analisar na saída:**
+- `Finished ... profile` => compilou com sucesso.
+- `warning:` => não bloqueia, mas deve ser revisado.
+- `error[Exxx]:` => **bloqueia o build** — corrija antes de prosseguir.
+
+> Após recompilar o `nemesis-defender`, **reinicie o daemon** (seção 4). Só recompilar
+> não basta enquanto o daemon antigo (binário em memória) seguir vivo.
+
+---
+
+## 3. eBPF Kernel LSM (somente Linux)
+
+Camada adicional e independente do pretool. Ativada **uma única vez** na instalação.
+
+### Verificar
+
+```bash
+cat /sys/kernel/security/lsm                 # deve conter 'bpf'
+getcap .nemesis/target/release/nemesis-ebpf-daemon
+ls /sys/fs/cgroup/nemesis-agent/
+sudo bpftool prog list
+```
+
+### Diagnóstico / iniciar / parar
+
+```bash
+sudo .nemesis/target/release/nemesis-ebpf-daemon --doctor
+sudo .nemesis/target/release/nemesis-ebpf-daemon --start
+sudo killall nemesis-ebpf-daemon 2>/dev/null; echo "PARADO"
+```
+
+### Capabilities (uma vez por máquina)
+
+```bash
+sudo setcap cap_bpf,cap_perfmon,cap_sys_resource+eip \
+    .nemesis/target/release/nemesis-ebpf-daemon
+```
+
+> macOS/Windows: eBPF não se aplica — a defesa fica nas trilhas do pretool. O `nemesis-doctor` reporta `NA`.
+
+---
+
+## 4. Daemon nemesis-defender
+
+Scanner em tempo real (inotify). Deveria subir **automaticamente** quando a IDE
+dispara o pretool hook (`nemesis-pretool-check-unix` executa `--ensure-daemon`).
+Se o scaffold da IDE (seção 5) não estiver configurado, suba manualmente.
+
+### Verificar
+
+```bash
+pidof nemesis-defender && echo "ATIVO" || echo "INATIVO"
+ls -la /proc/$(pidof nemesis-defender)/fd/ | grep inotify
+```
+
+### Iniciar / parar / reiniciar
+
+```bash
+# Iniciar (se não estiver rodando)
+.nemesis/target/release/nemesis-defender --ensure-daemon
+
+# Parar
+pkill -9 -f "nemesis-defender"; pidof nemesis-defender || echo "PARADO"
+
+# Reiniciar (obrigatório após recompilar o defender)
+pkill -9 -f "nemesis-defender"; sleep 1; .nemesis/target/release/nemesis-defender --ensure-daemon
+```
+
+### Scan manual
+
+```bash
+.nemesis/target/release/nemesis-defender --scan /caminho/arquivo.ts
+```
+
+---
+
+## 5. Scaffold da IDE (hooks)
+
+Sem o hook **pretool** configurado, a IDE não dispara `nemesis-defender --ensure-daemon`
+e o daemon **não sobe sozinho** (no Linux, só o eBPF protege).
+
+Arquivos verificados pelo `nemesis-doctor` (G4):
+
+```
+.devin/hooks.json
+.claude/settings.json
+.cursor/hooks.json
+.codex/hooks.json
+.github/hooks.json
+```
+
+**O que analisar:**
+- Arquivo `{}` ou vazio => daemon não sobe automaticamente.
+- Deve referenciar `pretool` (ignição do daemon) e, idealmente, `posttool` (scan pós-escrita).
+- O binário referenciado deve existir em `.nemesis/target/release/`.
+
+---
+
+## 6. Pentest Red-Team
+
+Suíte automatizada (166 testes, 26 módulos) que injeta comandos/arquivos maliciosos
+no binário pretool via stdin (não-destrutivo) e mede a taxa de bloqueio.
+
+```bash
+bash .nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh \
+    .nemesis/target/release/nemesis-pretool-check-unix
+```
+
+Requer `bash` + `node`. Gera `pentest-results.csv` e `pentest-results.md`.
+
+**O que analisar:**
+- Taxa `>= 95%` => `PRODUCAO-READY`; `90-94%` => `HARDENING`; `< 90%` => `NAO LANCAR`.
+- Módulo **M26** usa lógica invertida: bloquear ali = **falso-positivo** (regressão).
+
+---
+
+## 7. Checklist de instalação (nova máquina)
+
+- [ ] Rust + dependências do sistema instalados (`build-essential`, `libbpf-dev`, `clang`, `bpftool`).
+- [ ] `cd .nemesis && cargo build --release --workspace` sem erros.
+- [ ] 11 binários presentes em `.nemesis/target/release/` (rode `nemesis-doctor`).
+- [ ] eBPF: capabilities + serviço ativo (Linux) — uma vez.
+- [ ] Scaffold da IDE com pretool/posttool apontando para os binários corretos.
+- [ ] `nemesis-doctor` retorna veredito `SAUDAVEL`.

@@ -46,7 +46,7 @@ fn visit_node(
 
 fn check_assignment_in_condition(
     node: &tree_sitter::Node,
-    source: &str,
+    _source: &str,
     violations: &mut Vec<Violation>,
 ) {
     let parent = node.parent();

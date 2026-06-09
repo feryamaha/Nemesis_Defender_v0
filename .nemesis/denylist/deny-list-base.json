@@ -1599,17 +1599,6 @@
       "source": "harvest + rules",
       "patterns": [
         {
-          "id": "sec-001",
-          "pattern": "NEXT_PUBLIC_[A-Z_]+",
-          "type": "regex",
-          "severity": "high",
-          "message": "NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!",
-          "suggestion": "",
-          "rule": "",
-          "source": "harvest",
-          "enabled": true
-        },
-        {
           "id": "sec-002",
           "pattern": "api[_-]?key['\"]?\\s*[:=]\\s*['\"][a-zA-Z0-9]{20,}['\"]",
           "type": "regex",
