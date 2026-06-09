@@ -343,7 +343,7 @@ fn is_file_allowed(file_path: &str) -> bool {
 
     // Arquivos de infraestrutura critica — BLOQUEIO ABSOLUTO
     let absolutely_blocked = [
-        ".nemesis/workflow-enforcement/",
+        ".nemesis/denylist/",
         ".nemesis/hooks/",
         ".claude/settings.json",
         ".claude/settings.local.json",

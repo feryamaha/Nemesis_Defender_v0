@@ -1,5 +1,5 @@
 //! Nemesis CLI - PreToolUse Hook
-// diretorio: .nemesis/workflow-enforcement/cli/pretool-hook.rs 
+// diretorio: .nemesis/hooks/pretool-hook.rs 
 //!
 //! FIX: validateFileOperation bloqueia escrita direta em
 //! permission-gate.state.json e workflow-state.json.
@@ -222,7 +222,7 @@ fn get_runtime_dir() -> PathBuf {
 }
 
 fn get_workflow_enforcement_dir() -> PathBuf {
-    get_nemesis_dir().join("workflow-enforcement")
+    get_nemesis_dir().join("denylist")
 }
 
 fn get_workflows_dir() -> PathBuf {
@@ -230,7 +230,7 @@ fn get_workflows_dir() -> PathBuf {
 }
 
 fn get_config_path() -> PathBuf {
-    get_workflow_enforcement_dir().join("config").join("workflow-gate-artifacts.json")
+    get_workflow_enforcement_dir().join("workflow-gate-artifacts.json")
 }
 
 fn get_scope_path() -> PathBuf {
@@ -242,7 +242,7 @@ fn get_permission_gate_state_path() -> PathBuf {
 }
 
 fn get_deny_list_path() -> PathBuf {
-    get_workflow_enforcement_dir().join("config").join("deny-list.json")
+    get_workflow_enforcement_dir().join("deny-list.json")
 }
 
 fn get_violations_log_path() -> PathBuf {
@@ -498,8 +498,8 @@ fn load_deny_list() -> Option<DenyList> {
 /// Carrega TODOS os arquivos .json da pasta config como deny-lists.
 fn load_all_deny_lists() -> Vec<DenyList> {
     let mut all = Vec::new();
-    let config_dir = get_workflow_enforcement_dir().join("config");
-    if let Ok(entries) = fs::read_dir(&config_dir) {
+    let denylist_dir = get_workflow_enforcement_dir();
+    if let Ok(entries) = fs::read_dir(&denylist_dir) {
         for entry in entries.flatten() {
             let path = entry.path();
             if path.extension().map_or(false, |e| e == "json") {
@@ -518,11 +518,11 @@ fn get_command_patterns() -> Vec<DenyPattern> {
     let mut all_patterns: Vec<DenyPattern> = Vec::new();
 
     // Consultar TODAS as 3 deny-lists de comandos
-    let config_dir = get_workflow_enforcement_dir().join("config");
+    let denylist_dir = get_workflow_enforcement_dir();
     let deny_list_paths = [
-        config_dir.join("deny-list.json"),
-        config_dir.join("deny-list-base.json"),
-        config_dir.join("deny-list-generic.json"),
+        denylist_dir.join("deny-list.json"),
+        denylist_dir.join("deny-list-base.json"),
+        denylist_dir.join("deny-list-generic.json"),
     ];
 
     for path in &deny_list_paths {
@@ -946,7 +946,7 @@ fn check_src_lock(file_path: &str) -> Option<ValidationResult> {
             )),
             rule: Some(".devin/workflows — tracker start obrigatório antes de escrever em src/, app/, Feature-Documentation/".to_string()),
             suggestion: Some(
-                "Execute: npx tsx .nemesis/workflow-enforcement/cli/workflow-step-tracker.ts start [workflow-name] [total-steps]".to_string()
+                "Execute: work-00-training para iniciar o workflow de treinamento e liberar a escrita no diretório.".to_string()
             ),
         });
     }
@@ -1779,7 +1779,7 @@ fn read_stdin() -> io::Result<String> {
 // =============================================================================
 // NEMESIS INFRASTRUCTURE PROTECTION
 // Bloqueia leitura e escrita em paths protegidos pelo denylist-folder-files.json
-// Fonte unica de verdade: .nemesis/workflow-enforcement/config/denylist-folder-files.json
+// Fonte unica de verdade: .nemesis/denylist/denylist-folder-files.json
 // =============================================================================
 
 fn path_matches_allowed_exception(rel_path: &str, exception: &str) -> bool {
@@ -1803,7 +1803,7 @@ fn check_nemesis_protected_path(file_path: &str, is_write: bool) -> Option<Valid
         let allowed_prefixes = [
             ".nemesis/runtime/",
             ".nemesis/logs/",
-            ".nemesis/workflow-enforcement/config/",
+            ".nemesis/denylist/",
             ".nemesis/nemesis-defender/config/",
             ".nemesis/defender-exclude.txt",
         ];
@@ -1844,7 +1844,7 @@ fn check_nemesis_protected_path(file_path: &str, is_write: bool) -> Option<Valid
 
 fn load_denylist_folder_files(project_root: &str) -> Option<DenylistFolderFiles> {
     let path = format!(
-        "{}/.nemesis/workflow-enforcement/config/denylist-folder-files.json",
+        "{}/.nemesis/denylist/denylist-folder-files.json",
         project_root
     );
     match fs::read_to_string(&path) {

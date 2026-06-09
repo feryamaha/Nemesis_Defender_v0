@@ -381,7 +381,7 @@ pub fn run() {
 
     let session_events_path = cwd.join(".nemesis/logs/session-events.jsonl");
     let mut session_file_pos: u64 = 0;
-    let poll_interval = std::time::Duration::from_millis(2000); // 2s — evita write-storm
+    let poll_interval = std::time::Duration::from_millis(5000); // 5s — evita write-storm e reduz uso de CPU
 
     // Event loop — inotify events + pretool session events polled every 500ms
     loop {
@@ -451,8 +451,9 @@ fn handle_event(event: Event, cwd: &Path) {
         // Read/Bash events come via poll_session_events() from pretool
         let tool_type = "Write".to_string();
 
-        // Scan the file
+        // Scan the file and delete if Malicious
         let result = scan_file_return_result(&path, cwd);
+        scan_file(&path, cwd);
 
         // Determine risk level
         let risk_level = match result.severity {

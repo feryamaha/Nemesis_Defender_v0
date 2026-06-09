@@ -4,7 +4,6 @@ members = [
     "ast-linters",
     "ebpf-kernel",
     "nemesis-defender",
-    "nemesis-cli",
 ]
 
 [package]
@@ -12,7 +11,7 @@ name = "nemesis"
 version = "8.2.0"
 edition = "2021"
 authors = ["Fernando Moreira"]
-description = "Nemesis Workflow Enforcement Framework - SDD with Constraint-Based Orchestration"
+description = "Nemesis Defender - Deterministic Enforcement Framework"
 
 [dependencies]
 ast-linters = { path = "ast-linters" }
@@ -40,12 +39,7 @@ url = "2"
 insta = "1"
 tokio-test = "0.4"
 
-# Biblioteca principal - módulos compartilhados
-[lib]
-name = "nemesis"
-path = "workflow-enforcement/lib.rs"
-
-# Binários executáveis - hooks
+# Binários executáveis — hooks
 [[bin]]
 name = "nemesis-pretool-check"
 path = "hooks/nemesis-pretool-check.rs"
@@ -66,26 +60,9 @@ path = "hooks/pre-edit-hook.rs"
 name = "debug-hook-env"
 path = "hooks/debug-hook-env.rs"
 
-# Binários - CLI workflow-enforcement
-[[bin]]
-name = "nemesis-install-hooks"
-path = "workflow-enforcement/cli/install-hooks.rs"
-
 [[bin]]
 name = "nemesis-pretool-hook"
-path = "workflow-enforcement/cli/pretool-hook.rs"
-
-[[bin]]
-name = "nemesis-scope"
-path = "workflow-enforcement/cli/scope.rs"
-
-[[bin]]
-name = "nemesis-validate"
-path = "workflow-enforcement/cli/validate.rs"
-
-[[bin]]
-name = "nemesis-install"
-path = "workflow-enforcement/harvest/nemesis-install.rs"
+path = "hooks/pretool-hook.rs"
 
 [[bin]]
 name = "nemesis-lsp"

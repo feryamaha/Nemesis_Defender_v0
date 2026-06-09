@@ -1,6 +1,5 @@
 use crate::{EbpfBlockEvent, EbpfEventKind, KernelEvent};
-use nemesis::types::{Violation, ViolationType};
-use nemesis::violation_logger::ViolationLogger;
+use crate::violation::{Violation, ViolationType, ViolationLogger};
 
 pub fn log_block_event(event: &EbpfBlockEvent) {
     let message = match event.kind {

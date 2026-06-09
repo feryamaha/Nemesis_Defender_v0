@@ -90,12 +90,27 @@ impl DefenderResult {
 // ─────────────────────────────────────────────
 
 /// Paths/substrings that are exempt from scanning.
-/// Arquivos nestas pastas contêm payloads de documentação de teste (pentests).
 /// Defender não deve escanear, alertar ou remover estes arquivos.
+///
+/// Duas categorias, mesmo mecanismo (substring no path completo):
+/// 1. Pastas de pentest/documentação de teste (payloads catalogados).
+/// 2. Documentação canônica do projeto, mantida exclusivamente por humanos.
+///    Estes arquivos descrevem os próprios comandos que o Nemesis bloqueia
+///    (ex.: `rm -rf`, `curl | bash`, configs de IDE, exemplos de prompt
+///    injection) como conteúdo de documentação — não como payload real.
+///    Sem esta isenção, o daemon gera falso positivo e deleta README/index.
 const EXCLUDED_PATH_SUBSTRINGS: &[&str] = &[
+    // 1. Pentest / documentação de teste
     "pentest-nemesis-control",
     "PENTEST-NEMESIS",
     "defender-exclude.txt",
+    // 2. Documentação canônica do projeto
+    "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "CODE_OF_CONDUCT.md",
+    "index.html",
 ];
 
 /// Returns true if the path should be skipped by the defender.

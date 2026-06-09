@@ -51,24 +51,12 @@ fn main() {
         });
 
     // Verificar se estamos em ambiente de desenvolvimento
-    let hook_script_ts = project_dir.join("src").join("workflow-enforcement").join("cli").join("pretool-hook.ts");
-    let hook_script_js = project_dir.join("dist").join("workflow-enforcement").join("cli").join("pretool-hook.js");
-    let hook_script_nemesis = project_dir.join(".nemesis").join("workflow-enforcement").join("cli").join("pretool-hook.ts");
+    let hook_script = project_dir.join(".nemesis").join("hooks").join("pretool-hook.rs");
 
-    let (hook_script, runner) = if hook_script_ts.exists() {
-        (hook_script_ts, "npx ts-node")
-    } else if hook_script_js.exists() {
-        // Versao compilada (producao)
-        (hook_script_js, "node")
-    } else if hook_script_nemesis.exists() {
-        // Versao instalada via npx install-genesis
-        (hook_script_nemesis, "npx tsx")
-    } else {
+    if !hook_script.exists() {
         eprintln!("NEMESIS ERROR: Hook script nao encontrado");
         eprintln!("Procurado em:");
-        eprintln!("  - {}", hook_script_ts.display());
-        eprintln!("  - {}", hook_script_js.display());
-        eprintln!("  - {}", hook_script_nemesis.display());
+        eprintln!("  - {}", hook_script.display());
         std::process::exit(1);
     };
 

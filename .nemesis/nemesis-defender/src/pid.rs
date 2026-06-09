@@ -65,17 +65,17 @@ pub fn read_pid() -> Option<u32> {
 pub fn is_daemon_running() -> bool {
     let Some(pid) = read_pid() else { return false };
 
-    // Check if process with this PID is actually alive
+    // Check if process with this PID is actually alive AND is nemesis-defender
     #[cfg(unix)]
     {
-        // kill -0 sends no signal but returns 0 if process exists
-        let alive = std::process::Command::new("kill")
-            .args(["-0", &pid.to_string()])
-            .stdout(std::process::Stdio::null())
-            .stderr(std::process::Stdio::null())
-            .status()
-            .map(|s| s.success())
-            .unwrap_or(false);
+        let proc_comm = std::path::PathBuf::from(format!("/proc/{}/comm", pid));
+        let proc_exe = std::path::PathBuf::from(format!("/proc/{}/exe", pid));
+
+        let alive = proc_comm.exists()
+            && proc_exe.exists()
+            && std::fs::read_to_string(&proc_comm)
+                .map(|s| s.trim().starts_with("nemesis-defende"))
+                .unwrap_or(false);
 
         if !alive {
             // Stale PID file — clean up so next caller spawns a fresh daemon

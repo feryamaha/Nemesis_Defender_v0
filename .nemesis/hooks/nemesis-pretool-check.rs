@@ -77,10 +77,7 @@ fn detect_host_environment(project_root: &Path) -> HostEnvironment {
 
 fn find_hook_path(project_root: &Path) -> Option<PathBuf> {
     let possible_paths = [
-        project_root.join("src").join("workflow-enforcement").join("cli").join("pretool-hook.rs"),
-        project_root.join(".nemesis").join("workflow-enforcement").join("cli").join("pretool-hook.rs"),
-        project_root.join("workflow-enforcement").join("cli").join("pretool-hook.rs"),
-        project_root.join("dist").join("workflow-enforcement").join("cli").join("pretool-hook.js"),
+        project_root.join(".nemesis").join("hooks").join("pretool-hook.rs"),
         project_root.join("target").join("release").join("pretool-hook"),
         project_root.join("target").join("debug").join("pretool-hook"),
     ];
@@ -197,10 +194,7 @@ fn main() {
             // FAIL-OPEN: hook nao encontrado = problema de instalacao, nao violacao de regra
             eprintln!("[NEMESIS WARNING] pretool-hook.rs nao encontrado. Instalacao pode estar incompleta.");
             eprintln!("Localizacoes verificadas:");
-            eprintln!("  - src/workflow-enforcement/cli/pretool-hook.rs");
-            eprintln!("  - .nemesis/workflow-enforcement/cli/pretool-hook.rs");
-            eprintln!("  - workflow-enforcement/cli/pretool-hook.rs");
-            eprintln!("  - dist/workflow-enforcement/cli/pretool-hook.js");
+            eprintln!("  - .nemesis/hooks/pretool-hook.rs");
             eprintln!("  - target/release/pretool-hook");
             eprintln!("  - target/debug/pretool-hook");
             eprintln!("Permitindo operacao — verifique a instalacao do Nemesis.");

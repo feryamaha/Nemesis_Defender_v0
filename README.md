@@ -76,7 +76,6 @@ A premissa técnica: instrução em texto (`"não rode comandos destrutivos"`) �
 - **Clang/LLVM** - para compilar o core.
 - **~4 GB de RAM livres** para o build e **~2 GB de disco** para toolchain + binários.
 - Uma **IDE/agente que exponha hooks de pre-tool** (ver [tabela de suporte](#configuração-do-pretool-por-ide)). Sem isso, o Nemesis não tem ponto de acoplamento.
-- **Node.js** (opcional) - apenas para o harvest legado em projetos JS/TS.
 
 ### Adicional para a camada eBPF (somente Linux)
 
@@ -394,9 +393,8 @@ No terminal sob eBPF, o kernel emite a mensagem padrão do sistema (`Operação 
 ## Verificação e diagnóstico
 
 ```bash
-# Validar um workflow / definir escopo (nemesis-scope usa subcomandos)
-nemesis-validate /caminho/workflow
-nemesis-scope set /caminho/arquivo.rs   # subcomandos: set | add | add-pattern | show | clear
+# Escanear o conteúdo de um arquivo manualmente (mesma engine do daemon/hook)
+.nemesis/target/release/nemesis-defender --scan /caminho/arquivo.js
 
 # Diagnóstico da camada eBPF (Linux)
 .nemesis/target/release/nemesis-ebpf-daemon --doctor

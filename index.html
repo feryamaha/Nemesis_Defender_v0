@@ -2280,10 +2280,9 @@
             é build: ~4 GB de RAM livres para compilar e ~2 GB de disco para toolchain + binários.
           </li>
           <li
-            data-pt="<strong>Software:</strong> Rust 1.70+ e Cargo (toolchain estável); Clang/LLVM para o core; Node opcional (para o harvest legado em projetos JS/TS)."
-            data-en="<strong>Software:</strong> Rust 1.70+ and Cargo (stable toolchain); Clang/LLVM for the core; Node optional (for the legacy harvest in JS/TS projects).">
-            <strong>Software:</strong> Rust 1.70+ e Cargo (toolchain estável); Clang/LLVM para o core; Node opcional
-            (para o harvest legado em projetos JS/TS).
+            data-pt="<strong>Software:</strong> Rust 1.70+ e Cargo (toolchain estável); Clang/LLVM para o core."
+            data-en="<strong>Software:</strong> Rust 1.70+ and Cargo (stable toolchain); Clang/LLVM for the core.">
+            <strong>Software:</strong> Rust 1.70+ e Cargo (toolchain estável); Clang/LLVM para o core.
           </li>
           <li
             data-pt="<strong>Kernel/eBPF (camada adicional, Linux):</strong> kernel 5.8+ com <strong>BPF LSM habilitado</strong>. Em muitas distros o BPF LSM não vem ligado — precisa ser adicionado na cmdline do kernel (GRUB: <code>lsm=...,bpf</code>) e reiniciar. Sem isso, a camada eBPF não carrega e o Nemesis opera com as trilhas do pretool."
@@ -2330,8 +2329,8 @@
         <p data-pt="No Linux você tem todas as camadas, incluindo a proteção de kernel (eBPF) que vale <strong>inclusive contra você mesmo</strong> no terminal. Em macOS/Windows, sem eBPF, você opera com a trilha do pretool (Defender) e o humano mantém liberdade total no terminal (a proteção ali se aplica às ações da IA via hooks da IDE)."
           data-en="On Linux you get all layers, including the kernel protection (eBPF) that applies <strong>even against yourself</strong> in the terminal. On macOS/Windows, without eBPF, you run the pretool track (Defender) and the human keeps full terminal freedom (protection there applies to the AI's actions via IDE hooks).">
           No Linux você tem todas as camadas, incluindo a proteção de kernel (eBPF) que vale <strong>inclusive contra
-            você mesmo</strong> no terminal. Em macOS/Windows, sem eBPF, você opera com as trilhas do pretool (Defender
-          Em macOS/Windows, sem eBPF, você opera com a trilha do pretool (Defender) e o humano mantém liberdade total no terminal (a proteção ali se aplica às ações da IA via hooks da IDE).</p>
+            você mesmo</strong> no terminal. Em macOS/Windows, sem eBPF, você opera com a trilha do pretool (Defender) e
+          o humano mantém liberdade total no terminal (a proteção ali se aplica às ações da IA via hooks da IDE).</p>
         <h3 data-pt="Build" data-en="Build">Build</h3>
         <pre><code><span class="c" data-pt="# Build do workspace completo" data-en="# Build the full workspace"># Build do workspace completo</span>
 cd .nemesis
@@ -2369,17 +2368,12 @@ nemesis-defender <span class="k">--stop</span></code></pre>
         <div class="eyebrow" data-pt="15 — Workflow" data-en="15 — Workflow">15 — Workflow</div>
         <h2 data-pt="Processo de desenvolvimento ≠ regra do Nemesis" data-en="Development process ≠ a Nemesis rule">
           Processo de desenvolvimento ≠ regra do Nemesis</h2>
-        <p data-pt="Versões antigas incluíam um enforcement de workflow sequencial (<code>.nemesis/workflow-enforcement/</code>) que funcionava como um harness de SDD: cada fragmento só era liberado quando o anterior havia sido executado, porque os modelos não liam regras, pulavam etapas e isso introduzia dívida técnica."
-          data-en="Older versions included a sequential workflow enforcement (<code>.nemesis/workflow-enforcement/</code>) that worked as an SDD harness: each fragment was only released once the previous had run, because models didn't read rules, skipped steps and that introduced technical debt.">
-          Versões antigas incluíam um enforcement de workflow sequencial (<code>.nemesis/workflow-enforcement/</code>)
-          que funcionava como um harness de SDD: cada fragmento só era liberado quando o anterior havia sido executado,
-          porque os modelos não liam regras, pulavam etapas e isso introduzia dívida técnica.</p>
-        <p data-pt="Depois que o Nemesis amadureceu, passei a usar <strong>skills SDD apenas para criar spec e planos</strong> em tarefas que dependem de IA — porque, na maioria dos casos, o desenvolvimento é humano e a IA é assistente. Então relaxei o harness. <strong>O módulo continua no código</strong> e pode ser usado para automatizar alguma tarefa quando fizer sentido."
-          data-en="After Nemesis matured, I started using <strong>SDD skills only to create spec and plans</strong> in tasks that depend on AI — because, in most cases, development is human and the AI is an assistant. So I relaxed the harness. <strong>The module remains in the code</strong> and can be used to automate a task when it makes sense.">
-          Depois que o Nemesis amadureceu, passei a usar <strong>skills SDD apenas para criar spec e planos</strong> em
-          tarefas que dependem de IA — porque, na maioria dos casos, o desenvolvimento é humano e a IA é assistente.
-          Então relaxei o harness. <strong>O módulo continua no código</strong> e pode ser usado para automatizar alguma
-          tarefa quando fizer sentido.</p>
+        <p data-pt="O Nemesis usa <strong>skills SDD apenas para criar spec e planos</strong> em tarefas que dependem de IA — porque, na maioria dos casos, o desenvolvimento é humano e a IA é assistente. As skills orientam o método (especificação → plano → execução), mas não são impostas: você adota o fluxo que fizer sentido para a tarefa."
+          data-en="Nemesis uses <strong>SDD skills only to create spec and plans</strong> in tasks that depend on AI — because, in most cases, development is human and the AI is an assistant. The skills guide the method (specification → plan → execution), but they are not enforced: you adopt whatever flow makes sense for the task.">
+          O Nemesis usa <strong>skills SDD apenas para criar spec e planos</strong> em tarefas que dependem de IA —
+          porque, na maioria dos casos, o desenvolvimento é humano e a IA é assistente. As skills orientam o método
+          (especificação → plano → execução), mas não são impostas: você adota o fluxo que fizer sentido para a
+          tarefa.</p>
         <div class="callout">
           <div class="h" data-pt="Importante" data-en="Important">Importante</div>
           <p data-pt="Processo de desenvolvimento é de cada equipe — <strong>não é uma regra do Nemesis</strong>. O que o Nemesis impõe é o enforcement de segurança (deny-list + eBPF + pretool/posttool), que permanece ativo independentemente do fluxo de trabalho adotado."

@@ -735,7 +735,7 @@ fn validate_critical_files(command: &str) -> Option<String> {
 
 fn load_denylist_folder_files(project_root: &Path) -> Option<DenylistFolderFiles> {
     let path = project_root
-        .join(".nemesis/workflow-enforcement/config/denylist-folder-files.json");
+        .join(".nemesis/denylist/denylist-folder-files.json");
     let content = fs::read_to_string(&path).ok()?;
     serde_json::from_str(&content).ok()
 }
@@ -925,7 +925,7 @@ fn run_pretool() {
 
     let timestamp = chrono::Local::now().format("%Y-%m-%dT%H:%M:%S%.3f%:z").to_string();
 
-    let deny_list_path = project_dir.join(".nemesis").join("workflow-enforcement").join("config").join("deny-list.json");
+    let deny_list_path = project_dir.join(".nemesis").join("denylist").join("deny-list.json");
 
     // ============================================================
     // DETECAO DE IDE
@@ -1363,9 +1363,9 @@ fn run_pretool() {
         // 1. Verificar TODAS as deny-lists de comandos
         {
             let deny_list_paths = [
-                project_dir.join(".nemesis").join("workflow-enforcement").join("config").join("deny-list.json"),
-                project_dir.join(".nemesis").join("workflow-enforcement").join("config").join("deny-list-base.json"),
-                project_dir.join(".nemesis").join("workflow-enforcement").join("config").join("deny-list-generic.json"),
+                project_dir.join(".nemesis").join("denylist").join("deny-list.json"),
+                project_dir.join(".nemesis").join("denylist").join("deny-list-base.json"),
+                project_dir.join(".nemesis").join("denylist").join("deny-list-generic.json"),
             ];
 
             for deny_path in &deny_list_paths {
@@ -1514,9 +1514,9 @@ fn run_pretool() {
 
         // ============================================================
         // DENY-LIST QUALITY SCANNING — valida conteudo contra regex de
-        // todas as deny-lists em .nemesis/workflow-enforcement/config/
+        // todas as deny-lists em .nemesis/denylist/
         // ============================================================
-        let config_dir = project_dir.join(".nemesis").join("workflow-enforcement").join("config");
+        let config_dir = project_dir.join(".nemesis").join("denylist");
         if let Some(quality_hit) = check_content_all_deny_lists(file_path_str, content_str, &config_dir) {
             let rule_msg = quality_hit.rule.as_deref().unwrap_or(".devin/rules/README.md");
             let suggestion = quality_hit.suggestion.as_deref().unwrap_or("Revise o padrao de codigo conforme as convencoes do projeto.");

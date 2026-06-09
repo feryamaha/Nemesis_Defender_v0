@@ -9,6 +9,7 @@ pub mod logger;
 #[cfg(target_os = "linux")]
 pub mod seccomp;
 pub mod transport;
+pub mod violation;
 
 use bytemuck::{Pod, Zeroable};
 use serde::{Deserialize, Serialize};
