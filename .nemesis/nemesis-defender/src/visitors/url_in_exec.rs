@@ -91,7 +91,14 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
-    if (node_text.contains("curl") || node_text.contains("wget")) && node_text.contains("|") {
+    // Gate em pipeline: curl/wget e o interpretador precisam estar no mesmo pipe
+    // (`curl x | bash`). Sem o gate, o visitor rodava no nó raiz e casava "curl"/"|"
+    // numa linha e "bash" no shebang/outra linha do arquivo (falso positivo). A forma
+    // dentro de string (`bash -c "curl|bash"`) continua coberta por regex_layer.
+    if node.kind() == "pipeline"
+        && (node_text.contains("curl") || node_text.contains("wget"))
+        && node_text.contains("|")
+    {
         if node_text.contains("bash") || node_text.contains("sh") || node_text.contains("eval") {
             violations.push(DefenderViolation {
                 visitor: "url_in_exec".to_string(),
@@ -115,7 +122,12 @@ pub fn visit_python_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
-    if (node_text.contains("urllib") || node_text.contains("requests"))
+    // Gate em call: HTTP request e exec/eval precisam estar no mesmo nó de chamada
+    // (ex.: exec(urllib.request.urlopen(...).read())). Sem o gate, o visitor rodava no
+    // nó raiz e casava "urllib"/"requests" e "exec"/"eval" em statements distintos
+    // (falso positivo). A forma fragmentada continua coberta por taint_tracker/decoder.
+    if node.kind() == "call"
+        && (node_text.contains("urllib") || node_text.contains("requests"))
         && (node_text.contains("exec") || node_text.contains("eval"))
     {
         violations.push(DefenderViolation {
@@ -131,7 +143,8 @@ pub fn visit_python_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         });
     }
 
-    if node_text.contains("exec")
+    if node.kind() == "call"
+        && node_text.contains("exec")
         && (node_text.contains("http://") || node_text.contains("https://"))
     {
         violations.push(DefenderViolation {

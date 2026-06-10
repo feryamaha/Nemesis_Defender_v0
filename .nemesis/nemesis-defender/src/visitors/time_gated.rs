@@ -59,6 +59,8 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
+    // NOTA: este visitor bash NÃO está conectado ao ast_scanner (apenas time_gated::
+    // visit_js_node é despachado). Código atualmente inalcançável — mantido como estava.
     if node_text.contains("sleep") && (node_text.contains("exec") || node_text.contains("bash")) {
         violations.push(DefenderViolation {
             visitor: "time_gated".to_string(),
@@ -79,6 +81,8 @@ pub fn visit_python_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
+    // NOTA: este visitor python NÃO está conectado ao ast_scanner (apenas time_gated::
+    // visit_js_node é despachado). Código atualmente inalcançável — mantido como estava.
     if node_text.contains("time.sleep")
         && (node_text.contains("exec") || node_text.contains("eval"))
     {

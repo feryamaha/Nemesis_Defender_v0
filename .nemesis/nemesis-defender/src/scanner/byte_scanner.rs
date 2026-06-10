@@ -13,12 +13,11 @@ use crate::DefenderViolation;
 // BiDi SCANNER
 // ─────────────────────────────────────────────
 
-/// Unicode BiDi control characters that can hide malicious code
-/// References: CVE-2021-42574, Glassworm (Oct 2025), Aikido Research (Mar 2025)
-const BIDI_CODEPOINTS: &[(u32, &str)] = &[
-    (0x061C, "Arabic Letter Mark"),
-    (0x200E, "Left-to-Right Mark"),
-    (0x200F, "Right-to-Left Mark"),
+/// BiDi control characters que REORDENAM código (embeddings/overrides/isolates).
+/// Em código-fonte não têm uso legítimo — o ataque Trojan Source (CVE-2021-42574)
+/// usa exatamente estes para fazer o compilador executar lógica que o humano lê como
+/// comentário. Sinal de ALTA CONFIANÇA → emitido como "unicode_bidi" (confirmatório).
+const BIDI_DANGEROUS: &[(u32, &str)] = &[
     (0x202A, "Left-to-Right Embedding"),
     (0x202B, "Right-to-Left Embedding"),
     (0x202C, "Pop Directional Formatting"),
@@ -28,9 +27,19 @@ const BIDI_CODEPOINTS: &[(u32, &str)] = &[
     (0x2067, "Right-to-Left Isolate"),
     (0x2068, "First Strong Isolate"),
     (0x2069, "Pop Directional Isolate"),
+];
+
+/// Caracteres invisíveis/formatação FRACOS: marcas direcionais (LRM/RLM/ALM) e
+/// separadores APARECEM em texto i18n legítimo (árabe/hebraico) e os variation
+/// selectors aparecem em EMOJI legítimo (❤️ = U+2764 U+FE0F). Não devem deletar
+/// sozinhos — emitidos como "unicode_zero_width" (corroborante, exige 2o sinal).
+/// Glassworm abusa de variation selectors, mas sempre junto de outro payload → corroborado.
+const BIDI_WEAK: &[(u32, &str)] = &[
+    (0x061C, "Arabic Letter Mark"),
+    (0x200E, "Left-to-Right Mark"),
+    (0x200F, "Right-to-Left Mark"),
     (0x2028, "Line Separator"),
     (0x2029, "Paragraph Separator"),
-    // Variation selectors (used in Glassworm — produce zero visual output)
     (0xFE00, "Variation Selector-1"),
     (0xFE01, "Variation Selector-2"),
     (0xFE0E, "Variation Selector-15"),
@@ -50,7 +59,7 @@ pub fn scan_bidi(content: &[u8]) -> Vec<DefenderViolation> {
     for ch in text.chars() {
         let cp = ch as u32;
 
-        if let Some(&(_, name)) = BIDI_CODEPOINTS.iter().find(|&&(c, _)| c == cp) {
+        if let Some(&(_, name)) = BIDI_DANGEROUS.iter().find(|&&(c, _)| c == cp) {
             violations.push(DefenderViolation {
                 visitor: "unicode_bidi".to_string(),
                 line,
@@ -58,14 +67,32 @@ pub fn scan_bidi(content: &[u8]) -> Vec<DefenderViolation> {
                 evidence: format!("U+{:04X} ({})", cp, name),
                 decoded: None,
                 message: format!(
-                    "Unicode BiDi control character U+{:04X} ({}) detected. \
+                    "Unicode BiDi reordering control U+{:04X} ({}) detected. \
                      CVE-2021-42574 (Trojan Source) / Glassworm 2025 — \
                      makes malicious code appear as comment to human reviewer. \
                      Compiler executes hidden logic invisible on screen.",
                     cp, name
                 ),
                 suggestion: Some(
-                    "Remove the BiDi character. Use only ASCII in source code files.".to_string(),
+                    "Remove the BiDi control. Use only ASCII in source code files.".to_string(),
+                ),
+            });
+        } else if let Some(&(_, name)) = BIDI_WEAK.iter().find(|&&(c, _)| c == cp) {
+            // Sinal fraco/ambíguo (i18n ou emoji legítimos): corroborante, não deleta sozinho.
+            violations.push(DefenderViolation {
+                visitor: "unicode_zero_width".to_string(),
+                line,
+                col,
+                evidence: format!("U+{:04X} ({})", cp, name),
+                decoded: None,
+                message: format!(
+                    "Invisible Unicode formatting char U+{:04X} ({}) detected. \
+                     Legitimate in i18n/emoji, but also used in steganography — \
+                     flagged as corroborating signal (requires a second signal to confirm).",
+                    cp, name
+                ),
+                suggestion: Some(
+                    "If not intentional (i18n/emoji), remove the invisible character.".to_string(),
                 ),
             });
         }

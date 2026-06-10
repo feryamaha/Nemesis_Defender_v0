@@ -277,56 +277,76 @@ pub fn scan_command(command: &str) -> DefenderResult {
     }
 }
 
+// ─────────────────────────────────────────────
+// MODELO DE SEVERIDADE — CORROBORAÇÃO POR CONFIANÇA (P0-1)
+// ─────────────────────────────────────────────
+//
+// Regra de negócio: o Iron Dome só deleta quando a hostilidade é CONFIRMADA.
+// "Confirmada" = (a) um sinal determinístico/curado de alta confiança, OU
+// (b) corroboração de 2+ métodos de detecção INDEPENDENTES concordando.
+//
+// Isso elimina a classe de falso-positivo que deletava arquivos legítimos: um único
+// matcher heurístico de substring (ex.: prompt_injection casando "danger" via "DAN")
+// nunca mais apaga um arquivo sozinho — vira no máximo Suspicious (logado, mantido).
+// Ataques reais quase sempre disparam múltiplos sinais distintos ou um confirmatório.
+
+/// Tier A — CONFIRMATÓRIO: 1 hit já confirma malícia. São sinais determinísticos,
+/// multi-condição (corroboração embutida) ou de denylist curada pelo mantenedor.
+const CONFIRMATORY_VISITORS: &[&str] = &[
+    "denylist_malicious",          // denylist curada = comando hostil confirmado (1a camada)
+    "decode_exec",                 // decoder achou comando real em payload decodificado / pattern AST específico de decode→exec
+    "exfil_chain",                 // exige fonte de credencial + sink de rede coexistindo (corroboração embutida)
+    "taint_tracker",               // exige fluxo de dado fonte→sink (corroboração embutida)
+    "url_in_exec",                 // fetch+eval / require(http) / curl|bash — padrões multi-token específicos
+    "credential_harvest",          // leitura de path sensível (.ssh/id_rsa, .npmrc) ou env-cred + sink (allowlist aplicada)
+    "unicode_bidi",                // controle BiDi de reordenação (Trojan Source) — sem uso legítimo em código
+    "manifest_postinstall_exec",   // script de ciclo de vida com execução — específico
+    "manifest_build_exec",         // build script com execução — específico
+    "manifest_registry_redirect",  // redirect de registry — supply chain confirmado
+    "ide_config_poisoning",        // injeção em arquivo de config de IDE — alvo específico
+    "nemesis_bypass",              // tentativa de neutralizar o próprio Nemesis — confirmatório por definição
+];
+
+/// Tier B — CORROBORANTE: matchers heurísticos (substring/padrão) sujeitos a FP.
+/// 1 tipo distinto → Suspicious (loga, mantém). 2+ tipos DISTINTOS → Malicious (deleta).
+/// Contar TIPOS distintos (não hits) impede que múltiplos matches da MESMA causa
+/// (ex.: várias substrings "danger" num só arquivo) escalem indevidamente.
+const CORROBORATING_VISITORS: &[&str] = &[
+    "prompt_injection",
+    "self_clean",
+    "persistence_patterns",
+    "python_import_injection",
+    "unicode_pua",
+    "unicode_zero_width",
+    "unicode_homoglyph",
+    "dynamic_cmd",
+    "time_gated",
+    "high_entropy",
+    "denylist_suspicious",
+    "manifest_supply_chain",
+];
+
 fn compute_severity(violations: &[DefenderViolation]) -> Severity {
-    // Any single MALICIOUS-tagged visitor → Malicious
-    let malicious_visitors = &[
-        "decode_exec",
-        "url_in_exec",
-        "credential_harvest",
-        "prompt_injection",
-        "manifest_postinstall_exec",
-        "manifest_build_exec",
-        "self_clean",
-        "unicode_bidi",
-        "unicode_pua",
-        "unicode_zero_width",
-        "denylist_malicious",
-        "persistence_patterns",
-        "python_import_injection",
-        "ide_config_poisoning",
-        "taint_tracker",
-        "exfil_chain",
-        "manifest_registry_redirect",
-    ];
-
-    let suspicious_visitors = &[
-        "dynamic_cmd",
-        "time_gated",
-        "unicode_homoglyph",
-        "high_entropy",
-        "denylist_suspicious",
-        "manifest_supply_chain",
-    ];
-
-    for v in violations {
-        if malicious_visitors.contains(&v.visitor.as_str()) {
-            return Severity::Malicious;
-        }
-    }
-
-    // 2+ suspicious signals → escalate to Malicious
-    let suspicious_count = violations
+    // (a) Qualquer sinal confirmatório → Malicious.
+    if violations
         .iter()
-        .filter(|v| suspicious_visitors.contains(&v.visitor.as_str()))
-        .count();
-
-    if suspicious_count >= 2 {
+        .any(|v| CONFIRMATORY_VISITORS.contains(&v.visitor.as_str()))
+    {
         return Severity::Malicious;
     }
 
-    if suspicious_count >= 1 {
-        return Severity::Suspicious;
+    // (b) Corroboração: contar TIPOS de visitor corroborante DISTINTOS.
+    let mut distinct: std::collections::HashSet<&str> = std::collections::HashSet::new();
+    for v in violations {
+        let name = v.visitor.as_str();
+        if CORROBORATING_VISITORS.contains(&name) {
+            distinct.insert(name);
+        }
     }
 
-    Severity::Clean
+    match distinct.len() {
+        0 => Severity::Clean,
+        1 => Severity::Suspicious,        // sinal heurístico isolado → mantém, só loga
+        _ => Severity::Malicious,         // 2+ métodos independentes concordam → confirmado
+    }
 }

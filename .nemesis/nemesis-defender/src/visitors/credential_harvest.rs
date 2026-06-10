@@ -160,7 +160,13 @@ pub fn visit_js_node(node: &Node, source: &str, file_path: &str) -> Vec<Defender
         }
     }
 
-    if node_text.contains("readFile")
+    // Gate em call_expression: exige que readFile e fetch/axios coexistam dentro do
+    // MESMO nó de chamada (ex.: fetch(url, {body: fs.readFileSync(p)})). Sem o gate,
+    // o visitor rodava no nó raiz e via o arquivo inteiro, casando readFile e fetch em
+    // statements distintos (falso positivo). O caso de statements separados continua
+    // coberto pelo check 1 (SENSITIVE_PATHS), exfil_chain e taint_tracker.
+    if node.kind() == "call_expression"
+        && node_text.contains("readFile")
         && (node_text.contains("fetch") || node_text.contains("axios"))
     {
         violations.push(DefenderViolation {
@@ -189,7 +195,10 @@ pub fn visit_bash_node(node: &Node, source: &str, file_path: &str) -> Vec<Defend
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
-    if node_text.contains("cat") || node_text.contains("read") {
+    // Gate em command: avalia apenas o nó de um comando shell, não o arquivo inteiro.
+    // Sem o gate, "cat"/"read" e um SENSITIVE_PATH em linhas distintas do mesmo arquivo
+    // coexistiam no node_text do nó raiz (falso positivo).
+    if node.kind() == "command" && (node_text.contains("cat") || node_text.contains("read")) {
         for path in SENSITIVE_PATHS {
             if node_text.contains(path) {
                 violations.push(DefenderViolation {

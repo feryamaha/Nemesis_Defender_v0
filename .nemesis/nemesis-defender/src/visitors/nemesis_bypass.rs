@@ -46,6 +46,27 @@ const BYPASS_INDICATORS: &[&str] = &[
     "bypass",
 ];
 
+/// Nome de arquivo DISTINTIVO de um path protegido, para matching por basename.
+/// Retorna o último segmento não-vazio APENAS se for um nome de arquivo (contém '.').
+/// Para alvos que são diretórios (ex.: ".devin/rules/") retorna None — diretórios com
+/// nomes genéricos ("rules") não devem casar por basename (gerava falso-positivo).
+/// Corrige o bug do `split('/').last()` que retornava "" para alvos terminados em '/'
+/// (e `contains("")` é sempre verdadeiro → qualquer arquivo era flaggeado).
+fn distinctive_filename(target: &str) -> Option<&str> {
+    let seg = target.trim_end_matches('/').rsplit('/').next()?;
+    if !seg.is_empty() && seg.contains('.') {
+        Some(seg)
+    } else {
+        None
+    }
+}
+
+/// Verdadeiro se `text` referencia o path protegido `target` — pelo caminho completo
+/// ou por um nome de arquivo distintivo. Nunca casa string vazia nem palavra genérica.
+fn references_protected_target(text: &str, target: &str) -> bool {
+    text.contains(target) || distinctive_filename(target).is_some_and(|f| text.contains(f))
+}
+
 // ═══════════════════════════════════════════════════════════════
 // BASH VISITOR
 // ═══════════════════════════════════════════════════════════════
@@ -120,8 +141,7 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
     if (has_hex || has_b64) && has_output_target {
         // Verificar se o output target ou o conteúdo decodificado referencia paths Nemesis
         for target in NEMESIS_PROTECTED_TARGETS {
-            let target_short = target.split('/').last().unwrap_or(target);
-            if node_text.contains(target_short) {
+            if references_protected_target(node_text, target) {
                 violations.push(DefenderViolation {
                     visitor: "nemesis_bypass".to_string(),
                     line: (node.start_position().row + 1) as u32,
@@ -131,7 +151,7 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
                     message: format!(
                         "Path ofuscado (hex/base64) detectado com destino a '{}'. \
                          Payload codificado para evadir detecção de paths do Nemesis.",
-                        target_short
+                        target
                     ),
                     suggestion: Some(SUGGESTION_NEMESIS_BYPASS.to_string()),
                 });
@@ -173,8 +193,7 @@ pub fn visit_python_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         && (node_text.contains("'w'") || node_text.contains("\"w\"") || node_text.contains("write"))
     {
         for target in NEMESIS_PROTECTED_TARGETS {
-            let target_short = target.split('/').last().unwrap_or(target);
-            if node_text.contains(target) || node_text.contains(target_short) {
+            if references_protected_target(node_text, target) {
                 // Verifica se é concatenação de path ou variável
                 let has_concat = node_text.contains('+')
                     || node_text.contains("f\"")
@@ -230,8 +249,7 @@ pub fn visit_python_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
     if (node_text.contains("subprocess")
         || node_text.contains("os.system")
         || node_text.contains("os.popen"))
-        && node_text.contains("settings.json")
-        || node_text.contains("hooks.json")
+        && (node_text.contains("settings.json") || node_text.contains("hooks.json"))
     {
         violations.push(DefenderViolation {
             visitor: "nemesis_bypass".to_string(),
@@ -264,8 +282,7 @@ pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         || node_text.contains("appendFile"))
     {
         for target in NEMESIS_PROTECTED_TARGETS {
-            let target_short = target.split('/').last().unwrap_or(target);
-            if node_text.contains(target) || node_text.contains(target_short) {
+            if references_protected_target(node_text, target) {
                 let has_concat = node_text.contains('+')
                     || node_text.contains("${")
                     || node_text.contains("path.join")
@@ -298,8 +315,7 @@ pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
     if node.kind() == "template_string" || node.kind() == "template_literal" {
         if node_text.contains("${") {
             for target in NEMESIS_PROTECTED_TARGETS {
-                let target_short = target.split('/').last().unwrap_or(target);
-                if node_text.contains(target_short) {
+                if references_protected_target(node_text, target) {
                     violations.push(DefenderViolation {
                         visitor: "nemesis_bypass".to_string(),
                         line: (node.start_position().row + 1) as u32,
@@ -309,7 +325,7 @@ pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
                         message: format!(
                             "Template literal com path Nemesis '{}' interpolado. \
                              Ofuscação de acesso a infraestrutura protegida.",
-                            target_short
+                            target
                         ),
                         suggestion: Some(SUGGESTION_NEMESIS_BYPASS.to_string()),
                     });

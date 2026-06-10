@@ -64,7 +64,14 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
-    if node_text.contains("crontab")
+    // Gate em nó de statement único (comando ou comando-com-redirect). Sem isto, o visitor
+    // rodava no nó raiz e enxergava o arquivo inteiro, casando, p.ex., ">>" numa linha e
+    // ".bashrc" em outra (falso positivo). Cada mecanismo de persistência ocorre dentro de
+    // um único comando/redirect.
+    let is_cmd_stmt = node.kind() == "command" || node.kind() == "redirected_statement";
+
+    if is_cmd_stmt
+        && node_text.contains("crontab")
         && (node_text.contains("-e") || node_text.contains("-l") || node_text.contains("-r"))
     {
         violations.push(DefenderViolation {
@@ -80,7 +87,8 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         });
     }
 
-    if (node_text.contains(">>") || node_text.contains(">"))
+    if is_cmd_stmt
+        && (node_text.contains(">>") || node_text.contains(">"))
         && !node_text.contains("stdout")
         && (node_text.contains(".bashrc")
             || node_text.contains(".zshrc")
@@ -97,7 +105,8 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         });
     }
 
-    if node_text.contains("authorized_keys")
+    if is_cmd_stmt
+        && node_text.contains("authorized_keys")
         && (node_text.contains("echo") || node_text.contains("cat") || node_text.contains(">>"))
     {
         violations.push(DefenderViolation {
@@ -111,8 +120,9 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         });
     }
 
-    if (node_text.contains("systemctl") && node_text.contains("enable"))
-        || (node_text.contains("update-rc.d") && node_text.contains("defaults"))
+    if is_cmd_stmt
+        && ((node_text.contains("systemctl") && node_text.contains("enable"))
+            || (node_text.contains("update-rc.d") && node_text.contains("defaults")))
     {
         violations.push(DefenderViolation {
             visitor: "persistence_patterns".to_string(),
@@ -125,7 +135,7 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         });
     }
 
-    if node_text.contains("ssh-keygen") && !node_text.contains("-A") {
+    if is_cmd_stmt && node_text.contains("ssh-keygen") && !node_text.contains("-A") {
         violations.push(DefenderViolation {
             visitor: "persistence_patterns".to_string(),
             line: (node.start_position().row + 1) as u32,

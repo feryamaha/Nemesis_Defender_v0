@@ -27,14 +27,13 @@
       ".profile",
       ".ssh/id_rsa",
       ".ssh/authorized_keys",
-      ".nemesis/",
       "var/tmp/",
       "/tmp/",
       "/var/tmp/",
       "tmp/",
       "/dev/null"
     ],
-    "allowed_exceptions": ["/src/"]
+    "allowed_exceptions": ["/src/", ".nemesis/"]
   },
   "write_block": {
     "description": "Bloqueio de escrita/edição - leitura permitida",

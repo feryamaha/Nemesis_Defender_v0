@@ -32,7 +32,13 @@ pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         }
     }
 
-    if node_text.contains("writeFile") && node_text.contains("package.json") {
+    // Gate em call_expression: a ação perigosa (writeFile / exec de "rm -rf") precisa
+    // estar num nó de chamada, não espalhada pelo arquivo. Sem o gate, o visitor rodava
+    // no nó raiz e casava "writeFile"/"rm -rf" e seus alvos em statements distintos.
+    if node.kind() == "call_expression"
+        && node_text.contains("writeFile")
+        && node_text.contains("package.json")
+    {
         violations.push(DefenderViolation {
             visitor: "self_clean".to_string(),
             line: (node.start_position().row + 1) as u32,
@@ -44,7 +50,10 @@ pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         });
     }
 
-    if node_text.contains("rm -rf") && (node_text.contains(" ~") || node_text.contains("$HOME")) {
+    if node.kind() == "call_expression"
+        && node_text.contains("rm -rf")
+        && (node_text.contains(" ~") || node_text.contains("$HOME"))
+    {
         violations.push(DefenderViolation {
             visitor: "self_clean".to_string(),
             line: (node.start_position().row + 1) as u32,
@@ -56,7 +65,8 @@ pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         });
     }
 
-    if node_text.contains("rm -rf")
+    if node.kind() == "call_expression"
+        && node_text.contains("rm -rf")
         && (node_text.contains(".bashrc") || node_text.contains(".zshrc"))
     {
         violations.push(DefenderViolation {
@@ -70,7 +80,8 @@ pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         });
     }
 
-    if node_text.contains("rm -rf")
+    if node.kind() == "call_expression"
+        && node_text.contains("rm -rf")
         && (node_text.contains("Date")
             || node_text.contains("token")
             || node_text.contains("expir"))
@@ -94,7 +105,9 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
-    if node_text.contains("rm") && node_text.contains("$0") {
+    // Gate em command: cada padrão de auto-deleção precisa estar no nó de um único
+    // comando shell, não casado entre linhas distintas do arquivo (falso positivo).
+    if node.kind() == "command" && node_text.contains("rm") && node_text.contains("$0") {
         violations.push(DefenderViolation {
             visitor: "self_clean".to_string(),
             line: (node.start_position().row + 1) as u32,
@@ -107,7 +120,10 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         });
     }
 
-    if node_text.contains("rm -rf") && (node_text.contains(" ~") || node_text.contains("$HOME")) {
+    if node.kind() == "command"
+        && node_text.contains("rm -rf")
+        && (node_text.contains(" ~") || node_text.contains("$HOME"))
+    {
         violations.push(DefenderViolation {
             visitor: "self_clean".to_string(),
             line: (node.start_position().row + 1) as u32,
@@ -121,7 +137,8 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         });
     }
 
-    if node_text.contains("rm -rf")
+    if node.kind() == "command"
+        && node_text.contains("rm -rf")
         && (node_text.contains(".bashrc") || node_text.contains(".zshrc"))
     {
         violations.push(DefenderViolation {

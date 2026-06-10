@@ -90,7 +90,14 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
-    if node_text.contains("base64") && (node_text.contains("|") || node_text.contains("eval")) {
+    // Gate em pipeline/command: base64 e seu consumidor (| ou eval) precisam estar no
+    // mesmo nó. Sem o gate, o visitor rodava no nó raiz e casava "base64" e "|"/"eval"
+    // em linhas distintas do arquivo (falso positivo). Cobre `... | base64 -d | bash`
+    // (pipeline) e `eval "$(... base64 -d)"` (command).
+    if (node.kind() == "pipeline" || node.kind() == "command")
+        && node_text.contains("base64")
+        && (node_text.contains("|") || node_text.contains("eval"))
+    {
         violations.push(DefenderViolation {
             visitor: "decode_exec".to_string(),
             line: (node.start_position().row + 1) as u32,
@@ -112,7 +119,15 @@ pub fn visit_python_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
-    if node_text.contains("base64") && (node_text.contains("exec") || node_text.contains("eval")) {
+    // Gate em call: base64 e exec/eval (ou subprocess) precisam estar no mesmo nó de
+    // chamada (ex.: exec(base64.b64decode(...))). Sem o gate, o visitor rodava no nó
+    // raiz e casava "base64" e "exec"/"eval" em statements distintos (falso positivo).
+    // A forma fragmentada (decode numa linha, exec em outra) continua coberta pelo
+    // decoder recursivo, que decodifica o base64 e re-escaneia o payload.
+    if node.kind() == "call"
+        && node_text.contains("base64")
+        && (node_text.contains("exec") || node_text.contains("eval"))
+    {
         violations.push(DefenderViolation {
             visitor: "decode_exec".to_string(),
             line: (node.start_position().row + 1) as u32,
@@ -126,7 +141,7 @@ pub fn visit_python_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         });
     }
 
-    if node_text.contains("subprocess") && node_text.contains("base64") {
+    if node.kind() == "call" && node_text.contains("subprocess") && node_text.contains("base64") {
         violations.push(DefenderViolation {
             visitor: "decode_exec".to_string(),
             line: (node.start_position().row + 1) as u32,

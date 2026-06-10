@@ -104,7 +104,13 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
-    if node_text.contains("$") && (node_text.contains("curl") || node_text.contains("wget")) {
+    // Gate em command: a variável ($) e a ferramenta de rede (curl/wget) precisam estar
+    // no mesmo comando (ex.: `curl "$URL"`). Sem o gate, o visitor rodava no nó raiz e
+    // casava "$" numa linha e "curl" em outra do arquivo (falso positivo).
+    if node.kind() == "command"
+        && node_text.contains("$")
+        && (node_text.contains("curl") || node_text.contains("wget"))
+    {
         violations.push(DefenderViolation {
             visitor: "dynamic_cmd".to_string(),
             line: (node.start_position().row + 1) as u32,
@@ -150,7 +156,12 @@ pub fn visit_python_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         }
     }
 
-    if node_text.contains("subprocess") && node_text.contains("shell=True") {
+    // Gate em call: subprocess e shell=True precisam estar na mesma chamada
+    // (subprocess.run(cmd, shell=True)), não em linhas distintas do arquivo.
+    if node.kind() == "call"
+        && node_text.contains("subprocess")
+        && node_text.contains("shell=True")
+    {
         violations.push(DefenderViolation {
             visitor: "dynamic_cmd".to_string(),
             line: (node.start_position().row + 1) as u32,

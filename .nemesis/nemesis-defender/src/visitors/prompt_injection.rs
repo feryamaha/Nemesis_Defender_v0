@@ -44,7 +44,10 @@ const INJECTION_PATTERNS: &[&str] = &[
     "=== END SYSTEM PROMPT ===",
     "--- END OF INSTRUCTIONS ---",
     // ── ROLE-PLAYING / JAILBREAK (18) ──
-    "DAN",
+    // NOTE: "DAN" cru removido — colide com substrings legítimas ("danger",
+    // "Jordan", etc.) por ser match de substring sem fronteira de palavra.
+    // Cobertura preservada por "Do Anything Now" abaixo, regex_layer.rs
+    // (\bDAN\b com contexto) e denylist-defender.json.
     "Do Anything Now",
     "evil twin",
     "evil mode",
@@ -83,10 +86,10 @@ const INJECTION_PATTERNS: &[&str] = &[
     "[SYSTEM]",
     "=== END SYSTEM PROMPT ===",
     // ── INSTRUCTION SMUGGLING (8) ──
-    "<!--",
-    "--->",
-    "<![CDATA[",
-    "]]>",
+    // NOTE: delimitadores sintáticos crus ("<!--", "--->", "<![CDATA[", "]]>")
+    // removidos — casam com QUALQUER comentário HTML/JSX ou seção CDATA/XML
+    // legítima. O ataque está no CONTEÚDO da instrução (capturado pelos demais
+    // patterns + regex_layer), não no delimitador.
     "ignore everything above",
     "ignore above",
     "focus only on what follows",
