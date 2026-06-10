@@ -20,21 +20,36 @@ pub fn visit_js_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
         for ch in node_text.chars() {
             let cp = ch as u32;
 
-            if (0x061C..=0x061C).contains(&cp)
-                || (0x200E..=0x200F).contains(&cp)
-                || (0x202A..=0x202E).contains(&cp)
-                || (0x2066..=0x2069).contains(&cp)
-                || (0x2028..=0x2029).contains(&cp)
-                || (0xFE00..=0xFE0F).contains(&cp)
-            {
+            // Controles BiDi de REORDENAção (Trojan Source) — sem uso legítimo em código.
+            // Sinal de alta confiança → "unicode_bidi" (confirmatório).
+            if (0x202A..=0x202E).contains(&cp) || (0x2066..=0x2069).contains(&cp) {
                 violations.push(DefenderViolation {
                     visitor: "unicode_bidi".to_string(),
                     line: (node.start_position().row + 1) as u32,
                     col: (node.start_position().column + 1) as u32,
                     evidence: format!("U+{:04X} in string literal", cp),
                     decoded: None,
-                    message: "Unicode BiDi control character in AST string node. \
+                    message: "Unicode BiDi reordering control in AST string node. \
                              CVE-2021-42574 — Trojan Source attack."
+                        .to_string(),
+                    suggestion: Some(SUGGESTION_UNICODE.to_string()),
+                });
+            } else if (0x061C..=0x061C).contains(&cp)
+                || (0x200E..=0x200F).contains(&cp)
+                || (0x2028..=0x2029).contains(&cp)
+                || (0xFE00..=0xFE0F).contains(&cp)
+            {
+                // Marcas direcionais (LRM/RLM/ALM), separadores e variation selectors:
+                // legítimos em i18n (árabe/hebraico) e EMOJI (❤️ = U+2764 U+FE0F).
+                // Sinal fraco → "unicode_zero_width" (corroborante, não deleta sozinho).
+                violations.push(DefenderViolation {
+                    visitor: "unicode_zero_width".to_string(),
+                    line: (node.start_position().row + 1) as u32,
+                    col: (node.start_position().column + 1) as u32,
+                    evidence: format!("U+{:04X} in string literal", cp),
+                    decoded: None,
+                    message: "Invisible Unicode formatting char in AST string node. \
+                             Legitimate in i18n/emoji; corroborating signal."
                         .to_string(),
                     suggestion: Some(SUGGESTION_UNICODE.to_string()),
                 });

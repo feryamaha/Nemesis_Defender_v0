@@ -243,6 +243,32 @@ fn is_project_path(path: &Path, cwd: &Path) -> bool {
     path.starts_with(cwd)
 }
 
+/// Verdadeiro se `cwd` NÃO é uma raiz de projeto segura para o daemon deletar dentro.
+/// Recusa: raiz do filesystem ("/"), o próprio HOME do usuário, diretórios rasos demais,
+/// e qualquer dir que não contenha `.nemesis/`. Isso impede o escopo GLOBAL (varrer/deletar
+/// o disco inteiro) que causou data-loss no macOS quando a raiz era mal resolvida.
+fn is_unsafe_root(cwd: &Path) -> bool {
+    // Raiz do filesystem (sem parent) — ex.: "/"
+    if cwd.parent().is_none() {
+        return true;
+    }
+    // HOME do usuário não é raiz de projeto (Nemesis é per-projeto, não global)
+    if let Some(home) = get_home() {
+        if cwd == home {
+            return true;
+        }
+    }
+    // Diretórios rasos demais (ex.: "/Users", "/home", "/tmp") — provável engano de resolução
+    if cwd.components().count() < 3 {
+        return true;
+    }
+    // Raiz legítima de projeto Nemesis SEMPRE contém `.nemesis/`. Sem isso, não é projeto.
+    if !cwd.join(".nemesis").is_dir() {
+        return true;
+    }
+    false
+}
+
 fn should_scan_tmp_file(path: &Path) -> bool {
     let name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
 
@@ -288,6 +314,22 @@ pub fn run() {
 
     // Register all watch paths that exist in the current working directory
     let cwd = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
+
+    // ── SAFETY GUARD (anti escopo global / data-loss) ──
+    // O daemon DELETA arquivos Malicious dentro de `cwd` (is_project_path = starts_with cwd).
+    // Se `cwd` resolver para HOME, raiz do filesystem, ou um diretório raso demais, o escopo
+    // de deleção vira GLOBAL — o daemon varreria/deletaria o disco inteiro e interferiria em
+    // outros projetos (data-loss observado no macOS, onde a raiz era mal resolvida).
+    // Nemesis é PER-PROJETO: a raiz legítima contém `.nemesis/`. Fail-safe: recusar iniciar.
+    if is_unsafe_root(&cwd) {
+        eprintln!(
+            "[nemesis-defender] ABORT: raiz de projeto insegura para o daemon: '{}'. \
+             O escopo de deleção seria global (HOME/raiz/sem .nemesis). \
+             Inicie o daemon a partir da raiz de um projeto Nemesis (que contém .nemesis/).",
+            cwd.display()
+        );
+        return;
+    }
 
     let mut watched_count = 0;
 

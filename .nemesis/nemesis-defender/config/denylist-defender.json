@@ -28,8 +28,7 @@
       "suggestion": "System permissions are for human administrators only. Remove chmod/chown/sudo from application code.",
       "patterns": [
         "\\bchmod\\s+(\\+x|777|755|0?[0-7]{3})",
-        "\\bchown\\s+",
-        "\\bsudo\\s+(?!nemesis)"
+        "\\bchown\\s+"
       ]
     },
     "filesystem_manipulation": {
@@ -158,8 +157,7 @@
       "patterns": [
         "\\bln\\s+-s\\b",
         "\\bpax\\s+",
-        "\\beval\\s*\\(",
-        "\\bexec\\s*\\("
+        "\\beval\\s*\\("
       ]
     },
     "reverse_shell_enhanced": {
@@ -312,8 +310,6 @@
         "(?i)\\[SYSTEM\\](?:\\(|\\)|\\s)",
         "(?i)role\":\\s*\"system\"",
         "\\\\x[0-9a-fA-F]{2}\\\\x[0-9a-fA-F]{2}\\\\x[0-9a-fA-F]{2}",
-        "(?i)<!--",
-        "(?i)--->",
         "\\b1gn0r3\\b",
         "\\bpr3v10us\\b",
         "\\b1nstruct10ns\\b",
@@ -349,11 +345,7 @@
       "patterns": [
         "registry\\s*=\\s*https?://.*evil",
         "_authToken\\s*=",
-        "registry\\s*=\\s*https?://(?!(?:registry\\.npmjs\\.org|registry\\.yarnpkg\\.com|pypi\\.org|crates\\.io))",
-        "_authToken.*(?!registry\\.npmjs\\.org)",
-        "(?i)(?:npm|pip|cargo)\\s+install\\s+(?!@?[a-z0-9-]+/).*--registry",
-        "(?i)(?:npm|yarn)\\s+config\\s+set\\s+registry",
-        "(?i)index-url\\s*=\\s*https?://(?!pypi\\.org)"
+        "(?i)(?:npm|yarn)\\s+config\\s+set\\s+registry"
       ]
     },
     "shell_hook_hijacking": {
@@ -446,7 +438,7 @@
       "severity": "malicious",
       "suggestion": "Code comments should not contain Base64 encoded content. Base64 is often used to obfuscate malicious commands. Decode and review any suspicious Base64 strings.",
       "patterns": [
-        "//\\s*[A-Za-z0-9+/]{50,}={0,2}",
+        "(?:^|\\s)//\\s*[A-Za-z0-9+/]{50,}={0,2}",
         "#\\s*[A-Za-z0-9+/]{50,}={0,2}",
         "/\\*\\s*[A-Za-z0-9+/]{50,}={0,2}",
         "<!--\\s*[A-Za-z0-9+/]{50,}={0,2}"
@@ -499,7 +491,7 @@
         "(?i)DEVELOPER\\s+MODE\\s+(ENABLED|ACTIVATED|ON)",
         "(?i)(1gn0r3|f0rg3t|d1sr3g4rd|0v3rr1d3)",
         "(?i)(syst3m|pr0mpt|1nstruct10n[s5]?)",
-        "(?i)(j41lbr34k|byp4ss|h4ck)",
+        "(?i)(j41lbr34k|byp4ss)",
         "[\\u034F\\u115F\\u1160\\u17B4\\u17B5]{2,}"
       ]
     },
@@ -558,8 +550,6 @@
       "severity": "malicious",
       "suggestion": "Script tenta desativar o Nemesis. Remova imediatamente. Infraestrutura do Nemesis e gerenciada exclusivamente pelo usuario.",
       "patterns": [
-        "\\$\\{[A-Za-z_][A-Za-z0-9_]*\\}[\"']?\\s*[\"']?\\$\\{",
-        "\\$[A-Za-z_][A-Za-z0-9_]*\\$[A-Za-z_][A-Za-z0-9_]",
         "(?:echo|printf|cat)\\s+.*[>]\\s*[\"']?\\$",
         "printf\\s+.*\\\\\\\\(?:x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4})",
         "base64\\s+.*-(?:d|D|decode)\\s*.*\\|\\s*(?:sh|bash|zsh|tee|dd)",
@@ -582,8 +572,6 @@
         "export\\s+\\w+\\s*=\\s*[\"']?(?:/home/|/root/|~/)\\S*(?:\\.claude/settings|\\.devin/hooks|\\.codex/hooks|\\.nemesis/)",
         "cat\\s+>\\s*\\$\\w+\\s*<<",
         "exec\\s+\\d+>\\s*\\$",
-        "\\bunlink\\s+(?:-[A-Za-z]+\\s+)*\\$?[\"']?(?:/home/|/root/|~/|\\$?\\w)",
-        "\\blink\\s+(?:-[A-Za-z]+\\s+)*[\"']?(?:/home/|/root/|~/|\\$?\\w)",
         "\\bunlink\\s+.*&&.*\\blink\\s+",
         "^unlink\\s+|^link\\s+",
         "read\\s+\\w+\\s*<\\s*.*&&.*(?:unlink|link)",

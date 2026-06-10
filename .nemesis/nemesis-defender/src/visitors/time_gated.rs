@@ -59,9 +59,15 @@ pub fn visit_bash_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
-    // NOTA: este visitor bash NÃO está conectado ao ast_scanner (apenas time_gated::
-    // visit_js_node é despachado). Código atualmente inalcançável — mantido como estava.
-    if node_text.contains("sleep") && (node_text.contains("exec") || node_text.contains("bash")) {
+    // Gate em statement (command/list/pipeline), nunca no nó raiz `program`: sleep e o
+    // consumidor (exec/bash) precisam estar no MESMO statement (`sleep 3600 && bash x`,
+    // `sleep 5; exec ...`, `sleep | ...`). Sem o gate casaria sleep numa linha e bash em
+    // outra não-relacionada (FP). É visitor CORROBORANTE — não deleta sozinho.
+    let k = node.kind();
+    if (k == "command" || k == "list" || k == "pipeline")
+        && node_text.contains("sleep")
+        && (node_text.contains("exec") || node_text.contains("bash"))
+    {
         violations.push(DefenderViolation {
             visitor: "time_gated".to_string(),
             line: (node.start_position().row + 1) as u32,
@@ -81,9 +87,13 @@ pub fn visit_python_node(node: &Node, source: &str) -> Vec<DefenderViolation> {
 
     let node_text = node.utf8_text(source.as_bytes()).unwrap_or("");
 
-    // NOTA: este visitor python NÃO está conectado ao ast_scanner (apenas time_gated::
-    // visit_js_node é despachado). Código atualmente inalcançável — mantido como estava.
-    if node_text.contains("time.sleep")
+    // Gate em block (corpo de função/if/loop), nunca no nó raiz `module`: time.sleep e
+    // exec/eval precisam estar no mesmo bloco indentado — padrão real do delayed-exec
+    // (def _delayed(): time.sleep(...); exec(...)). Sem o gate casaria sleep e exec em
+    // funções não-relacionadas (FP). Visitor CORROBORANTE — não deleta sozinho. Adjacência
+    // solta no nível de módulo fica coberta pelo decoder (que re-escaneia o payload do exec).
+    if node.kind() == "block"
+        && node_text.contains("time.sleep")
         && (node_text.contains("exec") || node_text.contains("eval"))
     {
         violations.push(DefenderViolation {

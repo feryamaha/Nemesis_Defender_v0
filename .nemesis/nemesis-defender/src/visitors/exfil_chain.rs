@@ -164,6 +164,14 @@ const EXFIL_SINKS: &[(&str, &str)] = &[
     ),
 ];
 
+/// Env vars públicas (client-side) que NÃO são segredo — expostas ao browser por design
+/// no Next.js. Ler+enviar estas não é exfiltração. Mantém consistência com a allowlist
+/// LEGITIMATE_ENV_VARS do credential_harvest.
+fn is_public_env_var(s: &str) -> bool {
+    const PUBLIC: &[&str] = &["NEXT_PUBLIC", "CLIENT_TOKEN", "CLIENT_ID", "NODE_ENV"];
+    PUBLIC.iter().any(|p| s.contains(p))
+}
+
 /// Scan file content for exfil_chain: sensitive SOURCE + network SINK coexisting.
 /// Called directly from scan_content() — works on all file types.
 /// Does NOT fire on isolated source (no sink) or isolated sink (no source).
@@ -173,11 +181,18 @@ pub fn scan_content(_path: &Path, content: &[u8]) -> Vec<DefenderViolation> {
         Err(_) => return Vec::new(),
     };
 
-    // Find first matching source
+    // Find first matching source que NÃO seja uma env var pública (client-side).
+    // NEXT_PUBLIC_*, CLIENT_TOKEN, CLIENT_ID, NODE_ENV são expostas ao browser por design
+    // — não são segredo, então ler+enviar não é exfiltração. Espelha a allowlist do
+    // credential_harvest. Sem isto, todo route handler Next.js que usa um token público
+    // + fetch era marcado MALICIOUS e deletado (causa de data-loss no projeto real).
     let source_match = EXFIL_SOURCES.iter().find_map(|(pattern, label)| {
-        regex::Regex::new(pattern)
-            .ok()
-            .and_then(|re| re.find(text).map(|m| (m.as_str().to_string(), *label)))
+        regex::Regex::new(pattern).ok().and_then(|re| {
+            re.find_iter(text)
+                .map(|m| m.as_str().to_string())
+                .find(|s| !is_public_env_var(s))
+                .map(|s| (s, *label))
+        })
     });
 
     let (source_evidence, source_label) = match source_match {

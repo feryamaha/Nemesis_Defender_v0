@@ -116,6 +116,7 @@ fn traverse_bash_node(
     violations.extend(visitors::persistence_patterns::visit_bash_node(
         node, source,
     ));
+    violations.extend(visitors::time_gated::visit_bash_node(node, source));
     violations.extend(visitors::nemesis_bypass::visit_bash_node(node, source));
 
     let mut cursor = node.walk();
@@ -160,6 +161,7 @@ fn traverse_python_node(
     violations.extend(visitors::persistence_patterns::visit_python_node(
         node, source,
     ));
+    violations.extend(visitors::time_gated::visit_python_node(node, source));
     violations.extend(visitors::nemesis_bypass::visit_python_node(node, source));
     violations.extend(visitors::python_import_injection::visit_python_node(
         node, source,

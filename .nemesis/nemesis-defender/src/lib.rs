@@ -156,6 +156,24 @@ pub fn is_path_excluded(path: &Path) -> bool {
 /// - daemon watcher (filesystem events) — asynchronous
 ///
 /// Returns DefenderResult with severity + all violations found.
+///
+/// ── ARQUITETURA DE DENYLISTS / CONSISTÊNCIA ENTRE CAMADAS (P1-2 / P1-5) ──
+/// A SEGURANÇA DE CONTEÚDO tem FONTE ÚNICA: `config/denylist-defender.json`, aplicada
+/// aqui (regex_layer) e portanto compartilhada por AMBOS o pretool (write-time) e o
+/// daemon (filesystem). Logo, o veredito de SEGURANÇA é idêntico nas duas camadas para
+/// bytes idênticos — verificado empiricamente (decode_exec, exfil, ssh-read, reverse
+/// shell, bidi override: pretool == daemon).
+///
+/// As denylists em `.nemesis/denylist/*.json` servem VETORES DISTINTOS, NÃO são
+/// duplicatas e NÃO entram aqui:
+///   - camada "commands": interceptação de comando bash AO VIVO (Tool Bash) — só pretool;
+///     o daemon observa arquivos, não comandos.
+///   - regras de QUALIDADE (BFF, JSX, tipagem): portão de qualidade do pretool no
+///     write-time. NUNCA devem chegar ao daemon: violação de qualidade ⇒ bloquear a
+///     escrita (reversível), JAMAIS deletar arquivo (irreversível). Por isso o daemon é
+///     SECURITY-ONLY e a única divergência legítima pretool/daemon é a camada de qualidade.
+/// INVARIANTE: novos padrões de SEGURANÇA DE CONTEÚDO vão em denylist-defender.json (fonte
+/// única). Não duplicar em .nemesis/denylist nem mover regra de qualidade para cá.
 pub fn scan_content(path: &Path, content: &[u8]) -> DefenderResult {
     // ── Isentar pastas de pentest/documentação (early return — não escanea) ──
     if is_path_excluded(path) {

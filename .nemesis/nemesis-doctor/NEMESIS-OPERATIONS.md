@@ -68,6 +68,14 @@ Workspace Cargo `nemesis` (v8.2.0) com membros:
 cd .nemesis && cargo build --release --workspace
 ```
 
+> **Linux + eBPF:** prefira o wrapper, que recompila E reaplica as capabilities do
+> eBPF (perdidas a cada build, pois `setcap` é por-inode):
+> ```bash
+> .nemesis/scripts/nemesis-build.sh           # build --workspace + ensure-ebpf-caps
+> ```
+> Para só reativar as caps sem recompilar: `.nemesis/scripts/ensure-ebpf-caps.sh`
+> (idempotente; sudo apenas quando precisa aplicar; no-op em macOS).
+
 ### Por módulo
 
 ```bash

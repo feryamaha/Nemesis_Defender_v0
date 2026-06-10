@@ -8,6 +8,26 @@
 
 use crate::{DefenderViolation, Language};
 
+/// Avisa (uma vez por pattern, no stderr) quando um regex falha em compilar, em vez de
+/// pular em SILÊNCIO. A falha silenciosa (`Err(_) => continue`) escondia patterns mortos
+/// — ex.: lookahead `(?!...)`, que o crate `regex` não suporta. Tornar a falha visível
+/// garante que regra quebrada apareça em vez de virar proteção fantasma.
+fn warn_invalid_pattern(source: &str, pattern: &str, err: &regex::Error) {
+    use std::collections::HashSet;
+    use std::sync::{Mutex, OnceLock};
+    static WARNED: OnceLock<Mutex<HashSet<String>>> = OnceLock::new();
+    let set = WARNED.get_or_init(|| Mutex::new(HashSet::new()));
+    if let Ok(mut guard) = set.lock() {
+        if guard.insert(pattern.to_string()) {
+            eprintln!(
+                "[nemesis-defender] AVISO: regex invalido ignorado ({source}): {pattern:?} — {err}. \
+                 O engine `regex` nao suporta lookahead/backreference; reescreva sem (?!...)/(?=...) \
+                 ou implemente a verificacao em codigo. Esta regra esta INATIVA ate ser corrigida."
+            );
+        }
+    }
+}
+
 struct RegexPattern {
     visitor: &'static str,
     pattern: &'static str,
@@ -123,24 +143,14 @@ const UNIVERSAL_PATTERNS: &[RegexPattern] = &[
         pattern: r#"(?:/dev/tcp/|/dev/udp/|bash\s+-i\s+>&|nc\s+-e\s+/bin|socat\s+exec:)"#,
         message: "Reverse shell infrastructure pattern detected (bash /dev/tcp, netcat -e, socat). Active exploitation.",
     },
-    // ── Supply chain: malicious registry ──
-    RegexPattern {
-        visitor: "credential_harvest",
-        pattern: r#"(?i)registry\s*=\s*https?://(?!registry\.npmjs\.org|npm\.pkg\.github\.com)"#,
-        message: "Non-standard npm registry in .npmrc. Supply chain redirect attack — packages pulled from attacker's server.",
-    },
-    // ── Supply chain: non-canonical PyPI index (requirements.txt / pip.ini) ──
-    RegexPattern {
-        visitor: "manifest_registry_redirect",
-        pattern: r#"--(?:extra-)?index-url\s+https?://(?!pypi\.org|files\.pythonhosted\.org|test\.pypi\.org)\S+"#,
-        message: "Non-canonical PyPI index URL in --extra-index-url / --index-url. Supply chain redirect: all pip installs resolve from attacker-controlled server instead of pypi.org.",
-    },
-    // ── Supply chain: non-canonical PyPI server in .pypirc / pip.ini ──
-    RegexPattern {
-        visitor: "manifest_registry_redirect",
-        pattern: r#"(?:repository|index_url)\s*=\s*https?://(?!pypi\.org|files\.pythonhosted\.org|test\.pypi\.org)\S+"#,
-        message: "Non-canonical PyPI server in registry config (.pypirc / pip.ini). Supply chain redirect: pip resolves packages from attacker's index server.",
-    },
+    // ── Supply chain: registry/index redirect ──
+    // NOTA: a detecção de registry-redirect é feita pelo manifest_scanner, com ESCOPO
+    // DE PATH e sem lookahead (scan_npmrc / scan_pypirc / scan_requirements_txt /
+    // scan_ruby_gemfile). Os padrões que existiam aqui usavam lookahead `(?!...)`, que
+    // o crate `regex` do Rust NÃO suporta — falhavam em Regex::new e eram pulados em
+    // silêncio (proteção INERTE e redundante). Removidos. Fazê-los em regex_layer (sem
+    // path) seria perigoso: casaria `"repository": "https://github.com"` em package.json
+    // ou `const registry = "https://cdn"` em JS → falso-positivo destrutivo.
 ];
 
 pub fn scan(content: &[u8], _lang: &Language) -> Vec<DefenderViolation> {
@@ -155,7 +165,10 @@ pub fn scan(content: &[u8], _lang: &Language) -> Vec<DefenderViolation> {
         // Build regex (compiled once per call — for Phase 3+ this will be cached)
         let re = match regex::Regex::new(pattern_def.pattern) {
             Ok(r) => r,
-            Err(_) => continue,
+            Err(e) => {
+                warn_invalid_pattern("regex_layer/builtin", pattern_def.pattern, &e);
+                continue;
+            }
         };
 
         for m in re.find_iter(text) {
@@ -185,7 +198,10 @@ pub fn scan(content: &[u8], _lang: &Language) -> Vec<DefenderViolation> {
         {
             let re = match regex::Regex::new(&pattern_str) {
                 Ok(r) => r,
-                Err(_) => continue, // Skip invalid patterns
+                Err(e) => {
+                    warn_invalid_pattern("denylist-defender.json", &pattern_str, &e);
+                    continue;
+                }
             };
 
             for m in re.find_iter(text) {

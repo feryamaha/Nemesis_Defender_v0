@@ -35,7 +35,7 @@ pub fn run() -> CheckResult {
             if caps.contains("cap_bpf") {
                 res.push("OK    Capabilities cap_bpf presentes no nemesis-ebpf-daemon.");
             } else {
-                res.push("ATENCAO sem cap_bpf. Acao: sudo setcap cap_bpf,cap_perfmon,cap_sys_resource+eip <daemon>.");
+                res.push("ATENCAO sem cap_bpf (cai a cada recompilacao). Acao: rode .nemesis/scripts/ensure-ebpf-caps.sh (ou builde via .nemesis/scripts/nemesis-build.sh, que ja reaplica as caps).");
                 problems += 1;
             }
         } else {

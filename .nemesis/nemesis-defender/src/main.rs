@@ -89,12 +89,16 @@ fn main() {
                 }
             };
 
-            // Use binary's directory to find project root (immune to CWD changes)
+            // Project root = parent do diretório `.nemesis` que contém este binário.
+            // Achar o ancestral `.nemesis` é robusto a mudanças de profundidade/layout
+            // (symlinks, build em local diferente). A versão antiga contava 4 parents
+            // fixos; no macOS, com layout/symlink diferente, isso resolvia para HOME ou
+            // a raiz do FS → daemon com escopo GLOBAL deletando o disco inteiro.
             let project_root = exe
-                .parent()
-                .and_then(|release| release.parent())
-                .and_then(|target| target.parent())
-                .map(|nemesis| nemesis.parent().unwrap_or(nemesis).to_path_buf())
+                .ancestors()
+                .find(|p| p.file_name() == Some(std::ffi::OsStr::new(".nemesis")))
+                .and_then(|nemesis_dir| nemesis_dir.parent())
+                .map(|p| p.to_path_buf())
                 .unwrap_or_else(|| {
                     std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."))
                 });
