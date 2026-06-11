@@ -56,6 +56,14 @@ impl ViolationLogger {
 
         Self::write_to_file(violation);
 
+        // Ledger unificado (.nemesis/logs/nemesis-violations.log): normaliza para o
+        // vocabulário das 6 mensagens. Bloqueio de comando do kernel → COMANDO NAO PERMITIDO.
+        let unified_msg = match violation.command {
+            Some(ref cmd) => format!("NEMESIS SEC - COMANDO NAO PERMITIDO · {}", cmd),
+            None => violation.message.clone(),
+        };
+        append_unified_ledger("ebpf-kernel", &unified_msg);
+
         eprintln!("[VIOLATION] {:?}: {}", violation.violation_type, violation.message);
         if let Some(ref rule) = violation.rule {
             eprintln!("  Rule: {}", rule);
@@ -98,5 +106,35 @@ impl ViolationLogger {
             "layer": violation.layer.as_ref().unwrap_or(&"unknown".to_string()),
         });
         entry.to_string()
+    }
+}
+
+/// Anexa um evento de bloqueio ao ledger unificado `.nemesis/logs/nemesis-violations.log`.
+/// Cópia local (o crate ebpf-kernel é desacoplado do nemesis-defender). Mesmo schema:
+/// {ts, date, time, layer, message}. Path resolvido subindo do binário até `.nemesis/`.
+fn append_unified_ledger(layer: &str, message: &str) {
+    use std::path::PathBuf;
+    let ledger: PathBuf = std::env::current_exe()
+        .ok()
+        .and_then(|exe| {
+            exe.ancestors()
+                .find(|a| a.file_name().map(|n| n == ".nemesis").unwrap_or(false))
+                .map(|nem| nem.join("logs").join("nemesis-violations.log"))
+        })
+        .unwrap_or_else(|| PathBuf::from(".nemesis/logs/nemesis-violations.log"));
+
+    let now = chrono::Local::now();
+    let entry = serde_json::json!({
+        "ts": now.to_rfc3339(),
+        "date": now.format("%Y-%m-%d").to_string(),
+        "time": now.format("%H:%M:%S").to_string(),
+        "layer": layer,
+        "message": message,
+    });
+    if let Some(dir) = ledger.parent() {
+        let _ = fs::create_dir_all(dir);
+    }
+    if let Ok(mut f) = OpenOptions::new().create(true).append(true).open(&ledger) {
+        let _ = writeln!(f, "{}", entry);
     }
 }

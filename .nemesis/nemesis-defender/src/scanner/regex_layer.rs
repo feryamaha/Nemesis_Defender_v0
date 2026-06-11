@@ -143,6 +143,65 @@ const UNIVERSAL_PATTERNS: &[RegexPattern] = &[
         pattern: r#"(?:/dev/tcp/|/dev/udp/|bash\s+-i\s+>&|nc\s+-e\s+/bin|socat\s+exec:)"#,
         message: "Reverse shell infrastructure pattern detected (bash /dev/tcp, netcat -e, socat). Active exploitation.",
     },
+    // ── Execução dinâmica/ofuscada (sandbox-escape) — multi-runtime ──
+    // Equivalentes de eval/Function que evadem os visitors literais (eval/atob/require).
+    // JS/TS: Function-constructor via `(fn).constructor("code")`, `x.constructor.constructor`,
+    // `Function("return process")`, `globalThis["eval"]`. Python/Ruby/PHP: reflexão p/ exec.
+    RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"['"]return\s+(?:this|process|global|globalThis|require|module|eval)\b"#,
+        message: "Function-constructor global access: string \"return this/process/global\" passed to a constructed function = eval-equivalent sandbox escape.",
+    },
+    RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"\.constructor\s*\.\s*constructor\b"#,
+        message: "Function-constructor RCE: `x.constructor.constructor` is equivalent to eval(). Used to evade literal eval/Function detection.",
+    },
+    RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"[)\]}]\s*\.\s*constructor\s*\(\s*['"]"#,
+        message: "Function-constructor RCE: `(function(){}).constructor(\"code\")` / `[].constructor(\"code\")` — eval-equivalent via .constructor on a literal.",
+    },
+    RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"(?:globalThis|global|window|self)\s*\[\s*['"](?:eval|Function)['"]\s*\]"#,
+        message: "Dynamic global eval/Function access via bracket notation (globalThis[\"eval\"]). Obfuscated code execution.",
+    },
+    RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"__import__\s*\(\s*['"]os['"]\s*\)\s*\.\s*(?:system|popen|exec)"#,
+        message: "Python dynamic import RCE: __import__('os').system/popen. Obfuscated command execution.",
+    },
+    RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"\bgetattr\s*\(\s*__builtins__"#,
+        message: "Python reflective access to __builtins__ (getattr) — used to reach eval/exec while evading literal detection.",
+    },
+    RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"\bglobals\s*\(\s*\)\s*\[\s*['"](?:eval|exec)['"]"#,
+        message: "Python dynamic eval/exec via globals()['eval']. Obfuscated code execution.",
+    },
+    RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"\.\s*send\s*\(\s*:?['"]?(?:eval|system|exec|instance_eval)\b"#,
+        message: "Ruby reflective dispatch to eval/system/exec via .send(:eval). Obfuscated code execution.",
+    },
+    RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"\b(?:instance_eval|class_eval|module_eval)\s*\(\s*['"]"#,
+        message: "Ruby string eval (instance_eval/class_eval with a string literal). Runtime code execution.",
+    },
+    RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"\bcreate_function\s*\("#,
+        message: "PHP create_function() — deprecated dynamic-code primitive used in malware/backdoors.",
+    },
+    RegexPattern {
+        visitor: "decode_exec",
+        pattern: r#"\bassert\s*\(\s*['"$]"#,
+        message: "PHP assert() with a string/variable argument — classic RCE primitive (assert evaluates code).",
+    },
     // ── Supply chain: registry/index redirect ──
     // NOTA: a detecção de registry-redirect é feita pelo manifest_scanner, com ESCOPO
     // DE PATH e sem lookahead (scan_npmrc / scan_pypirc / scan_requirements_txt /
@@ -153,6 +212,47 @@ const UNIVERSAL_PATTERNS: &[RegexPattern] = &[
     // ou `const registry = "https://cdn"` em JS → falso-positivo destrutivo.
 ];
 
+/// Reverse shell MULTI-LINGUAGEM: criação de socket de rede CRU. Cobre linguagens sem
+/// visitor AST (Ruby/PHP/Go/Perl/Java) cujos idiomas não casam os padrões Python/bash.
+/// Socket cru (≠ cliente HTTP) é raro em código de app legítimo.
+const REVSHELL_NET_PATTERNS: &[&str] = &[
+    r"\bTCPSocket\.(?:new|open)\b",        // Ruby
+    r"\bSocket\.tcp\b",                    // Ruby
+    r"\bfsockopen\s*\(",                   // PHP
+    r"\bpfsockopen\s*\(",                  // PHP
+    r"\bstream_socket_client\s*\(",        // PHP
+    r"\bnet\.Dial(?:Timeout)?\s*\(",       // Go
+    r"\bIO::Socket(?:::INET)?\b",          // Perl
+    r"\bnew\s+java\.net\.Socket\b",        // Java
+    r"\bSocket\.new\s*\(\s*Socket::AF_INET", // Ruby low-level
+    r#"\bsocket\.tcp\s*\("#,               // Lua (luasocket: socket.tcp())
+    r#"\bsocket\.connect\s*\("#,           // Lua / genérico (luasocket: socket.connect())
+    r#"\brequire\s*\(\s*['"]socket['"]\s*\)"#, // Lua/Ruby: require("socket")
+    // Heurístico AGNÓSTICO: connect()/connect a host + PORTA numérica via método/`:`.
+    // Coexistência com um sink de exec (abaixo) mantém o FP baixo — connect a host:porta
+    // crua + execução de comando é assinatura de reverse shell em qualquer linguagem.
+    r#"[.:]\s*connect\s*\(\s*[^)]*,\s*['"]?\d{2,5}\b"#,
+];
+
+/// Execução de comando / spawn de shell. Evita colidir com template literal JS (`${`):
+/// usa idiomas específicos de Ruby/PHP/Go/Perl e backtick com interpolação Ruby (`#{`).
+const REVSHELL_EXEC_PATTERNS: &[&str] = &[
+    r"`[^`]*#\{",                          // Ruby backtick com #{...} (RCE) — não é JS (${)
+    r"\bIO\.popen\b",                      // Ruby
+    r"\bProcess\.spawn\b",                 // Ruby
+    r"\bKernel\.(?:system|exec)\b",        // Ruby
+    r#"\bsystem\s*\(\s*['"]"#,             // Ruby/Perl/PHP/C system("...")
+    r"\bshell_exec\s*\(",                  // PHP
+    r"\bproc_open\s*\(",                   // PHP
+    r"\bpassthru\s*\(",                    // PHP
+    r"\bexec\.Command\s*\(",               // Go
+    r#"\bexec\s*\(\s*['"]/(?:bin|usr)"#,   // exec("/bin/sh"...)
+    r"/bin/(?:ba|z)?sh\b",                 // spawn de shell
+    r"\bos\.execute\s*\(",                 // Lua os.execute()
+    r"\bio\.popen\s*\(",                   // Lua io.popen()
+    r"\bos\.popen\s*\(",                   // Lua/Python os.popen()
+];
+
 pub fn scan(content: &[u8], _lang: &Language) -> Vec<DefenderViolation> {
     let mut violations = Vec::new();
 
@@ -160,6 +260,43 @@ pub fn scan(content: &[u8], _lang: &Language) -> Vec<DefenderViolation> {
         Ok(s) => s,
         Err(_) => return violations,
     };
+
+    // ── Reverse shell multi-linguagem: socket de rede CRU + execução de comando
+    //    coexistindo no mesmo arquivo. Fecha o gap de Ruby/PHP/Go/Perl (sem visitor AST).
+    //    Coexistência (não padrão isolado) mantém o FP baixo — abrir socket cru E rodar
+    //    comando é forte indício de reverse shell, raro em código legítimo. ──
+    let net_match = REVSHELL_NET_PATTERNS.iter().find_map(|p| {
+        regex::Regex::new(p)
+            .ok()
+            .and_then(|re| re.find(text).map(|m| (m.start(), m.as_str().to_string())))
+    });
+    if let Some((net_off, net_ev)) = net_match {
+        let has_exec = REVSHELL_EXEC_PATTERNS.iter().any(|p| {
+            regex::Regex::new(p).map(|re| re.is_match(text)).unwrap_or(false)
+        });
+        if has_exec {
+            let before = &text[..net_off];
+            let line = before.chars().filter(|&c| c == '\n').count() as u32 + 1;
+            let last_newline = before.rfind('\n').map(|p| p + 1).unwrap_or(0);
+            let col = (net_off - last_newline) as u32 + 1;
+            violations.push(DefenderViolation {
+                visitor: "reverse_shell".to_string(),
+                line,
+                col,
+                evidence: net_ev,
+                decoded: None,
+                message: "Multi-language reverse shell: raw network socket creation coexists with \
+                          command execution in the same file. Pattern of Ruby/PHP/Go/Perl reverse \
+                          shells that evade language-specific AST checks."
+                    .to_string(),
+                suggestion: Some(
+                    "Remove raw socket + command-execution code. Application code should use vetted \
+                     HTTP clients, never raw sockets bridged to a shell."
+                        .to_string(),
+                ),
+            });
+        }
+    }
 
     for pattern_def in UNIVERSAL_PATTERNS {
         // Build regex (compiled once per call — for Phase 3+ this will be cached)

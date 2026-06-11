@@ -132,13 +132,13 @@ fn write_session_event(tool_type: &str, target: &str, blocked: bool, risk_level:
         .and_then(|p| p.parent().map(|d| d.to_path_buf())) // release/
         .and_then(|p| p.parent().map(|d| d.to_path_buf())) // target/
         .and_then(|p| p.parent().map(|d| d.to_path_buf())) // .nemesis/
-        .map(|nemesis| nemesis.join("logs/session-events.jsonl"));
+        .map(|nemesis| nemesis.join("runtime/session-events.jsonl"));
 
     let fallback_paths: &[std::path::PathBuf] = &[
-        std::path::PathBuf::from(".nemesis/logs/session-events.jsonl"),
+        std::path::PathBuf::from(".nemesis/runtime/session-events.jsonl"),
         std::env::current_dir()
             .unwrap_or_default()
-            .join(".nemesis/logs/session-events.jsonl"),
+            .join(".nemesis/runtime/session-events.jsonl"),
     ];
 
     let all_paths: Vec<&std::path::PathBuf> = exe_path.iter()
@@ -184,6 +184,12 @@ fn nemesis_block(reason: &str, instruction: Option<&str>) -> ! {
             write_session_event(tool_type, target, true, 2);
         }
     });
+    // Ledger unificado de bloqueios: só registra bloqueios de SEGURANÇA (vocabulário das 6
+    // mensagens `NEMESIS ...`). Erros operacionais do hook (JSON inválido, input vazio) não
+    // são proteções e não entram na telemetria.
+    if reason.contains("NEMESIS ") {
+        nemesis_defender::violations_log::append("pretool", reason);
+    }
     std::process::exit(2);
 }
 
@@ -751,6 +757,46 @@ fn trim_leading_dot_slash(path: &str) -> String {
     }
 }
 
+/// Converte um glob de shell em regex ANCORADO (^...$), com semântica de path:
+///   `*` → `[^/]*` (não cruza '/'), `?` → `[^/]`, `[...]` mantido, resto escapado.
+/// Detecta globs que EXPANDEM para um path protegido em QUALQUER componente (arquivo OU
+/// diretório): `.de*/hooks.json`, `.d?vin/hooks.json`, `.[cd]*/settings.json`, `.*`.
+fn glob_to_anchored_regex(glob: &str) -> String {
+    let mut re = String::from("^");
+    let mut chars = glob.chars();
+    while let Some(c) = chars.next() {
+        match c {
+            '*' => re.push_str("[^/]*"),
+            '?' => re.push_str("[^/]"),
+            '[' => {
+                re.push('[');
+                for cc in chars.by_ref() {
+                    re.push(cc);
+                    if cc == ']' {
+                        break;
+                    }
+                }
+            }
+            '.' | '+' | '(' | ')' | '|' | '^' | '$' | '{' | '}' | '\\' => {
+                re.push('\\');
+                re.push(c);
+            }
+            _ => re.push(c),
+        }
+    }
+    re.push('$');
+    re
+}
+
+/// Verdadeiro se o token glob expande para algum path protegido. `*`/`?` não cruzam '/',
+/// então globs legítimos (`src/*.ts`, `*.json`) não casam paths protegidos (dotfiles/dot-dirs).
+fn glob_hits_protected(glob: &str, protected: &[String]) -> bool {
+    match Regex::new(&glob_to_anchored_regex(glob)) {
+        Ok(re) => protected.iter().any(|p| re.is_match(p)),
+        Err(_) => false,
+    }
+}
+
 fn check_folder_file_access(
     denylist: &DenylistFolderFiles,
     path: &str,
@@ -1179,8 +1225,15 @@ fn run_pretool() {
                 // Paths extraidos do comando Bash (generico — qualquer comando)
                 if !bash_path.is_empty() {
                     // Captura paths absolutos, relativos e dot-prefixed de qualquer comando
+                    // Âncora inicial inclui = < ( além de espaço/início: captura paths em
+                    //   F=.devin/hooks.json   (atribuição de variável)
+                    //   $(<.devin/hooks.json) (read do bash via $(<...))
+                    //   cat <(...)            (process substitution)
+                    // que antes escapavam (a âncora só aceitava \s/^).
+                    // Char-class exclui também ( ) < para não capturar lixo de subshell/redirect.
+                    // Glob-chars (* ? [) logo após o ponto inicial capturam dot-globs (".*").
                     let path_re = regex::Regex::new(
-                        r#"(?:^|\s)(['"]?)((?:/[^\s;|&'">]+|\.\.?/[^\s;|&'">]+|\.[a-zA-Z0-9][^\s;|&'">]*))['"]?"#
+                        r#"(?:^|[\s=<(])(['"]?)((?:/[^\s;|&'"><()]+|\.\.?/[^\s;|&'"><()]+|\.[a-zA-Z0-9*?\[][^\s;|&'"><()]*))['"]?"#
                     ).unwrap();
 
                     for cap in path_re.captures_iter(&bash_path) {
@@ -1210,39 +1263,62 @@ fn run_pretool() {
                     }
                 }
 
-                // Wildcard/glob detection: check parent directories against deny list
+                // cd-context bypass: `cd .devin && cat hooks.json` despe o prefixo do path
+                // (após o cd, "hooks.json" resolve para ".devin/hooks.json", mas o pretool
+                // só via "hooks.json"). FIX: bloquear `cd`/`pushd` para dentro de um diretório
+                // que CONTÉM arquivo protegido (parent de qualquer absolute_block path).
+                // Respeita allowed_exceptions (ex.: /src/, ou .nemesis/ em manutenção).
+                if !bash_path.is_empty() {
+                    if let Some(ref dl) = load_denylist_folder_files(&project_dir) {
+                        let cd_re = regex::Regex::new(
+                            r#"(?:^|[;&|(]|&&|\|\|)\s*(?:cd|pushd)\s+(['"]?)([^\s;|&)'"]+)"#
+                        ).unwrap();
+                        for cap in cd_re.captures_iter(&bash_path) {
+                            let target = cap.get(2).map(|m| m.as_str()).unwrap_or("");
+                            if target.is_empty() || target == "." || target == ".." || target == "-" {
+                                continue;
+                            }
+                            let rel = normalize_to_relative(target);
+                            if rel.is_empty() {
+                                continue;
+                            }
+                            let prefix = format!("{}/", rel.trim_end_matches('/'));
+                            let into_protected = dl.absolute_block.paths.iter().any(|b| {
+                                b.starts_with(&prefix) || b.trim_end_matches('/') == rel
+                            });
+                            let is_exception = dl
+                                .absolute_block
+                                .allowed_exceptions
+                                .iter()
+                                .any(|exc| path_matches_allowed_exception(&rel, exc));
+                            if into_protected && !is_exception {
+                                nemesis_block(
+                                    &format!("NEMESIS SEC - ACESSO NEGADO (cd para diretorio protegido) · {}", rel),
+                                    Some("Não use 'cd'/'pushd' para entrar em diretórios protegidos (.devin, .claude, .codex, .ssh, .nemesis...). Acesse arquivos com caminho explícito a partir da raiz do projeto."),
+                                );
+                            }
+                        }
+                    }
+                }
+
+                // Wildcard/glob detection: bloqueia globs que EXPANDEM para arquivos
+                // protegidos (read OU write), em QUALQUER componente do path.
+                // FIX (gap 8.9 + glob-dir): glob→regex ancorado (`*`→[^/]*) casado contra
+                // cada path protegido. Cobre `.devin/*.json`, `.de*/hooks.json` (glob no
+                // diretório), `.d?vin/...`, `.[cd]*/...` e `.*` (dotfiles na raiz). A versão
+                // anterior só pegava glob no nome do arquivo (parent literal) e vazava `.de*/`.
                 if !all_paths.is_empty() {
                     if let Some(ref dl) = load_denylist_folder_files(&project_dir) {
                         for p in &all_paths {
-                            if p.contains('*') || p.contains('?') {
-                                // Extract parent directory from wildcard path
-                                let parent = if let Some(idx) = p.rfind('/') {
-                                    &p[..idx + 1]  // include trailing slash
-                                } else {
-                                    continue;
-                                };
-
-                                if parent.is_empty() || parent == "./" || parent == "../" {
-                                    continue;
-                                }
-
-                                // Check if ANY blocked path falls within this parent directory
-                                let is_parent_blocked = dl.absolute_block.paths.iter()
-                                    .any(|blocked| blocked.starts_with(parent)
-                                        || parent.contains(blocked));
-                                let is_parent_write_blocked = dl.write_block.files.iter()
-                                    .any(|f| {
-                                        let full = format!("{}{}", parent, f);
-                                        dl.absolute_block.paths.iter().any(|b| full.contains(b))
-                                            || f.starts_with(parent)
-                                    });
-
-                                if is_parent_blocked || is_parent_write_blocked {
-                                    nemesis_block(
-                                        &format!("NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO · {}", p),
-                                        Some("Não use wildcards (*, ?) para acessar diretórios protegidos. Especifique arquivos individualmente com caminho explícito.")
-                                    );
-                                }
+                            if !(p.contains('*') || p.contains('?') || p.contains('[')) {
+                                continue;
+                            }
+                            let rel = normalize_to_relative(p);
+                            if glob_hits_protected(&rel, &dl.absolute_block.paths) {
+                                nemesis_block(
+                                    &format!("NEMESIS SEC - ACESSO NEGADO (glob em alvo protegido) · {}", rel),
+                                    Some("Não use wildcards (*, ?, [) que expandem para arquivos protegidos (.env, .devin/, .claude/, .codex/...). Especifique cada arquivo com caminho explícito.")
+                                );
                             }
                         }
                     }
@@ -1550,6 +1626,16 @@ fn run_pretool() {
 
             if is_real_violation {
                 eprint!("{}{}", stderr_str, stdout_str);
+                // Ledger unificado: extrair a mensagem PADRÃO (NEMESIS SEC/QUALITY ...) da
+                // saída do hook nemesis-pretool-hook (denylist de comandos / workflow gates).
+                let combined = format!("{}{}", stderr_str, stdout_str);
+                let msg = combined
+                    .lines()
+                    .find(|l| l.contains("NEMESIS "))
+                    .or_else(|| combined.lines().find(|l| !l.trim().is_empty()))
+                    .unwrap_or("NEMESIS SEC - COMANDO NAO PERMITIDO")
+                    .trim();
+                nemesis_defender::violations_log::append("pretool", msg);
                 std::process::exit(2);
             }
 

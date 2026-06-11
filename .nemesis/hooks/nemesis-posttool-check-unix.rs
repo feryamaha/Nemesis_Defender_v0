@@ -139,48 +139,17 @@ fn scan_and_report(content: &str, context: &str) {
 }
 
 fn write_audit_log(result: &nemesis_defender::DefenderResult, context: &str, content: &str) {
-    let log_dir = resolve_log_dir();
-    if let Err(e) = std::fs::create_dir_all(&log_dir) {
-        eprintln!("[NEMESIS OUTPUT AUDIT] Cannot create log dir: {}", e);
-        return;
+    // Ledger unificado de bloqueios — camada posttool é ADVISORY (aviso pós-escrita):
+    // não bloqueia, mas registra quando detecta conteúdo malicioso já escrito.
+    if !matches!(result.severity, nemesis_defender::Severity::Clean) {
+        nemesis_defender::violations_log::append(
+            "posttool",
+            &format!("NEMESIS SEC - CONTEUDO MALICIOSO DETECTADO · {}", context),
+        );
     }
 
-    let log_path = log_dir.join("output-audit.log");
-    let timestamp = chrono::Local::now().format("%Y-%m-%dT%H:%M:%S");
-
-    let mut entries = String::new();
-    entries.push_str(&format!("\n[{}] context={} severity={:?} violations={}\n",
-        timestamp, context, result.severity, result.violations.len()));
-
-    for v in &result.violations {
-        entries.push_str(&format!("  ├─ visitor={} evidence={:?}\n", v.visitor, v.evidence));
-        entries.push_str(&format!("  │   message={}\n", v.message));
-        if let Some(ref s) = v.suggestion {
-            entries.push_str(&format!("  │   fix={}\n", s));
-        }
-    }
-
-    // Truncate scanned content preview to 200 chars for log readability
-    let preview: String = content.chars().take(200).collect();
-    entries.push_str(&format!("  └─ content_preview={:?}\n", preview));
-
-    use std::io::Write;
-    match std::fs::OpenOptions::new().create(true).append(true).open(&log_path) {
-        Ok(mut f) => { let _ = f.write_all(entries.as_bytes()); }
-        Err(e) => { eprintln!("[NEMESIS OUTPUT AUDIT] Log write failed: {}", e); }
-    }
-}
-
-fn resolve_log_dir() -> PathBuf {
-    // Try CWD-relative path first (binary invoked from project root)
-    let cwd = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
-    let candidate = cwd.join(".nemesis").join("logs");
-    if candidate.parent().map(|p| p.exists()).unwrap_or(false) {
-        return candidate;
-    }
-    // Fallback: same directory as the binary
-    std::env::current_exe()
-        .ok()
-        .and_then(|p| p.parent().map(|d| d.join("logs")))
-        .unwrap_or_else(|| PathBuf::from(".nemesis/logs"))
+    // output-audit.log (audit verboso write-only) foi descontinuado: o posttool agora
+    // registra apenas no ledger unificado (.nemesis/logs/nemesis-violations.log). O
+    // parâmetro `content` é mantido na assinatura por compatibilidade com os call-sites.
+    let _ = content;
 }

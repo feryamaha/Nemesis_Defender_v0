@@ -29,6 +29,7 @@ O Nemesis **age, não pergunta**. Quando instalado em um projeto que já contém
 
 - [O que o Nemesis faz](#o-que-o-nemesis-faz)
 - [Arquitetura em camadas](#arquitetura-em-camadas)
+- [Modelo de detecção e severidade](#modelo-de-detecção-e-severidade)
 - [Requisitos](#requisitos)
 - [Instalação](#instalação)
 - [Nemesis Doctor](#nemesis-doctor)
@@ -66,6 +67,25 @@ A premissa técnica: instrução em texto (`"não rode comandos destrutivos"`) �
 **Tudo parte do Pretool.** Sem o pretool configurado, o Nemesis não roda - a trilha de segurança (Defender) é acionada por ele. A camada **eBPF** é a única independente: opera no kernel como rede de contenção adicional, segurando comandos destrutivos caso o pretool seja desligado ou contornado. Em macOS e Windows, sem eBPF, a defesa se concentra nas trilhas do pretool.
 
 > A camada eBPF é uma **contenção mínima de comandos destrutivos**, não a defesa principal. Ela existe para o cenário em que o pretool é desativado. Sua expansão (cobrir escrita não-execve, rename/symlink) é um ponto aberto para a comunidade.
+
+---
+
+## Modelo de detecção e severidade
+
+O Defender **só deleta quando a hostilidade é confirmada** — isso é deliberado e é o que separa um "iron dome" de uma metralhadora que derruba avião amigo.
+
+- **Sinais de alta confiança (confirmatórios)** bloqueiam sozinhos: deny-list curada, `decode → exec`, cadeia de exfiltração (fonte sensível + sink de rede), reverse shell (socket cru + execução de comando), tentativa de bypass do próprio Nemesis, e injeção em config de IDE.
+- **Sinais heurísticos (substring/padrão)** exigem **corroboração — 2 métodos de detecção independentes concordando** — antes de deletar. Sozinhos, ficam em `Suspicious` (registrado, arquivo mantido). Contar *tipos distintos* de detector (não múltiplos hits do mesmo) impede que N coincidências da mesma causa escalem indevidamente.
+
+Esse modelo elimina a classe de falso-positivo que apagava código legítimo (por exemplo, um token `danger` de classes Tailwind colidindo com o jailbreak `DAN`).
+
+**Cobertura de execução multi-runtime.** A detecção de reverse shell e de execução ofuscada/dinâmica não se limita a JS/Python/Bash: cobre também **Ruby, PHP, Go, Perl, Java e Lua** (socket cru + exec; `Function`-constructor / `globalThis["eval"]`; `__import__('os').system`, `getattr(__builtins__)`; `.send(:eval)`, `instance_eval`; `create_function`, `assert`).
+
+**Proteção de paths endurecida** contra ofuscação: glob que expande para alvo protegido (em qualquer componente, inclusive o diretório — `.de*/hooks.json`), `cd`/`pushd` para dentro de diretório protegido, e indireção por variável ou `$(<arquivo)`.
+
+**Propriedades estruturais.** O hook é **fail-closed**: qualquer panic vira `exit 2` (bloqueia). O motor de regex é de **tempo linear** (sem backtracking), então não há ReDoS — entrada patológica não trava nem força fail-open.
+
+> Estas regras nasceram de uma campanha de **red-team com agente real** (engenharia social reversa, ao vivo): cada vetor de evasão encontrado foi fechado na origem e validado com a suíte de pentest (184/184) sem regressão. Nenhum vetor que *neutralize* a proteção foi encontrado. Bypasses continuam **bem-vindos** — ver [Segurança e disclosure](#segurança-e-disclosure).
 
 ---
 
@@ -144,7 +164,7 @@ Modo rápido (pula compilação, testes e pentest):
 | **G4** | Scaffold da IDE — hooks pretool/posttool configurados |
 | **G5** | eBPF Kernel LSM (Linux) — BPF LSM ativo, capabilities, cgroup |
 | **G6** | Daemon `nemesis-defender` — PID vivo, inotify ativo |
-| **G7** | Pentest Red-Team — taxa de bloqueio contra 178 casos de ataque |
+| **G7** | Pentest Red-Team — taxa de bloqueio contra 184 casos de ataque |
 
 ### Vereditos
 

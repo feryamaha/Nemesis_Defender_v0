@@ -13,6 +13,8 @@
 pub mod language;
 pub mod reporter;
 pub mod scanner;
+pub mod stats;
+pub mod violations_log;
 pub mod visitors;
 pub mod watcher;
 
@@ -313,6 +315,7 @@ pub fn scan_command(command: &str) -> DefenderResult {
 const CONFIRMATORY_VISITORS: &[&str] = &[
     "denylist_malicious",          // denylist curada = comando hostil confirmado (1a camada)
     "decode_exec",                 // decoder achou comando real em payload decodificado / pattern AST específico de decode→exec
+    "reverse_shell",               // socket de rede cru + execução de comando coexistindo (multi-linguagem: Ruby/PHP/Go/Perl/Java) — corroboração embutida
     "exfil_chain",                 // exige fonte de credencial + sink de rede coexistindo (corroboração embutida)
     "taint_tracker",               // exige fluxo de dado fonte→sink (corroboração embutida)
     "url_in_exec",                 // fetch+eval / require(http) / curl|bash — padrões multi-token específicos

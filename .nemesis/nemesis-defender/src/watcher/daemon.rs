@@ -421,7 +421,9 @@ pub fn run() {
         watched_count
     );
 
-    let session_events_path = cwd.join(".nemesis/logs/session-events.jsonl");
+    // Estado de runtime (não log): o pretool escreve aqui cada tool-call; o daemon lê para
+    // a correlação comportamental (multi-turn / escalação). Fica em .nemesis/runtime/.
+    let session_events_path = cwd.join(".nemesis/runtime/session-events.jsonl");
     let mut session_file_pos: u64 = 0;
     let poll_interval = std::time::Duration::from_millis(5000); // 5s — evita write-storm e reduz uso de CPU
 
@@ -639,6 +641,14 @@ fn scan_file(path: &Path, cwd: &Path) {
         }
         Severity::Malicious => {
             let _ = reporter::log_result(&result);
+            // Ledger unificado de bloqueios (vocabulário padrão das 6 mensagens).
+            crate::violations_log::append(
+                "nemesis-defender",
+                &format!(
+                    "NEMESIS SEC - CONTEUDO MALICIOSO DETECTADO · {}",
+                    path.display()
+                ),
+            );
             let dry_run = std::env::var("NEMESIS_DEFENDER_DRY_RUN").is_ok();
 
             if is_project_path(path, cwd) {

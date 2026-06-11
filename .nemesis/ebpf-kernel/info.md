@@ -8,7 +8,7 @@
 | BPF LSM ativo no boot | `cat /sys/kernel/security/lsm` deve conter `bpf` |
 | clang instalado | `which clang` |
 | bpftool instalado | `which bpftool` |
-| Binário compilado | `cargo build -p nemesis-ebpf-kernel` |
+| Binário compilado | `cargo build --release -p nemesis-ebpf-kernel` |
 
 ---
 
@@ -32,7 +32,7 @@ cat /sys/kernel/security/lsm
 
 ```bash
 # A partir da raiz do projeto
-cargo build -p nemesis-ebpf-kernel
+cargo build --release -p nemesis-ebpf-kernel
 ```
 
 **IMPORTANTE - Bloqueio de build pelo BPF LSM:**
@@ -49,7 +49,7 @@ sudo systemctl stop nemesis-ebpf  # se estiver como serviço
 kill <PID_DO_DAEMON>
 
 # 3. Tentar compilar novamente
-cargo build -p nemesis-ebpf-kernel
+cargo build --release -p nemesis-ebpf-kernel
 ```
 
 Se mesmo após parar o daemon o build falhar, o programa BPF LSM pode estar carregado no kernel. Programas BPF não podem ser removidos dinamicamente. Nesse caso:
@@ -87,19 +87,19 @@ Necessário após cada `cargo build` que recriar o binário:
 
 ```bash
 sudo setcap cap_bpf,cap_perfmon,cap_sys_resource+eip \
-  .nemesis/target/debug/nemesis-ebpf-daemon
+  .nemesis/target/release/nemesis-ebpf-daemon
 ```
 
 Verificar:
 ```bash
-getcap .nemesis/target/debug/nemesis-ebpf-daemon
+getcap .nemesis/target/release/nemesis-ebpf-daemon
 # esperado: cap_sys_resource,cap_perfmon,cap_bpf=eip
 ```
 
 ### 3.3 Iniciar o daemon BPF LSM
 
 ```bash
-.nemesis/target/debug/nemesis-ebpf-daemon --start
+.nemesis/target/release/nemesis-ebpf-daemon --start
 ```
 
 Saída esperada:
@@ -158,10 +158,10 @@ O daemon se move automaticamente para o cgroup ao iniciar — subprocessos herda
 sudo mkdir -p /sys/fs/cgroup/nemesis-agent
 
 # 2. Capabilities (uma vez por build)
-sudo setcap cap_bpf,cap_perfmon,cap_sys_resource+eip .nemesis/target/debug/nemesis-ebpf-daemon
+sudo setcap cap_bpf,cap_perfmon,cap_sys_resource+eip .nemesis/target/release/nemesis-ebpf-daemon
 
 # 3. Iniciar daemon (terminal dedicado)
-.nemesis/target/debug/nemesis-ebpf-daemon --start
+.nemesis/target/release/nemesis-ebpf-daemon --start
 ```
 
 O daemon se move automaticamente para o cgroup — não é necessário mover PIDs manualmente.
@@ -172,10 +172,10 @@ O daemon se move automaticamente para o cgroup — não é necessário mover PID
 
 ```bash
 # Diagnóstico completo
-.nemesis/target/debug/nemesis-ebpf-daemon --doctor
+.nemesis/target/release/nemesis-ebpf-daemon --doctor
 
 # Status rápido
-.nemesis/target/debug/nemesis-ebpf-daemon --print-status
+.nemesis/target/release/nemesis-ebpf-daemon --print-status
 ```
 
 Campos importantes no `--doctor`:
@@ -190,7 +190,7 @@ Campos importantes no `--doctor`:
 Protege apenas a process tree do processo filho, sem necessidade de root:
 
 ```bash
-.nemesis/target/debug/nemesis-ebpf-daemon --sandbox
+.nemesis/target/release/nemesis-ebpf-daemon --sandbox
 ```
 
 ---
@@ -299,10 +299,17 @@ sudo systemctl restart nemesis-ebpf
 # Finalidade: Recarrega a deny-list (commands.toml) para aplicar mudanças
 
 # Verificar status do enforcement (se o binário estiver disponível)
-.nemesis/target/debug/nemesis-ebpf-daemon --doctor
+.nemesis/target/release/nemesis-ebpf-daemon --doctor
 # Campos importantes: bpf_lsm_active, enforcement_level, can_load_bpf
 
 # Verificar logs em tempo real
 journalctl -u nemesis-ebpf -f
 # Procure por: [nemesis] BLOCKED ou [VIOLATION] PermissionDenied
 ```
+
+Pronto. Comandos uteis:
+  systemctl status nemesis-ebpf         # ver estado do daemon eBPF
+  systemctl status nemesis-cgroup-watcher # ver estado do watcher
+  journalctl -u nemesis-ebpf -f         # ver logs em tempo real
+  sudo systemctl stop nemesis-ebpf      # parar
+  sudo systemctl restart nemesis-ebpf   # reiniciar

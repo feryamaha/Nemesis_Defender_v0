@@ -334,7 +334,6 @@
       "suggestion": "HTTP requests to external hosts from within installed packages are a data exfiltration pattern. Use only pre-approved internal endpoints.",
       "patterns": [
         "https?\\s*\\.request\\s*\\(\\s*\\{\\s*hostname\\s*:",
-        "socket\\.connect\\s*\\(",
         "connect\\s*\\(\\s*\\(['\\\"]evil"
       ]
     },

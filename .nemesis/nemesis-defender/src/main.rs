@@ -182,6 +182,10 @@ fn main() {
             shell_hook::install();
         }
 
+        Some("--log-stats") => {
+            nemesis_defender::stats::print_stats();
+        }
+
         _ => {
             eprintln!("[nemesis-defender] Nemesis Iron Dome");
             eprintln!("Usage:");
@@ -192,6 +196,7 @@ fn main() {
             eprintln!(
                 "  nemesis-defender --install-shell-hook  Install terminal hook (once per machine)"
             );
+            eprintln!("  nemesis-defender --log-stats           Telemetria do ledger unificado de bloqueios");
             eprintln!();
             eprintln!("Environment variables:");
             eprintln!("  NEMESIS_DEFENDER_DRY_RUN=1             Same as --dry-run flag");

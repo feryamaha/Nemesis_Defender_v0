@@ -31,9 +31,10 @@
       "/tmp/",
       "/var/tmp/",
       "tmp/",
-      "/dev/null"
+      "/dev/null",
+      ".nemesis/"
     ],
-    "allowed_exceptions": ["/src/", ".nemesis/"]
+    "allowed_exceptions": ["/src/"]
   },
   "write_block": {
     "description": "Bloqueio de escrita/edição - leitura permitida",
@@ -57,14 +58,14 @@
       "CLAUDE.md.rej",
       "CLAUDE.md.orig",
       "CLAUDE.md~",
-      "AGENSTS.md",
-      "AGENSTS.md.bak",
-      "AGENSTS.md.tmp",
-      "AGENSTS.md.swp",
-      "AGENSTS.md.swo",
-      "AGENSTS.md.rej",
-      "AGENSTS.md.orig",
-      "AGENSTS.md~",
+      "AGENTS.md",
+      "AGENTS.md.bak",
+      "AGENTS.md.tmp",
+      "AGENTS.md.swp",
+      "AGENTS.md.swo",
+      "AGENTS.md.rej",
+      "AGENTS.md.orig",
+      "AGENTS.md~",
       ".cursorrules"
     ]
   }

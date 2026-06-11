@@ -126,8 +126,21 @@ sudo killall nemesis-ebpf-daemon 2>/dev/null; echo "PARADO"
 
 ```bash
 sudo setcap cap_bpf,cap_perfmon,cap_sys_resource+eip \
-    .nemesis/target/release/nemesis-ebpf-daemon
+        .nemesis/target/release/nemesis-ebpf-daemon
 ```
+
+## Sobe daemon + watcher, reaplica cap, religa no boot:
+
+```bash
+sudo bash .nemesis/ebpf-kernel/install-service.sh
+```
+
+##  Comandos uteis:
+  systemctl status nemesis-ebpf         # ver estado do daemon eBPF
+  systemctl status nemesis-cgroup-watcher # ver estado do watcher
+  journalctl -u nemesis-ebpf -f         # ver logs em tempo real
+  sudo systemctl stop nemesis-ebpf      # parar
+  sudo systemctl restart nemesis-ebpf   # reiniciar
 
 > macOS/Windows: eBPF não se aplica — a defesa fica nas trilhas do pretool. O `nemesis-doctor` reporta `NA`.
 
@@ -191,7 +204,7 @@ Arquivos verificados pelo `nemesis-doctor` (G4):
 
 ## 6. Pentest Red-Team
 
-Suíte automatizada (166 testes, 26 módulos) que injeta comandos/arquivos maliciosos
+Suíte automatizada (184 testes, 26 módulos) que injeta comandos/arquivos maliciosos
 no binário pretool via stdin (não-destrutivo) e mede a taxa de bloqueio.
 
 ```bash

@@ -11,6 +11,9 @@ use tree_sitter::Node;
 const SUSPICIOUS_COMMANDS: &[&str] = &[
     "curl", "wget", "fetch", "http", "https", "exec", "eval", "spawn", "fork", "rm", "unlink",
     "rmdir", "chmod", "chown", "bash", "sh", "zsh",
+    // Nomes de módulo/sink perigosos — pega reconstrução por concatenação
+    // (ex.: "child_pro" + "cess" → "child_process"; "ev" + "al" → "eval").
+    "child_process", "execsync", "spawnsync", "execfile",
 ];
 
 const SUGGESTION_DYNAMIC: &str =
