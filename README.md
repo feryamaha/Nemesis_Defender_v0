@@ -62,11 +62,11 @@ A premissa técnica: instrução em texto (`"não rode comandos destrutivos"`) �
 |--------|-----------|-----------|-----|
 | **Pretool / Posttool Hook** | Antes do `Bash.run()` / file-write | Deny-list JSON + exit code 2 | Windows, macOS, Linux |
 | **Nemesis Defender** (scanner) | Em file-write e em comandos | 6 layers: AST, byte, regex, denylist, entropia, decoder | Windows, macOS, Linux |
-| **eBPF Kernel LSM** | Syscalls no kernel | BPF LSM (`bprm_check_security`), retorna `-EPERM` | **Linux apenas** |
+| **eBPF Kernel LSM** | Syscalls no kernel | BPF LSM: `bprm_check_security` (exec) + `socket_connect` (egress allowlist), retorna `-EPERM` | **Linux apenas** |
 
 **Tudo parte do Pretool.** Sem o pretool configurado, o Nemesis não roda - a trilha de segurança (Defender) é acionada por ele. A camada **eBPF** é a única independente: opera no kernel como rede de contenção adicional, segurando comandos destrutivos caso o pretool seja desligado ou contornado. Em macOS e Windows, sem eBPF, a defesa se concentra nas trilhas do pretool.
 
-> A camada eBPF é uma **contenção mínima de comandos destrutivos**, não a defesa principal. Ela existe para o cenário em que o pretool é desativado. Sua expansão (cobrir escrita não-execve, rename/symlink) é um ponto aberto para a comunidade.
+> A camada eBPF é uma **contenção mínima** no kernel, não a defesa principal. Ela existe para o cenário em que o pretool é desativado. Além do bloqueio de exec, agora inclui **egress allowlist** (`lsm/socket_connect`): nega conexões de saída para destinos fora de uma allowlist CIDR:porta (cgroup-scoped, `enforce` opt-in, fail-closed) — neutraliza exfiltração/C2 mesmo se um payload conseguir rodar. Config em `denylist-ebpf/egress.toml`; ver `.nemesis/ebpf-kernel/info.md`. Expansão futura (escrita não-execve, rename/symlink, egress por domínio/DNS) segue aberta à comunidade.
 
 ---
 

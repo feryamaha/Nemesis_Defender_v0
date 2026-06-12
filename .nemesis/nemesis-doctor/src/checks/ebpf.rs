@@ -49,6 +49,30 @@ pub fn run() -> CheckResult {
             res.push("ATENCAO cgroup nemesis-agent ausente. Acao: sudo mkdir -p /sys/fs/cgroup/nemesis-agent.");
         }
 
+        // Egress allowlist (lsm/socket_connect) — SPEC_004. enforce=false e o default seguro,
+        // entao nao conta como problema; so reporta o estado.
+        let egress_toml = nemesis_dir()
+            .join("ebpf-kernel")
+            .join("denylist-ebpf")
+            .join("egress.toml");
+        match std::fs::read_to_string(&egress_toml) {
+            Ok(content) => {
+                let enforce = content
+                    .lines()
+                    .find(|l| l.trim_start().starts_with("enforce"))
+                    .map(|l| l.contains("true"))
+                    .unwrap_or(false);
+                if enforce {
+                    res.push("OK    Egress allowlist ATIVA (enforce=true). Conexoes fora da allowlist sao bloqueadas no kernel.");
+                } else {
+                    res.push("INFO  Egress allowlist em modo observacao (enforce=false, default seguro). Para impor: enforce=true em egress.toml + sudo systemctl restart nemesis-ebpf.");
+                }
+            }
+            Err(_) => {
+                res.push("ATENCAO egress.toml ausente em .nemesis/ebpf-kernel/denylist-ebpf/ — egress allowlist nao configurada (nao impoe).");
+            }
+        }
+
         if problems == 0 {
             return res.status(CheckStatus::Ok);
         }

@@ -2,15 +2,18 @@ use crate::checks::{command_exists, nemesis_dir};
 use crate::report::{CheckResult, CheckStatus};
 
 pub fn run() -> CheckResult {
-    let mut res = CheckResult::new("G2 - Testes unitarios (cargo test --workspace)");
+    let mut res = CheckResult::new("G2 - Testes unitarios (cargo test --release --workspace)");
 
     if !command_exists("cargo") {
         res.push("cargo nao encontrado no PATH - pulando testes.");
         return res.status(CheckStatus::Skip);
     }
 
+    // --release e obrigatorio: o crate nemesis-ebpf-kernel depende de libbpf-sys, cujo build
+    // nativo (make vendored) FALHA no perfil debug neste toolchain mas compila no release.
+    // Sem --release, o G2 daria falso-negativo e nao rodaria os testes do egress.
     let output = std::process::Command::new("cargo")
-        .args(["test", "--workspace"])
+        .args(["test", "--release", "--workspace"])
         .current_dir(nemesis_dir())
         .output();
 
@@ -52,7 +55,7 @@ pub fn run() -> CheckResult {
     res.push("Como ler: 'test result: ok' por suite = verde. Qualquer 'failed' > 0 = regressao.");
 
     if !output.status.success() || failed > 0 {
-        res.push("Acao: 'cd .nemesis && cargo test --workspace' e investigue os FAILED.");
+        res.push("Acao: 'cd .nemesis && cargo test --release --workspace' e investigue os FAILED.");
         res.status(CheckStatus::Fail)
     } else if passed == 0 {
         res.push("Nenhum teste unitario encontrado no workspace.");

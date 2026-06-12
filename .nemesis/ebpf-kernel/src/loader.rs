@@ -1,5 +1,6 @@
 use crate::cgroup;
 use crate::config::EbpfConfigBundle;
+use crate::egress::EgressAllowlist;
 use crate::logger::kernel_event_to_block_event;
 use crate::{
     EbpfBlockEvent, EbpfDoctorReport, EbpfHealthResponse, EbpfRuntimeStatus, KernelCommandKey,
@@ -34,6 +35,7 @@ impl LoadedEbpfProgram {
             let config = EbpfConfigBundle::load_from(&self.root)?;
             let mut object = self.object.lock().unwrap();
             populate_command_map(&mut object, &config)?;
+            populate_egress_maps(&mut object, &config)?;
             self.needs_reload.store(false, Ordering::Release);
             eprintln!("[nemesis] commands.toml reloaded via SIGHUP");
         }
@@ -100,6 +102,7 @@ pub fn load_linux_backend(
     let mut object = open_object.load().context("failed to load ebpf object")?;
 
     populate_command_map(&mut object, config)?;
+    populate_egress_maps(&mut object, config)?;
 
     let mut links = Vec::new();
     for program in object.progs_mut() {
@@ -343,6 +346,63 @@ fn populate_command_map(object: &mut libbpf_rs::Object, config: &EbpfConfigBundl
         let value = [1u8];
         map.update(bytes_of(&key), &value, MapFlags::ANY)
             .with_context(|| format!("failed to insert command `{command}` into map"))?;
+    }
+
+    Ok(())
+}
+
+/// Popula os maps de egress (flag enforce + LPM tries IPv4/IPv6) a partir de `config.egress`.
+/// Chave do LPM trie: [prefixlen: u32 native][addr: bytes em ordem de rede]. Valor: u16 porta.
+fn populate_egress_maps(object: &mut libbpf_rs::Object, config: &EbpfConfigBundle) -> Result<()> {
+    // 1) flag enforce (ARRAY índice 0)
+    {
+        let enforce_map = object
+            .maps_mut()
+            .find(|m| m.name().to_str() == Some("egress_enforce"))
+            .context("failed to locate egress_enforce map")?;
+        let key: u32 = 0;
+        let val: u8 = if config.egress.enforce { 1 } else { 0 };
+        enforce_map
+            .update(bytes_of(&key), &[val], MapFlags::ANY)
+            .context("failed to set egress_enforce flag")?;
+    }
+
+    // Parsing da allowlist (erro de config é fatal — não abrir silenciosamente)
+    let allow = EgressAllowlist::parse(&config.egress.allowlist)
+        .map_err(|e| anyhow!("egress allowlist inválida: {e}"))?;
+
+    // 2) LPM trie IPv4
+    {
+        let v4_map = object
+            .maps_mut()
+            .find(|m| m.name().to_str() == Some("egress_allow_v4"))
+            .context("failed to locate egress_allow_v4 map")?;
+        for r in allow.rules4() {
+            let mut key = Vec::with_capacity(8);
+            key.extend_from_slice(&(r.prefix_len as u32).to_ne_bytes());
+            key.extend_from_slice(&r.network.to_be_bytes()); // ordem de rede
+            let val = r.port.to_ne_bytes();
+            v4_map
+                .update(&key, &val, MapFlags::ANY)
+                .context("failed to insert egress v4 rule")?;
+        }
+    }
+
+    // 3) LPM trie IPv6
+    {
+        let v6_map = object
+            .maps_mut()
+            .find(|m| m.name().to_str() == Some("egress_allow_v6"))
+            .context("failed to locate egress_allow_v6 map")?;
+        for r in allow.rules6() {
+            let mut key = Vec::with_capacity(20);
+            key.extend_from_slice(&(r.prefix_len as u32).to_ne_bytes());
+            key.extend_from_slice(&r.network.to_be_bytes()); // u128 → 16 bytes big-endian
+            let val = r.port.to_ne_bytes();
+            v6_map
+                .update(&key, &val, MapFlags::ANY)
+                .context("failed to insert egress v6 rule")?;
+        }
     }
 
     Ok(())

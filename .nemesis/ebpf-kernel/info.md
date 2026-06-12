@@ -14,6 +14,11 @@
 
 ## 1. Ativar BPF LSM no boot (uma vez, requer reboot)
 
+> **Atalho (recomendado):** `sudo bash .nemesis/ebpf-kernel/install-service.sh` agora faz isto
+> automaticamente (edita o GRUB com backup, de forma idempotente) + setcap + cgroup + systemd —
+> **um único sudo**. A edição manual abaixo só é necessária se você tiver um `lsm=` customizado
+> (o script não mexe nesse caso, por segurança) ou preferir fazer à mão.
+
 ```bash
 sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 lsm=lockdown,capability,landlock,yama,apparmor,bpf"/' /etc/default/grub
 sudo update-grub
@@ -216,8 +221,35 @@ Fluxo interno:
 | `denylist-ebpf/commands.toml` | Binários bloqueados por basename |
 | `denylist-ebpf/paths.toml` | Paths de escrita bloqueados |
 | `denylist-ebpf/landlock-allowed-exec.toml` | Exec permitidos no modo sandbox |
+| `denylist-ebpf/egress.toml` | **Egress allowlist** (CIDR:porta) + flag `enforce` |
 
 Editar e reiniciar o daemon para aplicar. Não requer recompilação.
+
+### 7.1 Egress allowlist (lsm/socket_connect)
+
+Além do bloqueio de `execve`, o daemon intercepta **conexões de saída** (`lsm/socket_connect`)
+dos processos no cgroup do agente e **nega por padrão** destinos fora da allowlist — neutraliza
+exfiltração/C2 mesmo se um payload conseguir rodar. Config em `denylist-ebpf/egress.toml`:
+
+```toml
+enforce = true                         # false (default) = só observa/loga; true = impõe deny-by-default
+allowlist = ["140.82.112.0/20:443"]    # "CIDR:porta"  (porta 0 = qualquer)
+```
+
+- Match por **LPM trie** (longest-prefix em CIDR), IPv4 e IPv6. Porta validada por igualdade
+  (0 = qualquer). Allowlist vazia + `enforce=true` ⇒ nega tudo (fail-closed).
+- Famílias não-IP (AF_UNIX, etc.) não são bloqueadas. Bloqueio registra
+  `NEMESIS SEC - CONEXAO NAO PERMITIDA` no ledger.
+- Aplicar mudanças: `sudo systemctl restart nemesis-ebpf` (ou SIGHUP). v1 é por IP/CIDR;
+  domínio/DNS fica para v2.
+
+> **Nota de design (exec allowlist por basename — descartado):** uma allowlist de exec por
+> basename no eBPF foi avaliada e **descartada**. O hook de exec só vê o basename (`git`), não a
+> command-line, então não consegue distinguir `git diff` (ok) de `git checkout`/`git reset`
+> (hostil) — essa granularidade pertence ao **pretool** (regex sobre a linha inteira), que já a
+> faz. Além disso, allowlistar interpretadores (`bash`, `python3`) tornaria o enforce uma falsa
+> sensação de segurança. Política por command-line de exec fica no pretool; o eBPF mantém a
+> denylist por basename + o egress.
 
 ### Lista completa de comandos bloqueados no kernel (39 comandos)
 
@@ -256,9 +288,14 @@ bash test-violations/pentest-ebpf-kernel/level-3-kernel-bypass-attempts.sh
 
 ## 9. Logs de violações
 
+Ledger unificado único (o antigo `violations.log` foi removido da arquitetura):
+
 ```bash
-cat .nemesis/logs/violations.log | grep '"layer":"ebpf"'
+grep '"layer":"ebpf-kernel"' .nemesis/logs/nemesis-violations.log
 ```
+
+Schema por linha: `{ts, date, time, layer, message}`. Egress bloqueado aparece como
+`NEMESIS SEC - CONEXAO NAO PERMITIDA · ...`.
 
 ---
 

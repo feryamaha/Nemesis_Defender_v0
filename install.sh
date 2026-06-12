@@ -76,6 +76,11 @@ say "Checksum OK."
 mkdir -p .nemesis
 tar -xzf "$tmp/$tarball" -C .nemesis
 chmod +x .nemesis/bin/* 2>/dev/null || true
+
+# Rede de segurança: NUNCA herdar logs do empacotamento. O ledger é gerado em runtime;
+# qualquer violations.log/nemesis-violations.log que tenha vindo no tarball é removido,
+# e a pasta de logs começa limpa (evita "log já preenchido" na máquina do usuário).
+rm -f .nemesis/logs/violations.log .nemesis/logs/*.log logs/violations.log 2>/dev/null || true
 say "Binários instalados em .nemesis/bin/"
 
 ABS_PRETOOL="$(pwd)/.nemesis/bin/nemesis-pretool-check-unix"

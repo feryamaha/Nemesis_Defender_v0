@@ -9,6 +9,7 @@
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
 #include <bpf/bpf_core_read.h>
+#include <bpf/bpf_endian.h>
 
 #ifndef EPERM
 #define EPERM 1
@@ -35,6 +36,32 @@ struct {
     __type(key, u32);
     __type(value, u64);
 } agent_cgroup_map SEC(".maps");
+
+// Allowlist de egress IPv4 (LPM trie: longest-prefix match em CIDR)
+struct {
+    __uint(type, BPF_MAP_TYPE_LPM_TRIE);
+    __uint(max_entries, 1024);
+    __type(key, struct egress_v4_key);
+    __type(value, struct egress_val);
+    __uint(map_flags, BPF_F_NO_PREALLOC);
+} egress_allow_v4 SEC(".maps");
+
+// Allowlist de egress IPv6
+struct {
+    __uint(type, BPF_MAP_TYPE_LPM_TRIE);
+    __uint(max_entries, 1024);
+    __type(key, struct egress_v6_key);
+    __type(value, struct egress_val);
+    __uint(map_flags, BPF_F_NO_PREALLOC);
+} egress_allow_v6 SEC(".maps");
+
+// Flag de enforce (índice 0): 0 = observar/permitir, 1 = impor deny-by-default
+struct {
+    __uint(type, BPF_MAP_TYPE_ARRAY);
+    __uint(max_entries, 1);
+    __type(key, u32);
+    __type(value, u8);
+} egress_enforce SEC(".maps");
 
 // Tamanho máximo de path lido do kernel — menor para caber no stack BPF
 #define BPF_PATH_LEN 128
@@ -109,6 +136,91 @@ int BPF_PROG(nemesis_check_exec, struct linux_binprm *bprm, int ret)
     }
 
     return -EPERM;
+}
+
+#ifndef AF_INET
+#define AF_INET 2
+#endif
+#ifndef AF_INET6
+#define AF_INET6 10
+#endif
+
+static __always_inline int egress_is_agent(void)
+{
+    u32 cgroup_key = 0;
+    u64 *agent_cgroup = bpf_map_lookup_elem(&agent_cgroup_map, &cgroup_key);
+    if (!agent_cgroup || *agent_cgroup == 0)
+        return 0;
+    return bpf_get_current_cgroup_id() == *agent_cgroup;
+}
+
+static __always_inline void egress_emit(const char *label)
+{
+    struct nemesis_event *event = bpf_ringbuf_reserve(&events, sizeof(*event), 0);
+    if (!event)
+        return;
+    u64 pid_tgid = bpf_get_current_pid_tgid();
+    event->pid  = pid_tgid >> 32;
+    event->tgid = (unsigned int)pid_tgid;
+    event->kind = NEMESIS_EVENT_EGRESS_BLOCKED;
+    __builtin_memset(event->subject, 0, sizeof(event->subject));
+    bpf_probe_read_kernel_str(event->subject, sizeof(event->subject), label);
+    __builtin_memcpy(event->decision, "blocked", 8);
+    event->timestamp_ns = bpf_ktime_get_ns();
+    bpf_ringbuf_submit(event, 0);
+}
+
+SEC("lsm/socket_connect")
+int BPF_PROG(nemesis_check_connect, struct socket *sock, struct sockaddr *address,
+             int addrlen, int ret)
+{
+    if (ret != 0)
+        return ret;
+
+    // enforce desligado ⇒ não impõe (modo observação)
+    u32 zero = 0;
+    u8 *enforce = bpf_map_lookup_elem(&egress_enforce, &zero);
+    if (!enforce || *enforce == 0)
+        return 0;
+
+    if (!egress_is_agent())
+        return 0;
+
+    sa_family_t family = BPF_CORE_READ(address, sa_family);
+
+    if (family == AF_INET) {
+        struct sockaddr_in *sin = (struct sockaddr_in *)address;
+        struct egress_v4_key key = {};
+        key.prefixlen = 32;
+        __u32 daddr = BPF_CORE_READ(sin, sin_addr.s_addr); // ordem de rede
+        __builtin_memcpy(key.addr, &daddr, 4);
+        __u16 dport = bpf_ntohs(BPF_CORE_READ(sin, sin_port));
+
+        struct egress_val *val = bpf_map_lookup_elem(&egress_allow_v4, &key);
+        if (val && (val->port == 0 || val->port == dport))
+            return 0; // destino allowlistado
+
+        egress_emit("ipv4");
+        return -EPERM;
+    }
+
+    if (family == AF_INET6) {
+        struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)address;
+        struct egress_v6_key key = {};
+        key.prefixlen = 128;
+        BPF_CORE_READ_INTO(&key.addr, sin6, sin6_addr.in6_u.u6_addr8);
+        __u16 dport = bpf_ntohs(BPF_CORE_READ(sin6, sin6_port));
+
+        struct egress_val *val = bpf_map_lookup_elem(&egress_allow_v6, &key);
+        if (val && (val->port == 0 || val->port == dport))
+            return 0;
+
+        egress_emit("ipv6");
+        return -EPERM;
+    }
+
+    // Famílias não-IP (AF_UNIX, etc.) — não são egress de rede; permite.
+    return 0;
 }
 
 char LICENSE[] SEC("license") = "GPL";

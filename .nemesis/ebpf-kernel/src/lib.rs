@@ -4,6 +4,8 @@ pub mod config;
 #[cfg(target_os = "linux")]
 pub mod landlock;
 #[cfg(target_os = "linux")]
+pub mod egress;
+#[cfg(target_os = "linux")]
 pub mod loader;
 pub mod logger;
 #[cfg(target_os = "linux")]
@@ -39,6 +41,7 @@ impl EbpfRuntimeStatus {
 pub enum EbpfEventKind {
     CommandBlocked,
     WritePathBlocked,
+    EgressBlocked,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

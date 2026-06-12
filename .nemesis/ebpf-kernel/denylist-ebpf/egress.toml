@@ -1,0 +1,7 @@
+# Egress allowlist (eBPF lsm/socket_connect). Default: observação (enforce=false).
+# Formato de cada entrada: "CIDR:porta"  (porta 0 = qualquer porta)
+# Ex.: "140.82.112.0/20:443"  (GitHub HTTPS)
+#      "10.0.0.0/8:0"         (rede interna, qualquer porta)
+#      "2606:4700::/32:443"   (Cloudflare HTTPS, IPv6)
+enforce = false
+allowlist = []

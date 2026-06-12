@@ -8,6 +8,7 @@
 enum nemesis_event_kind {
     NEMESIS_EVENT_COMMAND_BLOCKED = 1,
     NEMESIS_EVENT_WRITE_PATH_BLOCKED = 2,
+    NEMESIS_EVENT_EGRESS_BLOCKED = 3,
 };
 
 struct nemesis_event {
@@ -21,6 +22,23 @@ struct nemesis_event {
 
 struct command_key {
     char name[MAX_COMMAND_LEN];
+};
+
+/* Chave do LPM trie IPv4: prefixlen (em bits) + 4 bytes de IP em ordem de rede. */
+struct egress_v4_key {
+    unsigned int prefixlen;
+    unsigned char addr[4];
+};
+
+/* Chave do LPM trie IPv6: prefixlen + 16 bytes de IP. */
+struct egress_v6_key {
+    unsigned int prefixlen;
+    unsigned char addr[16];
+};
+
+/* Valor de ambos os tries: porta permitida em ordem de host (0 = qualquer). */
+struct egress_val {
+    unsigned short port;
 };
 
 #endif

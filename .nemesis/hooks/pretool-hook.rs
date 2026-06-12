@@ -28,13 +28,12 @@
 
 #![allow(dead_code)]
 
-use chrono::Utc;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::env;
 use std::fs;
-use std::io::{self, Read, Write};
+use std::io::{self, Read};
 use std::path::PathBuf;
 use std::process;
 
@@ -245,10 +244,6 @@ fn get_permission_gate_state_path() -> PathBuf {
 
 fn get_deny_list_path() -> PathBuf {
     get_workflow_enforcement_dir().join("deny-list.json")
-}
-
-fn get_violations_log_path() -> PathBuf {
-    get_nemesis_dir().join("logs").join("violations.log")
 }
 
 // =============================================================================
@@ -751,37 +746,24 @@ fn get_current_llm_model() -> String {
         .unwrap_or_else(|| detect_devin_llm_model())
 }
 
-fn ensure_log_directory() {
-    let log_dir = get_nemesis_dir().join("logs");
-    if !log_dir.exists() {
-        let _ = fs::create_dir_all(&log_dir);
-    }
-}
-
-fn format_log_entry(violation_type: &str, message: &str, rule: Option<&str>, command: Option<&str>, llm_model: &str) -> String {
-    let entry = serde_json::json!({
-        "timestamp": Utc::now().to_rfc3339(),
-        "type": violation_type,
-        "message": message,
-        "rule": rule.unwrap_or(""),
-        "command": command.unwrap_or(""),
-        "llmModel": llm_model,
-    });
-    entry.to_string()
-}
-
 fn log_violation(violation_type: &str, message: &str, rule: Option<&str>, command: Option<&str>) {
+    // Ledger unificado ÚNICO: `.nemesis/logs/nemesis-violations.log` (via nemesis_defender).
+    // O arquivo legado `.nemesis/logs/violations.log` foi REMOVIDO da arquitetura.
+    // Bloqueios já são registrados no ledger pelo nemesis-pretool-check-unix (que lê o
+    // exit-code/stderr deste hook); aqui só registramos eventos NÃO-bloqueantes (ex.:
+    // ast-warning) que não passam por aquele caminho — evitando entradas duplicadas.
     let llm_model = get_current_llm_model();
-
-    ensure_log_directory();
-    let log_path = get_violations_log_path();
-    let entry = format_log_entry(violation_type, message, rule, command, &llm_model);
-
-    if let Ok(mut file) = fs::OpenOptions::new().create(true).append(true).open(&log_path) {
-        let _ = writeln!(file, "{}", entry);
+    let mut composed = format!("NEMESIS · {} · {}", violation_type, message);
+    if let Some(c) = command.filter(|c| !c.is_empty()) {
+        composed.push_str(&format!(" · {}", c));
     }
-
-    // Violation registrada apenas no arquivo de log — sem output no terminal
+    if let Some(r) = rule.filter(|r| !r.is_empty()) {
+        composed.push_str(&format!(" [{}]", r));
+    }
+    if !llm_model.is_empty() && llm_model != "unknown" {
+        composed.push_str(&format!(" ({})", llm_model));
+    }
+    nemesis_defender::violations_log::append("pretool", &composed);
 }
 
 // =============================================================================
@@ -2461,23 +2443,17 @@ async fn async_main() -> anyhow::Result<i32> {
 
     if !result.valid {
         let reason_text = result.reason.clone().unwrap_or_else(|| "Violação detectada pelo PreToolUse hook".to_string());
-        let rule_text = result.rule.clone();
         let suggestion_text = result.suggestion.clone();
-        let command_or_file = data.tool_info.command_line.clone().or(data.tool_info.file_path.clone());
 
         eprintln!("{}", reason_text);
         if let Some(suggestion) = suggestion_text {
             eprintln!("→ {}", suggestion);
         }
 
-        // Log violation with LLM model
+        // Bloqueio: o nemesis-pretool-check-unix (entrypoint que executa este hook) já grava
+        // este evento no ledger unificado a partir do exit-code/stderr. Não registramos aqui
+        // para não duplicar a entrada. set_llm_model mantém o modelo disponível p/ o ledger.
         set_llm_model(&llm_model);
-        log_violation(
-            "rule_violation",
-            &reason_text,
-            rule_text.as_deref(),
-            command_or_file.as_deref(),
-        );
 
         return Ok(2);
     }
