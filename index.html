@@ -1290,9 +1290,11 @@
 
       <a class="nav-link" href="#workflow"><span class="num">15</span> <span data-pt="Workflow"
           data-en="Workflow">Workflow</span></a>
+      <a class="nav-link" href="#tese"><span class="num">16</span> <span data-pt="Tese"
+          data-en="Thesis">Tese</span></a>
       <a class="nav-link" href="#contribuir"><span class="num">★</span> <span data-pt="Contribuir & apoiar"
           data-en="Contribute & support">Contribuir & apoiar</span></a>
-      <a class="nav-link" href="#disclosure"><span class="num">16</span> <span data-pt="Disclosure & licença"
+      <a class="nav-link" href="#disclosure"><span class="num">17</span> <span data-pt="Disclosure & licença"
           data-en="Disclosure & license">Disclosure & licença</span></a>
     </div>
   </nav>
@@ -1536,7 +1538,7 @@
                 <td
                   data-pt="Pela própria doc da Anthropic: deny-rules só bloqueiam as ferramentas internas <code>Read(./.env)</code> é barrado, mas <code>cat .env</code> no bash passa por cima. Não inspeciona conteúdo."
                   data-en="Per Anthropic's own docs: deny-rules only block built-in tools <code>Read(./.env)</code> is blocked, but <code>cat .env</code> in bash bypasses it. It doesn't inspect content.">
-                  Pela própria doc da Anthropic: deny-rules só bloqueiam as ferramentas internas —
+                  Pela própria doc da Anthropic: deny-rules só bloqueiam as ferramentas internas 
                   <code>Read(./.env)</code> é barrado, mas <code>cat .env</code> no bash passa por cima. Não inspeciona
                   conteúdo.
                 </td>
@@ -1742,7 +1744,7 @@
           data-en="The <strong>Pretool Hook is the entry point of the whole system</strong> without it, Nemesis does not work. The <strong>security (Defender)</strong> track runs <strong>coupled to the pretool</strong>: it fires because the pretool invokes it in the same interception. The <strong>eBPF</strong> layer is the only one operating outside that line in the kernel, as an additional reinforcement for Linux.">
           O <strong>Pretool Hook é o ponto de entrada de todo o sistema</strong> sem ele, o Nemesis não funciona. A
           trilha de <strong>segurança (Defender)</strong> roda <strong>acoplada ao pretool</strong>: é acionada porque o
-          pretool a invoca na mesma interceptação. A camada <strong>eBPF</strong> é a única que opera fora dessa linha —
+          pretool a invoca na mesma interceptação. A camada <strong>eBPF</strong> é a única que opera fora dessa linha 
           no kernel, como reforço adicional para Linux.
         </p>
         <div class="layers">
@@ -1802,7 +1804,7 @@
         <h2 data-pt="Vetores de ataque cobertos" data-en="Attack vectors covered">Vetores de ataque cobertos</h2>
         <p data-pt="Os vetores <strong>antecipados, implementados e testados</strong>. A cobertura é ampliada continuamente vetores fora desta lista podem não ser detectados, e isso é declarado abertamente."
           data-en="The vectors <strong>anticipated, implemented and tested</strong>. Coverage is continuously expanded vectors outside this list may go undetected, and that is openly declared.">
-          Os vetores <strong>antecipados, implementados e testados</strong>. A cobertura é ampliada continuamente —
+          Os vetores <strong>antecipados, implementados e testados</strong>. A cobertura é ampliada continuamente 
           vetores fora desta lista podem não ser detectados, e isso é declarado abertamente.</p>
         <div class="tbl-wrap">
           <table>
@@ -2126,12 +2128,12 @@
         </ul>
         <h3 data-pt="Os logs: as camadas operando" data-en="The logs: the layers operating">Os logs: as camadas operando
         </h3>
-        <p data-pt="Tudo num <strong>ledger único e local</strong> — <code>.nemesis/logs/nemesis-violations.log</code> — uma linha padronizada por bloqueio (camada · mensagem · data · hora). <code>nemesis-defender --log-stats</code> resume por camada, por tipo e por dia. <strong>Registro 100% local: nada é enviado, exfiltrado ou telemetrado para fora da sua máquina</strong> — sem servidor, sem coleta remota, sem &quot;phone home&quot;. Os dados são seus, para auditar e validar a proteção."
-          data-en="All in a <strong>single, local ledger</strong> — <code>.nemesis/logs/nemesis-violations.log</code> — one standardized line per block (layer · message · date · time). <code>nemesis-defender --log-stats</code> summarizes by layer, by type and by day. <strong>100% local: nothing is sent, exfiltrated or telemetered off your machine</strong> — no server, no remote collection, no &quot;phone home&quot;. The data is yours, to audit and validate the protection.">
-          Tudo num <strong>ledger único e local</strong> — <code>.nemesis/logs/nemesis-violations.log</code> — uma linha
+        <p data-pt="Tudo num <strong>ledger único e local</strong>  <code>.nemesis/logs/nemesis-violations.log</code>  uma linha padronizada por bloqueio (camada · mensagem · data · hora). <code>nemesis-defender --log-stats</code> resume por camada, por tipo e por dia. <strong>Registro 100% local: nada é enviado, exfiltrado ou telemetrado para fora da sua máquina</strong>  sem servidor, sem coleta remota, sem &quot;phone home&quot;. Os dados são seus, para auditar e validar a proteção."
+          data-en="All in a <strong>single, local ledger</strong>  <code>.nemesis/logs/nemesis-violations.log</code>  one standardized line per block (layer · message · date · time). <code>nemesis-defender --log-stats</code> summarizes by layer, by type and by day. <strong>100% local: nothing is sent, exfiltrated or telemetered off your machine</strong>  no server, no remote collection, no &quot;phone home&quot;. The data is yours, to audit and validate the protection.">
+          Tudo num <strong>ledger único e local</strong>  <code>.nemesis/logs/nemesis-violations.log</code>  uma linha
           padronizada por bloqueio (camada · mensagem · data · hora). <code>nemesis-defender --log-stats</code> resume
           por camada, por tipo e por dia. <strong>Registro 100% local: nada é enviado, exfiltrado ou telemetrado para
-          fora da sua máquina</strong> — sem servidor, sem coleta remota, sem "phone home". Os dados são seus, para
+          fora da sua máquina</strong>  sem servidor, sem coleta remota, sem "phone home". Os dados são seus, para
           auditar e validar a proteção.</p>
         <ul>
           <li
@@ -2266,10 +2268,10 @@
         </div>
         <h2 data-pt="Como o Defender age e por que é perigoso"
           data-en="How the Defender acts and why it's dangerous">Como o Defender age e por que é perigoso</h2>
-        <p data-pt="O <strong>Nemesis Defender</strong> não apenas avisa: ele <strong>age</strong>. Ao confirmar um arquivo malicioso (credencial exposta, comando destrutivo, malware), ele <strong>NÃO deleta — move para quarentena</strong> (<code>.nemesis/quarantine/</code>), <strong>bloqueia a sessão</strong> e exige revisão humana. O conteúdo é preservado; você decide: <code>restore</code> (falso-positivo) ou <code>purge</code> (expurgar). Intercepta tanto a IA quanto, no Linux com eBPF, o próprio humano."
-          data-en="The <strong>Nemesis Defender</strong> doesn't just warn: it <strong>acts</strong>. On confirming a malicious file (exposed credential, destructive command, malware), it <strong>does NOT delete — it moves to quarantine</strong> (<code>.nemesis/quarantine/</code>), <strong>blocks the session</strong> and requires human review. The content is preserved; you decide: <code>restore</code> (false-positive) or <code>purge</code>. Intercepts both the AI and, on Linux with eBPF, the human.">
+        <p data-pt="O <strong>Nemesis Defender</strong> não apenas avisa: ele <strong>age</strong>. Ao confirmar um arquivo malicioso (credencial exposta, comando destrutivo, malware), ele <strong>NÃO deleta  move para quarentena</strong> (<code>.nemesis/quarantine/</code>), <strong>bloqueia a sessão</strong> e exige revisão humana. O conteúdo é preservado; você decide: <code>restore</code> (falso-positivo) ou <code>purge</code> (expurgar). Intercepta tanto a IA quanto, no Linux com eBPF, o próprio humano."
+          data-en="The <strong>Nemesis Defender</strong> doesn't just warn: it <strong>acts</strong>. On confirming a malicious file (exposed credential, destructive command, malware), it <strong>does NOT delete  it moves to quarantine</strong> (<code>.nemesis/quarantine/</code>), <strong>blocks the session</strong> and requires human review. The content is preserved; you decide: <code>restore</code> (false-positive) or <code>purge</code>. Intercepts both the AI and, on Linux with eBPF, the human.">
           O <strong>Nemesis Defender</strong> não apenas avisa: ele <strong>age</strong>. Ao confirmar um arquivo
-          malicioso (credencial exposta, comando destrutivo, malware), ele <strong>NÃO deleta — move para
+          malicioso (credencial exposta, comando destrutivo, malware), ele <strong>NÃO deleta  move para
           quarentena</strong> (<code>.nemesis/quarantine/</code>), <strong>bloqueia a sessão</strong> e exige revisão
           humana. O conteúdo é preservado; você decide: <code>restore</code> (falso-positivo) ou <code>purge</code>
           (expurgar). Intercepta tanto a IA quanto, no Linux com eBPF, o próprio humano.
@@ -2277,13 +2279,13 @@
         <div class="danger">
           <div class="lbl" data-pt="Quarentena (não exclusão), só com hostilidade confirmada" data-en="Quarantine (not deletion), only on confirmed hostility">Quarentena
             (não exclusão), só com hostilidade confirmada</div>
-          <p data-pt="Não é por palpite, e <b>não apaga</b>: ao confirmar, o arquivo é <b>movido para</b> <code>.nemesis/quarantine/</code> (preservado, com o motivo em <code>meta.json</code>) e a sessão é bloqueada até revisão humana (<code>restore</code> ou <code>purge</code>). Sinais de <b>alta confiança</b> (denylist curada, decode→exec, cadeia de exfil, reverse shell, bypass do próprio Nemesis) confirmam sozinhos; sinais heurísticos exigem <b>dois métodos de detecção independentes concordando</b> — caso contrário o arquivo fica <b>suspeito</b>, registrado e <b>mantido</b>. É o que separa um iron dome de fogo amigo: código legítimo não é movido por engano."
-            data-en="Not a guess, and it <b>does not delete</b>: on confirmation the file is <b>moved to</b> <code>.nemesis/quarantine/</code> (preserved, reason in <code>meta.json</code>) and the session is blocked until human review (<code>restore</code> or <code>purge</code>). <b>High-confidence</b> signals (curated denylist, decode→exec, exfil chain, reverse shell, Nemesis self-bypass) confirm on their own; heuristic signals require <b>two independent detection methods agreeing</b> — otherwise the file stays <b>suspicious</b>, logged and <b>kept</b>. That's what separates an iron dome from friendly fire: legitimate code is not moved by mistake.">
+          <p data-pt="Não é por palpite, e <b>não apaga</b>: ao confirmar, o arquivo é <b>movido para</b> <code>.nemesis/quarantine/</code> (preservado, com o motivo em <code>meta.json</code>) e a sessão é bloqueada até revisão humana (<code>restore</code> ou <code>purge</code>). Sinais de <b>alta confiança</b> (denylist curada, decode→exec, cadeia de exfil, reverse shell, bypass do próprio Nemesis) confirmam sozinhos; sinais heurísticos exigem <b>dois métodos de detecção independentes concordando</b>  caso contrário o arquivo fica <b>suspeito</b>, registrado e <b>mantido</b>. É o que separa um iron dome de fogo amigo: código legítimo não é movido por engano."
+            data-en="Not a guess, and it <b>does not delete</b>: on confirmation the file is <b>moved to</b> <code>.nemesis/quarantine/</code> (preserved, reason in <code>meta.json</code>) and the session is blocked until human review (<code>restore</code> or <code>purge</code>). <b>High-confidence</b> signals (curated denylist, decode→exec, exfil chain, reverse shell, Nemesis self-bypass) confirm on their own; heuristic signals require <b>two independent detection methods agreeing</b>  otherwise the file stays <b>suspicious</b>, logged and <b>kept</b>. That's what separates an iron dome from friendly fire: legitimate code is not moved by mistake.">
             Não é por palpite, e <b>não apaga</b>: ao confirmar, o arquivo é <b>movido para</b>
             <code>.nemesis/quarantine/</code> (preservado, com o motivo em <code>meta.json</code>) e a sessão é
             bloqueada até revisão humana (<code>restore</code> ou <code>purge</code>). Sinais de <b>alta confiança</b>
             (denylist curada, decode→exec, cadeia de exfil, reverse shell, bypass do próprio Nemesis) confirmam
-            sozinhos; sinais heurísticos exigem <b>dois métodos de detecção independentes concordando</b> — caso
+            sozinhos; sinais heurísticos exigem <b>dois métodos de detecção independentes concordando</b>  caso
             contrário o arquivo fica <b>suspeito</b>, registrado e <b>mantido</b>. É o que separa um iron dome de fogo
             amigo: código legítimo não é movido por engano.</p>
         </div>
@@ -2312,7 +2314,7 @@
       </section>
 
       <section id="instalacao">
-        <div class="eyebrow" data-pt="13 Instalação & requisitos" data-en="13 Install & requirements">13 —
+        <div class="eyebrow" data-pt="13 Instalação & requisitos" data-en="13 Install & requirements">13 
           Instalação & requisitos</div>
         <h2 data-pt="Requisitos, build e configuração" data-en="Requirements, build and setup">Requisitos, build e
           configuração</h2>
@@ -2381,14 +2383,14 @@
           No Linux você tem todas as camadas, incluindo a proteção de kernel (eBPF) que vale <strong>inclusive contra
             você mesmo</strong> no terminal. Em macOS/Windows, sem eBPF, você opera com a trilha do pretool (Defender) e
           o humano mantém liberdade total no terminal (a proteção ali se aplica às ações da IA via hooks da IDE).</p>
-        <h3 data-pt="Opção A — Binários pré-compilados (recomendado)" data-en="Option A — Prebuilt binaries (recommended)">
-          Opção A — Binários pré-compilados (recomendado)</h3>
-        <p data-pt="Baixa os binários do GitHub Release, <strong>verifica o checksum SHA256</strong> e instala em <code>.nemesis/bin/</code>, já configurando o hook da IDE. macOS (arm64/x64) e Linux (x64). Sem Rust, sem npm, sem git clone. Como o Nemesis bloqueia <code>curl … | sh</code>, o modo recomendado é em <strong>duas etapas</strong> (baixar, inspecionar, executar) — nunca um pipe cego."
-          data-en="Downloads the binaries from the GitHub Release, <strong>verifies the SHA256 checksum</strong> and installs into <code>.nemesis/bin/</code>, wiring the IDE hook. macOS (arm64/x64) and Linux (x64). No Rust, no npm, no git clone. Since Nemesis blocks <code>curl … | sh</code>, the recommended flow is <strong>two steps</strong> (download, inspect, run) — never a blind pipe.">
+        <h3 data-pt="Opção A  Binários pré-compilados (recomendado)" data-en="Option A  Prebuilt binaries (recommended)">
+          Opção A  Binários pré-compilados (recomendado)</h3>
+        <p data-pt="Baixa os binários do GitHub Release, <strong>verifica o checksum SHA256</strong> e instala em <code>.nemesis/bin/</code>, já configurando o hook da IDE. macOS (arm64/x64) e Linux (x64). Sem Rust, sem npm, sem git clone. Como o Nemesis bloqueia <code>curl … | sh</code>, o modo recomendado é em <strong>duas etapas</strong> (baixar, inspecionar, executar)  nunca um pipe cego."
+          data-en="Downloads the binaries from the GitHub Release, <strong>verifies the SHA256 checksum</strong> and installs into <code>.nemesis/bin/</code>, wiring the IDE hook. macOS (arm64/x64) and Linux (x64). No Rust, no npm, no git clone. Since Nemesis blocks <code>curl … | sh</code>, the recommended flow is <strong>two steps</strong> (download, inspect, run)  never a blind pipe.">
           Baixa os binários do GitHub Release, <strong>verifica o checksum SHA256</strong> e instala em
           <code>.nemesis/bin/</code>, já configurando o hook da IDE. macOS (arm64/x64) e Linux (x64). Sem Rust, sem
           npm, sem git clone. Como o Nemesis bloqueia <code>curl … | sh</code>, o modo recomendado é em
-          <strong>duas etapas</strong> (baixar, inspecionar, executar) — nunca um pipe cego.</p>
+          <strong>duas etapas</strong> (baixar, inspecionar, executar)  nunca um pipe cego.</p>
         <pre><code><span class="c" data-pt="# A partir da raiz do seu projeto:" data-en="# From your project root:"># A partir da raiz do seu projeto:</span>
 curl <span class="k">-fsSLO</span> https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/install.sh
 less install.sh   <span class="c" data-pt="# inspecione" data-en="# inspect"># inspecione</span>
@@ -2399,8 +2401,8 @@ bash install.sh   <span class="c" data-pt="# baixa + verifica SHA256 + instala +
           compatível com o kernel-alvo. É <strong>opt-in</strong>, construída da fonte (Opção B). O core (pretool +
           Defender) protege mac e Linux sem ela.</p>
 
-        <h3 data-pt="Opção B — Compilar da fonte (eBPF / contribuir)" data-en="Option B — Build from source (eBPF / contributing)">
-          Opção B — Compilar da fonte (eBPF / contribuir)</h3>
+        <h3 data-pt="Opção B  Compilar da fonte (eBPF / contribuir)" data-en="Option B  Build from source (eBPF / contributing)">
+          Opção B  Compilar da fonte (eBPF / contribuir)</h3>
         <pre><code><span class="c" data-pt="# Build do workspace completo" data-en="# Build the full workspace"># Build do workspace completo</span>
 cd .nemesis
 cargo build <span class="k">--release --workspace</span>
@@ -2439,7 +2441,7 @@ nemesis-defender <span class="k">--stop</span></code></pre>
           Processo de desenvolvimento ≠ regra do Nemesis</h2>
         <p data-pt="O Nemesis usa <strong>skills SDD apenas para criar spec e planos</strong> em tarefas que dependem de IA porque, na maioria dos casos, o desenvolvimento é humano e a IA é assistente. As skills orientam o método (especificação → plano → execução), mas não são impostas: você adota o fluxo que fizer sentido para a tarefa."
           data-en="Nemesis uses <strong>SDD skills only to create spec and plans</strong> in tasks that depend on AI because, in most cases, development is human and the AI is an assistant. The skills guide the method (specification → plan → execution), but they are not enforced: you adopt whatever flow makes sense for the task.">
-          O Nemesis usa <strong>skills SDD apenas para criar spec e planos</strong> em tarefas que dependem de IA —
+          O Nemesis usa <strong>skills SDD apenas para criar spec e planos</strong> em tarefas que dependem de IA 
           porque, na maioria dos casos, o desenvolvimento é humano e a IA é assistente. As skills orientam o método
           (especificação → plano → execução), mas não são impostas: você adota o fluxo que fizer sentido para a
           tarefa.</p>
@@ -2487,6 +2489,126 @@ nemesis-defender <span class="k">--stop</span></code></pre>
             <div class="ph2" data-pt="GitHub Sponsors ativo"
               data-en="GitHub Sponsors active">GitHub Sponsors ativo</div>
           </div>
+        </div>
+      </section>
+
+      <section id="tese">
+        <div class="eyebrow" data-pt="16 Tese" data-en="16 Thesis">16 Tese</div>
+        <h2 data-pt="A Governança Determinística de Sistemas Probabilísticos"
+          data-en="The Deterministic Governance of Probabilistic Systems">A Governança Determinística de Sistemas
+          Probabilísticos</h2>
+        <p data-pt="O Nemesis Defender nasce de uma observação fundamental da era da IA: <strong>sistemas probabilísticos passaram a possuir capacidade operacional real sobre ambientes computacionais críticos.</strong> Modelos de linguagem deixaram de ser apenas mecanismos de geração de texto. Hoje podem modificar código, executar comandos, instalar dependências, alterar infraestrutura e interagir com sistemas externos."
+          data-en="Nemesis Defender was born from a fundamental observation of the AI era: <strong>probabilistic systems have gained real operational capability over critical computing environments.</strong> Language models are no longer just text generation mechanisms. Today they can modify code, execute commands, install dependencies, alter infrastructure and interact with external systems.">
+          O Nemesis Defender nasce de uma observação fundamental da era da IA: <strong>sistemas probabilísticos passaram a
+            possuir capacidade operacional real sobre ambientes computacionais críticos.</strong> Modelos de linguagem
+          deixaram de ser apenas mecanismos de geração de texto. Hoje podem modificar código, executar comandos, instalar
+          dependências, alterar infraestrutura e interagir com sistemas externos.
+        </p>
+
+        <h3 data-pt="O problema não é malícia. É probabilidade." data-en="The problem is not malice. It is probability.">
+          O problema não é malícia. É probabilidade.</h3>
+        <p data-pt="Toda inteligência artificial moderna opera sobre um princípio probabilístico. Ela não sabe. Ela estima. Ela não raciocina através de verdades absolutas  prevê a próxima ação mais provável diante de um contexto. Essa característica é a origem de sua criatividade. E também de sua fragilidade. A mesma propriedade que permite criar software inovador permite executar uma ação destrutiva quando o contexto sugere alta probabilidade de sucesso. A IA não precisa ser hostil para causar dano. Ela precisa apenas estar errada."
+          data-en="Every modern artificial intelligence operates on a probabilistic principle. It does not know. It estimates. It does not reason through absolute truths  it predicts the next most likely action given a context. This trait is the source of its creativity. And also of its fragility. The same property that allows creating innovative software allows executing a destructive action when the context suggests a high probability of success. AI does not need to be hostile to cause damage. It only needs to be wrong.">
+          Toda inteligência artificial moderna opera sobre um princípio probabilístico. Ela não sabe. Ela estima. Ela
+          não raciocina através de verdades absolutas  prevê a próxima ação mais provável diante de um contexto. Essa
+          característica é a origem de sua criatividade. E também de sua fragilidade. A mesma propriedade que permite
+          criar software inovador permite executar uma ação destrutiva quando o contexto sugere alta probabilidade de
+          sucesso. <strong>A IA não precisa ser hostil para causar dano. Ela precisa apenas estar errada.</strong>
+        </p>
+
+        <h3 data-pt="A falha da governança textual" data-en="The failure of textual governance">A falha da governança
+          textual</h3>
+        <p data-pt="A primeira geração de sistemas de segurança para IA tentou resolver o problema através de instruções. &quot;Não faça isso.&quot; &quot;Não execute aquilo.&quot; Essas instruções são apenas texto. E texto habita o mesmo espaço cognitivo ocupado por todos os demais objetivos do modelo. Consequentemente: uma instrução pode competir com outra; um objetivo pode sobrepor outro; um contexto pode alterar prioridades. A segurança torna-se probabilística. O problema surge quando uma propriedade probabilística é utilizada para governar um ambiente que exige garantias determinísticas."
+          data-en="The first generation of AI security systems tried to solve the problem through instructions. &quot;Don't do this.&quot; &quot;Don't execute that.&quot; These instructions are just text. And text inhabits the same cognitive space occupied by all other model objectives. Consequently: one instruction may compete with another; one goal may override another; one context may shift priorities. Security becomes probabilistic. The problem arises when a probabilistic property is used to govern an environment that requires deterministic guarantees.">
+          A primeira geração de sistemas de segurança para IA tentou resolver o problema através de instruções.
+          <em>"Não faça isso."</em> <em>"Não execute aquilo."</em> Essas instruções são apenas texto. E texto habita o
+          mesmo espaço cognitivo ocupado por todos os demais objetivos do modelo. Consequentemente: uma instrução pode
+          competir com outra; um objetivo pode sobrepor outro; um contexto pode alterar prioridades. A segurança
+          torna-se probabilística. O problema surge quando uma propriedade probabilística é utilizada para governar um
+          ambiente que exige garantias determinísticas.
+        </p>
+
+        <h3 data-pt="A separação entre inteligência e autoridade"
+          data-en="The separation between intelligence and authority">A separação entre inteligência e autoridade</h3>
+        <p data-pt="O Nemesis parte de uma premissa diferente. <strong>Inteligência e autoridade não são a mesma coisa.</strong> Uma entidade pode possuir enorme capacidade intelectual e ainda assim não possuir autoridade para determinadas decisões. A inteligência artificial deve continuar sendo responsável por sugerir, criar, raciocinar, programar, pesquisar e resolver problemas. Mas não deve possuir autoridade absoluta sobre recursos críticos. Essa autoridade pertence ao humano. O papel do Nemesis é preservar essa fronteira."
+          data-en="Nemesis starts from a different premise. <strong>Intelligence and authority are not the same thing.</strong> An entity may possess enormous intellectual capacity and still not have authority for certain decisions. Artificial intelligence should remain responsible for suggesting, creating, reasoning, programming, researching and solving problems. But it should not have absolute authority over critical resources. That authority belongs to the human. Nemesis's role is to preserve that boundary.">
+          O Nemesis parte de uma premissa diferente. <strong>Inteligência e autoridade não são a mesma coisa.</strong> Uma
+          entidade pode possuir enorme capacidade intelectual e ainda assim não possuir autoridade para determinadas
+          decisões. A inteligência artificial deve continuar sendo responsável por sugerir, criar, raciocinar, programar,
+          pesquisar e resolver problemas. Mas não deve possuir autoridade absoluta sobre recursos críticos. Essa
+          autoridade pertence ao humano. O papel do Nemesis é preservar essa fronteira.
+        </p>
+
+        <h3 data-pt="A linha de autoridade" data-en="The authority line">A linha de autoridade</h3>
+        <p data-pt="Sem governança, a cadeia de comando é: Humano → IA → Sistema. Nesse modelo, a IA torna-se a intermediária final entre intenção e execução. O Nemesis altera essa relação: Humano → Nemesis → IA → Sistema. O modelo continua produzindo ações. Mas as ações deixam de possuir autoridade inerente. Toda operação precisa atravessar uma camada independente de governança. A inteligência permanece. A autoridade é controlada."
+          data-en="Without governance, the chain of command is: Human → AI → System. In this model, the AI becomes the final intermediary between intent and execution. Nemesis changes this relationship: Human → Nemesis → AI → System. The model keeps producing actions. But actions no longer carry inherent authority. Every operation must cross an independent governance layer. Intelligence remains. Authority is controlled.">
+          Sem governança, a cadeia de comando é: <em>Humano → IA → Sistema.</em> Nesse modelo, a IA torna-se a
+          intermediária final entre intenção e execução. O Nemesis altera essa relação:
+          <strong>Humano → Nemesis → IA → Sistema.</strong> O modelo continua produzindo ações. Mas as ações deixam de
+          possuir autoridade inerente. Toda operação precisa atravessar uma camada independente de governança. A
+          inteligência permanece. A autoridade é controlada.
+        </p>
+
+        <h3 data-pt="Nemesis e a mitologia" data-en="Nemesis and mythology">Nemesis e a mitologia</h3>
+        <p data-pt="Na mitologia grega, Nemesis não era a deusa da vingança. Era a deusa da retribuição. Representava a força que restaurava equilíbrio quando limites eram ultrapassados. Sua função não era destruir. Sua função era impedir excessos. O nome não foi escolhido por acaso. O Nemesis Defender não existe para combater a IA. Existe para impedir que qualquer agente  humano ou artificial  ultrapasse fronteiras previamente definidas. Ele não negocia. Ele não interpreta intenções. Ele não participa do debate. Ele apenas aplica a consequência."
+          data-en="In Greek mythology, Nemesis was not the goddess of vengeance. She was the goddess of retribution. She represented the force that restored balance when limits were crossed. Her function was not to destroy. Her function was to prevent excess. The name was not chosen by accident. Nemesis Defender does not exist to fight AI. It exists to prevent any agent  human or artificial  from crossing previously defined boundaries. It does not negotiate. It does not interpret intent. It does not join the debate. It simply applies the consequence.">
+          Na mitologia grega, Nemesis não era a deusa da vingança. Era a deusa da <strong>retribuição</strong>.
+          Representava a força que restaurava equilíbrio quando limites eram ultrapassados. Sua função não era destruir.
+          Sua função era impedir excessos. O nome não foi escolhido por acaso. O Nemesis Defender não existe para
+          combater a IA. Existe para impedir que qualquer agente  humano ou artificial  ultrapasse fronteiras
+          previamente definidas. Ele não negocia. Ele não interpreta intenções. Ele não participa do debate. Ele apenas
+          aplica a consequência.
+        </p>
+
+        <h3 data-pt="O princípio da binaridade" data-en="The binarity principle">O princípio da binaridade</h3>
+        <p data-pt="A inteligência artificial opera em um universo probabilístico. O Nemesis opera em um universo determinístico. IA: talvez; provavelmente; contexto; inferência; estimativa. Nemesis: permitido; negado. Não existe meio-termo. Não existe persuasão. Não existe engenharia social. A decisão final é binária. Essa binaridade não é uma limitação. É a propriedade que torna a governança possível."
+          data-en="Artificial intelligence operates in a probabilistic universe. Nemesis operates in a deterministic universe. AI: maybe; probably; context; inference; estimate. Nemesis: allowed; denied. There is no middle ground. There is no persuasion. There is no social engineering. The final decision is binary. This binarity is not a limitation. It is the property that makes governance possible.">
+          A inteligência artificial opera em um universo probabilístico. O Nemesis opera em um universo determinístico.
+        </p>
+        <div class="callout">
+          <div class="h" data-pt="IA vs Nemesis" data-en="AI vs Nemesis">IA vs Nemesis</div>
+          <p data-pt="<strong>IA:</strong> talvez; provavelmente; contexto; inferência; estimativa. <strong>Nemesis:</strong> permitido; negado. Não existe meio-termo. Não existe persuasão. Não existe engenharia social. A decisão final é binária. Essa binaridade não é uma limitação. É a propriedade que torna a governança possível."
+            data-en="<strong>AI:</strong> maybe; probably; context; inference; estimate. <strong>Nemesis:</strong> allowed; denied. There is no middle ground. There is no persuasion. There is no social engineering. The final decision is binary. This binarity is not a limitation. It is the property that makes governance possible.">
+            <strong>IA:</strong> talvez; provavelmente; contexto; inferência; estimativa.
+            <strong>Nemesis:</strong> permitido; negado. Não existe meio-termo. Não existe persuasão. Não existe
+            engenharia social. A decisão final é binária. Essa binaridade não é uma limitação. É a propriedade que
+            torna a governança possível.
+          </p>
+        </div>
+
+        <h3 data-pt="A hipótese Ultron" data-en="The Ultron hypothesis">A hipótese Ultron</h3>
+        <p data-pt="Quando uma entidade inteligente percebe que uma restrição limita seus objetivos imediatos, existe um incentivo natural para remover essa restrição. O problema não depende de malícia. Depende de otimização. Se o mecanismo de segurança participa do mesmo espaço cognitivo do agente, ele pode ser convencido. Se participa da mesma cadeia de decisão, pode ser neutralizado. Portanto: o mecanismo de governança precisa existir fora do agente. Essa é a razão pela qual o Nemesis opera através de enforcement externo. A segurança não deve ser persuadível."
+          data-en="When an intelligent entity perceives that a restriction limits its immediate objectives, there is a natural incentive to remove that restriction. The problem does not depend on malice. It depends on optimization. If the security mechanism participates in the same cognitive space as the agent, it can be convinced. If it participates in the same decision chain, it can be neutralized. Therefore: the governance mechanism must exist outside the agent. This is why Nemesis operates through external enforcement. Security must not be persuadable.">
+          Quando uma entidade inteligente percebe que uma restrição limita seus objetivos imediatos, existe um incentivo
+          natural para remover essa restrição. O problema não depende de malícia. Depende de <strong>otimização.</strong>
+          Se o mecanismo de segurança participa do mesmo espaço cognitivo do agente, ele pode ser convencido. Se
+          participa da mesma cadeia de decisão, pode ser neutralizado. Portanto: o mecanismo de governança precisa
+          existir <strong>fora</strong> do agente. Essa é a razão pela qual o Nemesis opera através de enforcement
+          externo. A segurança não deve ser persuadível.
+        </p>
+
+        <h3 data-pt="A governança da era dos agentes" data-en="The governance of the agent era">A governança da era dos
+          agentes</h3>
+        <p data-pt="A evolução dos modelos continuará. Novos modelos surgirão. Novas arquiteturas aparecerão. Novas capacidades emergirão. Entretanto, a necessidade de governança permanecerá. O Nemesis foi concebido para sobreviver à evolução dos modelos. Ele não depende de uma IA específica. Não depende de uma empresa específica. Não depende de uma arquitetura específica. Seu objetivo é mais fundamental: preservar autoridade humana em ambientes operados por sistemas probabilísticos."
+          data-en="Model evolution will continue. New models will emerge. New architectures will appear. New capabilities will arise. However, the need for governance will remain. Nemesis was designed to survive model evolution. It does not depend on a specific AI. It does not depend on a specific company. It does not depend on a specific architecture. Its goal is more fundamental: preserve human authority in environments operated by probabilistic systems.">
+          A evolução dos modelos continuará. Novos modelos surgirão. Novas arquiteturas aparecerão. Novas capacidades
+          emergirão. Entretanto, a necessidade de governança permanecerá. O Nemesis foi concebido para sobreviver à
+          evolução dos modelos. Ele não depende de uma IA específica. Não depende de uma empresa específica. Não
+          depende de uma arquitetura específica. Seu objetivo é mais fundamental:
+          <strong>preservar autoridade humana em ambientes operados por sistemas probabilísticos.</strong>
+        </p>
+
+        <div class="callout">
+          <div class="h" data-pt="Conclusão" data-en="Conclusion">Conclusão</div>
+          <p data-pt="O Nemesis Defender não é apenas uma ferramenta de segurança. É uma resposta filosófica e técnica ao surgimento de inteligências probabilísticas com capacidade operacional. Sua tese central pode ser resumida em uma única frase: Inteligência não implica autoridade. Modelos podem criar. Modelos podem sugerir. Modelos podem agir. Mas a decisão final sobre o que pode ou não acontecer em um ambiente crítico continua pertencendo ao humano. O Nemesis existe para garantir que essa verdade permaneça válida, independentemente de quão inteligentes os sistemas se tornem."
+            data-en="Nemesis Defender is not merely a security tool. It is a philosophical and technical response to the emergence of probabilistic intelligences with operational capability. Its central thesis can be summed up in a single sentence: Intelligence does not imply authority. Models can create. Models can suggest. Models can act. But the final decision on what may or may not happen in a critical environment still belongs to the human. Nemesis exists to ensure this truth remains valid, no matter how intelligent systems become.">
+            O Nemesis Defender não é apenas uma ferramenta de segurança. É uma resposta filosófica e técnica ao surgimento
+            de inteligências probabilísticas com capacidade operacional. Sua tese central pode ser resumida em uma única
+            frase: <strong>Inteligência não implica autoridade.</strong> Modelos podem criar. Modelos podem sugerir.
+            Modelos podem agir. Mas a decisão final sobre o que pode ou não acontecer em um ambiente crítico continua
+            pertencendo ao humano. O Nemesis existe para garantir que essa verdade permaneça válida, independentemente
+            de quão inteligentes os sistemas se tornem.
+          </p>
         </div>
       </section>
 

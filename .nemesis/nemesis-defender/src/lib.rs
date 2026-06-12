@@ -101,6 +101,8 @@ const EXCLUDED_DIR_MARKERS: &[&str] = &[
     "pentest-nemesis-control",
     "PENTEST-NEMESIS",
     "defender-exclude.txt",
+    "denylist-defender.json",  // ← Isenta o arquivo de padrões do defender
+    "denylist-",               // ← Isenta denylist-*.json (base, generic, quality, etc.)
 ];
 
 /// Documentação canônica do projeto, mantida exclusivamente por humanos.
