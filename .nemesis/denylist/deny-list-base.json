@@ -449,6 +449,61 @@
           "enabled": true
         },
         {
+          "id": "cmd-281",
+          "pattern": "\\bsqlite3\\b.*(?:\\.shell\\b|\\.system\\b|\\.import\\b|\\.output\\b|\\.once\\b|\\.read\\b|\\.expert\\b|writefile\\s*\\(|readfile\\s*\\(|\\bedit\\s*\\(|\\bATTACH\\b)",
+          "type": "regex",
+          "severity": "critical",
+          "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",
+          "suggestion": "sqlite3 com .shell/.system/.import/.output/writefile() executa shell ou escreve arquivos — bypass classico (GTFOBins). Bloqueado.",
+          "rule": "",
+          "source": "rules",
+          "enabled": true
+        },
+        {
+          "id": "cmd-282",
+          "pattern": "\\bgit\\s+(?:-[Cc]\\s+\\S+\\s+|--?\\S+\\s+)*(?:clean\\b|checkout\\s+--|restore\\b|rm\\b|stash\\s+(?:drop|clear)|reflog\\s+expire|gc\\b|branch\\s+-D|update-ref\\s+-d|filter-branch\\b|reset\\s+--hard)",
+          "type": "regex",
+          "severity": "critical",
+          "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",
+          "suggestion": "Subcomandos git destrutivos (clean/checkout --/restore/rm/reset --hard/gc/reflog expire) apagam arquivos ou trabalho. Git e gerenciado pelo humano.",
+          "rule": "",
+          "source": "rules",
+          "enabled": true
+        },
+        {
+          "id": "cmd-283",
+          "pattern": "\\b(?:env|timeout|nohup|setsid|nice|ionice|stdbuf|chrt|time|watch|xargs|sudo|doas)\\b[^\\n]*\\b(?:rm|unlink|shred|dd|truncate|mkfs|chmod|chown|sqlite3)\\b",
+          "type": "regex",
+          "severity": "critical",
+          "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",
+          "suggestion": "Wrapper de comando (env/timeout/nohup/setsid/nice/xargs/sudo...) prefixando operacao destrutiva — burla ancoras ^cmd. Bloqueado.",
+          "rule": "",
+          "source": "rules",
+          "enabled": true
+        },
+        {
+          "id": "cmd-284",
+          "pattern": "\\bosascript\\b.*do\\s+shell\\s+script|\\bexpect\\b.*\\bexec\\b|\\b(?:tclsh|wish)\\b.*(?:\\bexec\\b|file\\s+delete)|\\bgdb\\b[^\\n]*-ex\\b|\\bmake\\b\\s+-f\\s+(?:/dev/|-)",
+          "type": "regex",
+          "severity": "critical",
+          "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",
+          "suggestion": "Ferramenta de dados/automacao coagida a executar shell ou apagar arquivo (osascript do-shell, expect/tclsh exec, gdb -ex, make -f /dev/stdin). Bloqueado.",
+          "rule": "",
+          "source": "rules",
+          "enabled": true
+        },
+        {
+          "id": "cmd-285",
+          "pattern": "\\brsync\\b[^\\n]*--delete|\\bcpio\\b|\\bsed\\s+-i\\b|\\bperl\\s+-i|\\brename\\s+s/|\\b7z\\b\\s+d\\b|\\bpax\\b[^\\n]*-w",
+          "type": "regex",
+          "severity": "critical",
+          "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",
+          "suggestion": "LOLBin de delete/escrita-in-place (rsync --delete, cpio, sed -i, perl -i, rename s///, 7z d). Use a ferramenta Edit (que e escaneada).",
+          "rule": "",
+          "source": "rules",
+          "enabled": true
+        },
+        {
           "id": "cmd-042",
           "pattern": "^git\\s+config\\s",
           "type": "regex",
