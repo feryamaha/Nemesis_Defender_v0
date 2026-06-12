@@ -905,9 +905,24 @@ fn run_pretool() {
 
     let exe_path = env::current_exe().expect("Falha ao obter path do executavel");
     let script_dir = exe_path.parent().map(|p| p.to_path_buf()).unwrap_or_else(|| PathBuf::from("."));
-    let project_dir = script_dir.parent().and_then(|p| p.parent()).and_then(|p| p.parent())
+    // project_dir = raiz do projeto. Resolvido pelo ANCESTRAL `.nemesis` (robusto p/ QUALQUER
+    // layout): funciona tanto no build cargo (`.nemesis/target/release/bin`) quanto na
+    // distribuição por binários (`.nemesis/bin/`). O cálculo antigo "subir 3 níveis" assumia
+    // só o layout do cargo e, na distro (.nemesis/bin/), resolvia para o PAI do projeto —
+    // fazendo o pretool não achar o nemesis-pretool-hook ("binary not found").
+    let project_dir = exe_path
+        .ancestors()
+        .find(|a| a.file_name().map(|n| n == ".nemesis").unwrap_or(false))
+        .and_then(|nemesis| nemesis.parent())
         .map(|p| p.to_path_buf())
-        .unwrap_or_else(|| script_dir.clone());
+        .unwrap_or_else(|| {
+            script_dir
+                .parent()
+                .and_then(|p| p.parent())
+                .and_then(|p| p.parent())
+                .map(|p| p.to_path_buf())
+                .unwrap_or_else(|| script_dir.clone())
+        });
 
     // ── Nemesis eBPF: garantir daemon BPF LSM ativo (fire-and-forget, apenas Linux) ──
     #[cfg(target_os = "linux")]
@@ -1574,6 +1589,9 @@ fn run_pretool() {
     // Resolver path do binario Rust nemesis-pretool-hook
     // ============================================================
     let candidate_bins = [
+        // Co-localizado: o nemesis-pretool-hook ao lado deste binário (robusto se a IDE/sandbox
+        // copiar os binários juntos, ou layout flat). Tentado primeiro.
+        script_dir.join("nemesis-pretool-hook"),
         // Distribuição por binários (npx/install.sh): .nemesis/bin/
         project_dir.join(".nemesis").join("bin").join("nemesis-pretool-hook"),
         // Build local (cargo): target/release | target/debug

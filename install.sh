@@ -211,18 +211,57 @@ EOF
   fi
 }
 
+# Dispatcher por nome de IDE — cria a pasta + o hook no formato correto.
+scaffold_ide() {  # $1 = nome
+  case "$1" in
+    claude)        sc_claude_like .claude .claude/settings.json ;;
+    openclaude)    sc_claude_like .openclaude .openclaude/settings.json ;;
+    codex)         sc_codex ;;
+    cursor)        sc_cursor ;;
+    devin)         sc_devin ;;
+    gemini)        sc_gemini_like .gemini ;;
+    agents)        sc_gemini_like .agents ;;
+    github|vscode) sc_github_vscode ;;
+    *) say "IDE desconhecida: '$1' (use: claude|openclaude|codex|cursor|devin|gemini|agents|github)"; return 1 ;;
+  esac
+}
+
+IDES="claude|openclaude|codex|cursor|devin|gemini|agents|github"
 detected=0
-[ -d ".claude"     ] && { sc_claude_like .claude .claude/settings.json; detected=1; }
-[ -d ".openclaude" ] && { sc_claude_like .openclaude .openclaude/settings.json; detected=1; }
-[ -d ".codex"      ] && { sc_codex; detected=1; }
-[ -d ".cursor"     ] && { sc_cursor; detected=1; }
-[ -d ".devin"      ] && { sc_devin; detected=1; }
-[ -d ".gemini"     ] && { sc_gemini_like .gemini; detected=1; }
-[ -d ".agents"     ] && { sc_gemini_like .agents; detected=1; }
-{ [ -d ".github" ] || [ -d ".vscode" ]; } && { sc_github_vscode; detected=1; }
+
+if [ -n "${NEMESIS_IDE:-}" ]; then
+  # IDE(s) EXPLÍCITA(s) via env — cria o hook MESMO que a pasta ainda não exista.
+  # Ex.: NEMESIS_IDE=devin bash install.sh   (ou lista: NEMESIS_IDE=devin,codex)
+  OLD_IFS="$IFS"; IFS=','
+  for ide in $NEMESIS_IDE; do
+    ide="$(printf '%s' "$ide" | tr 'A-Z' 'a-z' | tr -d '[:space:]')"
+    if [ -n "$ide" ] && scaffold_ide "$ide"; then detected=1; fi
+  done
+  IFS="$OLD_IFS"
+else
+  # Autodetecção: pastas de IDE já presentes no projeto.
+  [ -d ".claude"     ] && { sc_claude_like .claude .claude/settings.json; detected=1; }
+  [ -d ".openclaude" ] && { sc_claude_like .openclaude .openclaude/settings.json; detected=1; }
+  [ -d ".codex"      ] && { sc_codex; detected=1; }
+  [ -d ".cursor"     ] && { sc_cursor; detected=1; }
+  [ -d ".devin"      ] && { sc_devin; detected=1; }
+  [ -d ".gemini"     ] && { sc_gemini_like .gemini; detected=1; }
+  [ -d ".agents"     ] && { sc_gemini_like .agents; detected=1; }
+  { [ -d ".github" ] || [ -d ".vscode" ]; } && { sc_github_vscode; detected=1; }
+fi
+
 if [ "$detected" -eq 0 ]; then
-  say "Nenhuma pasta de IDE conhecida encontrada (.claude/.openclaude/.codex/.cursor/.devin/.gemini/.agents/.github/.vscode)."
-  say "Configure manualmente o hook de pre-tool apontando para: $PRE"
+  say "Nenhuma IDE detectada (pasta inexistente) e NEMESIS_IDE não informado."
+  if [ -t 0 ]; then
+    printf '[nemesis-install] Para qual IDE configurar o hook? (%s): ' "$IDES"
+    read -r choice || choice=""
+    choice="$(printf '%s' "$choice" | tr 'A-Z' 'a-z' | tr -d '[:space:]')"
+    if [ -n "$choice" ] && scaffold_ide "$choice"; then detected=1; fi
+  fi
+  if [ "$detected" -eq 0 ]; then
+    say "Configure manualmente, OU rode escolhendo a IDE: NEMESIS_IDE=devin bash install.sh"
+    say "Binário do hook (pre-tool): $PRE"
+  fi
 fi
 
 # ── 7. Próximos passos ───────────────────────────────────────────────────────
