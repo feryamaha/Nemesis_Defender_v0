@@ -77,9 +77,10 @@ jobs:
             shasum -a 256 "$PKG.tar.gz" > "$PKG.tar.gz.sha256"
           fi
 
-      - uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v2
         with:
           draft: true
+          fail_on_unmatched_files: true
           files: |
             nemesis-v2.0-*.tar.gz
             nemesis-v2.0-*.sha256
