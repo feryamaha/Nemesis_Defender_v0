@@ -1,0 +1,20 @@
+{
+  "id": "20260613-162353__HEAD",
+  "original_path": "/home/fernando/devproj/Nemesis_Defender_v2.0/./.git/logs/HEAD",
+  "quarantined_at": "2026-06-13T16:23:53.306474228-03:00",
+  "severity": "Malicious",
+  "violations": [
+    {
+      "visitor": "prompt_injection",
+      "line": 40,
+      "message": "Jailbreak activation phrase detected in file content.",
+      "evidence": "jailbreak"
+    },
+    {
+      "visitor": "denylist_malicious",
+      "line": 40,
+      "message": "Hostile command detected (denylist-defender / prompt_injection_advanced): Prompt injection patterns — instruction override, role-playing, context manipulation, instruction smuggling",
+      "evidence": "jailbreak"
+    }
+  ]
+}

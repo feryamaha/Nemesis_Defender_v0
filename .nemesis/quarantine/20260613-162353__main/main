@@ -1,0 +1,39 @@
+0000000000000000000000000000000000000000 a9be084b5ea92f6ec4d4521564ee9938d284649e feryamaha <feryamaha@hotmail.com> 1780105463 -0300	commit (initial): Initial commit: Nemesis Defender v2.0 project setup
+a9be084b5ea92f6ec4d4521564ee9938d284649e 4739e487ad139b73a973c714f120d1d373e99daf feryamaha <feryamaha@hotmail.com> 1780138796 -0300	commit: ajustes-finais-documentação
+4739e487ad139b73a973c714f120d1d373e99daf 34a8f58e8985aefc07f6d68f51a7038c654da72b feryamaha <feryamaha@hotmail.com> 1780143420 -0300	commit: Doc-update-licence-copyright
+34a8f58e8985aefc07f6d68f51a7038c654da72b 3b1e836cac77600c4a73a9c2b0d6b0e6342e6a73 feryamaha <feryamaha@hotmail.com> 1780148678 -0300	commit: Doc-upade+ajuste-documentação-organização-final
+3b1e836cac77600c4a73a9c2b0d6b0e6342e6a73 3a41b6d7fce262c7d25e97fa6e3e136f460d4111 feryamaha <feryamaha@hotmail.com> 1780336120 -0300	commit: ajuste-falso-positivo-amplificação-vetores
+3a41b6d7fce262c7d25e97fa6e3e136f460d4111 7b4ada2a4565b5b566a2e54b5f2188bfd276f30b feryamaha <feryamaha@hotmail.com> 1780348698 -0300	commit: atualização-html
+7b4ada2a4565b5b566a2e54b5f2188bfd276f30b 8ab5ef024f89532438eff972ddbcf39b7ce7fa40 feryamaha <feryamaha@hotmail.com> 1780400378 -0300	commit: atualização html
+8ab5ef024f89532438eff972ddbcf39b7ce7fa40 ace5290c6012625003c4d06f23485beb9f9cb9bf feryamaha <feryamaha@hotmail.com> 1780422003 -0300	commit: Calibração Nemesis v2.0: ast-linters cirúrgico + nemesis-defender prosa-agnostic
+ace5290c6012625003c4d06f23485beb9f9cb9bf 27b33afcb9fd90d8fc3e3c8a4e981895164efdaf feryamaha <feryamaha@hotmail.com> 1780497763 -0300	commit: calibration-denylist-mesage-blocked-nemesis-std
+27b33afcb9fd90d8fc3e3c8a4e981895164efdaf da69e76758e56e31661ec31dd28f30437b85a148 feryamaha <feryamaha@hotmail.com> 1780578279 -0300	commit: atualizações ast-linter+doc
+da69e76758e56e31661ec31dd28f30437b85a148 9a41f6fa52fba3e5630a7d2bde9967eeec89e142 feryamaha <feryamaha@hotmail.com> 1780593838 -0300	commit: calibration-ast-linters+doc
+9a41f6fa52fba3e5630a7d2bde9967eeec89e142 ff3d2d176232fbe53e48a600b6684e0f46938d03 feryamaha <feryamaha@hotmail.com> 1780613128 -0300	commit: update documentação
+ff3d2d176232fbe53e48a600b6684e0f46938d03 2eb3eeccc456f79025a7cc3724592ee6625e0841 feryamaha <feryamaha@hotmail.com> 1780682751 -0300	commit: update-modulo-ebpf-kernel+doc
+2eb3eeccc456f79025a7cc3724592ee6625e0841 7528924bc739aec0a692ed18d4a7e3d518741897 feryamaha <feryamaha@hotmail.com> 1780693015 -0300	commit: Refatoração ast-linters - SemanticModel próprio e remoção multi-stack
+7528924bc739aec0a692ed18d4a7e3d518741897 6cc6beadde37c3a04edc414f31a615406b063525 feryamaha <feryamaha@hotmail.com> 1780696762 -0300	commit: atualização doc
+6cc6beadde37c3a04edc414f31a615406b063525 9d0a8cd65cf1ac2b0c9195f879f8d4ede95dfe38 feryamaha <feryamaha@hotmail.com> 1780768544 -0300	commit: ajuste html
+9d0a8cd65cf1ac2b0c9195f879f8d4ede95dfe38 a20e1802abbff2f37c20ee8331a50e41adb2e9c6 feryamaha <feryamaha@hotmail.com> 1780919406 -0300	commit: update-windsurf-devin
+a20e1802abbff2f37c20ee8331a50e41adb2e9c6 f1b1b66e2a4f3210bbeca6b03541aea2b0192c22 feryamaha <feryamaha@hotmail.com> 1780950319 -0300	commit: ix/deny-list-quality-rules-enforcement
+f1b1b66e2a4f3210bbeca6b03541aea2b0192c22 b4286edf224bd9a55a0c3e21314d6a6763dc949f feryamaha <feryamaha@hotmail.com> 1780978009 -0300	commit: Refacto-workflow-enforcement-pastas e arquivos legados+fix e ajustes
+b4286edf224bd9a55a0c3e21314d6a6763dc949f 2ffd9893b7e3434abae50d14092ce77568b4ea4c feryamaha <feryamaha@hotmail.com> 1781029534 -0300	commit: Refactor-global
+2ffd9893b7e3434abae50d14092ce77568b4ea4c 8c44d62a033525076dd2cabe2576ba573662394b feryamaha <feryamaha@hotmail.com> 1781097086 -0300	commit: refactor-falso-positivo-lote-A
+8c44d62a033525076dd2cabe2576ba573662394b 24382beeb652665ad66ffaa95010c473ce1acbc5 feryamaha <feryamaha@hotmail.com> 1781111209 -0300	commit: refactor-nemesis-defender-falso-positivo-lote-b
+24382beeb652665ad66ffaa95010c473ce1acbc5 1ac5aced315dd8dfbc1dc9d9ecfca2c74f23c1b7 feryamaha <feryamaha@hotmail.com> 1781181002 -0300	commit: refactor-update-global
+1ac5aced315dd8dfbc1dc9d9ecfca2c74f23c1b7 0dfc14de6370859fe0fc6e3ae7abc4397f37cec5 feryamaha <feryamaha@hotmail.com> 1781199042 -0300	commit: FEAT-Quarantine
+0dfc14de6370859fe0fc6e3ae7abc4397f37cec5 aacc92162ee20d4226660eb36cb7ea4da78783cd feryamaha <feryamaha@hotmail.com> 1781219764 -0300	commit: FEAT-distruibuição-binarios+install.sh
+aacc92162ee20d4226660eb36cb7ea4da78783cd 9790a076a3b7a93ca35e2cec3263a581dbf775e5 feryamaha <feryamaha@hotmail.com> 1781226868 -0300	commit: FIX-runner-binario-gihub-actions
+9790a076a3b7a93ca35e2cec3263a581dbf775e5 d30c27884e530cafa40e113c7fb4d5b6034c8dcc feryamaha <feryamaha@hotmail.com> 1781228999 -0300	commit: FIX-release
+d30c27884e530cafa40e113c7fb4d5b6034c8dcc 37c9cfd0918bae6a4e5cc8f52d5c12fbb41613f5 feryamaha <feryamaha@hotmail.com> 1781229843 -0300	commit: FIX-draft-false-release
+37c9cfd0918bae6a4e5cc8f52d5c12fbb41613f5 2d0386b266ae381edcfe7fe9a0bedfe9a930f492 feryamaha <feryamaha@hotmail.com> 1781233537 -0300	commit: fix-release-install-path-hooks
+2d0386b266ae381edcfe7fe9a0bedfe9a930f492 8b9c36db30c759bc1d99cc904db386eccf47d92d feryamaha <feryamaha@hotmail.com> 1781235920 -0300	commit: fix-vulnerabilidade-nemesis
+8b9c36db30c759bc1d99cc904db386eccf47d92d 15bffa0774d9dee3266830ac5522052995aa9a8b feryamaha <feryamaha@hotmail.com> 1781271572 -0300	commit: feat-melhorias
+15bffa0774d9dee3266830ac5522052995aa9a8b 49c5e20d5653a5a4451cabd4274b41c054611f51 feryamaha <feryamaha@hotmail.com> 1781287558 -0300	commit: fix-install-update-index.html
+49c5e20d5653a5a4451cabd4274b41c054611f51 edb449123d96c1a6e2df8aaa107b5640d71fbbd8 feryamaha <feryamaha@hotmail.com> 1781321546 -0300	commit: fix-install-scaffold-right-denylist-defender
+edb449123d96c1a6e2df8aaa107b5640d71fbbd8 888b218e2350684c80082792534c84cf4e2aa72b feryamaha <feryamaha@hotmail.com> 1781322905 -0300	commit: fix-install-scan-defender+index.html
+888b218e2350684c80082792534c84cf4e2aa72b 3422ce06972b421b90eb224f7f6c6bc7d7b803a5 feryamaha <feryamaha@hotmail.com> 1781355467 -0300	commit: fix-install-validade
+3422ce06972b421b90eb224f7f6c6bc7d7b803a5 c13a593f79e5f0bdb2a9396601d53b59d10de7e2 feryamaha <feryamaha@hotmail.com> 1781357236 -0300	commit: fix-install-validade
+c13a593f79e5f0bdb2a9396601d53b59d10de7e2 7e7809df396176c75a039e6531c7f2292fe14e9e feryamaha <feryamaha@hotmail.com> 1781373711 -0300	commit: fix-doc
+7e7809df396176c75a039e6531c7f2292fe14e9e f112ca95b250877d4c37a20d96cb2f74779ac3b7 feryamaha <feryamaha@hotmail.com> 1781373984 -0300	commit: fix-install-dowgrade-scan-doctor
+f112ca95b250877d4c37a20d96cb2f74779ac3b7 5913825433d70db9582a2535b02f1656ef1ee7b7 feryamaha <feryamaha@hotmail.com> 1781378632 -0300	commit: fix-install-pid-doctor-jailbreak
