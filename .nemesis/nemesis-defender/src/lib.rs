@@ -123,6 +123,30 @@ const CANONICAL_ROOT_DOCS: &[&str] = &[
     "index.html",
 ];
 
+/// Estado INTERNO do `.git/` (mensagens de commit, reflogs, refs, objects, index, HEAD…) contém
+/// TEXTO ARBITRÁRIO legítimo — inclusive mensagens de commit/branch com termos que o scanner trata
+/// como gatilho (ex.: a palavra "jailbreak" num nome de branch). Mover esses arquivos para a
+/// quarentena CORROMPE o repositório (foi o que aconteceu: COMMIT_EDITMSG + reflogs movidos no
+/// meio de um `git commit`). Por isso são isentos.
+///
+/// EXCEÇÃO DELIBERADA: `.git/hooks/` CONTINUA sendo escaneado — git hooks EXECUTAM código e são
+/// um vetor real de supply-chain; não podem virar ponto cego.
+fn is_git_internal_data(path: &Path) -> bool {
+    let mut comps = path.components();
+    while let Some(c) = comps.next() {
+        if c.as_os_str() == ".git" {
+            // Encontrou o diretório do repositório. O componente seguinte decide:
+            return match comps.next() {
+                // `.git/hooks/...` → NÃO isentar (mantém o scan dos hooks executáveis).
+                Some(next) if next.as_os_str() == "hooks" => false,
+                // Qualquer outro conteúdo de `.git/` (ou o próprio diretório) → isentar.
+                _ => true,
+            };
+        }
+    }
+    false
+}
+
 /// Verifica se o diretório-pai de `path` é a raiz do projeto
 /// (contém marcador `.git` ou `.nemesis`).
 fn parent_is_project_root(path: &Path) -> bool {
@@ -137,6 +161,12 @@ fn parent_is_project_root(path: &Path) -> bool {
 /// Returns true if the path should be skipped by the defender.
 pub fn is_path_excluded(path: &Path) -> bool {
     let path_str = path.to_string_lossy();
+
+    // 0. Estado interno do `.git/` (exceto `.git/hooks/`) — isento. Escanear/quarentenar
+    //    commit msg, reflogs e refs corromperia o repositório (vide is_git_internal_data).
+    if is_git_internal_data(path) {
+        return true;
+    }
 
     // 1. Pastas de pentest/documentação de teste — isentas em qualquer nível.
     for substr in EXCLUDED_DIR_MARKERS {
@@ -377,5 +407,46 @@ fn compute_severity(violations: &[DefenderViolation]) -> Severity {
         0 => Severity::Clean,
         1 => Severity::Suspicious,        // sinal heurístico isolado → mantém, só loga
         _ => Severity::Malicious,         // 2+ métodos independentes concordam → confirmado
+    }
+}
+
+#[cfg(test)]
+mod git_exclusion_tests {
+    use super::*;
+
+    #[test]
+    fn git_internal_state_is_excluded() {
+        // Os exatos arquivos que o daemon quarentenou (FP "jailbreak" no commit).
+        for p in [
+            "/home/u/proj/.git/COMMIT_EDITMSG",
+            "/home/u/proj/.git/MERGE_MSG",
+            "/home/u/proj/.git/HEAD",
+            "/home/u/proj/.git/logs/HEAD",
+            "/home/u/proj/.git/logs/refs/heads/main",
+            "/home/u/proj/.git/refs/heads/main",
+            "/home/u/proj/.git/index",
+            "proj/./.git/COMMIT_EDITMSG", // com componente CurDir, como o daemon emite
+        ] {
+            assert!(is_path_excluded(Path::new(p)), "deveria isentar: {p}");
+        }
+    }
+
+    #[test]
+    fn git_hooks_are_still_scanned() {
+        // .git/hooks/ EXECUTA código — não pode virar ponto cego.
+        for p in [
+            "/home/u/proj/.git/hooks/pre-commit",
+            "/home/u/proj/.git/hooks/post-checkout",
+        ] {
+            assert!(!is_git_internal_data(Path::new(p)), "NÃO isentar hook: {p}");
+        }
+    }
+
+    #[test]
+    fn non_git_paths_unaffected() {
+        // `.gitignore`/`.github/` não são o diretório `.git/` do repo.
+        assert!(!is_git_internal_data(Path::new("/home/u/proj/.gitignore")));
+        assert!(!is_git_internal_data(Path::new("/home/u/proj/.github/workflows/ci.yml")));
+        assert!(!is_git_internal_data(Path::new("/home/u/proj/src/main.rs")));
     }
 }
