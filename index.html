@@ -2392,9 +2392,9 @@
           npm, sem git clone. Como o Nemesis bloqueia <code>curl … | sh</code>, o modo recomendado é em
           <strong>duas etapas</strong> (baixar, inspecionar, executar)  nunca um pipe cego.</p>
         <pre><code><span class="c" data-pt="# A partir da raiz do seu projeto:" data-en="# From your project root:"># A partir da raiz do seu projeto:</span>
-curl <span class="k">-fsSLO</span> https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/install.sh
-less install.sh   <span class="c" data-pt="# inspecione" data-en="# inspect"># inspecione</span>
-bash install.sh   <span class="c" data-pt="# baixa + verifica SHA256 + instala + configura o hook" data-en="# download + verify SHA256 + install + wire hook"># baixa + verifica SHA256 + instala</span></code></pre>
+curl <span class="k">-fsSLO</span> https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/nemesis-install.sh
+less nemesis-install.sh   <span class="c" data-pt="# inspecione" data-en="# inspect"># inspecione</span>
+bash nemesis-install.sh   <span class="c" data-pt="# baixa + verifica SHA256 + instala + configura o hook" data-en="# download + verify SHA256 + install + wire hook"># baixa + verifica SHA256 + instala</span></code></pre>
         <p data-pt="A <strong>camada eBPF</strong> (kernel, Linux) não vem nos binários: depende de libbpf/clang e de um objeto BPF compatível com o kernel-alvo. É <strong>opt-in</strong>, construída da fonte (Opção B). O core (pretool + Defender) protege mac e Linux sem ela."
           data-en="The <strong>eBPF layer</strong> (kernel, Linux) is not shipped in the binaries: it depends on libbpf/clang and a kernel-compatible BPF object. It is <strong>opt-in</strong>, built from source (Option B). The core (pretool + Defender) protects macOS and Linux without it.">
           A <strong>camada eBPF</strong> (kernel, Linux) não vem nos binários: depende de libbpf/clang e de um objeto BPF

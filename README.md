@@ -77,7 +77,7 @@ O Defender **só age quando a hostilidade é confirmada** — e **não deleta: m
 - **Sinais de alta confiança (confirmatórios)** bloqueiam sozinhos: deny-list curada, `decode → exec`, cadeia de exfiltração (fonte sensível + sink de rede), reverse shell (socket cru + execução de comando), tentativa de bypass do próprio Nemesis, e injeção em config de IDE.
 - **Sinais heurísticos (substring/padrão)** exigem **corroboração — 2 métodos de detecção independentes concordando** — antes de quarentenar. Sozinhos, ficam em `Suspicious` (registrado, arquivo mantido). Contar *tipos distintos* de detector (não múltiplos hits do mesmo) impede que N coincidências da mesma causa escalem indevidamente.
 
-**Quarentena, não exclusão.** Ao confirmar `Malicious`, o daemon **move** o arquivo para `.nemesis/quarantine/<id>/` (com `meta.json` do motivo), **bloqueia a sessão** (exit 2, `QUARENTENA PENDENTE`) e espera o humano: `nemesis-defender --quarantine list | show <id> | restore <id> | purge <id>`. O instalador do próprio Nemesis (`install.sh`) é isento (ele legitimamente contém os padrões detectados).
+**Quarentena, não exclusão.** Ao confirmar `Malicious`, o daemon **move** o arquivo para `.nemesis/quarantine/<id>/` (com `meta.json` do motivo), **bloqueia a sessão** (exit 2, `QUARENTENA PENDENTE`) e espera o humano: `nemesis-defender --quarantine list | show <id> | restore <id> | purge <id>`. O instalador do próprio Nemesis (`nemesis-install.sh`) é isento (ele legitimamente contém os padrões detectados).
 
 A corroboração existe justamente para **não agir sobre código legítimo por engano** — sinais isolados não bastam para mover um arquivo.
 
@@ -123,9 +123,9 @@ Baixa os binários do **GitHub Release**, **verifica o checksum SHA256** e insta
 
 ```bash
 # A partir da RAIZ do seu projeto:
-curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/install.sh
-less install.sh          # inspecione antes de rodar
-bash install.sh          # baixa + verifica SHA256 + instala em .nemesis/bin/ + configura o hook
+curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/nemesis-install.sh
+less nemesis-install.sh          # inspecione antes de rodar
+bash nemesis-install.sh          # baixa + verifica SHA256 + instala em .nemesis/bin/ + configura o hook
 ```
 
 O instalador detecta SO/arch, baixa o tarball da release, **confere o SHA256 antes de extrair** (aborta se não bater), instala os binários e as deny-lists, e **detecta a(s) IDE(s) presente(s) e escreve o hook no formato CORRETO de cada uma** (nome de arquivo + schema próprios), sem sobrescrever config existente:
@@ -139,7 +139,7 @@ O instalador detecta SO/arch, baixa o tarball da release, **confere o SHA256 ant
 | **Gemini / Agents** | `.gemini/hooks.json` · `.agents/hooks.json` | objetos `nemesis-pretool-hook`/`nemesis-posttool-hook` com `enabled` |
 | **VS Code / GitHub Copilot** | `.github/hooks/nemesis-pretool-hook.json` (+ `.vscode/settings.json` aponta para ele) | caminho relativo `./.nemesis/bin/...` |
 
-Caminho absoluto para os binários (relativo no caso do GitHub/VS Code). Versão fixa: `NEMESIS_VERSION=v2.0.0 bash install.sh`.
+Caminho absoluto para os binários (relativo no caso do GitHub/VS Code). Versão fixa: `NEMESIS_VERSION=v2.0.0 bash nemesis-install.sh`.
 
 > A **camada eBPF (Linux)** NÃO vem nos binários: depende de `libbpf`/`clang` e de um objeto BPF compatível com o seu kernel. É **opt-in**, construída da fonte (Opção B). O core (pretool + Defender) protege em macOS e Linux sem ela.
 

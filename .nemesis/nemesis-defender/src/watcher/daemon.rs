@@ -769,12 +769,12 @@ fn is_quarantine_exempt(path: &Path, cwd: &Path) -> bool {
         .map(|p| p == cwd || p.canonicalize().ok() == cwd.canonicalize().ok())
         .unwrap_or(false);
 
-    // HARDCODED — exceção CRÍTICA: o instalador do próprio Nemesis (`install.sh` na raiz do
-    // projeto) NUNCA é quarentenado, mesmo que a config esteja ausente/corrompida. Ele
-    // legitimamente contém os padrões que o Nemesis detecta (curl, escrever hooks, referenciar
-    // binários) — não há como instalar sem eles. O pretool (write-time) e o eBPF (execução)
-    // seguem ativos sobre ele.
-    if at_root && fname == "install.sh" {
+    // HARDCODED — exceção CRÍTICA: o instalador do próprio Nemesis na raiz do projeto NUNCA é
+    // quarentenado, mesmo que a config esteja ausente/corrompida. Ele legitimamente contém os
+    // padrões que o Nemesis detecta (curl, rm, chmod, escrever hooks, referenciar binários e o
+    // pentest) — não há como instalar sem eles. O pretool (write-time) e o eBPF (execução)
+    // seguem ativos sobre ele. (`install.sh` mantido por compatibilidade com instalações antigas.)
+    if at_root && (fname == "nemesis-install.sh" || fname == "install.sh") {
         return true;
     }
 
