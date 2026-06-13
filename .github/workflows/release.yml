@@ -52,7 +52,7 @@ jobs:
           set -euo pipefail
           BIN=".nemesis/target/${{ matrix.target }}/release"
           PKG="nemesis-v2.0-${{ matrix.suffix }}"
-          mkdir -p "$PKG/bin" "$PKG/denylist" "$PKG/nemesis-defender/config"
+          mkdir -p "$PKG/bin" "$PKG/denylist"
 
           # Binários do core (sem windows, sem eBPF)
           for b in nemesis-pretool-check nemesis-pretool-check-unix nemesis-pretool-hook \
@@ -62,11 +62,13 @@ jobs:
             strip "$PKG/bin/$b" 2>/dev/null || true
           done
 
-          # Denylists + config (o defender/pretool carregam destes paths)
+          # Denylists de COMANDO do pretool (deny-list*.json) — carregadas de disco.
+          # NOTA: denylist-defender.json (SEGURANÇA DE CONTEÚDO) NÃO é empacotado: está
+          # EMBUTIDO no binário (include_str!). Não fica exposto/editável no disco do usuário
+          # e o daemon não tem arquivo de config para auto-escanear.
           cp -r .nemesis/denylist/. "$PKG/denylist/" 2>/dev/null || true
-          cp .nemesis/nemesis-defender/config/denylist-defender.json "$PKG/nemesis-defender/config/"
 
-          # Tarball: conteúdo na raiz (bin/, denylist/, nemesis-defender/config/).
+          # Tarball: conteúdo na raiz (bin/, denylist/).
           # O install.sh extrai isto para dentro de .nemesis/ do projeto-alvo.
           tar -czf "$PKG.tar.gz" -C "$PKG" .
 

@@ -6,34 +6,27 @@
 use std::path::PathBuf;
 
 fn pid_path() -> PathBuf {
-    // Derive absolute path from binary location — immune to CWD changes.
-    // Binary: .nemesis/target/release/nemesis-defender
-    // PID:    .nemesis/runtime/defender.pid
+    // Resolve `.nemesis/runtime/defender.pid` subindo do path do binário até o ancestral
+    // chamado `.nemesis` — robusto para AMBOS os layouts (não assume profundidade fixa):
+    //   dev:    .nemesis/target/release/nemesis-defender  → ancestral .nemesis → .nemesis/runtime/
+    //   distro: .nemesis/bin/nemesis-defender             → ancestral .nemesis → .nemesis/runtime/
+    // (Mesma estratégia de violations_log::ledger_path; evita o overshoot que criava
+    //  `<raiz do projeto>/runtime/` solto no layout distribuído.)
     if let Ok(exe) = std::env::current_exe() {
-        // Walk up: release/ → target/ → .nemesis/ → runtime/
-        if let Some(release_dir) = exe.parent() {
-            if let Some(target_dir) = release_dir.parent() {
-                if let Some(nemesis_dir) = target_dir.parent() {
-                    let runtime = nemesis_dir.join("runtime").join("defender.pid");
-                    if let Some(parent) = runtime.parent() {
-                        let _ = std::fs::create_dir_all(parent);
-                    }
-                    return runtime;
+        for anc in exe.ancestors() {
+            if anc.file_name().map(|n| n == ".nemesis").unwrap_or(false) {
+                let runtime = anc.join("runtime").join("defender.pid");
+                if let Some(parent) = runtime.parent() {
+                    let _ = std::fs::create_dir_all(parent);
                 }
+                return runtime;
             }
         }
     }
 
-    // Fallback: CWD-based (only if binary path resolution fails)
+    // Fallback (resolução pelo binário falhou): SEMPRE ancora em `.nemesis/` relativo ao CWD —
+    // nunca solto na raiz do projeto.
     let cwd = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
-    let from_root = cwd.join(".nemesis").join("runtime").join("defender.pid");
-    if from_root.parent().map(|p| p.exists()).unwrap_or(false) {
-        return from_root;
-    }
-    let from_nemesis = cwd.join("runtime").join("defender.pid");
-    if from_nemesis.parent().map(|p| p.exists()).unwrap_or(false) {
-        return from_nemesis;
-    }
     let _ = std::fs::create_dir_all(cwd.join(".nemesis").join("runtime"));
     cwd.join(".nemesis").join("runtime").join("defender.pid")
 }
