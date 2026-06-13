@@ -101,8 +101,13 @@ const EXCLUDED_DIR_MARKERS: &[&str] = &[
     "pentest-nemesis-control",
     "PENTEST-NEMESIS",
     "defender-exclude.txt",
-    "denylist-defender.json",  // ← Isenta o arquivo de padrões do defender
-    "denylist-",               // ← Isenta denylist-*.json (base, generic, quality, etc.)
+    "denylist-defender.json",  // legado: hoje EMBUTIDO no binário; mantido por segurança
+    // Pasta de denylists do pretool — regras EDITÁVEIS pelo usuário (ele pode/deve relaxar
+    // os regex), logo NÃO são embutidas. Contêm padrões de detecção (\brm -rf\b, \bcurl\b…)
+    // que o daemon não deve auto-escanear. Os arquivos reais são deny-list*.json (com hífen)
+    // e denylist-folder-files.json; por isso isentamos a PASTA inteira (qualquer forma de
+    // path: absoluto, relativo da raiz ou de .nemesis/ — todos contêm "denylist/").
+    "denylist/",
 ];
 
 /// Documentação canônica do projeto, mantida exclusivamente por humanos.
