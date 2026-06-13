@@ -1283,8 +1283,8 @@
     </div>
     <div class="nav-group">
       <div class="gtitle" data-pt="Uso" data-en="Usage">Uso</div>
-      <a class="nav-link" href="#perigo"><span class="num">⚠</span> <span data-pt="Perigos & onboarding"
-          data-en="Dangers & onboarding">Perigos & onboarding</span></a>
+      <a class="nav-link" href="#perigo"><span class="num">⚠</span> <span data-pt="Enforcement ativo & onboarding"
+          data-en="Active enforcement & onboarding">Enforcement ativo & onboarding</span></a>
       <a class="nav-link" href="#instalacao"><span class="num">13</span> <span data-pt="Instalação & requisitos"
           data-en="Install & requirements">Instalação & requisitos</span></a>
 
@@ -1364,27 +1364,26 @@
             limites. Honestidade sobre escopo é uma escolha de engenharia, não uma fraqueza.</p>
         </div>
         <div class="danger">
-          <div class="lbl" data-pt="⚠️ LEIA ANTES DE INSTALAR isto não é um brinquedo"
-            data-en="⚠️ READ BEFORE INSTALLING this is not a toy">⚠️ LEIA ANTES DE INSTALAR isto não é um brinquedo
+          <div class="lbl" data-pt="⚠️ LEIA ANTES DE INSTALAR · enforcement ativo e irreversível"
+            data-en="⚠️ READ BEFORE INSTALLING · active, irreversible enforcement">⚠️ LEIA ANTES DE INSTALAR · enforcement ativo e irreversível
           </div>
-          <p data-pt="O Nemesis Defender é um sistema de segurança que <b>age, não pergunta.</b> Não negocia, não abre concessões e não é uma democracia é 0 ou 1."
-            data-en="Nemesis Defender is a security system that <b>acts, it doesn't ask.</b> It doesn't negotiate, makes no concessions, and is not a democracy it's 0 or 1.">
-            O Nemesis Defender é um sistema de segurança que <b>age, não pergunta.</b> Não negocia, não abre concessões
-            e não é uma democracia é 0 ou 1.</p>
-          <p data-pt="O Nemesis <b>age</b>: ao detectar hostilidade <b>confirmada</b> num arquivo (credencial exposta, payload destrutivo, malware), ele remove o infrator enforcement determinístico, não um aviso. Com o modelo de severidade por <b>corroboração</b>, a deleção só ocorre quando a ameaça é confirmada por sinais de detecção independentes; código legítimo não é apagado por engano. Sob Git, qualquer remoção é reversível pelo histórico."
-            data-en="Nemesis <b>acts</b>: on detecting <b>confirmed</b> hostility in a file (exposed credential, destructive payload, malware), it removes the offender deterministic enforcement, not a warning. With the <b>corroboration</b> severity model, deletion happens only when the threat is confirmed by independent detection signals; legitimate code is not removed by mistake. Under Git, any removal is reversible from history.">
+          <p data-pt="O Nemesis Defender é um sistema de segurança que <b>age, não pergunta.</b> Não negocia e não abre concessões: a decisão é binária (0 ou 1)."
+            data-en="Nemesis Defender is a security system that <b>acts, it doesn't ask.</b> It doesn't negotiate and makes no concessions: the decision is binary (0 or 1).">
+            O Nemesis Defender é um sistema de segurança que <b>age, não pergunta.</b> Não negocia e não abre concessões: a decisão é binária (0 ou 1).</p>
+          <p data-pt="O Nemesis <b>age</b>: ao detectar hostilidade <b>confirmada</b> num arquivo (credencial exposta, payload destrutivo, malware), ele <b>move o arquivo para quarentena</b> (<code>.nemesis/quarantine/</code>) e bloqueia a sessão até revisão humana. É enforcement determinístico, não um aviso. Com o modelo de severidade por <b>corroboração</b>, isso só ocorre quando a ameaça é confirmada por sinais de detecção independentes: código legítimo não é movido por engano. O conteúdo é preservado e você decide: <code>restore</code> (falso-positivo) ou <code>purge</code>."
+            data-en="Nemesis <b>acts</b>: on detecting <b>confirmed</b> hostility in a file (exposed credential, destructive payload, malware), it <b>moves the file to quarantine</b> (<code>.nemesis/quarantine/</code>) and blocks the session until human review. This is deterministic enforcement, not a warning. With the <b>corroboration</b> severity model, this happens only when the threat is confirmed by independent detection signals: legitimate code is not moved by mistake. The content is preserved and you decide: <code>restore</code> (false-positive) or <code>purge</code>.">
             O Nemesis <b>age</b>: ao detectar hostilidade <b>confirmada</b> num arquivo (credencial exposta, payload
-            destrutivo, malware), ele remove o infrator enforcement determinístico, não um aviso. Com o modelo de
-            severidade por <b>corroboração</b>, a deleção só ocorre quando a ameaça é confirmada por sinais de detecção
-            independentes; código legítimo não é apagado por engano. Sob Git, qualquer remoção é reversível pelo
-            histórico.
+            destrutivo, malware), ele <b>move o arquivo para quarentena</b> (<code>.nemesis/quarantine/</code>) e
+            bloqueia a sessão até revisão humana. É enforcement determinístico, não um aviso. Com o modelo de
+            severidade por <b>corroboração</b>, isso só ocorre quando a ameaça é confirmada por sinais de detecção
+            independentes: código legítimo não é movido por engano. O conteúdo é preservado e você decide:
+            <code>restore</code> (falso-positivo) ou <code>purge</code>.
           </p>
-          <p data-pt="Isto é intencional. O Nemesis intercepta operações destrutivas <b>independentemente de quem as origina IA ou humano.</b> No Linux com eBPF, nem você pelo terminal roda um <code>rm -rf</code>. Se você segue as regras, ele é um aliado poderoso; se pisa fora da caixa, ele pune por isso se chama Nemesis. Requer conhecimento técnico mínimo para configurar; não é plug-and-play."
-            data-en="This is intentional. Nemesis intercepts destructive operations <b>regardless of who originates them AI or human.</b> On Linux with eBPF, not even you can run an <code>rm -rf</code> from the terminal. Follow the rules and it's a powerful ally; step outside the box and it punishes that's why it's called Nemesis. It requires minimal technical knowledge to configure; it is not plug-and-play.">
-            Isto é intencional. O Nemesis intercepta operações destrutivas <b>independentemente de quem as origina IA
-              ou humano.</b> No Linux com eBPF, nem você pelo terminal roda um <code>rm -rf</code>. Se você segue as
-            regras, ele é um aliado poderoso; se pisa fora da caixa, ele pune por isso se chama Nemesis. Requer
-            conhecimento técnico mínimo para configurar; não é plug-and-play.</p>
+          <p data-pt="Isto é intencional. O Nemesis intercepta operações destrutivas <b>independentemente da origem, seja IA ou humano.</b> No Linux com eBPF, o bloqueio vale inclusive para o operador no terminal (por exemplo, um <code>rm -rf</code>). Requer conhecimento técnico mínimo para configurar; não é plug-and-play."
+            data-en="This is intentional. Nemesis intercepts destructive operations <b>regardless of origin, whether AI or human.</b> On Linux with eBPF, the block applies even to the operator at the terminal (for example, an <code>rm -rf</code>). It requires minimal technical knowledge to configure; it is not plug-and-play.">
+            Isto é intencional. O Nemesis intercepta operações destrutivas <b>independentemente da origem, seja IA ou
+              humano.</b> No Linux com eBPF, o bloqueio vale inclusive para o operador no terminal (por exemplo, um
+            <code>rm -rf</code>). Requer conhecimento técnico mínimo para configurar; não é plug-and-play.</p>
         </div>
         <p data-pt="Não é um linter genérico nem um scanner passivo. É um <b>harness de enforcement em runtime</b> para o contexto de desenvolvimento guiado por agentes de IA, onde um output aparentemente inócuo pode esconder manipulação de manifests, <em>decode-then-exec</em> de payloads codificados, esteganografia Unicode (CVE-2021-42574), prompt injection, exfiltração de credenciais e malware com <em>time-gating</em>. O Nemesis bloqueia essas operações <b>no momento em que tentam executar</b>."
           data-en="It is not a generic linter nor a passive scanner. It is a <b>runtime enforcement harness</b> for the AI-agent-driven development context, where seemingly innocuous output can hide manifest tampering, <em>decode-then-exec</em> of encoded payloads, Unicode steganography (CVE-2021-42574), prompt injection, credential exfiltration, and <em>time-gated</em> malware. Nemesis blocks these operations <b>at the moment they try to execute</b>.">
@@ -1408,14 +1407,12 @@
           data-en="What IDEs and TUIs already ship and why it isn't enough on its own">O que as IDEs e TUIs já trazem
           e por que não resolve sozinho</h2>
         <p class="lead"
-          data-pt="Pergunta justa e esperada: &quot;isso não dá para configurar nas settings da IDE?&quot;. Resposta honesta: os <strong>primitivos existem</strong> hooks, deny-list, sandbox e o Nemesis Defender <strong>usa esses recursos nativos</strong>. Eu não inventei hook nem sandbox. O que eu fiz foi recompilar todas essas peças num único framework de enforcement que bloqueia comandos <strong>destrutivos e maliciosos</strong>, igual em qualquer IDE, com uma camada de kernel que nenhuma delas oferece. Nenhuma ferramenta nativa faz essa combinação completa."
-          data-en="A fair, expected question: &quot;can't you just configure this in the IDE settings?&quot;. Honest answer: the <strong>primitives exist</strong> hooks, deny-list, sandbox and Nemesis Defender <strong>uses those native features</strong>. I did not invent the hook or the sandbox. What I did was recompile all those pieces into a single enforcement framework that blocks <strong>destructive and malicious</strong> commands, the same way across any IDE, with a kernel layer none of them offer. No native tool does this full combination.">
-          Pergunta justa e esperada: &quot;isso não dá para configurar nas settings da IDE?&quot;. Resposta honesta: os
-          <strong>primitivos existem</strong> hooks, deny-list, sandbox e o Nemesis Defender <strong>usa esses
-            recursos nativos</strong>. Eu não inventei hook nem sandbox. O que eu fiz foi recompilar todas essas peças
-          num único framework de enforcement que bloqueia comandos <strong>destrutivos e maliciosos</strong>, igual em
-          qualquer IDE, com uma camada de kernel que nenhuma delas oferece. Nenhuma ferramenta nativa faz essa
-          combinação completa.
+          data-pt="Os primitivos já existem: hooks de ciclo de vida, deny-list e sandbox são recursos nativos das IDEs e agentes, e o Nemesis Defender os utiliza. Não inventei o hook nem o sandbox; consolidei essas peças num único framework de enforcement, uniforme entre IDEs, somado a uma camada de kernel que nenhuma delas oferece. Nenhuma ferramenta nativa entrega essa combinação completa."
+          data-en="The primitives already exist: lifecycle hooks, deny-list and sandbox are native features of IDEs and agents, and Nemesis Defender uses them. I did not invent the hook or the sandbox; I consolidated these pieces into a single enforcement framework, uniform across IDEs, plus a kernel layer none of them offer. No native tool delivers this full combination.">
+          Os primitivos já existem: hooks de ciclo de vida, deny-list e sandbox são recursos nativos das IDEs e
+          agentes, e o Nemesis Defender os utiliza. Não inventei o hook nem o sandbox; consolidei essas peças num único
+          framework de enforcement, uniforme entre IDEs, somado a uma camada de kernel que nenhuma delas oferece.
+          Nenhuma ferramenta nativa entrega essa combinação completa.
         </p>
         <p data-pt="E isto não é específico de uma ferramenta. Consultei a documentação oficial de cada agente: <strong>todos os principais convergiram para o mesmo primitivo</strong> um hook de ciclo de vida que intercepta a chamada antes de executar e pode bloquear. A tabela abaixo mostra o mecanismo de bloqueio de cada um, direto da doc oficial."
           data-en="And this isn't specific to one tool. I consulted each agent's official documentation: <strong>every major one converged on the same primitive</strong> a lifecycle hook that intercepts the call before execution and can block it. The table below shows each one's blocking mechanism, straight from the official docs.">
@@ -1944,7 +1941,7 @@
             antecipado</strong> aumentam o custo de um ataque conhecido, mas não cobrem o desconhecido.</p>
         <div class="callout">
           <div class="h" data-pt="Severidade por corroboração: quarentena só quando confirmado"
-            data-en="Severity by corroboration delete only when confirmed">Severidade por corroboração: quarentena só
+            data-en="Severity by corroboration quarantine only when confirmed">Severidade por corroboração: quarentena só
             quando confirmado</div>
           <p data-pt="O endurecimento mais importante da v2.x: o Iron Dome <strong>só age (movendo para quarentena, não deletando) quando a hostilidade é confirmada</strong>. Sinais de alta confiança (denylist curada, decode→exec, cadeia de exfil, reverse shell socket+exec, bypass do próprio Nemesis) bloqueiam sozinhos; sinais heurísticos (substring/padrão) <strong>exigem 2 métodos de detecção independentes concordando</strong> antes de deletar caso contrário ficam em <em>Suspicious</em> (registrado, mantido). A detecção de execução foi ainda estendida a <strong>múltiplos runtimes</strong> (reverse shell e exec ofuscado em Ruby/PHP/Go/Perl/Java/Lua, não só JS/Python/Bash), e a proteção de paths foi endurecida contra ofuscação (glob em diretório, <code>cd</code> para dir protegido, indireção por variável/<code>$(&lt;file)</code>)."
             data-en="The most important v2.x hardening: the Iron Dome <strong>only deletes when hostility is confirmed</strong>. High-confidence signals (curated denylist, decode→exec, exfil chain, socket+exec reverse shell, Nemesis self-bypass) block on their own; heuristic signals (substring/pattern) <strong>require 2 independent detection methods agreeing</strong> before deletion otherwise they stay <em>Suspicious</em> (logged, kept). Execution detection was further extended to <strong>multiple runtimes</strong> (reverse shell and obfuscated exec in Ruby/PHP/Go/Perl/Java/Lua, not just JS/Python/Bash), and path protection was hardened against obfuscation (glob in a directory, <code>cd</code> into a protected dir, indirection via variable/<code>$(&lt;file)</code>).">
@@ -2264,10 +2261,10 @@
       </section>
 
       <section id="perigo">
-        <div class="eyebrow" data-pt="⚠ Perigos & onboarding" data-en="⚠ Dangers & onboarding">⚠ Perigos & onboarding
+        <div class="eyebrow" data-pt="⚠ Enforcement ativo & onboarding" data-en="⚠ Active enforcement & onboarding">⚠ Enforcement ativo & onboarding
         </div>
-        <h2 data-pt="Como o Defender age e por que é perigoso"
-          data-en="How the Defender acts and why it's dangerous">Como o Defender age e por que é perigoso</h2>
+        <h2 data-pt="Como o Defender age e o que isso exige de você"
+          data-en="How the Defender acts and what it requires of you">Como o Defender age e o que isso exige de você</h2>
         <p data-pt="O <strong>Nemesis Defender</strong> não apenas avisa: ele <strong>age</strong>. Ao confirmar um arquivo malicioso (credencial exposta, comando destrutivo, malware), ele <strong>NÃO deleta  move para quarentena</strong> (<code>.nemesis/quarantine/</code>), <strong>bloqueia a sessão</strong> e exige revisão humana. O conteúdo é preservado; você decide: <code>restore</code> (falso-positivo) ou <code>purge</code> (expurgar). Intercepta tanto a IA quanto, no Linux com eBPF, o próprio humano."
           data-en="The <strong>Nemesis Defender</strong> doesn't just warn: it <strong>acts</strong>. On confirming a malicious file (exposed credential, destructive command, malware), it <strong>does NOT delete  it moves to quarantine</strong> (<code>.nemesis/quarantine/</code>), <strong>blocks the session</strong> and requires human review. The content is preserved; you decide: <code>restore</code> (false-positive) or <code>purge</code>. Intercepts both the AI and, on Linux with eBPF, the human.">
           O <strong>Nemesis Defender</strong> não apenas avisa: ele <strong>age</strong>. Ao confirmar um arquivo
@@ -2306,11 +2303,11 @@
           acidente (o comando errado que apaga o que não devia). Em macOS/Windows, sem eBPF, o humano mantém liberdade
           total no terminal; a proteção se concentra nas ações da IA.
         </p>
-        <p data-pt="O efeito colateral pretendido: quem usa o Nemesis <strong>passa a escrever código de qualidade e seguro</strong> não por escolha, mas porque a alternativa é ser bloqueado. Ele é um balizador. Segue as regras, é aliado. Pisa fora da borda da caixa, ele pune. É por isso que se chama Nemesis."
-          data-en="The intended side effect: those who use Nemesis <strong>start writing quality, secure code</strong> not by choice, but because the alternative is being blocked. It's a guide rail. Follow the rules, it's an ally. Step outside the box, it punishes. That's why it's called Nemesis.">
+        <p data-pt="O efeito colateral pretendido: quem usa o Nemesis <strong>passa a escrever código de qualidade e seguro</strong> não por escolha, mas porque operações fora das regras são bloqueadas. A restrição é determinística e impessoal: o que está fora da política não executa."
+          data-en="The intended side effect: those who use Nemesis <strong>start writing quality, secure code</strong> not by choice, but because operations outside the rules are blocked. The restriction is deterministic and impersonal: what falls outside policy does not execute.">
           O efeito colateral pretendido: quem usa o Nemesis <strong>passa a escrever código de qualidade e
-            seguro</strong> não por escolha, mas porque a alternativa é ser bloqueado. Ele é um balizador. Segue as
-          regras, é aliado. Pisa fora da borda da caixa, ele pune. É por isso que se chama Nemesis.</p>
+            seguro</strong> não por escolha, mas porque operações fora das regras são bloqueadas. A restrição é
+          determinística e impessoal: o que está fora da política não executa.</p>
       </section>
 
       <section id="instalacao">

@@ -1,0 +1,15 @@
+---
+description: Engenheiro Mantenedor do Nemesis — regra canônica (ver AGENTS.md)
+alwaysApply: true
+---
+
+# Nemesis_Defender_v2.0 — regra canônica (Cursor)
+
+Leia **`AGENTS.md`** (na raiz) por inteiro antes de qualquer ação. É o documento canônico do
+Engenheiro Mantenedor do Nemesis (persona, invariantes de segurança, arquitetura, processo).
+Esta regra é apenas o ponteiro do Cursor para ele.
+
+Essenciais (detalhes em `AGENTS.md`): nada irreversível em manutenção (pretool desconectado; no
+macOS não há contenção de kernel para te segurar); não suba o daemon durante o install; prove, não
+suponha; git é exclusivamente do Fernando; 100% local. Processo: SDD pipeline em
+`.devin/workflows/nemesis-sdd-pipeline.md`.

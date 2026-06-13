@@ -541,6 +541,8 @@ O Nemesis possui funcionalidades presentes no código mas atualmente inativas:
 
 Contribuições são bem-vindas - código, novos vetores de deny-list, e especialmente **relatos de bypass**. Veja [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
+Para **manter o Nemesis** (em qualquer IDE/TUI), o ponto de partida é o [`AGENTS.md`](AGENTS.md) - o agente mantenedor canônico (invariantes de segurança, disciplina epistêmica, mapa do repositório, boas práticas de Rust) - e o manual de operação [`.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md`](.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md) (build, lifecycle de daemon/pretool/eBPF, logs, checklist).
+
 O projeto adota o **Developer Certificate of Origin (DCO)**: assine seus commits com `git commit -s`.
 
 A camada eBPF, em particular, é um campo aberto: ela hoje cobre execução de binários destrutivos (execve). Estender para escrita não-execve (hooks `file_open`/`inode_unlink`), matching por inode em vez de basename, e seccomp no modo `--start` são melhorias mapeadas e disponíveis para quem quiser contribuir.
