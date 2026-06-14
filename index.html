@@ -2386,14 +2386,12 @@
           data-en="Downloads the binaries from the GitHub Release, <strong>verifies the SHA256 checksum</strong> and installs into <code>.nemesis/bin/</code>, wiring the IDE hook. macOS (arm64/x64) and Linux (x64). No Rust, no npm, no git clone. Since Nemesis blocks <code>curl … | sh</code>, the recommended flow is <strong>two steps</strong> (download, inspect, run)  never a blind pipe.">
           Baixa os binários do GitHub Release, <strong>verifica o checksum SHA256</strong> e instala em
           <code>.nemesis/bin/</code>, já configurando o hook da IDE. macOS (arm64/x64) e Linux (x64). Sem Rust, sem
-          npm, sem git clone. Como o Nemesis bloqueia <code>curl … | sh</code>, o modo recomendado é em
-          <strong>duas etapas</strong> (baixar, inspecionar, executar)  nunca um pipe cego.</p>
+          npm, sem git clone. O arquivo vai para o disco antes de rodar (auditável)  <strong>não</strong> é o
+          pipe cego <code>curl … | sh</code>, que o Nemesis bloqueia. Um comando baixa o instalador e o guia e já instala:</p>
         <pre><code><span class="c" data-pt="# A partir da raiz do seu projeto:" data-en="# From your project root:"># A partir da raiz do seu projeto:</span>
-curl <span class="k">-fsSLO</span> https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/nemesis-install.sh
-curl <span class="k">-fsSLO</span> https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt
-less info-install.txt     <span class="c" data-pt="# leia o passo a passo" data-en="# read the step-by-step"># leia o passo a passo</span>
-less nemesis-install.sh   <span class="c" data-pt="# inspecione" data-en="# inspect"># inspecione</span>
-bash nemesis-install.sh   <span class="c" data-pt="# baixa + verifica SHA256 + instala + configura o hook" data-en="# download + verify SHA256 + install + wire hook"># baixa + verifica SHA256 + instala</span></code></pre>
+curl <span class="k">-fsSLO</span> https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/nemesis-install.sh \
+     <span class="k">-O</span>      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt \
+  &amp;&amp; bash nemesis-install.sh</code></pre>
         <p data-pt="A <strong>camada eBPF</strong> (kernel, Linux) não vem nos binários: depende de libbpf/clang e de um objeto BPF compatível com o kernel-alvo. É <strong>opt-in</strong>, construída da fonte (Opção B). O core (pretool + Defender) protege mac e Linux sem ela."
           data-en="The <strong>eBPF layer</strong> (kernel, Linux) is not shipped in the binaries: it depends on libbpf/clang and a kernel-compatible BPF object. It is <strong>opt-in</strong>, built from source (Option B). The core (pretool + Defender) protects macOS and Linux without it.">
           A <strong>camada eBPF</strong> (kernel, Linux) não vem nos binários: depende de libbpf/clang e de um objeto BPF

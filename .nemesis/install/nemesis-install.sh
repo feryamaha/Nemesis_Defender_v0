@@ -9,15 +9,15 @@
 #
 # Suporta: macOS (arm64/x64) e Linux (x64). Windows fora de escopo por enquanto.
 #
-# ⚠️  NEMESIS É SEGURANÇA: o próprio Nemesis BLOQUEIA `curl … | sh`. Por coerência,
-#     o modo RECOMENDADO é em DUAS ETAPAS (baixe, inspecione, execute). Baixe o
-#     instalador E o leia-me (info-install.txt) de uma vez:
+# ⚠️  NEMESIS É SEGURANÇA: o arquivo vai para o DISCO antes de rodar (auditável) — NÃO é o
+#     `curl … | sh` (pipe cego), que o próprio Nemesis bloqueia. Um comando baixa o instalador
+#     E o leia-me (info-install.txt) e já instala, a partir da raiz do SEU projeto:
 #
 #         curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/nemesis-install.sh \
-#              -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt
-#         less info-install.txt          # leia o passo a passo
-#         less nemesis-install.sh        # inspecione o instalador
-#         bash nemesis-install.sh        # execute a partir da raiz do SEU projeto
+#              -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt \
+#           && bash nemesis-install.sh
+#
+#     (Quer inspecionar antes? Baixe sem o `&& bash …` e leia: less nemesis-install.sh)
 #
 # Variáveis: NEMESIS_VERSION (default: latest), NEMESIS_REPO (default: feryamaha/Nemesis_Defender_v2.0)
 # =============================================================================

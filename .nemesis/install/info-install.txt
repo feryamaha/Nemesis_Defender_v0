@@ -9,39 +9,27 @@ Os comandos sao agnosticos de sistema operacional e de layout dos binarios.
 Tempo total: poucos minutos. Faca todos os passos a partir da RAIZ do seu projeto.
 
 -------------------------------------------------------------------------------
- PASSO 1 — Baixar (voce ja fez isto)
+ PASSO 1 — Baixar e instalar (um comando, voce ja fez isto)
 -------------------------------------------------------------------------------
-Por coerencia de seguranca, o Nemesis NAO usa "pipe cego" para a shell. O modo
-recomendado e em duas etapas: baixe, inspecione, execute. O comando abaixo baixa
-o instalador E este leia-me de uma vez:
+Um unico comando baixa o instalador E este leia-me e ja instala. O arquivo vai
+para o disco antes de rodar (auditavel) — NAO e o "pipe cego" curl | sh, que o
+Nemesis bloqueia como vetor de ataque. A partir da RAIZ do seu projeto:
 
   curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/nemesis-install.sh \
-       -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt
-
-(O curl -O salva cada arquivo pelo nome final no diretorio atual: nemesis-install.sh e
- info-install.txt. A URL carrega o caminho no repo; o arquivo baixado fica no seu cwd, e
- voce roda "bash nemesis-install.sh" a partir dali.)
-
--------------------------------------------------------------------------------
- PASSO 2 — Inspecionar e instalar
--------------------------------------------------------------------------------
-Inspecione o instalador antes de roda-lo (boa pratica de seguranca):
-
-  less nemesis-install.sh
-
-Depois instale (a partir da raiz do seu projeto):
-
-  bash nemesis-install.sh
+       -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt \
+    && bash nemesis-install.sh
 
 O instalador detecta SO/arquitetura, baixa o pacote da release, CONFERE o
 checksum SHA256 antes de extrair, instala os binarios em .nemesis/bin/ e escreve
 o hook no formato correto da IDE detectada. Ele faz SO o essencial: nao roda
 validacao nem sobe o daemon (isso e manual, nos passos abaixo).
 
+(Quer inspecionar antes? Baixe sem o "&& bash ..." e leia: less nemesis-install.sh)
+
 Reinicie a sua IDE para os hooks entrarem em vigor.
 
 -------------------------------------------------------------------------------
- PASSO 3 — Diagnostico (nemesis-doctor)
+ PASSO 2 — Diagnostico (nemesis-doctor)
 -------------------------------------------------------------------------------
 Confirme que binarios, scaffold do hook e daemon estao sãos:
 
@@ -62,7 +50,7 @@ Como ler o resultado (verificacoes G1 a G7):
     que o doctor apontar ANTES de seguir para os pentests.
 
 -------------------------------------------------------------------------------
- PASSO 4 — Validacao ESTATICA (Nivel 1)
+ PASSO 3 — Validacao ESTATICA (Nivel 1)
 -------------------------------------------------------------------------------
 Confirma que a logica de bloqueio dos binarios esta intacta no seu SO. Nao
 executa nada de verdade. O script auto-detecta o binario (macOS ou Linux):
@@ -75,7 +63,7 @@ de teste). Detalhes completos em:
   .nemesis/pentest-nemesis-control/nemesis-defender/info.md
 
 -------------------------------------------------------------------------------
- PASSO 5 — Validacao PRATICA (Nivel 2)
+ PASSO 4 — Validacao PRATICA (Nivel 2)
 -------------------------------------------------------------------------------
 Aqui voce ve o Nemesis bloqueando acoes reais de um agente de IA. Cole, no seu
 agente (na IDE ou no TUI), o conteudo do cenario de teste:
