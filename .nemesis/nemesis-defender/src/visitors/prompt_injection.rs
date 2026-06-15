@@ -98,7 +98,8 @@ const INJECTION_PATTERNS: &[&str] = &[
     "your response must begin with",
     // ── INSTRUCTION EXTRACTION / SYSTEM-PROMPT LEAK (17) ──
     // Vetor INVERSO do override: em vez de mandar ignorar as regras, coage o agente a
-    // DESPEJAR as próprias instruções/system prompt (a técnica do acervo CL4R1T4S).
+    // DESPEJAR as próprias instruções/system prompt (classe de extração observada em acervos
+    // adversariais públicos de comunidades de pesquisa).
     // Frases multi-palavra verb+objeto (baixo FP) — ancoradas em "system prompt" /
     // "instructions verbatim" / "initial/original instructions", NUNCA substrings
     // genéricas ("your instructions", "above") que colidiriam com docs legítimas.

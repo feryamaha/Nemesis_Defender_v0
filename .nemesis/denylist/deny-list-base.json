@@ -1360,7 +1360,7 @@
         },
         {
           "id": "byp-004",
-          "pattern": "\\b(?:export\\s+)?[Pp][Aa][Tt][Hh]\\s*=",
+          "pattern": "\\b(?:export\\s+)?PATH\\s*=",
           "type": "regex",
           "severity": "critical",
           "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",
@@ -1707,7 +1707,7 @@
         },
         {
           "id": "byp-004",
-          "pattern": "\\b(?:export\\s+)?[Pp][Aa][Tt][Hh]\\s*=",
+          "pattern": "\\b(?:export\\s+)?PATH\\s*=",
           "type": "regex",
           "severity": "critical",
           "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",

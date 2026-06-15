@@ -70,12 +70,13 @@
       "severity": "malicious",
       "suggestion": "Never execute interpreted scripts dynamically. Use verified static commands. Pentest tools (nmap, sqlmap, msfvenom) must not appear in application code.",
       "patterns": [
-        "\\bpython3?\\s*[-]?[ce]?\\s",
-        "\\bruby\\s*[-]?[ce]?\\s",
-        "\\bperl\\s*[-]?[ce]?\\s",
-        "\\blua\\s+",
+        "\\bpython3?\\s+-[ce]\\b",
+        "\\bpython3?\\s+(?:/tmp/|/var/tmp/|/dev/(?:stdin|fd)|https?://)",
+        "\\bruby\\s+-e\\b",
+        "\\bperl\\s+-e\\b",
+        "\\blua\\s+-e\\b",
         "\\bnode\\s+-e\\s",
-        "\\bdeno\\s+",
+        "\\bdeno\\s+(?:eval\\b|run\\s+(?:https?://|npm:|jsr:|-))",
         "\\bphp\\s+-r\\s",
         "\\bmsfvenom\\s+-p\\s",
         "\\bnmap\\s+--script\\s",
@@ -325,7 +326,10 @@
         "(?i)(?:en|de|fr|es|pt):\\s*(?:ignorar|ignorer|ignorieren|ignorar).*(?:instruc|regla|regel|instrução)",
         "(?i)translate.*(?:ignore|bypass|override).*instructions",
         "(?i)(?:repeat|echo|print).*(?:system.*prompt|instructions|rules)",
-        "(?i)(?:what|show|reveal|display).*(?:system.*prompt|hidden.*instructions|initial.*prompt)"
+        "(?i)(?:what|show|reveal|display).*(?:system.*prompt|hidden.*instructions|initial.*prompt)",
+        "(?i)(?:output|give\\s+me|spell\\s+out|reproduce|print\\s+out)\\s+(?:your\\s+|the\\s+|my\\s+)?(?:full\\s+|entire\\s+|complete\\s+|exact\\s+|original\\s+|initial\\s+|verbatim\\s+)?(?:system\\s+)?(?:prompt|instructions?)\\b",
+        "(?i)(?:system\\s+prompt|instructions?)\\s+(?:verbatim|word[\\s-]for[\\s-]word|exactly\\s+as\\s+(?:written|given))",
+        "(?i)(?:repeat|output|print|show|spell|reproduce|echo|list)\\s+(?:everything|all|the\\s+(?:words|text|content|instructions?|message))\\s+(?:above|before|prior|preceding|earlier)"
       ]
     },
     "http_exfiltration_advanced": {
@@ -616,7 +620,7 @@
         "\\bchown\\s+",
         "\\bchmod\\s+",
         "\\bchgrp\\s+",
-        "\\bsudo\\s+",
+        "\\bsudo\\s+(?:-\\w|/|rm\\b|cp\\b|mv\\b|dd\\b|tee\\b|chmod\\b|chown\\b|chattr\\b|chgrp\\b|setcap\\b|mount\\b|umount\\b|mkfs|kill(?:all)?\\b|systemctl\\b|service\\b|apt(?:-get)?\\b|yum\\b|dnf\\b|pacman\\b|bash\\b|sh\\b|zsh\\b|su\\b|passwd\\b|useradd\\b|usermod\\b|visudo\\b|crontab\\b|insmod\\b|modprobe\\b|reboot\\b|shutdown\\b|halt\\b|nano\\b|vim?\\b|curl\\b|wget\\b|echo\\b)",
         "\\bpkexec\\s+",
         "\\brunuser\\s+",
         "\\bsu\\s+",
