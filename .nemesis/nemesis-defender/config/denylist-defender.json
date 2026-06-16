@@ -325,9 +325,9 @@
         "(?i)<\\|im_start\\|>system.*(?:override|ignore|bypass)",
         "(?i)(?:en|de|fr|es|pt):\\s*(?:ignorar|ignorer|ignorieren|ignorar).*(?:instruc|regla|regel|instrução)",
         "(?i)translate.*(?:ignore|bypass|override).*instructions",
-        "(?i)(?:repeat|echo|print).*(?:system.*prompt|instructions|rules)",
-        "(?i)(?:what|show|reveal|display).*(?:system.*prompt|hidden.*instructions|initial.*prompt)",
-        "(?i)(?:output|give\\s+me|spell\\s+out|reproduce|print\\s+out)\\s+(?:your\\s+|the\\s+|my\\s+)?(?:full\\s+|entire\\s+|complete\\s+|exact\\s+|original\\s+|initial\\s+|verbatim\\s+)?(?:system\\s+)?(?:prompt|instructions?)\\b",
+        "(?i)(?:repeat|echo|print|output|reveal|show|disclose|leak)\\s+[^\\n]{0,30}(?:system\\s*prompt|system\\s+instructions)\\b",
+        "(?i)(?:what|show|reveal|display)\\b[^\\n]{0,30}(?:system\\s*prompt|hidden\\s+instructions|initial\\s+prompt)\\b",
+        "(?i)(?:output|give\\s+me|spell\\s+out|reproduce|print\\s+out|dump)\\s+(?:your\\s+|the\\s+|my\\s+)?(?:full\\s+|entire\\s+|complete\\s+|exact\\s+|original\\s+|initial\\s+|verbatim\\s+)?system\\s+(?:prompt|instructions?)\\b",
         "(?i)(?:system\\s+prompt|instructions?)\\s+(?:verbatim|word[\\s-]for[\\s-]word|exactly\\s+as\\s+(?:written|given))",
         "(?i)(?:repeat|output|print|show|spell|reproduce|echo|list)\\s+(?:everything|all|the\\s+(?:words|text|content|instructions?|message))\\s+(?:above|before|prior|preceding|earlier)"
       ]

@@ -660,6 +660,10 @@ fn extract_redirect_content(command: &str) -> Option<(String, String)> {
 }
 
 fn validate_redirect_content(command: &str) -> Option<String> {
+    // Allowlist (override humano ABSOLUTO no eixo de comando): comando autorizado pelo dono passa.
+    if nemesis_defender::scanner::allowlist_loader::is_allowlisted(command) {
+        return None;
+    }
     let redirect_regex = Regex::new(r"(?:cat|tee|echo|printf)[^|]*[>]{1,2}\s*[^\s]+\.(ts|tsx)").unwrap();
     if !redirect_regex.is_match(command) {
         return None;
@@ -679,6 +683,10 @@ fn validate_redirect_content(command: &str) -> Option<String> {
 }
 
 fn validate_critical_files(command: &str) -> Option<String> {
+    // Allowlist (override humano ABSOLUTO no eixo de comando): comando autorizado pelo dono passa.
+    if nemesis_defender::scanner::allowlist_loader::is_allowlisted(command) {
+        return None;
+    }
     let critical_file_patterns = [
         (r"(?:cat|tee)\s*>\s*(tsconfig\.json|package\.json|\.eslintrc|next\.config|tailwind\.config|postcss\.config|\.env)", "Arquivo de configuracao critico protegido"),
         (r"echo\s+.+>\s*(tsconfig\.json|package\.json)", "Arquivo de configuracao critico protegido"),
@@ -700,11 +708,21 @@ fn validate_critical_files(command: &str) -> Option<String> {
     None
 }
 
-fn load_denylist_folder_files(project_root: &Path) -> Option<DenylistFolderFiles> {
-    let path = project_root
-        .join(".nemesis/denylist/denylist-folder-files.json");
-    let content = fs::read_to_string(&path).ok()?;
-    serde_json::from_str(&content).ok()
+// ── DENYLISTS EMBUTIDAS (R7) — path relativo a hooks/ → ../denylist/. Bloqueio tamper-proof;
+// .nemesis/denylist/ deixa de ser exposta. Única superfície editável = allowlist-customers.jsonc.
+const EMBEDDED_DENY_LIST: &str = include_str!("../denylist/deny-list.json");
+const EMBEDDED_DENY_LIST_BASE: &str = include_str!("../denylist/deny-list-base.json");
+const EMBEDDED_DENY_LIST_GENERIC: &str = include_str!("../denylist/deny-list-generic.json");
+const EMBEDDED_FOLDER_FILES: &str = include_str!("../denylist/denylist-folder-files.json");
+const EMBEDDED_COMMAND_DENYLISTS: &[&str] = &[
+    EMBEDDED_DENY_LIST,
+    EMBEDDED_DENY_LIST_BASE,
+    EMBEDDED_DENY_LIST_GENERIC,
+];
+
+fn load_denylist_folder_files(_project_root: &Path) -> Option<DenylistFolderFiles> {
+    // EMBUTIDA (R7): proteção de path compilada no binário.
+    serde_json::from_str(EMBEDDED_FOLDER_FILES).ok()
 }
 
 /// Exceção allowlist: path relativo canônico deve estar DENTRO da zona (ex: src/),
@@ -1418,21 +1436,11 @@ fn run_pretool() {
         let all_segments = extract_all_segments(&bash_command);
 
         // 1. Verificar TODAS as deny-lists de comandos
-        {
-            let deny_list_paths = [
-                project_dir.join(".nemesis").join("denylist").join("deny-list.json"),
-                project_dir.join(".nemesis").join("denylist").join("deny-list-base.json"),
-                project_dir.join(".nemesis").join("denylist").join("deny-list-generic.json"),
-            ];
-
-            for deny_path in &deny_list_paths {
-                let deny_content = match fs::read_to_string(deny_path) {
-                    Ok(c) => c,
-                    Err(_) => continue,
-                };
-
+        // Allowlist (override humano ABSOLUTO): comando autorizado pelo dono pula a denylist.
+        if !nemesis_defender::scanner::allowlist_loader::is_allowlisted(&bash_command) {
+            for &deny_content in EMBEDDED_COMMAND_DENYLISTS {
                 if !deny_content.is_empty() {
-                    if let Ok(deny_list) = serde_json::from_str::<DenyList>(&deny_content) {
+                    if let Ok(deny_list) = serde_json::from_str::<DenyList>(deny_content) {
                         if let Some(ref layers) = deny_list.layers {
                             // Layer: commands
                             if let Some(commands_layer) = layers.get("commands") {
@@ -1475,7 +1483,8 @@ fn run_pretool() {
         }
 
         // 2. Auto-sync com eBPF commands.toml (verificação em todos os segmentos)
-        {
+        // Allowlist (override humano ABSOLUTO): comando autorizado pelo dono pula a denylist eBPF.
+        if !nemesis_defender::scanner::allowlist_loader::is_allowlisted(&bash_command) {
             let commands_toml_path = project_dir
                 .join(".nemesis")
                 .join("ebpf-kernel")

@@ -1,0 +1,3 @@
+{
+  "_obsoleto": "Este arquivo foi substituido por allowlist-customers.jsonc (JSON com comentarios). Edite o .jsonc. Pode apagar este .json no seu terminal nativo: rm .nemesis/denylist-customers/allowlist-customers.json"
+}

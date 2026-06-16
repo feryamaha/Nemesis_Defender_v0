@@ -92,6 +92,52 @@ chmod +x .nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh 2>/dev
 rm -f .nemesis/logs/violations.log .nemesis/logs/*.log logs/violations.log 2>/dev/null || true
 say "Binários instalados em .nemesis/bin/"
 
+# ── 5.1 Denylists de BLOQUEIO: EMBUTIDAS no binário (tamper-proof) — NÃO expostas ────────────
+# As regras de bloqueio (deny-list*.json + denylist-folder-files.json) são compiladas no binário
+# (include_str!). Remove qualquer cópia no disco para que NÃO fiquem expostas/editáveis: editá-las
+# não teria efeito. (Mantém a pasta .nemesis/denylist/ para artefatos de runtime do permission-gate.)
+rm -f .nemesis/denylist/deny-list.json \
+      .nemesis/denylist/deny-list-base.json \
+      .nemesis/denylist/deny-list-generic.json \
+      .nemesis/denylist/deny-list-quality.json \
+      .nemesis/denylist/denylist-folder-files.json 2>/dev/null || true
+
+# ── 5.2 Allowlist do usuário: ÚNICA superfície editável (override humano absoluto) ───────────
+# O dono relaxa/endurece POR CONTA E RISCO editando este arquivo. Efeito imediato (sem rebuild).
+# O agente NUNCA escreve aqui (absolute_block). Preserva uma allowlist já existente em re-install.
+mkdir -p .nemesis/denylist-customers
+if [ ! -s .nemesis/denylist-customers/allowlist-customers.jsonc ]; then
+  cat > .nemesis/denylist-customers/allowlist-customers.jsonc <<'EOF'
+{
+  // ─────────────────────────────────────────────────────────────────────────────
+  // allowlist-customers.jsonc — OVERRIDE HUMANO ABSOLUTO do Nemesis
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Tudo que você listar aqui SOBRESCREVE qualquer bloqueio do Nemesis (denylists de
+  // comando + denylist-defender + visitors), tanto no pretool quanto no daemon.
+  // O efeito é IMEDIATO ao salvar — sem recompilar, sem reiniciar.
+  //
+  // Edição é EXCLUSIVAMENTE sua (humano, no terminal nativo): o agente NUNCA consegue
+  // escrever neste arquivo (ele está protegido em absolute_block). É por SUA conta e
+  // risco — se você liberar "rm -rf", o Nemesis deixa de bloquear "rm -rf".
+  //
+  // Comentários: SÓ linhas que COMEÇAM com // (como estas) são ignoradas.
+  //
+  //   allow_commands : casa por SUBSTRING contra o comando / a evidência detectada.
+  //   allow_patterns : casa por REGEX (crate `regex` do Rust — sem lookahead).
+  //
+  // EXEMPLO (copie para dentro dos arrays abaixo e edite para liberar):
+  //   "allow_commands": ["git push", "sudo systemctl restart nginx", "rm -rf ./dist"],
+  //   "allow_patterns": ["^cp\\s+-r\\s+", "sed -i .*\\.ya?ml$"]
+
+  "allow_commands": [],
+  "allow_patterns": []
+}
+EOF
+  say "Allowlist criada: .nemesis/denylist-customers/allowlist-customers.jsonc (ÚNICA superfície editável)."
+else
+  say "Allowlist preservada (.nemesis/denylist-customers/allowlist-customers.jsonc já existe)."
+fi
+
 ABS_PRETOOL="$(pwd)/.nemesis/bin/nemesis-pretool-check-unix"
 ABS_POSTTOOL="$(pwd)/.nemesis/bin/nemesis-posttool-check-unix"
 

@@ -540,55 +540,57 @@ struct DenyList {
     layers: HashMap<String, DenyListLayer>,
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// DENYLISTS EMBUTIDAS (R7) — compiladas no binário via include_str!.
+// A pasta .nemesis/denylist/ deixa de ser exposta/editável no install: as regras de
+// BLOQUEIO são tamper-proof. A ÚNICA superfície editável pelo usuário é a
+// allowlist-customers.jsonc (override humano). Path relativo a hooks/ → ../denylist/.
+// ─────────────────────────────────────────────────────────────────────────────
+const EMBEDDED_DENY_LIST: &str = include_str!("../denylist/deny-list.json");
+const EMBEDDED_DENY_LIST_BASE: &str = include_str!("../denylist/deny-list-base.json");
+const EMBEDDED_DENY_LIST_GENERIC: &str = include_str!("../denylist/deny-list-generic.json");
+const EMBEDDED_DENY_LIST_QUALITY: &str = include_str!("../denylist/deny-list-quality.json");
+const EMBEDDED_FOLDER_FILES: &str = include_str!("../denylist/denylist-folder-files.json");
+
+/// Todas as denylists embutidas (substitui a varredura de diretório). Entradas com schema
+/// diferente de DenyList (ex.: folder-files) falham o parse e são puladas — igual ao dir-scan.
+const EMBEDDED_ALL_DENYLISTS: &[&str] = &[
+    EMBEDDED_DENY_LIST,
+    EMBEDDED_DENY_LIST_BASE,
+    EMBEDDED_DENY_LIST_GENERIC,
+    EMBEDDED_DENY_LIST_QUALITY,
+    EMBEDDED_FOLDER_FILES,
+];
+
+/// Denylists de COMANDOS embutidas (camada "commands").
+const EMBEDDED_COMMAND_DENYLISTS: &[&str] = &[
+    EMBEDDED_DENY_LIST,
+    EMBEDDED_DENY_LIST_BASE,
+    EMBEDDED_DENY_LIST_GENERIC,
+];
+
 fn load_deny_list() -> Option<DenyList> {
-    let deny_list_path = get_deny_list_path();
-    if !deny_list_path.exists() {
-        return None;
-    }
-    match fs::read_to_string(&deny_list_path) {
-        Ok(content) => serde_json::from_str::<DenyList>(&content).ok(),
-        Err(_) => None,
-    }
+    serde_json::from_str::<DenyList>(EMBEDDED_DENY_LIST).ok()
 }
 
-/// Carrega TODOS os arquivos .json da pasta config como deny-lists.
+/// Carrega TODAS as deny-lists embutidas (antes: varredura de .nemesis/denylist/).
 fn load_all_deny_lists() -> Vec<DenyList> {
-    let mut all = Vec::new();
-    let denylist_dir = get_workflow_enforcement_dir();
-    if let Ok(entries) = fs::read_dir(&denylist_dir) {
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.extension().map_or(false, |e| e == "json") {
-                if let Ok(content) = fs::read_to_string(&path) {
-                    if let Ok(deny_list) = serde_json::from_str::<DenyList>(&content) {
-                        all.push(deny_list);
-                    }
-                }
-            }
-        }
-    }
-    all
+    EMBEDDED_ALL_DENYLISTS
+        .iter()
+        .filter_map(|c| serde_json::from_str::<DenyList>(c).ok())
+        .collect()
 }
 
 fn get_command_patterns() -> Vec<DenyPattern> {
     let mut all_patterns: Vec<DenyPattern> = Vec::new();
 
-    // Consultar TODAS as 3 deny-lists de comandos
-    let denylist_dir = get_workflow_enforcement_dir();
-    let deny_list_paths = [
-        denylist_dir.join("deny-list.json"),
-        denylist_dir.join("deny-list-base.json"),
-        denylist_dir.join("deny-list-generic.json"),
-    ];
-
-    for path in &deny_list_paths {
-        if let Ok(content) = fs::read_to_string(path) {
-            if let Ok(deny_list) = serde_json::from_str::<DenyList>(&content) {
-                if let Some(commands) = deny_list.layers.get("commands") {
-                    for p in &commands.patterns {
-                        if p.pattern_type == "regex" {
-                            all_patterns.push(p.clone());
-                        }
+    // Consultar TODAS as 3 deny-lists de comandos (EMBUTIDAS — R7).
+    for content in EMBEDDED_COMMAND_DENYLISTS {
+        if let Ok(deny_list) = serde_json::from_str::<DenyList>(content) {
+            if let Some(commands) = deny_list.layers.get("commands") {
+                for p in &commands.patterns {
+                    if p.pattern_type == "regex" {
+                        all_patterns.push(p.clone());
                     }
                 }
             }
@@ -599,6 +601,12 @@ fn get_command_patterns() -> Vec<DenyPattern> {
 }
 
 fn check_command(command: &str) -> Option<DenyPattern> {
+    // Allowlist (override humano ABSOLUTO): comando autorizado pelo dono na
+    // allowlist-customers.jsonc passa, ignorando TODA a denylist de comandos (rm -rf, git…).
+    // Arquivo editável só por humano (absolute_block protege contra o agente). Vazia => no-op.
+    if nemesis_defender::scanner::allowlist_loader::is_allowlisted(command) {
+        return None;
+    }
     let patterns = get_command_patterns();
     for pattern in patterns {
         if let Ok(re) = Regex::new(&pattern.pattern) {
@@ -780,7 +788,12 @@ fn check_content_deny_list(file_path: &str, content: &str) -> Option<DenyPattern
     let patterns = get_patterns_for_file(file_path);
     for pattern in patterns {
         if let Ok(re) = Regex::new(&pattern.pattern) {
-            if re.is_match(content) {
+            if let Some(m) = re.find(content) {
+                // Allowlist (override humano): se o TRECHO casado foi autorizado pelo dono,
+                // ignora este hit (per-evidência) e segue checando os demais. Vazia => no-op.
+                if nemesis_defender::scanner::allowlist_loader::is_allowlisted(m.as_str()) {
+                    continue;
+                }
                 return Some(pattern);
             }
         }
@@ -1884,20 +1897,14 @@ fn check_nemesis_protected_path(file_path: &str, is_write: bool) -> Option<Valid
 // DENYLIST FOLDER FILES — Carregamento e verificacao
 // =============================================================================
 
-fn load_denylist_folder_files(project_root: &str) -> Option<DenylistFolderFiles> {
-    let path = format!(
-        "{}/.nemesis/denylist/denylist-folder-files.json",
-        project_root
-    );
-    match fs::read_to_string(&path) {
-        Ok(content) => match serde_json::from_str(&content) {
-            Ok(denylist) => Some(denylist),
-            Err(e) => {
-                eprintln!("[NEMESIS WARNING] Failed to parse denylist-folder-files.json: {}", e);
-                None
-            }
-        },
-        Err(_) => None, // File not found is not an error
+fn load_denylist_folder_files(_project_root: &str) -> Option<DenylistFolderFiles> {
+    // EMBUTIDA (R7): proteção de path tamper-proof, compilada no binário.
+    match serde_json::from_str(EMBEDDED_FOLDER_FILES) {
+        Ok(denylist) => Some(denylist),
+        Err(e) => {
+            eprintln!("[NEMESIS WARNING] Failed to parse denylist-folder-files.json: {}", e);
+            None
+        }
     }
 }
 
@@ -2365,6 +2372,12 @@ fn validate_command(command: &str) -> ValidationResult {
             rule: None,
             suggestion: None,
         };
+    }
+
+    // Allowlist (override humano ABSOLUTO): comando autorizado pelo dono passa toda a denylist
+    // (denylist de comandos + eBPF + defender). Editável só por humano (absolute_block). Vazia => no-op.
+    if nemesis_defender::scanner::allowlist_loader::is_allowlisted(command) {
+        return ValidationResult { valid: true, reason: None, rule: None, suggestion: None };
     }
 
     // Carregar ebpf_commands para validate_full_command

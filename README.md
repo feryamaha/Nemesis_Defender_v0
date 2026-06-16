@@ -40,6 +40,7 @@ O Nemesis **age, não pergunta** — mas **não deleta mais**: ao confirmar um a
 - [Uso no dia a dia](#uso-no-dia-a-dia)
 - [Verificação e diagnóstico](#verificação-e-diagnóstico)
 - [Relaxar ou customizar regras](#relaxar-ou-customizar-regras)
+- [Desinstalação](#desinstalação)
 - [Solução de problemas](#solução-de-problemas)
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Contribuição](#contribuição)
@@ -560,11 +561,62 @@ Para confirmar que o pretool está realmente ativo, force um comando que deve se
 
 ## Relaxar ou customizar regras
 
-Todas as regras são configuráveis por **edição humana** das deny-lists - não há regra hardcoded. Ampliar a cobertura é adicionar uma entrada; relaxar é remover ou comentar.
+### O Nemesis foi calibrado para frontend
 
-> **Aviso de responsabilidade.** Relaxar a severidade do Nemesis é legítimo para manutenção, mas tem um custo: ao remover restrições, você **devolve ao modelo o poder de decidir o que excluir ou sobrescrever**. Esse é exatamente o risco que o Nemesis existe para eliminar. Se você relaxa as regras e um agente destrói algo, a responsabilidade é sua. O autor não se responsabiliza por perdas decorrentes de configuração relaxada.
+O detector foi calibrado contra a realidade **frontend** (Next.js / React / TypeScript), onde o falso-positivo (FP) fica **abaixo de ~1%**. Frontend praticamente não gera código "scriptado" (sudo, `sed -i`, exec dinâmico, manipulação de PATH); para essa stack, esses comandos são hostis e desnecessários, então bloqueá-los é correto.
 
-Uma exceção exige conhecimento mais profundo: a camada **eBPF** tem sua lista de comandos atrelada à arquitetura (no `commands.toml` do módulo), e os **visitors do Defender** são código Rust de análise. As deny-lists JSON, por outro lado, são simples de ajustar.
+Stacks de **backend / DevSecOps** (e múltiplas linguagens) têm um coeficiente de FP **mais alto** — elas legitimamente usam comandos que para frontend seriam hostis. Isso é uma **limitação conhecida** do Nemesis e a razão de existir a allowlist (abaixo). Medição empírica contra 8 codebases open-source reais:
+
+| Projeto | Stack | FP |
+|---|---|---|
+| biomejs/biome | Rust | **0,4%** |
+| fastapi/fastapi | Python | 3,2% |
+| nestjs/nest | TypeScript | 4,4% |
+| shadcn-ui/ui | TypeScript | 4,4% |
+| ansible/ansible | Python (DevOps) | 7,4% |
+| fabric/fabric | Python (remote exec) | 20,7% |
+| Gallopsled/pwntools | Python (exploit dev) | 21,6% \* |
+| nvm-sh/nvm | Shell (installer) | 46,7% |
+
+\* pwntools é o teto proposital: uma lib de exploit/shellcode **deve** acender — confirma que a detecção real está viva.
+
+> **Leitura:** FP baixo em frontend e em Rust real (biome); FP cresce em backend/devops/shell por usarem comandos intrínsecos à stack. Não é o detector "quebrando" — é a calibração frontend encontrando código legítimo de outra natureza. Esses ambientes devem **relaxar via allowlist**.
+
+### A allowlist (única superfície editável)
+
+As deny-lists de **bloqueio** são **embutidas no binário** (tamper-proof) — não há arquivo no disco para editar, e isso é intencional: um agente não consegue enfraquecer o Nemesis editando regras. A **única** superfície que você edita após instalar é:
+
+```
+.nemesis/denylist-customers/allowlist-customers.jsonc
+```
+
+É um **override humano absoluto**: tudo que você listar passa, sobrescrevendo **qualquer** bloqueio (denylist de comando, defender, visitors) — no pretool e no daemon. Efeito imediato ao salvar (sem rebuild). É assim que backend/DevSecOps **relaxam** o Nemesis para a realidade da própria stack:
+
+```jsonc
+{
+  // allow_commands: casa por SUBSTRING; allow_patterns: casa por REGEX (sem lookahead)
+  "allow_commands": ["sudo systemctl restart nginx", "rm -rf ./dist"],
+  "allow_patterns": ["^cp\\s+-r\\s+"]
+}
+```
+
+> **Aviso de responsabilidade.** A allowlist é absoluta: se você liberar `rm -rf`, o Nemesis deixa de bloquear `rm -rf`. Você **devolve ao modelo o poder de decidir** sobre o que liberou — por sua conta e risco. O arquivo é editável **só por humano** (o agente nunca escreve nele — `absolute_block`); essa é a garantia que faz o override não ser auto-sabotagem. Edite no seu terminal nativo.
+
+A camada **eBPF** (Linux) mantém sua lista de comandos no `commands.toml` do módulo (atrelada à arquitetura) e os **visitors do Defender** são código Rust; para a maioria dos casos a allowlist resolve sem tocar nessas.
+
+---
+
+## Desinstalação
+
+Rode na **raiz do projeto**, no seu **terminal nativo** (o script reverte o `nemesis-install.sh`):
+
+```bash
+bash .nemesis/install/nemesis-uninstall.sh
+# sem confirmação interativa:
+NEMESIS_YES=1 bash .nemesis/install/nemesis-uninstall.sh
+```
+
+O script: para o daemon; desabilita o serviço eBPF (se você o instalou, opt-in); remove os hooks de IDE que apontam para o Nemesis (arquivos só-dele) e **avisa** sobre os compartilhados (`.claude/settings.json`, `.vscode/settings.json`) para você remover a entrada à mão preservando o resto; e remove a pasta `.nemesis/` (binários, daemon, **sua allowlist** e logs). **Git é seu** — nada é commitado/removido do versionamento; revise com `git status`. Reinicie a IDE depois.
 
 ---
 

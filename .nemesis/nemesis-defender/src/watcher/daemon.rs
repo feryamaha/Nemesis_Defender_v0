@@ -778,12 +778,11 @@ fn is_quarantine_exempt(path: &Path, cwd: &Path) -> bool {
         return true;
     }
 
-    // Config controlada por humano: denylist-folder-files.json → daemon_quarantine_exempt.paths
-    let cfg = cwd.join(".nemesis/denylist/denylist-folder-files.json");
-    let Ok(content) = std::fs::read_to_string(&cfg) else {
-        return false;
-    };
-    let Ok(json) = serde_json::from_str::<serde_json::Value>(&content) else {
+    // EMBUTIDA (R7): denylist-folder-files.json → daemon_quarantine_exempt.paths compilada no
+    // binário; .nemesis/denylist/ não é mais lida do disco (regras de bloqueio tamper-proof).
+    const EMBEDDED_FOLDER_FILES: &str =
+        include_str!("../../../denylist/denylist-folder-files.json");
+    let Ok(json) = serde_json::from_str::<serde_json::Value>(EMBEDDED_FOLDER_FILES) else {
         return false;
     };
     let Some(arr) = json

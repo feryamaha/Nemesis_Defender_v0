@@ -33,6 +33,7 @@
       "tmp/",
       "/dev/null",
       ".nemesis/",
+      ".nemesis/denylist-customers/allowlist-customers.jsonc",
       "install.sh",
       "nemesis-install.sh"
     ],

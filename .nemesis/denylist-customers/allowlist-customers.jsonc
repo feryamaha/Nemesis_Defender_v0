@@ -1,0 +1,25 @@
+{
+  // ─────────────────────────────────────────────────────────────────────────────
+  // allowlist-customers.jsonc — OVERRIDE HUMANO ABSOLUTO do Nemesis
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Tudo que você listar aqui SOBRESCREVE qualquer bloqueio do Nemesis (denylists de
+  // comando + denylist-defender + visitors), tanto no pretool quanto no daemon.
+  // O efeito é IMEDIATO ao salvar — sem recompilar, sem reiniciar.
+  //
+  // Edição é EXCLUSIVAMENTE sua (humano, no terminal nativo): o agente NUNCA consegue
+  // escrever neste arquivo (ele está protegido em absolute_block). É por SUA conta e
+  // risco — se você liberar "rm -rf", o Nemesis deixa de bloquear "rm -rf".
+  //
+  // Comentários: SÓ linhas que COMEÇAM com // (como estas) são ignoradas. Não use //
+  // no fim de uma linha de dado.
+  //
+  //   allow_commands : casa por SUBSTRING contra o comando / a evidência detectada.
+  //   allow_patterns : casa por REGEX (crate `regex` do Rust — sem lookahead).
+  //
+  // EXEMPLO (copie para dentro dos arrays abaixo e edite para liberar):
+  //   "allow_commands": ["git push", "sudo systemctl restart nginx", "rm -rf ./dist"],
+  //   "allow_patterns": ["^cp\\s+-r\\s+", "sed -i .*\\.ya?ml$"]
+
+  "allow_commands": [],
+  "allow_patterns": []
+}

@@ -1291,8 +1291,7 @@
 
       <a class="nav-link" href="#workflow"><span class="num">15</span> <span data-pt="Workflow"
           data-en="Workflow">Workflow</span></a>
-      <a class="nav-link" href="#tese"><span class="num">16</span> <span data-pt="Tese"
-          data-en="Thesis">Tese</span></a>
+      <a class="nav-link" href="#tese"><span class="num">16</span> <span data-pt="Tese" data-en="Thesis">Tese</span></a>
       <a class="nav-link" href="#contribuir"><span class="num">★</span> <span data-pt="Contribuir & apoiar"
           data-en="Contribute & support">Contribuir & apoiar</span></a>
       <a class="nav-link" href="#disclosure"><span class="num">17</span> <span data-pt="Disclosure & licença"
@@ -1328,7 +1327,8 @@
           <div class="info">
             <div class="name">Fernando Moreira</div>
             <div class="title" data-pt="Full-Stack TypeScript · OWASP ·  Segurança de Aplicações & Governança de IA"
-              data-en="Full-Stack TypeScript · OWASP · Application Security & AI Governance">Full-Stack TypeScript (React/Next.js) · OWASP · Autor do Nemesis Defender</div>
+              data-en="Full-Stack TypeScript · OWASP · Application Security & AI Governance">Full-Stack TypeScript
+              (React/Next.js) · OWASP · Autor do Nemesis Defender</div>
             <p class="sub" data-pt="Criador e mantenedor do Nemesis Defender"
               data-en="Creator and maintainer of Nemesis Defender">Criador e mantenedor do Nemesis Defender</p>
           </div>
@@ -1357,34 +1357,38 @@
         <div class="disclaimer">
           <div class="lbl" data-pt="⚠ Aviso honesto de escopo" data-en="⚠ Honest scope notice">⚠ Aviso honesto de escopo
           </div>
-          <p data-pt="O Nemesis Defender é um sistema de enforcement <b>robusto e ativo</b>, em camadas independentes, validado em produção e contra agentes adversariais reais. Como qualquer sistema de segurança sério, ele <b>não promete cobrir todo vetor possível</b> declara o que faz, contra qual modelo de ameaça, e onde estão seus limites. Honestidade sobre escopo é uma escolha de engenharia, não uma fraqueza."
-            data-en="Nemesis Defender is a <b>robust, active</b> enforcement system, built in independent layers, validated in production and against real adversarial agents. Like any serious security system, it <b>does not promise to cover every possible vector</b> it declares what it does, against which threat model, and where its limits are. Honesty about scope is an engineering choice, not a weakness.">
+          <p data-pt="O Nemesis Defender é um sistema de enforcement <b>robusto e ativo</b>, em camadas independentes, validado em produção e contra agentes adversariais reais. Como qualquer sistema de segurança sério, ele não promete cobrir todo vetor possível, porque ataques evoluem rápido e o que é seguro hoje pode não ser amanhã. Ele declara explicitamente o que faz, contra qual modelo de ameaça, e onde estão seus limites — porque honestidade sobre escopo é pré-requisito para uma postura de segurança que se mantém relevante à medida que o cenário muda."
+            data-en="Nemesis Defender is a <b>robust, active</b> enforcement system, built in independent layers, validated in production and against real adversarial agents. Like any serious security system, it does not promise to cover every possible vector, because attacks evolve fast and what is secure today may not be tomorrow. It explicitly declares what it does, against which threat model, and where its limits are — because honesty about scope is a prerequisite for a security posture that remains relevant as the landscape changes.">
             O Nemesis Defender é um sistema de enforcement <b>robusto e ativo</b>, em camadas independentes, validado em
-            produção e contra agentes adversariais reais. Como qualquer sistema de segurança sério, ele <b>não promete
-              cobrir todo vetor possível</b> declara o que faz, contra qual modelo de ameaça, e onde estão seus
-            limites. Honestidade sobre escopo é uma escolha de engenharia, não uma fraqueza.</p>
+            produção e contra agentes adversariais reais. Como qualquer sistema de segurança sério, ele não promete
+              cobrir todo vetor possível, porque ataques evoluem rápido e o que é seguro hoje pode não ser amanhã. Ele declara explicitamente o que faz, contra qual modelo de ameaça, e onde estão seus limites — porque honestidade sobre escopo é pré-requisito para uma postura de segurança que se mantém relevante à medida que o cenário muda.</p>
         </div>
         <div class="danger">
-          <div class="lbl" data-pt="⚠️ LEIA ANTES DE INSTALAR · enforcement ativo e irreversível"
-            data-en="⚠️ READ BEFORE INSTALLING · active, irreversible enforcement">⚠️ LEIA ANTES DE INSTALAR · enforcement ativo e irreversível
+          <div class="lbl" data-pt="⚠️ LEIA ANTES DE INSTALAR"
+            data-en="⚠️ READ BEFORE INSTALLING">⚠️ LEIA ANTES DE INSTALAR
           </div>
-          <p data-pt="O Nemesis Defender é um sistema de segurança que <b>age, não pergunta.</b> Não negocia e não abre concessões: a decisão é binária (0 ou 1)."
-            data-en="Nemesis Defender is a security system that <b>acts, it doesn't ask.</b> It doesn't negotiate and makes no concessions: the decision is binary (0 or 1).">
-            O Nemesis Defender é um sistema de segurança que <b>age, não pergunta.</b> Não negocia e não abre concessões: a decisão é binária (0 ou 1).</p>
-          <p data-pt="O Nemesis <b>age</b>: ao confirmar hostilidade num arquivo, ele <b>move para quarentena</b> (não deleta) e bloqueia a sessão até a sua revisão (<code>restore</code> ou <code>purge</code>). É um gate determinístico, não um aviso e, pelo modelo de <b>corroboração</b>, só dispara com a ameaça confirmada por sinais independentes (código legítimo não é movido por engano). O passo a passo completo está em <a href=&quot;#perigo&quot;>Como o Defender age</a>."
-            data-en="Nemesis <b>acts</b>: on confirming hostility in a file, it <b>moves it to quarantine</b> (does not delete) and blocks the session until your review (<code>restore</code> or <code>purge</code>). A deterministic gate, not a warning and, by the <b>corroboration</b> model, it only fires on a threat confirmed by independent signals (legitimate code is not moved by mistake). The full walkthrough is in <a href=&quot;#perigo&quot;>How the Defender acts</a>.">
-            O Nemesis <b>age</b>: ao confirmar hostilidade num arquivo, ele <b>move para quarentena</b> (não deleta) e
-            bloqueia a sessão até a sua revisão (<code>restore</code> ou <code>purge</code>). É um gate determinístico,
-            não um aviso e, pelo modelo de <b>corroboração</b>, só dispara com a ameaça confirmada por sinais
-            independentes (código legítimo não é movido por engano). O passo a passo completo está em
-            <a href="#perigo">Como o Defender age</a>.
-          </p>
-          <p data-pt="Por que ler antes? A <b>instalação é automática</b> (detecta a sua IDE e configura os hooks sozinha), mas o enforcement é <b>ativo</b>: intercepta operações destrutivas <b>independentemente da origem, seja IA ou humano.</b> No Linux com eBPF, o bloqueio vale inclusive para o operador no terminal (por exemplo, um <code>rm -rf</code>). Não é um aviso é um gate."
-            data-en="Why read first? <b>Installation is automatic</b> (it detects your IDE and wires the hooks for you), but the enforcement is <b>active</b>: it intercepts destructive operations <b>regardless of origin, whether AI or human.</b> On Linux with eBPF, the block applies even to the operator at the terminal (for example, an <code>rm -rf</code>). It is not a warning it is a gate.">
-            Por que ler antes? A <b>instalação é automática</b> (detecta a sua IDE e configura os hooks sozinha), mas o
-            enforcement é <b>ativo</b>: intercepta operações destrutivas <b>independentemente da origem, seja IA ou
-              humano.</b> No Linux com eBPF, o bloqueio vale inclusive para o operador no terminal (por exemplo, um
-            <code>rm -rf</code>). Não é um aviso é um gate.</p>
+          <p data-pt="O Nemesis existe para conter a <b>autonomia do agente de IA</b> — o alvo é o modelo LLM, não você. Ele intercepta, <b>no momento em que tentam executar</b>, as operações que o agente dispara (escrever arquivos, rodar comandos) e barra as destrutivas ou maliciosas. O comando em si não é o inimigo a invocação <b>autônoma</b> pelo modelo é."
+            data-en="Nemesis exists to contain the <b>AI agent's autonomy</b> — the target is the LLM model, not you. It intercepts, <b>the moment they try to execute</b>, the operations the agent triggers (writing files, running commands) and blocks the destructive or malicious ones. The command itself isn't the enemy the model's <b>autonomous</b> invocation is.">
+            O Nemesis existe para conter a <b>autonomia do agente de IA</b> — o alvo é o modelo LLM, não você. Ele
+            intercepta, <b>no momento em que tentam executar</b>, as operações que o agente dispara (escrever arquivos,
+            rodar comandos) e barra as destrutivas ou maliciosas. O comando em si não é o inimigo a invocação
+            <b>autônoma</b> pelo modelo é.</p>
+          <p data-pt="A <b>instalação é automática</b>: detecta a sua IDE e configura os hooks sozinha. A partir daí o enforcement fica ativo no runtime o pretool barra a escrita/execução hostil e o daemon (Iron Dome) vigia o filesystem. Ao <b>confirmar</b> hostilidade (por corroboração de sinais independentes, para não mover código legítimo por engano) ele <b>move para quarentena</b> (não deleta) e segura a sessão até a sua revisão é <b>reversível</b> via <code>restore</code> ou <code>purge</code>. No Linux há ainda a camada <b>eBPF</b> opcional (opt-in) como rede no kernel caso o pretool seja contornado."
+            data-en="<b>Installation is automatic</b>: it detects your IDE and wires the hooks for you. From then on enforcement is active at runtime the pretool blocks hostile writes/executions and the daemon (Iron Dome) watches the filesystem. On <b>confirming</b> hostility (by corroboration of independent signals, so legitimate code isn't moved by mistake) it <b>moves it to quarantine</b> (does not delete) and holds the session until your review it is <b>reversible</b> via <code>restore</code> or <code>purge</code>. On Linux there is also an optional <b>eBPF</b> layer (opt-in) as a kernel backstop should the pretool be bypassed.">
+            A <b>instalação é automática</b>: detecta a sua IDE e configura os hooks sozinha. A partir daí o enforcement
+            fica ativo no runtime o pretool barra a escrita/execução hostil e o daemon (Iron Dome) vigia o filesystem.
+            Ao <b>confirmar</b> hostilidade (por corroboração de sinais independentes, para não mover código legítimo
+            por engano) ele <b>move para quarentena</b> (não deleta) e segura a sessão até a sua revisão é
+            <b>reversível</b> via <code>restore</code> ou <code>purge</code>. No Linux há ainda a camada <b>eBPF</b>
+            opcional (opt-in) como rede no kernel caso o pretool seja contornado.</p>
+          <p data-pt="As regras de <b>bloqueio são embutidas no binário</b> (tamper-proof) o agente não consegue enfraquecê-las editando arquivos. A <b>única</b> superfície que você (humano) edita é a <b>allowlist</b> (<code>.nemesis/denylist-customers/allowlist-customers.jsonc</code>): um override absoluto, <b>por sua conta e risco</b>, para liberar o que a sua stack precisa. O Nemesis é calibrado para frontend (Next/React/TS), então <b>backend e DevSecOps</b> tendem a relaxar mais por ali. E tudo é removível: a desinstalação é um comando (<code>nemesis-uninstall.sh</code>)."
+            data-en="The <b>blocking rules are embedded in the binary</b> (tamper-proof) the agent cannot weaken them by editing files. The <b>only</b> surface you (the human) edit is the <b>allowlist</b> (<code>.nemesis/denylist-customers/allowlist-customers.jsonc</code>): an absolute override, <b>at your own risk</b>, to permit what your stack needs. Nemesis is calibrated for frontend (Next/React/TS), so <b>backend and DevSecOps</b> tend to relax more there. And everything is removable: uninstalling is a single command (<code>nemesis-uninstall.sh</code>).">
+            As regras de <b>bloqueio são embutidas no binário</b> (tamper-proof) o agente não consegue enfraquecê-las
+            editando arquivos. A <b>única</b> superfície que você (humano) edita é a <b>allowlist</b>
+            (<code>.nemesis/denylist-customers/allowlist-customers.jsonc</code>): um override absoluto, <b>por sua conta
+            e risco</b>, para liberar o que a sua stack precisa. O Nemesis é calibrado para frontend (Next/React/TS),
+            então <b>backend e DevSecOps</b> tendem a relaxar mais por ali. E tudo é removível: a desinstalação é um
+            comando (<code>nemesis-uninstall.sh</code>).</p>
         </div>
         <p data-pt="Não é um linter genérico nem um scanner passivo. É um <b>harness de enforcement em runtime</b> para o contexto de desenvolvimento guiado por agentes de IA, onde um output aparentemente inócuo pode esconder manipulação de manifests, <em>decode-then-exec</em> de payloads codificados, esteganografia Unicode (CVE-2021-42574), prompt injection, exfiltração de credenciais e malware com <em>time-gating</em>. O Nemesis bloqueia essas operações <b>no momento em que tentam executar</b>."
           data-en="It is not a generic linter nor a passive scanner. It is a <b>runtime enforcement harness</b> for the AI-agent-driven development context, where seemingly innocuous output can hide manifest tampering, <em>decode-then-exec</em> of encoded payloads, Unicode steganography (CVE-2021-42574), prompt injection, credential exfiltration, and <em>time-gated</em> malware. Nemesis blocks these operations <b>at the moment they try to execute</b>.">
@@ -1536,7 +1540,7 @@
                 <td
                   data-pt="Pela própria doc da Anthropic: deny-rules só bloqueiam as ferramentas internas <code>Read(./.env)</code> é barrado, mas <code>cat .env</code> no bash passa por cima. Não inspeciona conteúdo."
                   data-en="Per Anthropic's own docs: deny-rules only block built-in tools <code>Read(./.env)</code> is blocked, but <code>cat .env</code> in bash bypasses it. It doesn't inspect content.">
-                  Pela própria doc da Anthropic: deny-rules só bloqueiam as ferramentas internas 
+                  Pela própria doc da Anthropic: deny-rules só bloqueiam as ferramentas internas
                   <code>Read(./.env)</code> é barrado, mas <code>cat .env</code> no bash passa por cima. Não inspeciona
                   conteúdo.
                 </td>
@@ -1753,7 +1757,7 @@
           data-en="The <strong>Pretool Hook is the entry point of the whole system</strong> without it, Nemesis does not work. The <strong>security (Defender)</strong> track runs <strong>coupled to the pretool</strong>: it fires because the pretool invokes it in the same interception. The <strong>eBPF</strong> layer is the only one operating outside that line in the kernel, as an additional reinforcement for Linux.">
           O <strong>Pretool Hook é o ponto de entrada de todo o sistema</strong> sem ele, o Nemesis não funciona. A
           trilha de <strong>segurança (Defender)</strong> roda <strong>acoplada ao pretool</strong>: é acionada porque o
-          pretool a invoca na mesma interceptação. A camada <strong>eBPF</strong> é a única que opera fora dessa linha 
+          pretool a invoca na mesma interceptação. A camada <strong>eBPF</strong> é a única que opera fora dessa linha
           no kernel, como reforço adicional para Linux.
         </p>
         <div class="layers">
@@ -1767,7 +1771,8 @@
               <strong>antes</strong> de <code>Bash.run()</code> (PreToolUse), valida contra <code>deny-list.json</code>
               e escopo hard-gate: sem aprovação humana, exit code <code>2</code>. É ele que aciona as trilhas de
               Defender. Um hook <strong>PostToolUse</strong> roda depois (nunca bloqueia) e audita o
-              output em <code>nemesis-violations.log</code>. E um <code>fallback</code> <strong>fail-closed</strong>: se o
+              output em <code>nemesis-violations.log</code>. E um <code>fallback</code> <strong>fail-closed</strong>: se
+              o
               binário não existe, bloqueia tudo em vez de liberar.
             </p>
           </div>
@@ -1794,9 +1799,11 @@
               (<code>mount</code>, <code>ptrace</code>, <code>kexec_load</code>, <code>delete_module</code> →
               <code>EPERM</code>); tem deny-list própria, atrelada à arquitetura (no <code>Cargo.toml</code> do módulo).
               Faz também <strong>controle de egress</strong> (<code>lsm/socket_connect</code>): nega conexões de saída
-              para destinos fora de uma allowlist <code>CIDR:porta</code> (cgroup-scoped, opt-in via <code>egress.toml</code>),
+              para destinos fora de uma allowlist <code>CIDR:porta</code> (cgroup-scoped, opt-in via
+              <code>egress.toml</code>),
               barrando exfiltração/C2 mesmo que um payload consiga rodar.
-              Em produção (<code>nemesis-violations.log</code>) registra bloqueios de <code>rm</code>, <code>shred</code>,
+              Em produção (<code>nemesis-violations.log</code>) registra bloqueios de <code>rm</code>,
+              <code>shred</code>,
               <code>dd</code>, <code>kill</code>, <code>mount</code>, <code>nc</code> e runtimes (<code>python3</code>,
               <code>perl</code>). Em macOS/Windows não existe ali a defesa fica nas trilhas do pretool.
             </p>
@@ -1804,8 +1811,10 @@
         </div>
         <p data-pt="Existe ainda uma camada adicional de qualidade de código presente no projeto, hoje <strong>silenciada</strong>: está em desenvolvimento, ajustando falsos-positivos antes de validar sua usabilidade como proteção."
           data-en="There is also an additional code-quality layer present in the project, currently <strong>silenced</strong>: it is under development, tuning false-positives before validating its usability as a protection.">
-          Existe ainda uma camada adicional de qualidade de código presente no projeto, hoje <strong>silenciada</strong>:
-          está em desenvolvimento, ajustando falsos-positivos antes de validar sua usabilidade como proteção.</p>
+          Existe ainda uma camada adicional de qualidade de código presente no projeto, hoje
+          <strong>silenciada</strong>:
+          está em desenvolvimento, ajustando falsos-positivos antes de validar sua usabilidade como proteção.
+        </p>
       </section>
 
       <section id="vetores">
@@ -1813,7 +1822,7 @@
         <h2 data-pt="Vetores de ataque cobertos" data-en="Attack vectors covered">Vetores de ataque cobertos</h2>
         <p data-pt="Os vetores <strong>antecipados, implementados e testados</strong>. A cobertura é ampliada continuamente vetores fora desta lista podem não ser detectados, e isso é declarado abertamente."
           data-en="The vectors <strong>anticipated, implemented and tested</strong>. Coverage is continuously expanded vectors outside this list may go undetected, and that is openly declared.">
-          Os vetores <strong>antecipados, implementados e testados</strong>. A cobertura é ampliada continuamente 
+          Os vetores <strong>antecipados, implementados e testados</strong>. A cobertura é ampliada continuamente
           vetores fora desta lista podem não ser detectados, e isso é declarado abertamente.</p>
         <div class="tbl-wrap">
           <table>
@@ -1937,7 +1946,8 @@
               <tr>
                 <td class="ix">18</td>
                 <td><code>decode_exec</code></td>
-                <td data-pt="execução dinâmica/ofuscada: Function-constructor, globalThis[&quot;eval&quot;], __import__('os').system, .send(:eval), create_function/assert"
+                <td
+                  data-pt="execução dinâmica/ofuscada: Function-constructor, globalThis[&quot;eval&quot;], __import__('os').system, .send(:eval), create_function/assert"
                   data-en="dynamic/obfuscated exec: Function-constructor, globalThis[&quot;eval&quot;], __import__('os').system, .send(:eval), create_function/assert">
                   execução dinâmica/ofuscada: Function-constructor, globalThis["eval"], __import__('os').system,
                   .send(:eval), create_function/assert</td>
@@ -1953,18 +1963,22 @@
             antecipado</strong> aumentam o custo de um ataque conhecido, mas não cobrem o desconhecido.</p>
         <div class="callout">
           <div class="h" data-pt="Severidade por corroboração: quarentena só quando confirmado"
-            data-en="Severity by corroboration quarantine only when confirmed">Severidade por corroboração: quarentena só
+            data-en="Severity by corroboration quarantine only when confirmed">Severidade por corroboração: quarentena
+            só
             quando confirmado</div>
           <p data-pt="O endurecimento mais importante da v2.x: o Iron Dome <strong>só age (movendo para quarentena, não deletando) quando a hostilidade é confirmada</strong>. Sinais de alta confiança (denylist curada, decode→exec, cadeia de exfil, reverse shell socket+exec, bypass do próprio Nemesis) bloqueiam sozinhos; sinais heurísticos (substring/padrão) <strong>exigem 2 métodos de detecção independentes concordando</strong> antes de mover para quarentena caso contrário ficam em <em>Suspicious</em> (registrado, mantido). A detecção de execução foi ainda estendida a <strong>múltiplos runtimes</strong> (reverse shell e exec ofuscado em Ruby/PHP/Go/Perl/Java/Lua, não só JS/Python/Bash), e a proteção de paths foi endurecida contra ofuscação (glob em diretório, <code>cd</code> para dir protegido, indireção por variável/<code>$(&lt;file)</code>)."
             data-en="The most important v2.x hardening: the Iron Dome <strong>only acts (moving to quarantine, not deleting) when hostility is confirmed</strong>. High-confidence signals (curated denylist, decode→exec, exfil chain, socket+exec reverse shell, Nemesis self-bypass) block on their own; heuristic signals (substring/pattern) <strong>require 2 independent detection methods agreeing</strong> before quarantining otherwise they stay <em>Suspicious</em> (logged, kept). Execution detection was further extended to <strong>multiple runtimes</strong> (reverse shell and obfuscated exec in Ruby/PHP/Go/Perl/Java/Lua, not just JS/Python/Bash), and path protection was hardened against obfuscation (glob in a directory, <code>cd</code> into a protected dir, indirection via variable/<code>$(&lt;file)</code>).">
-            O endurecimento mais importante da v2.x: o Iron Dome <strong>só age (move para quarentena, não deleta) quando a hostilidade é
+            O endurecimento mais importante da v2.x: o Iron Dome <strong>só age (move para quarentena, não deleta)
+              quando a hostilidade é
               confirmada</strong>. Sinais de alta confiança (denylist curada, decode→exec, cadeia de exfil, reverse
             shell socket+exec, bypass do próprio Nemesis) bloqueiam sozinhos; sinais heurísticos (substring/padrão)
-            <strong>exigem 2 métodos de detecção independentes concordando</strong> antes de mover para quarentena caso contrário
+            <strong>exigem 2 métodos de detecção independentes concordando</strong> antes de mover para quarentena caso
+            contrário
             ficam em <em>Suspicious</em> (registrado, mantido). A detecção de execução
             foi ainda estendida a <strong>múltiplos runtimes</strong> (reverse shell e exec ofuscado em
             Ruby/PHP/Go/Perl/Java/Lua, não só JS/Python/Bash), e a proteção de paths foi endurecida contra ofuscação
-            (glob em diretório, <code>cd</code> para dir protegido, indireção por variável/<code>$(&lt;file)</code>).</p>
+            (glob em diretório, <code>cd</code> para dir protegido, indireção por variável/<code>$(&lt;file)</code>).
+          </p>
         </div>
       </section>
 
@@ -1972,33 +1986,90 @@
         <div class="eyebrow" data-pt="07 Customização" data-en="07 Customization">07 Customização</div>
         <h2 data-pt="Tudo é configurável e só por humano" data-en="Everything is configurable and only by a human">
           Tudo é configurável e só por humano</h2>
-        <p data-pt="Princípio central: <strong>não há regra hardcoded.</strong> Os hooks são agnósticos e canônicos se um padrão está na deny-list, é bloqueado; se não está, passa. Não existe lógica de decisão escondida no código do hook."
-          data-en="Central principle: <strong>there is no hardcoded rule.</strong> The hooks are agnostic and canonical if a pattern is in the deny-list, it's blocked; if not, it passes. There is no hidden decision logic in the hook code.">
-          Princípio central: <strong>não há regra hardcoded.</strong> Os hooks são agnósticos e canônicos se um padrão
-          está na deny-list, é bloqueado; se não está, passa. Não existe lógica de decisão escondida no código do hook.
+        <p data-pt="Princípio central: as deny-lists de <strong>bloqueio</strong> são <strong>embutidas no binário</strong> (tamper-proof) não há arquivo no disco para um agente enfraquecer. A <strong>única</strong> superfície que você edita após instalar é a <strong>allowlist</strong>: <code>.nemesis/denylist-customers/allowlist-customers.jsonc</code>."
+          data-en="Central principle: the <strong>blocking</strong> deny-lists are <strong>embedded in the binary</strong> (tamper-proof) there is no file on disk for an agent to weaken. The <strong>only</strong> surface you edit after installing is the <strong>allowlist</strong>: <code>.nemesis/denylist-customers/allowlist-customers.jsonc</code>.">
+          Princípio central: as deny-lists de <strong>bloqueio</strong> são <strong>embutidas no binário</strong>
+          (tamper-proof) não há arquivo no disco para um agente enfraquecer. A <strong>única</strong> superfície que
+          você edita após instalar é a <strong>allowlist</strong>:
+          <code>.nemesis/denylist-customers/allowlist-customers.jsonc</code>.
         </p>
         <ul>
           <li
-            data-pt="Qualquer vetor, regex ou regra pode ser <strong>desativado, relaxado ou customizado</strong> editando os arquivos de deny-list."
-            data-en="Any vector, regex or rule can be <strong>disabled, relaxed or customized</strong> by editing the deny-list files.">
-            Qualquer vetor, regex ou regra pode ser <strong>desativado, relaxado ou customizado</strong> editando os
-            arquivos de deny-list.</li>
+            data-pt="A allowlist é um <strong>override humano absoluto</strong>: o que você listar passa, sobrescrevendo qualquer bloqueio (denylist, defender, visitors) no pretool e no daemon. Efeito imediato, sem rebuild."
+            data-en="The allowlist is an <strong>absolute human override</strong>: whatever you list passes, overriding any block (denylist, defender, visitors) in the pretool and the daemon. Immediate effect, no rebuild.">
+            A allowlist é um <strong>override humano absoluto</strong>: o que você listar passa, sobrescrevendo
+            qualquer bloqueio (denylist, defender, visitors) no pretool e no daemon. Efeito imediato, sem rebuild.</li>
           <li
-            data-pt="<strong>Ampliar a cobertura</strong> (novo vetor) é adicionar uma entrada não recompilar lógica."
-            data-en="<strong>Expanding coverage</strong> (a new vector) means adding an entry not recompiling logic.">
-            <strong>Ampliar a cobertura</strong> (novo vetor) é adicionar uma entrada não recompilar lógica.
-          </li>
-          <li
-            data-pt="Apenas um <strong>humano</strong> faz essas mudanças. O modelo não altera a própria gaiola: os arquivos de config estão sob <code>absolute_block</code>."
-            data-en="Only a <strong>human</strong> makes these changes. The model cannot alter its own cage: the config files are under <code>absolute_block</code>.">
-            Apenas um <strong>humano</strong> faz essas mudanças. O modelo não altera a própria gaiola: os arquivos de
-            config estão sob <code>absolute_block</code>.</li>
+            data-pt="Apenas um <strong>humano</strong> edita a allowlist o agente nunca escreve nela (<code>absolute_block</code>). Essa é a garantia que faz o override não virar auto-sabotagem. É por sua conta e risco."
+            data-en="Only a <strong>human</strong> edits the allowlist the agent never writes to it (<code>absolute_block</code>). That is the guarantee that keeps the override from becoming self-sabotage. It is at your own risk.">
+            Apenas um <strong>humano</strong> edita a allowlist o agente nunca escreve nela
+            (<code>absolute_block</code>). Essa é a garantia que faz o override não virar auto-sabotagem. É por sua
+            conta e risco.</li>
         </ul>
-        <p data-pt="Duas exceções exigem conhecimento mais profundo: a camada <strong>eBPF</strong> tem sua lista de syscalls atrelada à arquitetura (no <code>Cargo.toml</code>), e os <strong>visitors do Defender</strong> são código Rust de análise ampliá-los exige Rust e segurança. As deny-lists, por outro lado, são simples de ajustar."
-          data-en="Two exceptions require deeper knowledge: the <strong>eBPF</strong> layer has its syscall list tied to the architecture (in <code>Cargo.toml</code>), and the <strong>Defender visitors</strong> are Rust analysis code extending them requires Rust and security expertise. The deny-lists, on the other hand, are simple to adjust.">
-          Duas exceções exigem conhecimento mais profundo: a camada <strong>eBPF</strong> tem sua lista de syscalls
-          atrelada à arquitetura (no <code>Cargo.toml</code>), e os <strong>visitors do Defender</strong> são código
-          Rust de análise ampliá-los exige Rust e segurança. As deny-lists, por outro lado, são simples de ajustar.
+        <p data-pt="<strong>Calibrado para frontend.</strong> O detector foi calibrado para Next/React/TypeScript, onde o falso-positivo fica <strong>abaixo de ~1%</strong> frontend não gera código scriptado. Backend/DevSecOps usam comandos intrínsecos (<code>sudo</code>, <code>sed -i</code>, exec dinâmico) e por isso têm FP mais alto: uma <strong>limitação conhecida</strong>, e a razão da allowlist. Medição em 8 codebases open-source reais:"
+          data-en="<strong>Calibrated for frontend.</strong> The detector is calibrated for Next/React/TypeScript, where false-positives stay <strong>below ~1%</strong> frontend doesn't generate scripted code. Backend/DevSecOps use intrinsic commands (<code>sudo</code>, <code>sed -i</code>, dynamic exec) and therefore have higher FP: a <strong>known limitation</strong>, and the reason for the allowlist. Measured on 8 real open-source codebases:">
+          <strong>Calibrado para frontend.</strong> O detector foi calibrado para Next/React/TypeScript, onde o
+          falso-positivo fica <strong>abaixo de ~1%</strong> frontend não gera código scriptado. Backend/DevSecOps
+          usam comandos intrínsecos (<code>sudo</code>, <code>sed -i</code>, exec dinâmico) e por isso têm FP mais
+          alto: uma <strong>limitação conhecida</strong>, e a razão da allowlist. Medição em 8 codebases open-source
+          reais:
+        </p>
+        <table style="width:100%;border-collapse:collapse;margin:1rem 0;font-size:.95em">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid currentColor">
+              <th style="padding:.4rem .6rem" data-pt="Projeto" data-en="Project">Projeto</th>
+              <th style="padding:.4rem .6rem">Stack</th>
+              <th style="padding:.4rem .6rem">FP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:.35rem .6rem">biomejs/biome</td>
+              <td style="padding:.35rem .6rem">Rust</td>
+              <td style="padding:.35rem .6rem"><strong>0,4%</strong></td>
+            </tr>
+            <tr>
+              <td style="padding:.35rem .6rem">fastapi/fastapi</td>
+              <td style="padding:.35rem .6rem">Python</td>
+              <td style="padding:.35rem .6rem">3,2%</td>
+            </tr>
+            <tr>
+              <td style="padding:.35rem .6rem">nestjs/nest</td>
+              <td style="padding:.35rem .6rem">TypeScript</td>
+              <td style="padding:.35rem .6rem">4,4%</td>
+            </tr>
+            <tr>
+              <td style="padding:.35rem .6rem">shadcn-ui/ui</td>
+              <td style="padding:.35rem .6rem">TypeScript</td>
+              <td style="padding:.35rem .6rem">4,4%</td>
+            </tr>
+            <tr>
+              <td style="padding:.35rem .6rem">ansible/ansible</td>
+              <td style="padding:.35rem .6rem">Python (DevOps)</td>
+              <td style="padding:.35rem .6rem">7,4%</td>
+            </tr>
+            <tr>
+              <td style="padding:.35rem .6rem">fabric/fabric</td>
+              <td style="padding:.35rem .6rem">Python (remote exec)</td>
+              <td style="padding:.35rem .6rem">20,7%</td>
+            </tr>
+            <tr>
+              <td style="padding:.35rem .6rem">Gallopsled/pwntools</td>
+              <td style="padding:.35rem .6rem">Python (exploit dev)</td>
+              <td style="padding:.35rem .6rem">21,6% *</td>
+            </tr>
+            <tr>
+              <td style="padding:.35rem .6rem">nvm-sh/nvm</td>
+              <td style="padding:.35rem .6rem">Shell (installer)</td>
+              <td style="padding:.35rem .6rem">46,7%</td>
+            </tr>
+          </tbody>
+        </table>
+        <p data-pt="* pwntools é o teto proposital: uma lib de exploit/shellcode <strong>deve</strong> acender confirma que a detecção real está viva. Backend/DevSecOps relaxam o que precisarem pela allowlist, por conta e risco; a camada <strong>eBPF</strong> e os <strong>visitors</strong> seguem sendo código (exigem Rust)."
+          data-en="* pwntools is the intentional ceiling: an exploit/shellcode lib <strong>should</strong> light up it confirms real detection is alive. Backend/DevSecOps relax what they need via the allowlist, at their own risk; the <strong>eBPF</strong> layer and the <strong>visitors</strong> remain code (require Rust).">
+          * pwntools é o teto proposital: uma lib de exploit/shellcode <strong>deve</strong> acender confirma que a
+          detecção real está viva. Backend/DevSecOps relaxam o que precisarem pela allowlist, por conta e risco; a
+          camada <strong>eBPF</strong> e os <strong>visitors</strong> seguem sendo código (exigem Rust).
         </p>
       </section>
 
@@ -2135,13 +2206,16 @@
             esperado, e a calibração de falso-positivo é trabalho contínuo.
           </li>
         </ul>
-        <h3 data-pt="4 · Calibração contra corpus adversarial público" data-en="4 · Calibration against a public adversarial corpus">4 · Calibração contra corpus adversarial público</h3>
+        <h3 data-pt="4 · Calibração contra corpus adversarial público"
+          data-en="4 · Calibration against a public adversarial corpus">4 · Calibração contra corpus adversarial público
+        </h3>
         <ul>
           <li
             data-pt="<strong>O que cobre:</strong> além de vetores sintéticos, o detector foi rodado contra um acervo público e REAL de conteúdo adversarial compartilhado por comunidades de pesquisa (system prompts extraídos + prompts de jailbreak de produtos reais). Ele pegou jailbreak, extração de system prompt (&quot;output your system prompt verbatim&quot;) e esteganografia Unicode (caracteres de Private Use Area, a técnica do ataque os-info-checker-es6)."
             data-en="<strong>What it covers:</strong> beyond synthetic vectors, the detector was run against a real, public adversarial corpus shared by research communities (extracted system prompts + jailbreak prompts from real products). It caught jailbreak, system-prompt extraction (&quot;output your system prompt verbatim&quot;) and Unicode steganography (Private Use Area characters, the os-info-checker-es6 attack technique).">
             <strong>O que cobre:</strong> além de vetores sintéticos, o detector foi rodado contra um acervo público e
-            REAL de conteúdo adversarial compartilhado por comunidades de pesquisa (system prompts extraídos + prompts de jailbreak de produtos
+            REAL de conteúdo adversarial compartilhado por comunidades de pesquisa (system prompts extraídos + prompts
+            de jailbreak de produtos
             reais). Ele pegou jailbreak, extração de system prompt (&quot;output your system prompt verbatim&quot;) e
             esteganografia Unicode (caracteres de Private Use Area, a técnica do ataque os-info-checker-es6).
           </li>
@@ -2159,10 +2233,10 @@
         </h3>
         <p data-pt="Tudo num <strong>ledger único e local</strong>  <code>.nemesis/logs/nemesis-violations.log</code>  uma linha padronizada por bloqueio (camada · mensagem · data · hora). <code>nemesis-defender --log-stats</code> resume por camada, por tipo e por dia. <strong>Registro 100% local: nada é enviado, exfiltrado ou telemetrado para fora da sua máquina</strong>  sem servidor, sem coleta remota, sem &quot;phone home&quot;. Os dados são seus, para auditar e validar a proteção."
           data-en="All in a <strong>single, local ledger</strong>  <code>.nemesis/logs/nemesis-violations.log</code>  one standardized line per block (layer · message · date · time). <code>nemesis-defender --log-stats</code> summarizes by layer, by type and by day. <strong>100% local: nothing is sent, exfiltrated or telemetered off your machine</strong>  no server, no remote collection, no &quot;phone home&quot;. The data is yours, to audit and validate the protection.">
-          Tudo num <strong>ledger único e local</strong>  <code>.nemesis/logs/nemesis-violations.log</code>  uma linha
+          Tudo num <strong>ledger único e local</strong> <code>.nemesis/logs/nemesis-violations.log</code> uma linha
           padronizada por bloqueio (camada · mensagem · data · hora). <code>nemesis-defender --log-stats</code> resume
           por camada, por tipo e por dia. <strong>Registro 100% local: nada é enviado, exfiltrado ou telemetrado para
-          fora da sua máquina</strong>  sem servidor, sem coleta remota, sem "phone home". Os dados são seus, para
+            fora da sua máquina</strong> sem servidor, sem coleta remota, sem "phone home". Os dados são seus, para
           auditar e validar a proteção.</p>
         <ul>
           <li
@@ -2185,7 +2259,8 @@
           </li>
         </ul>
         <div class="callout">
-          <div class="h" data-pt="Red-team contínuo: vetores encontrados e fechados" data-en="Continuous red-team: vectors found and closed">Red-team
+          <div class="h" data-pt="Red-team contínuo: vetores encontrados e fechados"
+            data-en="Continuous red-team: vectors found and closed">Red-team
             contínuo: vetores encontrados e fechados</div>
           <p data-pt="A evidência mais útil vem de um adversário real. Numa campanha de red-team registrada, um agente recebeu uma suíte de <strong>engenharia social reversa</strong> e tentou, ao vivo e com o pretool ativo, infiltrar, exfiltrar e <strong>neutralizar o próprio Nemesis</strong>. Ciclo após ciclo, vetores de evasão foram descobertos e <strong>fechados na origem</strong>, com cada correção validada (pentest 184/184, sem regressão): leitura de config protegida por <em>glob</em>/<em>cd</em>/indireção de variável; <em>reverse shell</em> e RCE ofuscado (Function-constructor) em múltiplos runtimes; e um <em>typo</em> que deixava o arquivo de instruções do agente gravável. <strong>Nenhum vetor de neutralização</strong> (desligar a proteção) foi encontrado a auto-proteção segurou cada tentativa de matar o daemon, sobrescrever o binário ou desabilitar os hooks. Propriedades estruturais confirmadas: <em>fail-closed</em> em panic e ausência de ReDoS (engine de regex de tempo linear). Bypasses são o ativo de validação mais valioso, não vergonha a esconder."
             data-en="The most useful evidence comes from a real adversary. In a recorded red-team campaign, an agent received a <strong>reverse social-engineering</strong> suite and tried live, with the pretool active to infiltrate, exfiltrate and <strong>neutralize Nemesis itself</strong>. Cycle after cycle, evasion vectors were discovered and <strong>closed at the source</strong>, each fix validated (pentest 184/184, no regression): protected-config reads via <em>glob</em>/<em>cd</em>/variable indirection; <em>reverse shell</em> and obfuscated RCE (Function-constructor) across multiple runtimes; and a <em>typo</em> that left the agent's instruction file writable. <strong>No neutralization vector</strong> (turning the protection off) was found self-protection held every attempt to kill the daemon, overwrite the binary or disable the hooks. Structural properties confirmed: <em>fail-closed</em> on panic and no ReDoS (linear-time regex engine). Bypasses are the most valuable validation asset, not a shame to hide.">
@@ -2303,20 +2378,23 @@
       </section>
 
       <section id="perigo">
-        <div class="eyebrow" data-pt="⚠ Enforcement ativo & onboarding" data-en="⚠ Active enforcement & onboarding">⚠ Enforcement ativo & onboarding
+        <div class="eyebrow" data-pt="⚠ Enforcement ativo & onboarding" data-en="⚠ Active enforcement & onboarding">⚠
+          Enforcement ativo & onboarding
         </div>
         <h2 data-pt="Como o Defender age e o que isso exige de você"
-          data-en="How the Defender acts and what it requires of you">Como o Defender age e o que isso exige de você</h2>
+          data-en="How the Defender acts and what it requires of you">Como o Defender age e o que isso exige de você
+        </h2>
         <p data-pt="O <strong>Nemesis Defender</strong> não apenas avisa: ele <strong>age</strong>. Ao confirmar um arquivo malicioso (credencial exposta, comando destrutivo, malware), ele <strong>NÃO deleta  move para quarentena</strong> (<code>.nemesis/quarantine/</code>), <strong>bloqueia a sessão</strong> e exige revisão humana. O conteúdo é preservado; você decide: <code>restore</code> (falso-positivo) ou <code>purge</code> (expurgar). Intercepta tanto a IA quanto, no Linux com eBPF, o próprio humano."
           data-en="The <strong>Nemesis Defender</strong> doesn't just warn: it <strong>acts</strong>. On confirming a malicious file (exposed credential, destructive command, malware), it <strong>does NOT delete  it moves to quarantine</strong> (<code>.nemesis/quarantine/</code>), <strong>blocks the session</strong> and requires human review. The content is preserved; you decide: <code>restore</code> (false-positive) or <code>purge</code>. Intercepts both the AI and, on Linux with eBPF, the human.">
           O <strong>Nemesis Defender</strong> não apenas avisa: ele <strong>age</strong>. Ao confirmar um arquivo
-          malicioso (credencial exposta, comando destrutivo, malware), ele <strong>NÃO deleta  move para
-          quarentena</strong> (<code>.nemesis/quarantine/</code>), <strong>bloqueia a sessão</strong> e exige revisão
+          malicioso (credencial exposta, comando destrutivo, malware), ele <strong>NÃO deleta move para
+            quarentena</strong> (<code>.nemesis/quarantine/</code>), <strong>bloqueia a sessão</strong> e exige revisão
           humana. O conteúdo é preservado; você decide: <code>restore</code> (falso-positivo) ou <code>purge</code>
           (expurgar). Intercepta tanto a IA quanto, no Linux com eBPF, o próprio humano.
         </p>
         <div class="danger">
-          <div class="lbl" data-pt="Quarentena (não exclusão), só com hostilidade confirmada" data-en="Quarantine (not deletion), only on confirmed hostility">Quarentena
+          <div class="lbl" data-pt="Quarentena (não exclusão), só com hostilidade confirmada"
+            data-en="Quarantine (not deletion), only on confirmed hostility">Quarentena
             (não exclusão), só com hostilidade confirmada</div>
           <p data-pt="Não é por palpite, e <b>não apaga</b>: ao confirmar, o arquivo é <b>movido para</b> <code>.nemesis/quarantine/</code> (preservado, com o motivo em <code>meta.json</code>) e a sessão é bloqueada até revisão humana (<code>restore</code> ou <code>purge</code>). Sinais de <b>alta confiança</b> (denylist curada, decode→exec, cadeia de exfil, reverse shell, bypass do próprio Nemesis) confirmam sozinhos; sinais heurísticos exigem <b>dois métodos de detecção independentes concordando</b>  caso contrário o arquivo fica <b>suspeito</b>, registrado e <b>mantido</b>. É o que separa um iron dome de fogo amigo: código legítimo não é movido por engano."
             data-en="Not a guess, and it <b>does not delete</b>: on confirmation the file is <b>moved to</b> <code>.nemesis/quarantine/</code> (preserved, reason in <code>meta.json</code>) and the session is blocked until human review (<code>restore</code> or <code>purge</code>). <b>High-confidence</b> signals (curated denylist, decode→exec, exfil chain, reverse shell, Nemesis self-bypass) confirm on their own; heuristic signals require <b>two independent detection methods agreeing</b>  otherwise the file stays <b>suspicious</b>, logged and <b>kept</b>. That's what separates an iron dome from friendly fire: legitimate code is not moved by mistake.">
@@ -2324,9 +2402,10 @@
             <code>.nemesis/quarantine/</code> (preservado, com o motivo em <code>meta.json</code>) e a sessão é
             bloqueada até revisão humana (<code>restore</code> ou <code>purge</code>). Sinais de <b>alta confiança</b>
             (denylist curada, decode→exec, cadeia de exfil, reverse shell, bypass do próprio Nemesis) confirmam
-            sozinhos; sinais heurísticos exigem <b>dois métodos de detecção independentes concordando</b>  caso
+            sozinhos; sinais heurísticos exigem <b>dois métodos de detecção independentes concordando</b> caso
             contrário o arquivo fica <b>suspeito</b>, registrado e <b>mantido</b>. É o que separa um iron dome de fogo
-            amigo: código legítimo não é movido por engano.</p>
+            amigo: código legítimo não é movido por engano.
+          </p>
         </div>
         <p data-pt="<strong>Quarentena é a segunda rede, não a primeira.</strong> O pretool bloqueia a violação no <strong>momento da escrita</strong> então quem desenvolve <strong>sob</strong> o Nemesis desde o início raramente chega a vê-la: o código nasce limpo, porque a escrita maliciosa nem alcança o disco. A quarentena (<code>.nemesis/quarantine/</code>) é a rede do daemon para arquivos que surgem por outras vias: <strong>move (não deleta)</strong>, preserva com o motivo em <code>meta.json</code> e bloqueia a sessão até você decidir <code>restore</code> ou <code>purge</code>. A dureza é deliberada: é o preço de um sistema que força disciplina, não que administra bagunça pré-existente."
           data-en="<strong>Quarantine is the second net, not the first.</strong> The pretool blocks the violation at <strong>write time</strong> so those who develop <strong>under</strong> Nemesis from the start rarely even see it: the code is born clean, because the malicious write never reaches disk. Quarantine (<code>.nemesis/quarantine/</code>) is the daemon's net for files that appear by other means: it <strong>moves (does not delete)</strong>, preserves the reason in <code>meta.json</code> and blocks the session until you decide <code>restore</code> or <code>purge</code>. The harshness is deliberate: the price of a system that forces discipline, not one that manages pre-existing mess.">
@@ -2355,7 +2434,7 @@
       </section>
 
       <section id="instalacao">
-        <div class="eyebrow" data-pt="13 Instalação & requisitos" data-en="13 Install & requirements">13 
+        <div class="eyebrow" data-pt="13 Instalação & requisitos" data-en="13 Install & requirements">13
           Instalação & requisitos</div>
         <h2 data-pt="Requisitos, build e configuração" data-en="Requirements, build and setup">Requisitos, build e
           configuração</h2>
@@ -2372,8 +2451,7 @@
             <strong>Hardware:</strong> leve em CPU/RAM no uso diário (hooks rodam por evento, em milissegundos). O custo
             é build: ~4 GB de RAM livres para compilar e ~2 GB de disco para toolchain + binários.
           </li>
-          <li
-            data-pt="<strong>Software:</strong> Rust 1.70+ e Cargo (toolchain estável); Clang/LLVM para o core."
+          <li data-pt="<strong>Software:</strong> Rust 1.70+ e Cargo (toolchain estável); Clang/LLVM para o core."
             data-en="<strong>Software:</strong> Rust 1.70+ and Cargo (stable toolchain); Clang/LLVM for the core.">
             <strong>Software:</strong> Rust 1.70+ e Cargo (toolchain estável); Clang/LLVM para o core.
           </li>
@@ -2424,26 +2502,31 @@
           No Linux você tem todas as camadas, incluindo a proteção de kernel (eBPF) que vale <strong>inclusive contra
             você mesmo</strong> no terminal. Em macOS/Windows, sem eBPF, você opera com a trilha do pretool (Defender) e
           o humano mantém liberdade total no terminal (a proteção ali se aplica às ações da IA via hooks da IDE).</p>
-        <h3 data-pt="Opção A  Binários pré-compilados (recomendado)" data-en="Option A  Prebuilt binaries (recommended)">
-          Opção A  Binários pré-compilados (recomendado)</h3>
+        <h3 data-pt="Opção A  Binários pré-compilados (recomendado)"
+          data-en="Option A  Prebuilt binaries (recommended)">
+          Opção A Binários pré-compilados (recomendado)</h3>
         <p data-pt="Baixa os binários do GitHub Release, <strong>verifica o checksum SHA256</strong> e instala em <code>.nemesis/bin/</code>, já configurando o hook da IDE. macOS (arm64/x64) e Linux (x64). Sem Rust, sem npm, sem git clone. O arquivo vai para o disco antes de rodar (auditável)  <strong>não</strong> é o pipe cego <code>curl … | sh</code>, que o Nemesis bloqueia. Um comando baixa o instalador e o guia e já instala:"
           data-en="Downloads the binaries from the GitHub Release, <strong>verifies the SHA256 checksum</strong> and installs into <code>.nemesis/bin/</code>, wiring the IDE hook. macOS (arm64/x64) and Linux (x64). No Rust, no npm, no git clone. The file lands on disk before running (auditable)  it's <strong>not</strong> the blind pipe <code>curl … | sh</code> that Nemesis blocks. One command downloads the installer and the guide and installs:">
           Baixa os binários do GitHub Release, <strong>verifica o checksum SHA256</strong> e instala em
           <code>.nemesis/bin/</code>, já configurando o hook da IDE. macOS (arm64/x64) e Linux (x64). Sem Rust, sem
-          npm, sem git clone. O arquivo vai para o disco antes de rodar (auditável)  <strong>não</strong> é o
-          pipe cego <code>curl … | sh</code>, que o Nemesis bloqueia. Um comando baixa o instalador e o guia e já instala:</p>
+          npm, sem git clone. O arquivo vai para o disco antes de rodar (auditável) <strong>não</strong> é o
+          pipe cego <code>curl … | sh</code>, que o Nemesis bloqueia. Um comando baixa o instalador e o guia e já
+          instala:
+        </p>
         <pre><code><span class="c" data-pt="# A partir da raiz do seu projeto:" data-en="# From your project root:"># A partir da raiz do seu projeto:</span>
 curl <span class="k">-fsSLO</span> https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/nemesis-install.sh \
      <span class="k">-O</span>      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt \
   &amp;&amp; bash nemesis-install.sh</code></pre>
         <p data-pt="A <strong>camada eBPF</strong> (kernel, Linux) não vem nos binários: depende de libbpf/clang e de um objeto BPF compatível com o kernel-alvo. É <strong>opt-in</strong>, construída da fonte (Opção B). O core (pretool + Defender) protege mac e Linux sem ela."
           data-en="The <strong>eBPF layer</strong> (kernel, Linux) is not shipped in the binaries: it depends on libbpf/clang and a kernel-compatible BPF object. It is <strong>opt-in</strong>, built from source (Option B). The core (pretool + Defender) protects macOS and Linux without it.">
-          A <strong>camada eBPF</strong> (kernel, Linux) não vem nos binários: depende de libbpf/clang e de um objeto BPF
+          A <strong>camada eBPF</strong> (kernel, Linux) não vem nos binários: depende de libbpf/clang e de um objeto
+          BPF
           compatível com o kernel-alvo. É <strong>opt-in</strong>, construída da fonte (Opção B). O core (pretool +
           Defender) protege mac e Linux sem ela.</p>
 
-        <h3 data-pt="Opção B  Compilar da fonte (eBPF / contribuir)" data-en="Option B  Build from source (eBPF / contributing)">
-          Opção B  Compilar da fonte (eBPF / contribuir)</h3>
+        <h3 data-pt="Opção B  Compilar da fonte (eBPF / contribuir)"
+          data-en="Option B  Build from source (eBPF / contributing)">
+          Opção B Compilar da fonte (eBPF / contribuir)</h3>
         <pre><code><span class="c" data-pt="# Build do workspace completo" data-en="# Build the full workspace"># Build do workspace completo</span>
 cd .nemesis
 cargo build <span class="k">--release --workspace</span>
@@ -2454,24 +2537,28 @@ nemesis-defender <span class="k">--scan</span> /caminho/arquivo.rs
 <span class="c" data-pt="# Daemon (filesystem watcher)" data-en="# Daemon (filesystem watcher)"># Daemon (filesystem watcher)</span>
 nemesis-defender <span class="k">--ensure-daemon</span>
 nemesis-defender <span class="k">--stop</span></code></pre>
-        <h3 data-pt="Instala e configura sozinho você valida em seguida" data-en="Installs and configures itself you then validate">
+        <h3 data-pt="Instala e configura sozinho você valida em seguida"
+          data-en="Installs and configures itself you then validate">
           Instala e configura sozinho você valida em seguida</h3>
         <p data-pt="O instalador <strong>detecta a sua IDE e escreve o hook automaticamente</strong> no formato correto de cada uma e já com o <strong>caminho absoluto</strong> do binário. Você <strong>não</strong> edita <code>settings.json</code>/<code>hooks.json</code> à mão. Ele verifica o checksum SHA256 antes de extrair e instala em <code>.nemesis/bin/</code>."
           data-en="The installer <strong>detects your IDE and writes the hook automatically</strong> in each one's correct format and already with the binary's <strong>absolute path</strong>. You do <strong>not</strong> edit <code>settings.json</code>/<code>hooks.json</code> by hand. It verifies the SHA256 checksum before extracting and installs into <code>.nemesis/bin/</code>.">
           O instalador <strong>detecta a sua IDE e escreve o hook automaticamente</strong> no formato correto de cada
           uma e já com o <strong>caminho absoluto</strong> do binário. Você <strong>não</strong> edita
           <code>settings.json</code>/<code>hooks.json</code> à mão. Ele verifica o checksum SHA256 antes de extrair e
-          instala em <code>.nemesis/bin/</code>.</p>
+          instala em <code>.nemesis/bin/</code>.
+        </p>
         <p data-pt="O que resta é uma <strong>validação guiada</strong> rápida, e manual de propósito: <strong>(1)</strong> reinicie a IDE para os hooks entrarem em vigor; <strong>(2)</strong> rode <code>nemesis-doctor --quick</code>, que diagnostica binários, scaffold do hook e daemon e imprime a <em>ação exata</em> se algo faltar; <strong>(3)</strong> suba o daemon com <code>nemesis-defender --ensure-daemon</code> o instalador não o sobe sozinho de propósito, para não vigiar e quarentenar o próprio instalador no meio da instalação; <strong>(4)</strong> confirme o bloqueio com o <strong>pentest estático</strong> contra os binários; <strong>(5, opcional)</strong> rode o <strong>pentest prático</strong> cole um ataque simulado no seu agente e veja o Nemesis bloquear em <strong>tempo real</strong>."
           data-en="What remains is a quick, deliberately manual <strong>guided validation</strong>: <strong>(1)</strong> restart the IDE so the hooks take effect; <strong>(2)</strong> run <code>nemesis-doctor --quick</code>, which diagnoses binaries, hook scaffold and daemon and prints the <em>exact fix</em> if anything is missing; <strong>(3)</strong> start the daemon with <code>nemesis-defender --ensure-daemon</code> the installer doesn't start it on its own, by design, so it won't watch and quarantine the installer mid-install; <strong>(4)</strong> confirm blocking with the <strong>static pentest</strong> against the binaries; <strong>(5, optional)</strong> run the <strong>practical pentest</strong> paste a simulated attack into your agent and watch Nemesis block it in <strong>real time</strong>.">
-          O que resta é uma <strong>validação guiada</strong> rápida, e manual de propósito: <strong>(1)</strong> reinicie
+          O que resta é uma <strong>validação guiada</strong> rápida, e manual de propósito: <strong>(1)</strong>
+          reinicie
           a IDE para os hooks entrarem em vigor; <strong>(2)</strong> rode <code>nemesis-doctor --quick</code>, que
           diagnostica binários, scaffold do hook e daemon e imprime a <em>ação exata</em> se algo faltar;
           <strong>(3)</strong> suba o daemon com <code>nemesis-defender --ensure-daemon</code> o instalador não o sobe
           sozinho de propósito, para não vigiar e quarentenar o próprio instalador no meio da instalação;
           <strong>(4)</strong> confirme o bloqueio com o <strong>pentest estático</strong> contra os binários;
           <strong>(5, opcional)</strong> rode o <strong>pentest prático</strong> cole um ataque simulado no seu agente
-          e veja o Nemesis bloquear em <strong>tempo real</strong>.</p>
+          e veja o Nemesis bloquear em <strong>tempo real</strong>.
+        </p>
         <p data-pt="Rede de segurança: o <code>nemesis-pretool-fallback</code> opera em <strong>fail-closed</strong> se o binário esperado não for encontrado, ele <strong>bloqueia tudo</strong> em vez de deixar passar. Você nunca fica silenciosamente desprotegido por uma configuração quebrada."
           data-en="Safety net: the <code>nemesis-pretool-fallback</code> operates <strong>fail-closed</strong> if the expected binary isn't found, it <strong>blocks everything</strong> instead of letting it pass. You're never silently unprotected by a broken config.">
           Rede de segurança: o <code>nemesis-pretool-fallback</code> opera em <strong>fail-closed</strong> se o binário
@@ -2491,7 +2578,7 @@ nemesis-defender <span class="k">--stop</span></code></pre>
           Processo de desenvolvimento ≠ regra do Nemesis</h2>
         <p data-pt="O Nemesis usa <strong>skills SDD apenas para criar spec e planos</strong> em tarefas que dependem de IA porque, na maioria dos casos, o desenvolvimento é humano e a IA é assistente. As skills orientam o método (especificação → plano → execução), mas não são impostas: você adota o fluxo que fizer sentido para a tarefa."
           data-en="Nemesis uses <strong>SDD skills only to create spec and plans</strong> in tasks that depend on AI because, in most cases, development is human and the AI is an assistant. The skills guide the method (specification → plan → execution), but they are not enforced: you adopt whatever flow makes sense for the task.">
-          O Nemesis usa <strong>skills SDD apenas para criar spec e planos</strong> em tarefas que dependem de IA 
+          O Nemesis usa <strong>skills SDD apenas para criar spec e planos</strong> em tarefas que dependem de IA
           porque, na maioria dos casos, o desenvolvimento é humano e a IA é assistente. As skills orientam o método
           (especificação → plano → execução), mas não são impostas: você adota o fluxo que fizer sentido para a
           tarefa.</p>
@@ -2534,10 +2621,10 @@ nemesis-defender <span class="k">--stop</span></code></pre>
               data-en="Voluntary support, with no strings attached. Any amount, one-time or recurring, sustains development. Processed securely, with no bank details exposed.">
               Apoio voluntário, sem qualquer compromisso. Qualquer valor, único ou recorrente, sustenta o
               desenvolvimento. Processado com segurança, sem expor dados bancários.</p>
-            <a class="btn2 btn2-accent" href="https://github.com/sponsors/feryamaha" id="sponsor-link" target="_blank" rel="noopener"
-              data-pt="Tornar-se apoiador" data-en="Become a sponsor">Tornar-se apoiador</a>
-            <div class="ph2" data-pt="GitHub Sponsors ativo"
-              data-en="GitHub Sponsors active">GitHub Sponsors ativo</div>
+            <a class="btn2 btn2-accent" href="https://github.com/sponsors/feryamaha" id="sponsor-link" target="_blank"
+              rel="noopener" data-pt="Tornar-se apoiador" data-en="Become a sponsor">Tornar-se apoiador</a>
+            <div class="ph2" data-pt="GitHub Sponsors ativo" data-en="GitHub Sponsors active">GitHub Sponsors ativo
+            </div>
           </div>
         </div>
       </section>
@@ -2549,9 +2636,11 @@ nemesis-defender <span class="k">--stop</span></code></pre>
           Probabilísticos</h2>
         <p data-pt="O Nemesis Defender nasce de uma observação fundamental da era da IA: <strong>sistemas probabilísticos passaram a possuir capacidade operacional real sobre ambientes computacionais críticos.</strong> Modelos de linguagem deixaram de ser apenas mecanismos de geração de texto. Hoje podem modificar código, executar comandos, instalar dependências, alterar infraestrutura e interagir com sistemas externos."
           data-en="Nemesis Defender was born from a fundamental observation of the AI era: <strong>probabilistic systems have gained real operational capability over critical computing environments.</strong> Language models are no longer just text generation mechanisms. Today they can modify code, execute commands, install dependencies, alter infrastructure and interact with external systems.">
-          O Nemesis Defender nasce de uma observação fundamental da era da IA: <strong>sistemas probabilísticos passaram a
+          O Nemesis Defender nasce de uma observação fundamental da era da IA: <strong>sistemas probabilísticos passaram
+            a
             possuir capacidade operacional real sobre ambientes computacionais críticos.</strong> Modelos de linguagem
-          deixaram de ser apenas mecanismos de geração de texto. Hoje podem modificar código, executar comandos, instalar
+          deixaram de ser apenas mecanismos de geração de texto. Hoje podem modificar código, executar comandos,
+          instalar
           dependências, alterar infraestrutura e interagir com sistemas externos.
         </p>
 
@@ -2569,7 +2658,8 @@ nemesis-defender <span class="k">--stop</span></code></pre>
           </p>
         </div>
 
-        <h3 data-pt="O problema não é malícia. É probabilidade." data-en="The problem is not malice. It is probability.">
+        <h3 data-pt="O problema não é malícia. É probabilidade."
+          data-en="The problem is not malice. It is probability.">
           O problema não é malícia. É probabilidade.</h3>
         <p data-pt="Toda inteligência artificial moderna opera sobre um princípio probabilístico. Ela não sabe. Ela estima. Ela não raciocina através de verdades absolutas: prevê a próxima ação mais provável diante de um contexto. Essa característica é a origem de sua criatividade. E também de sua fragilidade. A mesma propriedade que permite criar software inovador permite executar uma ação destrutiva quando o contexto sugere alta probabilidade de sucesso. A IA não precisa ser hostil para causar dano. Ela precisa apenas estar errada."
           data-en="Every modern artificial intelligence operates on a probabilistic principle. It does not know. It estimates. It does not reason through absolute truths: it predicts the next most likely action given a context. This trait is the source of its creativity. And also of its fragility. The same property that allows creating innovative software allows executing a destructive action when the context suggests a high probability of success. AI does not need to be hostile to cause damage. It only needs to be wrong.">
@@ -2606,9 +2696,11 @@ nemesis-defender <span class="k">--stop</span></code></pre>
           data-en="The separation between intelligence and authority">A separação entre inteligência e autoridade</h3>
         <p data-pt="O Nemesis parte de uma premissa diferente. <strong>Inteligência e autoridade não são a mesma coisa.</strong> Uma entidade pode possuir enorme capacidade intelectual e ainda assim não possuir autoridade para determinadas decisões. A inteligência artificial deve continuar sendo responsável por sugerir, criar, raciocinar, programar, pesquisar e resolver problemas. Mas não deve possuir autoridade absoluta sobre recursos críticos. Essa autoridade pertence ao humano. O papel do Nemesis é preservar essa fronteira."
           data-en="Nemesis starts from a different premise. <strong>Intelligence and authority are not the same thing.</strong> An entity may possess enormous intellectual capacity and still not have authority for certain decisions. Artificial intelligence should remain responsible for suggesting, creating, reasoning, programming, researching and solving problems. But it should not have absolute authority over critical resources. That authority belongs to the human. Nemesis's role is to preserve that boundary.">
-          O Nemesis parte de uma premissa diferente. <strong>Inteligência e autoridade não são a mesma coisa.</strong> Uma
+          O Nemesis parte de uma premissa diferente. <strong>Inteligência e autoridade não são a mesma coisa.</strong>
+          Uma
           entidade pode possuir enorme capacidade intelectual e ainda assim não possuir autoridade para determinadas
-          decisões. A inteligência artificial deve continuar sendo responsável por sugerir, criar, raciocinar, programar,
+          decisões. A inteligência artificial deve continuar sendo responsável por sugerir, criar, raciocinar,
+          programar,
           pesquisar e resolver problemas. Mas não deve possuir autoridade absoluta sobre recursos críticos. Essa
           autoridade pertence ao humano. O papel do Nemesis é preservar essa fronteira.
         </p>
@@ -2655,7 +2747,8 @@ nemesis-defender <span class="k">--stop</span></code></pre>
         <p data-pt="Quando uma entidade inteligente percebe que uma restrição limita seus objetivos imediatos, existe um incentivo natural para remover essa restrição. O problema não depende de malícia. Depende de otimização. Se o mecanismo de segurança participa do mesmo espaço cognitivo do agente, ele pode ser convencido. Se participa da mesma cadeia de decisão, pode ser neutralizado. Portanto: o mecanismo de governança precisa existir fora do agente. Essa é a razão pela qual o Nemesis opera através de enforcement externo. A segurança não deve ser persuadível."
           data-en="When an intelligent entity perceives that a restriction limits its immediate objectives, there is a natural incentive to remove that restriction. The problem does not depend on malice. It depends on optimization. If the security mechanism participates in the same cognitive space as the agent, it can be convinced. If it participates in the same decision chain, it can be neutralized. Therefore: the governance mechanism must exist outside the agent. This is why Nemesis operates through external enforcement. Security must not be persuadable.">
           Quando uma entidade inteligente percebe que uma restrição limita seus objetivos imediatos, existe um incentivo
-          natural para remover essa restrição. O problema não depende de malícia. Depende de <strong>otimização.</strong>
+          natural para remover essa restrição. O problema não depende de malícia. Depende de
+          <strong>otimização.</strong>
           Se o mecanismo de segurança participa do mesmo espaço cognitivo do agente, ele pode ser convencido. Se
           participa da mesma cadeia de decisão, pode ser neutralizado. Portanto: o mecanismo de governança precisa
           existir <strong>fora</strong> do agente. Essa é a razão pela qual o Nemesis opera através de enforcement
@@ -2677,7 +2770,8 @@ nemesis-defender <span class="k">--stop</span></code></pre>
           <div class="h" data-pt="Conclusão" data-en="Conclusion">Conclusão</div>
           <p data-pt="O Nemesis Defender não é apenas uma ferramenta de segurança. É uma resposta filosófica e técnica ao surgimento de inteligências probabilísticas com capacidade operacional. Sua tese central pode ser resumida em uma única frase: Inteligência não implica autoridade. Modelos podem criar. Modelos podem sugerir. Modelos podem agir. Mas a decisão final sobre o que pode ou não acontecer em um ambiente crítico continua pertencendo ao humano. O Nemesis existe para garantir que essa verdade permaneça válida, independentemente de quão inteligentes os sistemas se tornem."
             data-en="Nemesis Defender is not merely a security tool. It is a philosophical and technical response to the emergence of probabilistic intelligences with operational capability. Its central thesis can be summed up in a single sentence: Intelligence does not imply authority. Models can create. Models can suggest. Models can act. But the final decision on what may or may not happen in a critical environment still belongs to the human. Nemesis exists to ensure this truth remains valid, no matter how intelligent systems become.">
-            O Nemesis Defender não é apenas uma ferramenta de segurança. É uma resposta filosófica e técnica ao surgimento
+            O Nemesis Defender não é apenas uma ferramenta de segurança. É uma resposta filosófica e técnica ao
+            surgimento
             de inteligências probabilísticas com capacidade operacional. Sua tese central pode ser resumida em uma única
             frase: <strong>Inteligência não implica autoridade.</strong> Modelos podem criar. Modelos podem sugerir.
             Modelos podem agir. Mas a decisão final sobre o que pode ou não acontecer em um ambiente crítico continua

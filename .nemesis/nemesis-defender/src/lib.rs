@@ -108,6 +108,11 @@ const EXCLUDED_DIR_MARKERS: &[&str] = &[
     // e denylist-folder-files.json; por isso isentamos a PASTA inteira (qualquer forma de
     // path: absoluto, relativo da raiz ou de .nemesis/ — todos contêm "denylist/").
     "denylist/",
+    // Pasta da allowlist do usuário (override humano). É a ÚNICA superfície editável pós-install
+    // e contém literalmente comandos que o dono autorizou (rm -rf, git…) — o daemon NÃO deve
+    // auto-escaneá-la ("cobra mordendo o rabo"). Editável só por humano (absolute_block protege
+    // contra o agente). Isenção por substring cobre qualquer forma do path.
+    "denylist-customers/",
     // Pasta dos artefatos de INSTALAÇÃO no repo-fonte (nemesis-install.sh + info-install.txt).
     // O instalador contém legitimamente comandos `curl` (download da release) e o leia-me os
     // documenta — disparariam data_transfer_exfiltration. Mesma classe de pentest-nemesis-control
@@ -289,6 +294,12 @@ pub fn scan_content(path: &Path, content: &[u8]) -> DefenderResult {
     let (decoded_violations, scan_depth) = scanner::decoder::scan_recursive(content, 0);
     all_violations.extend(decoded_violations);
 
+    // ── Allowlist (override humano ABSOLUTO) ──
+    // Suprime findings cuja evidência o dono autorizou explicitamente na allowlist-customers.json.
+    // Per-finding (por evidência): um arquivo com 1 token allowlistado + malware real continua
+    // bloqueado pelo resto (override só vale para o listado). Fail-safe: allowlist vazia = no-op.
+    all_violations.retain(|v| !scanner::allowlist_loader::is_allowlisted(&v.evidence));
+
     // ── Determine final severity ──
     let severity = compute_severity(&all_violations);
 
@@ -334,6 +345,15 @@ pub fn scan_command(command: &str) -> DefenderResult {
     // 4. Recursive decoder (base64/hex/charCode — depth 3)
     let (decoded_violations, scan_depth) = scanner::decoder::scan_recursive(content, 0);
     all_violations.extend(decoded_violations);
+
+    // ── Allowlist (override humano ABSOLUTO) ──
+    // Comando inteiro autorizado pelo dono => libera tudo; senão, suprime só os findings cuja
+    // evidência casa a allowlist. Fail-safe: allowlist vazia = no-op.
+    if scanner::allowlist_loader::is_allowlisted(command) {
+        all_violations.clear();
+    } else {
+        all_violations.retain(|v| !scanner::allowlist_loader::is_allowlisted(&v.evidence));
+    }
 
     let severity = compute_severity(&all_violations);
 

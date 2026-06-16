@@ -79,10 +79,13 @@ jobs:
             strip "$PKG/bin/$b" 2>/dev/null || true
           done
 
-          # Denylists de COMANDO do pretool (deny-list*.json) — carregadas de disco.
-          # denylist-defender.json (SEGURANÇA DE CONTEÚDO) NÃO é empacotado: está EMBUTIDO no
-          # binário (include_str!), sem arquivo exposto/editável e sem config p/ o daemon escanear.
-          cp -r .nemesis/denylist/. "$PKG/denylist/" 2>/dev/null || true
+          # Denylists de BLOQUEIO (deny-list*.json + denylist-folder-files.json) NÃO são mais
+          # empacotadas: estão TODAS EMBUTIDAS no binário (include_str!, R7) — tamper-proof, sem
+          # arquivo exposto/editável (assim como a denylist-defender.json de conteúdo). A ÚNICA
+          # superfície editável pelo usuário é a allowlist, criada pelo nemesis-install.sh em
+          # .nemesis/denylist-customers/allowlist-customers.jsonc (override humano absoluto).
+          # A pasta denylist/ vai VAZIA, só como destino de artefatos de runtime do permission-gate.
+          : # (sem cópia de denylists — todas embutidas no binário)
 
           # Validação pós-install: só os 3 arquivos necessários. A pasta pentest-nemesis-control
           # é ISENTA do scan do daemon (EXCLUDED_DIR_MARKERS), então não gera ruído de violações.
