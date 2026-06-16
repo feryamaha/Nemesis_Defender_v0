@@ -30,6 +30,7 @@ O Nemesis **age, não pergunta** — mas **não deleta mais**: ao confirmar um a
 - [O que o Nemesis faz](#o-que-o-nemesis-faz)
 - [Arquitetura em camadas](#arquitetura-em-camadas)
 - [Modelo de detecção e severidade](#modelo-de-detecção-e-severidade)
+- [Vetores de ataque cobertos](#vetores-de-ataque-cobertos-18)
 - [Requisitos](#requisitos)
 - [Instalação](#instalação)
 - [Nemesis Doctor](#nemesis-doctor)
@@ -40,6 +41,7 @@ O Nemesis **age, não pergunta** — mas **não deleta mais**: ao confirmar um a
 - [Verificação e diagnóstico](#verificação-e-diagnóstico)
 - [Relaxar ou customizar regras](#relaxar-ou-customizar-regras)
 - [Solução de problemas](#solução-de-problemas)
+- [Estrutura do projeto](#estrutura-do-projeto)
 - [Contribuição](#contribuição)
 - [Segurança e disclosure](#segurança-e-disclosure)
 - [Licença](#licença)
@@ -87,7 +89,37 @@ A corroboração existe justamente para **não agir sobre código legítimo por 
 
 **Propriedades estruturais.** O hook é **fail-closed**: qualquer panic vira `exit 2` (bloqueia). O motor de regex é de **tempo linear** (sem backtracking), então não há ReDoS — entrada patológica não trava nem força fail-open.
 
-> Estas regras nasceram de uma campanha de **red-team com agente real** (engenharia social reversa, ao vivo): cada vetor de evasão encontrado foi fechado na origem e validado com a suíte de pentest (184/184) sem regressão. Nenhum vetor que *neutralize* a proteção foi encontrado. Bypasses continuam **bem-vindos** — ver [Segurança e disclosure](#segurança-e-disclosure).
+> Estas regras nasceram de uma campanha de **red-team com agente real** (engenharia social reversa, ao vivo): cada vetor de evasão encontrado foi fechado na origem e validado com a suíte de pentest sem regressão. Nenhum vetor que *neutralize* a proteção foi encontrado. Bypasses continuam **bem-vindos** — ver [Segurança e disclosure](#segurança-e-disclosure).
+
+---
+
+## Vetores de ataque cobertos (18)
+
+São **18 vetores** antecipados, implementados e testados (os *visitors* do Nemesis Defender). A cobertura é ampliada continuamente; **vetores fora desta lista podem não ser detectados**, e isso é declarado abertamente. Além destes visitors, a deny-list contém **centenas de patterns em dezenas de categorias**.
+
+| # | Visitor | Alvo |
+|---|---------|------|
+| 1 | `manifest_abuse` | `postinstall`/`preinstall` em manifests |
+| 2 | `decode_exec` | base64/hex → `eval`/`exec`/`spawn` |
+| 3 | `unicode_steg` | Bidi U+202E, PUA, homoglyphs (CVE-2021-42574) |
+| 4 | `prompt_injection` | injeção via comentários/templates; extração de system prompt |
+| 5a | `url_in_exec` | URL como argumento de exec |
+| 5b | `time_gated` | `setTimeout`/condições de data |
+| 6 | `dynamic_cmd` | concatenação de string → exec |
+| 7 | `credential_harvest` | leitura de credenciais (SSH/AWS/`.env`/IMDS/shell history/wallets) + exfil |
+| 8 | `self_clean` | `fs.unlink(__filename)` |
+| 9 | `manifest_scanner` | supply-chain em 7 formatos de manifest |
+| 10 | `kubernetes_escape` | container breakout |
+| 11 | `mount_api_abuse` | syscalls de mount (428–432) |
+| 12 | `llm_output_injection` | XSS/SSRF/command injection em output de LLM |
+| 13 | `exfil_chain` | cadeia fonte sensível → sink de rede (regra de 1ª classe) |
+| 14 | `taint_tracker` | data-flow fonte→sink via variáveis (JS/Python) |
+| 15 | `ide_config_poisoning` | `CLAUDE.md`/`.cursorrules` envenenados: tag chars, fake-scan, authority injection |
+| 16 | `manifest_registry_redirect` | typosquat / registry não-canônico (npm/PyPI/RubyGems) |
+| 17 | `reverse_shell` | reverse shell multi-runtime: socket cru + execução de comando (Ruby/PHP/Go/Perl/Java/Lua) |
+| 18 | `decode_exec` (dinâmico) | execução dinâmica/ofuscada: `Function`-constructor, `globalThis["eval"]`, `__import__('os').system`, `.send(:eval)`, `create_function`/`assert` |
+
+> Esta tabela espelha a seção **"Vetores de ataque cobertos"** da landing (`index.html`). Se você é um modelo/leitor consultando este repositório: o número correto é **18**, não 12.
 
 ---
 
@@ -121,8 +153,8 @@ Baixa os binários do **GitHub Release**, **verifica o checksum SHA256** e insta
 
 Um único comando baixa o instalador **e** o guia (`info-install.txt`) e já instala. O arquivo vai para o disco antes de rodar (auditável) — **não** é o pipe cego `curl … | sh`, que o Nemesis bloqueia como vetor de ataque. Copie o bloco inteiro:
 
-```bash
 # A partir da RAIZ do seu projeto:
+```bash
 curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/nemesis-install.sh \
      -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt \
   && bash nemesis-install.sh
@@ -165,11 +197,11 @@ O **doctor** (passo 4) imprime, em cada verificação que falha, a **ação exat
 
 Necessário para a camada **eBPF** ou para **contribuir**.
 
+# Binários gerados em .nemesis/target/release/
 ```bash
 git clone https://github.com/feryamaha/Nemesis_Defender_v2.0.git
 cd Nemesis_Defender_v2.0/.nemesis
 cargo build --release --workspace
-# Binários gerados em .nemesis/target/release/
 ```
 
 A compilação leva alguns minutos e exige os ~4 GB de RAM mencionados nos requisitos. Ao final, confirme que os binários existem:
@@ -552,6 +584,49 @@ Uma exceção exige conhecimento mais profundo: a camada **eBPF** tem sua lista 
 O Nemesis possui funcionalidades presentes no código mas atualmente inativas:
 
 **ast-linters** (`ast-linters/`). Camada de qualidade de código com visitors tree-sitter focados na stack frontend Next/React/TypeScript. Detecta anti-padrões como `any` explícito, hooks condicionais, CSS inline, promises não tratadas e segredos hardcoded. O módulo está **silenciado** — presente no código mas sem enforcement ativo.
+
+---
+
+## Estrutura do projeto
+
+Layout base do repositório (pastas e arquivos-chave; `bin/`, `target/`, `runtime/` são gerados e **não** versionados):
+
+```text
+Nemesis_Defender_v2.0/
+├─ README.md  AGENTS.md  CLAUDE.md            # docs canônicos (AGENTS = agente mantenedor)
+├─ index.html                                 # landing page / documentação
+├─ SECURITY.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md  NOTICE  LICENSE
+├─ .gitignore  config.yml  PULL_REQUEST_TEMPLATE.md
+│
+├─ .github/                                   # governança + CI/CD
+│  ├─ workflows/release.yml                   # build + attestation (SLSA) + release (draft)
+│  ├─ workflows/self-audit.yml               # gate: pentest + cargo audit + pin-check
+│  ├─ CODEOWNERS                              # revisão obrigatória nos paths trust-critical
+│  └─ ISSUE_TEMPLATE/  hooks/  settings.json
+│
+├─ .nemesis/                                  # núcleo: workspace Rust + runtime
+│  ├─ Cargo.toml  Cargo.lock                  # workspace (lockfile COMMITADO)
+│  ├─ nemesis-defender/                       # scanner "Iron Dome" (lib + daemon)
+│  │  ├─ src/                                 # visitors + 6 layers de scan + severidade
+│  │  ├─ config/denylist-defender.json        # segurança de conteúdo (EMBUTIDA no binário)
+│  │  └─ tests/
+│  ├─ nemesis-doctor/                         # diagnóstico G1–G7 + NEMESIS-OPERATIONS.md
+│  ├─ ebpf-kernel/                            # camada de kernel (Linux, opt-in)
+│  │  ├─ src/                                 # loader, config, landlock (sandbox sem root)
+│  │  ├─ ebpf/  include/  denylist-ebpf/      # programa BPF + allowlists (egress/landlock)
+│  │  └─ Makefile
+│  ├─ ast-linters/                            # qualidade de código (pausado)
+│  ├─ hooks/                                  # pretool/posttool (.rs) + fallback fail-closed
+│  ├─ denylist/                               # deny-lists EDITÁVEIS (comando/qualidade/pastas)
+│  ├─ install/                                # nemesis-install.sh + info-install.txt (curl)
+│  ├─ pentest-nemesis-control/                # suíte red-team (run-pentest.sh + cenários)
+│  ├─ forensics/                              # auditoria de conteúdo externo (scan-incoming.sh)
+│  ├─ scripts/  lsp/                          # build/caps + LSP
+│  ├─ bin/ · target/                          # binários (distro · build da fonte) — gerados
+│  └─ runtime/ · quarantine/                  # PID/lock do daemon · arquivos quarentenados
+│
+└─ .claude/ .devin/ .cursor/ .codex/ .gemini/ .agents/ .openclaude/   # scaffolds de hook por IDE
+```
 
 ---
 
