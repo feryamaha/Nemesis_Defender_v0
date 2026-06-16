@@ -2006,70 +2006,49 @@
             (<code>absolute_block</code>). Essa é a garantia que faz o override não virar auto-sabotagem. É por sua
             conta e risco.</li>
         </ul>
-        <p data-pt="<strong>Calibrado para frontend.</strong> O detector foi calibrado para Next/React/TypeScript, onde o falso-positivo fica <strong>abaixo de ~1%</strong> frontend não gera código scriptado. Backend/DevSecOps usam comandos intrínsecos (<code>sudo</code>, <code>sed -i</code>, exec dinâmico) e por isso têm FP mais alto: uma <strong>limitação conhecida</strong>, e a razão da allowlist. Medição em 8 codebases open-source reais:"
-          data-en="<strong>Calibrated for frontend.</strong> The detector is calibrated for Next/React/TypeScript, where false-positives stay <strong>below ~1%</strong> frontend doesn't generate scripted code. Backend/DevSecOps use intrinsic commands (<code>sudo</code>, <code>sed -i</code>, dynamic exec) and therefore have higher FP: a <strong>known limitation</strong>, and the reason for the allowlist. Measured on 8 real open-source codebases:">
+        <p data-pt="<strong>Calibrado para frontend.</strong> O detector foi calibrado para Next/React/TypeScript, onde o falso-positivo fica <strong>abaixo de ~1%</strong> frontend não gera código scriptado. Backend/DevSecOps usam comandos intrínsecos (<code>sudo</code>, <code>sed -i</code>, exec dinâmico) e por isso têm FP mais alto: uma <strong>limitação conhecida</strong>, e a razão da allowlist. Estimativa por setor, com margem conservadora:"
+          data-en="<strong>Calibrated for frontend.</strong> The detector is calibrated for Next/React/TypeScript, where false-positives stay <strong>below ~1%</strong> frontend doesn't generate scripted code. Backend/DevSecOps use intrinsic commands (<code>sudo</code>, <code>sed -i</code>, dynamic exec) and therefore have higher FP: a <strong>known limitation</strong>, and the reason for the allowlist. Estimated by sector, conservatively:">
           <strong>Calibrado para frontend.</strong> O detector foi calibrado para Next/React/TypeScript, onde o
           falso-positivo fica <strong>abaixo de ~1%</strong> frontend não gera código scriptado. Backend/DevSecOps
           usam comandos intrínsecos (<code>sudo</code>, <code>sed -i</code>, exec dinâmico) e por isso têm FP mais
-          alto: uma <strong>limitação conhecida</strong>, e a razão da allowlist. Medição em 8 codebases open-source
-          reais:
+          alto: uma <strong>limitação conhecida</strong>, e a razão da allowlist. Estimativa por setor, com margem
+          conservadora:
         </p>
         <table style="width:100%;border-collapse:collapse;margin:1rem 0;font-size:.95em">
           <thead>
             <tr style="text-align:left;border-bottom:1px solid currentColor">
-              <th style="padding:.4rem .6rem" data-pt="Projeto" data-en="Project">Projeto</th>
-              <th style="padding:.4rem .6rem">Stack</th>
-              <th style="padding:.4rem .6rem">FP</th>
+              <th style="padding:.4rem .6rem" data-pt="Setor" data-en="Sector">Setor</th>
+              <th style="padding:.4rem .6rem" data-pt="Stack típica" data-en="Typical stack">Stack típica</th>
+              <th style="padding:.4rem .6rem" data-pt="FP estimado" data-en="Estimated FP">FP estimado</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="padding:.35rem .6rem">biomejs/biome</td>
-              <td style="padding:.35rem .6rem">Rust</td>
-              <td style="padding:.35rem .6rem"><strong>0,4%</strong></td>
+              <td style="padding:.35rem .6rem"><strong>Frontend</strong></td>
+              <td style="padding:.35rem .6rem">Next.js / React / TypeScript</td>
+              <td style="padding:.35rem .6rem"><strong>&lt; 1%</strong></td>
             </tr>
             <tr>
-              <td style="padding:.35rem .6rem">fastapi/fastapi</td>
-              <td style="padding:.35rem .6rem">Python</td>
-              <td style="padding:.35rem .6rem">3,2%</td>
+              <td style="padding:.35rem .6rem"><strong>Backend</strong></td>
+              <td style="padding:.35rem .6rem" data-pt="Python / Node / múltiplas linguagens" data-en="Python / Node / multiple languages">Python / Node / múltiplas linguagens</td>
+              <td style="padding:.35rem .6rem">~3–6%</td>
             </tr>
             <tr>
-              <td style="padding:.35rem .6rem">nestjs/nest</td>
-              <td style="padding:.35rem .6rem">TypeScript</td>
-              <td style="padding:.35rem .6rem">4,4%</td>
-            </tr>
-            <tr>
-              <td style="padding:.35rem .6rem">shadcn-ui/ui</td>
-              <td style="padding:.35rem .6rem">TypeScript</td>
-              <td style="padding:.35rem .6rem">4,4%</td>
-            </tr>
-            <tr>
-              <td style="padding:.35rem .6rem">ansible/ansible</td>
-              <td style="padding:.35rem .6rem">Python (DevOps)</td>
-              <td style="padding:.35rem .6rem">7,4%</td>
-            </tr>
-            <tr>
-              <td style="padding:.35rem .6rem">fabric/fabric</td>
-              <td style="padding:.35rem .6rem">Python (remote exec)</td>
-              <td style="padding:.35rem .6rem">20,7%</td>
-            </tr>
-            <tr>
-              <td style="padding:.35rem .6rem">Gallopsled/pwntools</td>
-              <td style="padding:.35rem .6rem">Python (exploit dev)</td>
-              <td style="padding:.35rem .6rem">21,6% *</td>
-            </tr>
-            <tr>
-              <td style="padding:.35rem .6rem">nvm-sh/nvm</td>
-              <td style="padding:.35rem .6rem">Shell (installer)</td>
-              <td style="padding:.35rem .6rem">46,7%</td>
+              <td style="padding:.35rem .6rem"><strong>DevSecOps / IaC / Shell</strong></td>
+              <td style="padding:.35rem .6rem" data-pt="Ansible, installers, scripts, exec remoto" data-en="Ansible, installers, scripts, remote exec">Ansible, installers, scripts, exec remoto</td>
+              <td style="padding:.35rem .6rem" data-pt="a partir de ~7%" data-en="from ~7%">a partir de ~7%</td>
             </tr>
           </tbody>
         </table>
-        <p data-pt="* pwntools é o teto proposital: uma lib de exploit/shellcode <strong>deve</strong> acender confirma que a detecção real está viva. Backend/DevSecOps relaxam o que precisarem pela allowlist, por conta e risco; a camada <strong>eBPF</strong> e os <strong>visitors</strong> seguem sendo código (exigem Rust)."
-          data-en="* pwntools is the intentional ceiling: an exploit/shellcode lib <strong>should</strong> light up it confirms real detection is alive. Backend/DevSecOps relax what they need via the allowlist, at their own risk; the <strong>eBPF</strong> layer and the <strong>visitors</strong> remain code (require Rust).">
-          * pwntools é o teto proposital: uma lib de exploit/shellcode <strong>deve</strong> acender confirma que a
-          detecção real está viva. Backend/DevSecOps relaxam o que precisarem pela allowlist, por conta e risco; a
-          camada <strong>eBPF</strong> e os <strong>visitors</strong> seguem sendo código (exigem Rust).
+        <p data-pt="São estimativas com margem de erro; o FP cresce quanto mais <strong>scriptado</strong> é o stack. Ferramentas intrinsecamente ofensivas (ex.: bibliotecas de exploit/shellcode) acendem por <strong>design</strong> é o teto esperado, não fogo amigo. <strong>Duas camadas, duas allowlists:</strong> a <code>allowlist-customers.jsonc</code> relaxa o pretool/defender (todo SO); no <strong>Linux</strong>, a camada <strong>eBPF</strong> (kernel) tem denylist própria e se relaxa à parte na <code>allowlist-ebpf.toml</code> (ex.: <code>allowed_commands = [\"rm\", \"chmod\"]</code>), sem editar a lista oficial."
+          data-en="These are estimates with a margin of error; FP grows the more <strong>scripted</strong> the stack is. Intrinsically offensive tools (e.g., exploit/shellcode libraries) light up by <strong>design</strong> that is the expected ceiling, not friendly fire. <strong>Two layers, two allowlists:</strong> <code>allowlist-customers.jsonc</code> relaxes the pretool/defender (every OS); on <strong>Linux</strong>, the <strong>eBPF</strong> (kernel) layer has its own denylist and is relaxed separately in <code>allowlist-ebpf.toml</code> (e.g., <code>allowed_commands = [\"rm\", \"chmod\"]</code>), without editing the official list.">
+          São estimativas com margem de erro; o FP cresce quanto mais <strong>scriptado</strong> é o stack. Ferramentas
+          intrinsecamente ofensivas (ex.: bibliotecas de exploit/shellcode) acendem por <strong>design</strong> é o
+          teto esperado, não fogo amigo. <strong>Duas camadas, duas allowlists:</strong> a
+          <code>allowlist-customers.jsonc</code> relaxa o pretool/defender (todo SO); no <strong>Linux</strong>, a
+          camada <strong>eBPF</strong> (kernel) tem denylist própria e se relaxa à parte na
+          <code>allowlist-ebpf.toml</code> (ex.: <code>allowed_commands = ["rm", "chmod"]</code>), sem editar a lista
+          oficial.
         </p>
       </section>
 

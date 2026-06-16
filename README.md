@@ -565,22 +565,17 @@ Para confirmar que o pretool está realmente ativo, force um comando que deve se
 
 O detector foi calibrado contra a realidade **frontend** (Next.js / React / TypeScript), onde o falso-positivo (FP) fica **abaixo de ~1%**. Frontend praticamente não gera código "scriptado" (sudo, `sed -i`, exec dinâmico, manipulação de PATH); para essa stack, esses comandos são hostis e desnecessários, então bloqueá-los é correto.
 
-Stacks de **backend / DevSecOps** (e múltiplas linguagens) têm um coeficiente de FP **mais alto** — elas legitimamente usam comandos que para frontend seriam hostis. Isso é uma **limitação conhecida** do Nemesis e a razão de existir a allowlist (abaixo). Medição empírica contra 8 codebases open-source reais:
+Stacks de **backend / DevSecOps** (e múltiplas linguagens) têm um coeficiente de FP **mais alto** — elas legitimamente usam comandos que para frontend seriam hostis. Isso é uma **limitação conhecida** do Nemesis e a razão de existir a allowlist (abaixo). Estimativa **por setor** (a partir de medição empírica em codebases open-source reais, com margem conservadora):
 
-| Projeto | Stack | FP |
+| Setor | Stack típica | FP estimado |
 |---|---|---|
-| biomejs/biome | Rust | **0,4%** |
-| fastapi/fastapi | Python | 3,2% |
-| nestjs/nest | TypeScript | 4,4% |
-| shadcn-ui/ui | TypeScript | 4,4% |
-| ansible/ansible | Python (DevOps) | 7,4% |
-| fabric/fabric | Python (remote exec) | 20,7% |
-| Gallopsled/pwntools | Python (exploit dev) | 21,6% \* |
-| nvm-sh/nvm | Shell (installer) | 46,7% |
+| **Frontend** | Next.js / React / TypeScript | **< 1%** |
+| **Backend** | Python / Node / múltiplas linguagens | **~3–6%** |
+| **DevSecOps / IaC / Shell** | Ansible, installers, scripts, exec remoto | **a partir de ~7%** |
 
-\* pwntools é o teto proposital: uma lib de exploit/shellcode **deve** acender — confirma que a detecção real está viva.
+São estimativas com margem de erro; o FP cresce quanto mais "scriptado" é o stack. Ferramentas intrinsecamente ofensivas (ex.: bibliotecas de exploit/shellcode) acendem por **design** — é o teto esperado, não fogo amigo, e confirma que a detecção real está viva.
 
-> **Leitura:** FP baixo em frontend e em Rust real (biome); FP cresce em backend/devops/shell por usarem comandos intrínsecos à stack. Não é o detector "quebrando" — é a calibração frontend encontrando código legítimo de outra natureza. Esses ambientes devem **relaxar via allowlist**.
+> **Leitura:** FP baixo em frontend (e em Rust real); cresce em backend/devops/shell por usarem comandos intrínsecos à stack. Não é o detector "quebrando" — é a calibração frontend encontrando código legítimo de outra natureza. Esses ambientes devem **relaxar via allowlist**.
 
 ### A allowlist (única superfície editável)
 
@@ -602,7 +597,21 @@ As deny-lists de **bloqueio** são **embutidas no binário** (tamper-proof) — 
 
 > **Aviso de responsabilidade.** A allowlist é absoluta: se você liberar `rm -rf`, o Nemesis deixa de bloquear `rm -rf`. Você **devolve ao modelo o poder de decidir** sobre o que liberou — por sua conta e risco. O arquivo é editável **só por humano** (o agente nunca escreve nele — `absolute_block`); essa é a garantia que faz o override não ser auto-sabotagem. Edite no seu terminal nativo.
 
-A camada **eBPF** (Linux) mantém sua lista de comandos no `commands.toml` do módulo (atrelada à arquitetura) e os **visitors do Defender** são código Rust; para a maioria dos casos a allowlist resolve sem tocar nessas.
+### Duas camadas, duas allowlists (importante para Linux)
+
+A `allowlist-customers.jsonc` relaxa o **pretool + o defender/daemon** — onde vivem os falsos-positivos de comando/conteúdo do agente. Vale em macOS, Linux e Windows.
+
+A camada **eBPF** (kernel, Linux, opt-in) tem uma denylist **própria e separada** (`denylist-ebpf/commands.toml`) que a allowlist acima **não** controla. Em Linux, comandos como `rm`/`chmod` só **executam de fato** se você também os listar na allowlist do eBPF — assim você relaxa o kernel **sem editar a lista oficial**:
+
+```
+.nemesis/denylist-customers/allowlist-ebpf.toml
+```
+```toml
+# nome EXATO do comando (basename do exec); por sua conta e risco
+allowed_commands = ["rm", "chmod", "tar"]
+```
+
+O loader do eBPF **remove** esses comandos do bloqueio ao subir o daemon (recarrega ao reiniciar). Em macOS/Windows não há eBPF: a `allowlist-customers.jsonc` sozinha já libera. Os **visitors do Defender** continuam sendo código Rust (ampliá-los exige Rust).
 
 ---
 

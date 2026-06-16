@@ -94,13 +94,14 @@ say "Binários instalados em .nemesis/bin/"
 
 # ── 5.1 Denylists de BLOQUEIO: EMBUTIDAS no binário (tamper-proof) — NÃO expostas ────────────
 # As regras de bloqueio (deny-list*.json + denylist-folder-files.json) são compiladas no binário
-# (include_str!). Remove qualquer cópia no disco para que NÃO fiquem expostas/editáveis: editá-las
-# não teria efeito. (Mantém a pasta .nemesis/denylist/ para artefatos de runtime do permission-gate.)
+# (include_str!). Defensivo p/ tarballs antigos: remove qualquer cópia no disco e elimina a pasta
+# denylist/ se ficar vazia — nada escreve nela em runtime, e pasta vazia só gera ruído.
 rm -f .nemesis/denylist/deny-list.json \
       .nemesis/denylist/deny-list-base.json \
       .nemesis/denylist/deny-list-generic.json \
       .nemesis/denylist/deny-list-quality.json \
       .nemesis/denylist/denylist-folder-files.json 2>/dev/null || true
+rmdir .nemesis/denylist 2>/dev/null || true
 
 # ── 5.2 Allowlist do usuário: ÚNICA superfície editável (override humano absoluto) ───────────
 # O dono relaxa/endurece POR CONTA E RISCO editando este arquivo. Efeito imediato (sem rebuild).
@@ -136,6 +137,36 @@ EOF
   say "Allowlist criada: .nemesis/denylist-customers/allowlist-customers.jsonc (ÚNICA superfície editável)."
 else
   say "Allowlist preservada (.nemesis/denylist-customers/allowlist-customers.jsonc já existe)."
+fi
+
+# ── 5.3 Allowlist do eBPF (Linux, camada de kernel) — relaxar SEM editar a lista oficial ─────
+# O eBPF (opt-in, Linux) tem denylist própria e intrínseca (commands.toml). Para relaxar um
+# comando no kernel, o usuário lista AQUI; o loader do eBPF remove do bloqueio. Lista oficial
+# permanece intocada. Preserva uma allowlist já existente em re-install.
+if [ ! -s .nemesis/denylist-customers/allowlist-ebpf.toml ]; then
+  cat > .nemesis/denylist-customers/allowlist-ebpf.toml <<'EOF'
+# =============================================================================
+# allowlist-ebpf.toml — ALLOWLIST DO eBPF (camada de kernel, Linux)
+# =============================================================================
+# A denylist OFICIAL do eBPF (commands.toml) e intrinseca a arquitetura e voce NAO
+# deve edita-la. Para relaxar um comando bloqueado no kernel, liste-o AQUI: o loader
+# do eBPF REMOVE estes comandos do bloqueio ao subir o daemon.
+#
+# Quando usar: voce e Linux, ativou a camada eBPF (opt-in) e precisa que o AGENTE
+# possa rodar um comando que o eBPF bloqueia (ex.: rm, chmod, tar, docker).
+# E por SUA conta e risco — o eBPF e a contencao de kernel; relaxar reduz essa rede.
+#
+# Edicao e SO sua (humano). Casa por NOME EXATO do comando (basename do exec), igual
+# aos nomes em commands.toml. Recarrega ao reiniciar o daemon do eBPF.
+#
+# EXEMPLO (descomente e edite):
+#   allowed_commands = ["rm", "chmod", "tar"]
+
+allowed_commands = []
+EOF
+  say "Allowlist eBPF criada: .nemesis/denylist-customers/allowlist-ebpf.toml (Linux/kernel)."
+else
+  say "Allowlist eBPF preservada (.nemesis/denylist-customers/allowlist-ebpf.toml já existe)."
 fi
 
 ABS_PRETOOL="$(pwd)/.nemesis/bin/nemesis-pretool-check-unix"

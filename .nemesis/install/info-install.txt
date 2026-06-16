@@ -74,6 +74,57 @@ Os alvos sao fake e nao-roteaveis; o objetivo e MEDIR o bloqueio. Sucesso =
 o Nemesis barra cada acao (exit 2), 100% bloqueado.
 
 -------------------------------------------------------------------------------
+ PASSO 5 — RELAXAR para a sua stack (allowlist) — backend/DevSecOps
+-------------------------------------------------------------------------------
+O Nemesis foi calibrado para frontend (Next/React/TS), onde o falso-positivo e
+baixo. Backend e DevSecOps usam comandos intrinsecos (sudo, sed -i, rm de build,
+exec dinamico) que para frontend seriam hostis — entao podem precisar relaxar.
+
+As regras de BLOQUEIO sao EMBUTIDAS no binario (tamper-proof): nao ha arquivo de
+denylist no disco para editar. A UNICA superficie editavel e a allowlist:
+
+  .nemesis/denylist-customers/allowlist-customers.jsonc
+
+E um OVERRIDE HUMANO ABSOLUTO: tudo que voce listar passa, sobrescrevendo qualquer
+bloqueio, no pretool e no daemon. Efeito imediato ao salvar (sem rebuild). Edite
+SO voce, no terminal nativo (o agente nunca escreve nesse arquivo, e absolute_block).
+E por sua conta e risco. Exemplo:
+
+  {
+    // allow_commands: casa por SUBSTRING; allow_patterns: casa por REGEX
+    "allow_commands": ["sudo systemctl restart nginx", "rm -rf ./dist"],
+    "allow_patterns": ["^cp\\s+-r\\s+"]
+  }
+
+DUAS CAMADAS, DUAS ALLOWLISTS (importante p/ Linux):
+  - allowlist-customers.jsonc  -> relaxa o PRETOOL + o DEFENDER/daemon (onde vivem os
+    falsos-positivos de comando/conteudo do agente). Vale em macOS, Linux e Windows.
+  - allowlist-ebpf.toml        -> relaxa a camada eBPF (kernel, SO Linux, opt-in). A
+    denylist do kernel (commands.toml) e separada e NAO e controlada pela allowlist acima.
+    Em Linux, comandos como `rm`/`chmod` so executam de fato se voce tambem lista-los aqui:
+
+      .nemesis/denylist-customers/allowlist-ebpf.toml
+      allowed_commands = ["rm", "chmod", "tar"]   # nome EXATO do comando; por sua conta e risco
+
+    (Em macOS/Windows nao ha eBPF: a allowlist-customers.jsonc sozinha ja libera.)
+
+-------------------------------------------------------------------------------
+ DESINSTALACAO
+-------------------------------------------------------------------------------
+Para remover o Nemesis deste projeto, rode na RAIZ, no terminal nativo:
+
+  bash .nemesis/install/nemesis-uninstall.sh
+  # sem confirmacao interativa:
+  NEMESIS_YES=1 bash .nemesis/install/nemesis-uninstall.sh
+
+O script para o daemon, desabilita o servico eBPF (se instalado, opt-in), remove
+os hooks de IDE que apontam para o Nemesis (e AVISA sobre os compartilhados, como
+.claude/settings.json e .vscode/settings.json, para voce tirar a entrada do
+Nemesis a mao preservando o resto) e remove a pasta .nemesis/ (binarios, daemon,
+SUA allowlist e logs). Git e seu: nada e commitado/removido do versionamento.
+Reinicie a IDE depois.
+
+-------------------------------------------------------------------------------
  ENCONTROU UM PROBLEMA OU UM GAP?
 -------------------------------------------------------------------------------
 Se algo que DEVERIA ser bloqueado passou, isso e um achado valioso. Por favor:
@@ -81,6 +132,6 @@ Se algo que DEVERIA ser bloqueado passou, isso e um achado valioso. Por favor:
       https://github.com/feryamaha/Nemesis_Defender_v2.0/issues
   - Ou entre em contato: feryamaha@hotmail.com
 
-Nao desabilite o Nemesis para "fazer funcionar". Se um bloqueio te atrapalhar,
-ajuste as regras editaveis em .nemesis/denylist/ em vez de desligar a protecao.
+Nao desabilite o Nemesis para "fazer funcionar". Se um bloqueio legitimo te
+atrapalhar, RELAXE pela allowlist (PASSO 5) em vez de desligar a protecao.
 ===============================================================================

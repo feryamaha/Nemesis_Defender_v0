@@ -1,0 +1,18 @@
+# =============================================================================
+# allowlist-ebpf.toml — ALLOWLIST DO eBPF (camada de kernel, Linux)
+# =============================================================================
+# A denylist OFICIAL do eBPF (commands.toml) é intrínseca à arquitetura e você NÃO
+# deve editá-la. Para relaxar um comando bloqueado no kernel, liste-o AQUI: o loader
+# do eBPF REMOVE estes comandos do bloqueio ao subir o daemon.
+#
+# Quando usar: você é Linux, ativou a camada eBPF (opt-in) e precisa que o AGENTE
+# possa rodar um comando que o eBPF bloqueia (ex.: `rm`, `chmod`, `tar`, `docker`).
+# É por SUA conta e risco — o eBPF é a contenção de kernel; relaxar reduz essa rede.
+#
+# Edição é SÓ sua (humano). Casa por NOME EXATO do comando (basename do exec), igual
+# aos nomes em commands.toml. Recarrega ao reiniciar o daemon do eBPF.
+#
+# EXEMPLO (descomente e edite):
+#   allowed_commands = ["rm", "chmod", "tar"]
+
+allowed_commands = []

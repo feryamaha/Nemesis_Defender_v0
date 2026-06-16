@@ -34,6 +34,17 @@ pub struct EgressConfig {
     pub allowlist: Vec<String>,
 }
 
+/// Allowlist do USUÁRIO para o eBPF — superfície editável FORA da lista oficial (commands.toml).
+/// Comandos listados aqui são REMOVIDOS do bloqueio no kernel. Vive em
+/// `.nemesis/denylist-customers/allowlist-ebpf.toml` (consistente com a allowlist do pretool/defender).
+/// Assim o usuário Linux relaxa por conta e risco sem editar a denylist oficial.
+/// Fail-safe: ausente/inválida ⇒ nada é relaxado.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct CustomerEbpfAllowlist {
+    #[serde(default)]
+    pub allowed_commands: Vec<String>,
+}
+
 #[derive(Debug, Clone)]
 pub struct EbpfConfigBundle {
     pub commands: CommandsConfig,
@@ -49,7 +60,22 @@ impl EbpfConfigBundle {
         let root = root.as_ref().to_path_buf();
         let denylist_root = root.join("denylist-ebpf");
 
-        let commands = parse_toml::<CommandsConfig>(&denylist_root.join("commands.toml"))?;
+        let mut commands = parse_toml::<CommandsConfig>(&denylist_root.join("commands.toml"))?;
+
+        // Allowlist do USUÁRIO (override humano): comandos em
+        // .nemesis/denylist-customers/allowlist-ebpf.toml são REMOVIDOS do bloqueio do kernel,
+        // sem tocar na lista oficial (commands.toml). Fail-safe: ausente/inválida ⇒ nada relaxado.
+        let customer_allow = root
+            .parent()
+            .map(|p| p.join("denylist-customers").join("allowlist-ebpf.toml"))
+            .and_then(|p| parse_toml_optional::<CustomerEbpfAllowlist>(&p))
+            .unwrap_or_default();
+        if !customer_allow.allowed_commands.is_empty() {
+            let allow: std::collections::HashSet<String> =
+                customer_allow.allowed_commands.into_iter().collect();
+            commands.blocked_commands.retain(|c| !allow.contains(c));
+        }
+
         let paths = parse_toml::<PathsConfig>(&denylist_root.join("paths.toml"))?;
         let runtime = parse_toml::<RuntimeConfig>(&denylist_root.join("config.toml"))?;
         let landlock =

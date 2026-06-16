@@ -69,7 +69,7 @@ jobs:
           BIN=".nemesis/target/${{ matrix.target }}/release"
           PKG="nemesis-v2.0-${{ matrix.suffix }}"
           PENTEST_DST="$PKG/pentest-nemesis-control/nemesis-defender"
-          mkdir -p "$PKG/bin" "$PKG/denylist" "$PENTEST_DST"
+          mkdir -p "$PKG/bin" "$PENTEST_DST"
 
           # Binários do core (sem windows, sem eBPF)
           for b in nemesis-pretool-check nemesis-pretool-check-unix nemesis-pretool-hook \
@@ -83,8 +83,8 @@ jobs:
           # empacotadas: estão TODAS EMBUTIDAS no binário (include_str!, R7) — tamper-proof, sem
           # arquivo exposto/editável (assim como a denylist-defender.json de conteúdo). A ÚNICA
           # superfície editável pelo usuário é a allowlist, criada pelo nemesis-install.sh em
-          # .nemesis/denylist-customers/allowlist-customers.jsonc (override humano absoluto).
-          # A pasta denylist/ vai VAZIA, só como destino de artefatos de runtime do permission-gate.
+          # denylist-customers/ (override humano). NÃO criamos a pasta denylist/ vazia (gera ruído):
+          # nada escreve nela em runtime e o permission-gate (pausado) lê o estado com graça se ausente.
           : # (sem cópia de denylists — todas embutidas no binário)
 
           # Validação pós-install: só os 3 arquivos necessários. A pasta pentest-nemesis-control
@@ -94,7 +94,7 @@ jobs:
           cp "$PENTEST_SRC/info.md"                                "$PENTEST_DST/"
           cp "$PENTEST_SRC/pentest-final-amplificado-portal-dental.md" "$PENTEST_DST/"
 
-          # Tarball: conteúdo na raiz (bin/, denylist/, pentest-nemesis-control/).
+          # Tarball: conteúdo na raiz (bin/, pentest-nemesis-control/).
           tar -czf "$PKG.tar.gz" -C "$PKG" .
 
           # Checksum (INTEGRIDADE de download; a AUTENTICIDADE vem da attestation no job release).
