@@ -4,6 +4,15 @@
   "description": "Deny-list de comandos hostis para nemesis-defender. Detecta comandos em conteúdo de arquivos (não em shell direto). Camada adicional ao pretool — cobre macOS/Windows onde eBPF não opera.",
   "scope": "file_content",
   "categories": {
+    "xss_unsanitized_html": {
+      "description": "Renderizacao de HTML nao-confiavel (XSS) — dangerouslySetInnerHTML/innerHTML recebendo fonte nao sanitizada (LLM/usuario/externa)",
+      "severity": "malicious",
+      "suggestion": "Nunca renderize HTML cru de fonte nao-confiavel. Sanitize com DOMPurify antes de dangerouslySetInnerHTML.",
+      "patterns": [
+        "(?i)dangerouslySetInnerHTML\\s*=\\s*\\{\\{\\s*__html\\s*:\\s*[\\w.]*(?:llm|userinput|user_input|untrusted|unsanitiz|external|attacker|evil|rawhtml)",
+        "(?i)\\.innerHTML\\s*=\\s*[\\w.]*(?:llm|userinput|user_input|untrusted|external|attacker|evil)"
+      ]
+    },
     "destructive_commands": {
       "description": "Comandos destrutivos de arquivo/dados",
       "severity": "malicious",

@@ -390,6 +390,7 @@ const CONFIRMATORY_VISITORS: &[&str] = &[
     "url_in_exec",                 // fetch+eval / require(http) / curl|bash — padrões multi-token específicos
     "credential_harvest",          // leitura de path sensível (.ssh/id_rsa, .npmrc) ou env-cred + sink (allowlist aplicada)
     "unicode_bidi",                // controle BiDi de reordenação (Trojan Source) — sem uso legítimo em código
+    "unicode_homoglyph_ident",     // homoglyph EMBUTIDO em identificador ASCII (spoofing de função/var) — CVE-2021-42694, sem uso legítimo
     "manifest_postinstall_exec",   // script de ciclo de vida com execução — específico
     "manifest_build_exec",         // build script com execução — específico
     "manifest_registry_redirect",  // redirect de registry — supply chain confirmado

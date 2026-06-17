@@ -215,19 +215,36 @@ pub fn scan_homoglyphs(content: &[u8]) -> Vec<DefenderViolation> {
 
     let (mut line, mut col) = (1u32, 1u32);
 
-    for ch in text.chars() {
+    let chars: Vec<char> = text.chars().collect();
+    for (i, &ch) in chars.iter().enumerate() {
         if let Some(&(_, ascii, name)) = HOMOGLYPHS.iter().find(|&&(hg, _, _)| hg == ch) {
+            // Homoglyph ADJACENTE a alfanumérico ASCII => embutido num IDENTIFICADOR ASCII
+            // (spoofing de nome de função/var), não texto i18n (onde os vizinhos também são
+            // não-ASCII). Esse é o vetor do CVE-2021-42694 — sinal CONFIRMATÓRIO, baixo FP.
+            // Homoglyph isolado / em string permanece CORROBORANTE (evita FP em i18n).
+            let prev_ascii = i > 0 && chars[i - 1].is_ascii_alphanumeric();
+            let next_ascii = i + 1 < chars.len() && chars[i + 1].is_ascii_alphanumeric();
+            let in_identifier = prev_ascii || next_ascii;
             violations.push(DefenderViolation {
-                visitor: "unicode_homoglyph".to_string(),
+                visitor: if in_identifier {
+                    "unicode_homoglyph_ident".to_string()
+                } else {
+                    "unicode_homoglyph".to_string()
+                },
                 line,
                 col,
                 evidence: format!("{} (U+{:04X}) looks like ASCII '{}'", ch, ch as u32, ascii),
                 decoded: None,
                 message: format!(
-                    "Homoglyph {} ({}) visually identical to ASCII '{}'. \
-                     CVE-2021-42694 — can define duplicate function names \
-                     that execute different logic.",
-                    ch, name, ascii
+                    "Homoglyph {} ({}) visually identical to ASCII '{}'. CVE-2021-42694{}",
+                    ch,
+                    name,
+                    ascii,
+                    if in_identifier {
+                        " — embedded in an ASCII identifier (function/variable name spoofing)."
+                    } else {
+                        " — can define duplicate function names that execute different logic."
+                    }
                 ),
                 suggestion: Some("Replace the homoglyph with the equivalent ASCII character. Use homoglyph linters in CI.".to_string()),
             });

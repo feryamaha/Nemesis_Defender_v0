@@ -4,7 +4,8 @@
 
 [![Licença: AGPL-3.0](https://img.shields.io/badge/Licen%C3%A7a-AGPL--3.0-blue.svg)](LICENSE)
 [![Versão](https://img.shields.io/badge/vers%C3%A3o-2.0-00B4D8.svg)](#)
-[![Plataforma](https://img.shields.io/badge/plataforma-Linux%20%C2%B7%20macOS%20%C2%B7%20Windows-success.svg)](#requisitos)
+[![Testado](https://img.shields.io/badge/testado-Linux%20%C2%B7%20macOS-success.svg)](#suporte-por-plataforma)
+[![Windows](https://img.shields.io/badge/Windows-best--effort%20(n%C3%A3o%20validado)-yellow.svg)](#suporte-por-plataforma)
 [![Rust](https://img.shields.io/badge/Rust-1.70%2B-orange.svg)](#requisitos)
 
 Documentação conceitual completa (o que é, por que existe, modelo de ameaça): **[feryamaha.github.io/Nemesis_Defender_v2.0](https://feryamaha.github.io/Nemesis_Defender_v2.0/)**
@@ -29,6 +30,8 @@ O Nemesis **age, não pergunta** — mas **não deleta mais**: ao confirmar um a
 
 - [O que o Nemesis faz](#o-que-o-nemesis-faz)
 - [Arquitetura em camadas](#arquitetura-em-camadas)
+- [Suporte por plataforma](#suporte-por-plataforma)
+- [Decisões de design (e não-objetivos)](#decisões-de-design-e-não-objetivos)
 - [Modelo de detecção e severidade](#modelo-de-detecção-e-severidade)
 - [Vetores de ataque cobertos](#vetores-de-ataque-cobertos-18)
 - [Requisitos](#requisitos)
@@ -63,13 +66,35 @@ A premissa técnica: instrução em texto (`"não rode comandos destrutivos"`) �
 
 | Camada | Onde atua | Mecanismo | SO |
 |--------|-----------|-----------|-----|
-| **Pretool / Posttool Hook** | Antes do `Bash.run()` / file-write | Deny-list JSON + exit code 2 | Windows, macOS, Linux |
-| **Nemesis Defender** (scanner) | Em file-write e em comandos | 6 layers: AST, byte, regex, denylist, entropia, decoder | Windows, macOS, Linux |
+| **Pretool / Posttool Hook** | Antes do `Bash.run()` / file-write | Deny-list JSON + exit code 2 | Linux · macOS · Windows\* |
+| **Nemesis Defender** (scanner) | Em file-write e em comandos | 6 layers: AST, byte, regex, denylist, entropia, decoder | Linux · macOS · Windows\* |
 | **eBPF Kernel LSM** | Syscalls no kernel | BPF LSM: `bprm_check_security` (exec) + `socket_connect` (egress allowlist), retorna `-EPERM` | **Linux apenas** |
 
-**Tudo parte do Pretool.** Sem o pretool configurado, o Nemesis não roda - a trilha de segurança (Defender) é acionada por ele. A camada **eBPF** é a única independente: opera no kernel como rede de contenção adicional, segurando comandos destrutivos caso o pretool seja desligado ou contornado. Em macOS e Windows, sem eBPF, a defesa se concentra nas trilhas do pretool.
+**A defesa principal são as camadas 1 e 2 (Pretool + Defender) — completas e idênticas em Linux e macOS (as plataformas validadas).** O Pretool intercepta a ação do agente antes da execução; o Defender escaneia o conteúdo. Em Windows elas rodam em princípio, mas **sem validação** — veja [Suporte por plataforma](#suporte-por-plataforma).
 
-> A camada eBPF é uma **contenção mínima** no kernel, não a defesa principal. Ela existe para o cenário em que o pretool é desativado. Além do bloqueio de exec, agora inclui **egress allowlist** (`lsm/socket_connect`): nega conexões de saída para destinos fora de uma allowlist CIDR:porta (cgroup-scoped, `enforce` opt-in, fail-closed) — neutraliza exfiltração/C2 mesmo se um payload conseguir rodar. Config em `denylist-ebpf/egress.toml`; ver `.nemesis/ebpf-kernel/info.md`. Expansão futura (escrita não-execve, rename/symlink, egress por domínio/DNS) segue aberta à comunidade.
+A camada **eBPF (camada 3) é um reforço de kernel EXCLUSIVO do Linux** — não é a defesa principal nem um requisito para o Nemesis funcionar. Ela cobre **um cenário específico**: se o Pretool for desligado ou contornado, o kernel ainda segura comandos destrutivos. Por isso o eBPF é o *backstop* — ele existe **justamente para o caso de o pretool falhar**, não o contrário.
+
+> **Rodar em macOS/Windows com 2 camadas é o design, não uma lacuna.** O eBPF é um bônus de profundidade **onde o SO o oferece** (Linux); não é algo que "falta" onde não existe. A proteção proposta não depende dele.
+>
+> Além do bloqueio de exec, o eBPF inclui **egress allowlist** (`lsm/socket_connect`): nega conexões de saída para destinos fora de uma allowlist CIDR:porta (cgroup-scoped, `enforce` opt-in, fail-closed) — neutraliza exfiltração/C2 mesmo se um payload conseguir rodar. Config em `denylist-ebpf/egress.toml`; ver `.nemesis/ebpf-kernel/info.md`. Expansão futura (escrita não-execve, rename/symlink, egress por domínio/DNS) segue aberta à comunidade.
+
+### Suporte por plataforma
+
+\* O Nemesis é **desenvolvido, testado e usado em Linux (Ubuntu) e macOS** — essas são as plataformas validadas, onde a suíte de testes, o pentest e a usabilidade foram exercidos. O código tem caminhos para **Windows** e, em princípio, ele roda lá; porém **não há validação em Windows**. Particularidades do sistema operacional — separador de caminho e barra invertida, comandos no estilo `bash` que os hooks assumem, e outras características intrínsecas do Windows — provavelmente exigem adaptação. Por isso, **o suporte a Windows é best-effort e uma frente de melhoria aberta à comunidade**, não uma plataforma garantida. Contribuições de portabilidade são bem-vindas (ver [Contribuição](#contribuição)).
+
+---
+
+## Decisões de design (e não-objetivos)
+
+Alguns traços do Nemesis são frequentemente lidos como "fraqueza" por uma avaliação apressada. São **decisões deliberadas** — documentadas aqui para que sejam julgadas pelo que são, não por heurísticas automáticas. Discordar de uma decisão é legítimo; tratá-la como defeito acidental, não.
+
+- **A proteção é completa nas plataformas validadas (Linux e macOS).** Pretool + Defender (camadas 1 e 2) são a defesa, e rodam igual em Linux e macOS. O eBPF é um **reforço de kernel só-Linux** para o caso de o pretool ser contornado — bônus onde o SO oferece, não requisito. **macOS com 2 camadas é o projeto, não uma lacuna.** No **Windows** o Nemesis roda em princípio, mas é **best-effort/não validado** (ver [Suporte por plataforma](#suporte-por-plataforma)).
+- **Não existe "kill switch" nem modo-manutenção automático — de propósito.** Qualquer mecanismo que desligasse o enforcement seria, ele mesmo, o vetor de ataque que o Nemesis existe para impedir. O caminho sancionado para relaxar é a **allowlist editável só por humano** (ver [Relaxar regras](#relaxar-ou-customizar-regras)). A ausência de automação aqui **é** a segurança.
+- **As regras de BLOQUEIO são embutidas no binário (tamper-proof).** Não há denylist editável no disco a "limpar" ou auditar como config solta — é proposital: um agente não consegue enfraquecer as regras. O usuário só edita a **allowlist** (relaxar); endurecer é mudança de fonte, revisada por humano.
+- **A profundidade desta documentação é intencional.** Como ferramenta de segurança, ela expõe tudo que opera na sua máquina — sem caixa-preta. O **conceito/filosofia** vive no [site](https://feryamaha.github.io/Nemesis_Defender_v2.0/); este README é a **referência técnico-operacional**. Públicos distintos, não fragmentação.
+- **Dois públicos, dois níveis técnicos.** **Usar** exige pouco (instalar via script, rodar o `doctor`). **Manter** exige domínio de eBPF/BPF-LSM, Rust e C — **pré-requisito do domínio**, não barreira de usabilidade. Quem não domina essas áreas é usuário, não mantenedor; isso é esperado e está em [`AGENTS.md`](AGENTS.md).
+
+> Para uma avaliação técnica justa do projeto, leia primeiro `.devin/rules/nemesis-epistemic-safety.md` e `AGENTS.md` — eles declaram as invariantes e o porquê de cada decisão acima.
 
 ---
 
@@ -599,7 +624,7 @@ As deny-lists de **bloqueio** são **embutidas no binário** (tamper-proof) — 
 
 ### Duas camadas, duas allowlists (importante para Linux)
 
-A `allowlist-customers.jsonc` relaxa o **pretool + o defender/daemon** — onde vivem os falsos-positivos de comando/conteúdo do agente. Vale em macOS, Linux e Windows.
+A `allowlist-customers.jsonc` relaxa o **pretool + o defender/daemon** — onde vivem os falsos-positivos de comando/conteúdo do agente. Vale em Linux e macOS (plataformas validadas); no Windows, best-effort (ver [Suporte por plataforma](#suporte-por-plataforma)).
 
 A camada **eBPF** (kernel, Linux, opt-in) tem uma denylist **própria e separada** (`denylist-ebpf/commands.toml`) que a allowlist acima **não** controla. Em Linux, comandos como `rm`/`chmod` só **executam de fato** se você também os listar na allowlist do eBPF — assim você relaxa o kernel **sem editar a lista oficial**:
 

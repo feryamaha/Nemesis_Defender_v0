@@ -90,6 +90,16 @@ const EXFIL_SOURCES: &[(&str, &str)] = &[
         r"process\.env\.[A-Z_]*(?:TOKEN|SECRET_KEY|API_KEY|PASSWORD|PASS\b)[A-Z_]*",
         "sensitive env var",
     ),
+    // Exfil da ENV INTEIRA: serializar/espalhar todo o process.env (não uma var específica).
+    // Não há uso legítimo para serializar o ambiente inteiro dentro de um payload de rede.
+    (
+        r"(?:JSON\.stringify|Object\.(?:entries|values|assign))\s*\(\s*process\.env\b",
+        "entire process.env serialized (exfil)",
+    ),
+    (
+        r"\.\.\.process\.env\b",
+        "entire process.env spread (exfil)",
+    ),
     (
         r#"os\.environ(?:\.get)?\s*[\[(]['"][A-Z_]*(?:TOKEN|SECRET_KEY|API_KEY|PASSWORD)[A-Z_]*['"]\s*[)\]]"#,
         "Python sensitive env var",
@@ -114,6 +124,11 @@ const EXFIL_SOURCES: &[(&str, &str)] = &[
     (
         r#"getHeader\s*\(\s*['\"](?:[Aa]uthorization|[Bb]earer)['\"]"#,
         "getHeader auth access",
+    ),
+    // Colheita de TODOS os headers da request para um objeto (depois enviado = exfil).
+    (
+        r#"Object\.fromEntries\s*\(\s*[\w.]+\.headers"#,
+        "all request headers harvested",
     ),
     // Node.js native HTTP module assignment — const https = require('https'/'http')
     (
