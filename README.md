@@ -16,13 +16,11 @@ Este README é o documento **técnico e operacional**: como instalar, configurar
 
 ## ⚠️ Leia antes de instalar
 
-O Nemesis **age, não pergunta** — mas **não deleta mais**: ao confirmar um arquivo malicioso, ele o **move para quarentena** (`.nemesis/quarantine/`) em vez de apagar, **bloqueia a sessão** e exige revisão humana. O conteúdo é **preservado** para você decidir: restaurar (falso-positivo) ou expurgar. Nada é exfiltrado — tudo local.
+O Nemesis existe para conter a **autonomia do agente de IA** — o alvo é o modelo LLM, não você. Ele intercepta, **no momento em que tentam executar**, as operações que o agente dispara (escrever arquivos, rodar comandos) e barra as destrutivas ou maliciosas. O comando em si não é o inimigo; a invocação **autônoma** pelo modelo é.
 
-- Ao instalar num projeto que já contém violações (credenciais, comandos destrutivos, malware), o Defender **quarentena** os arquivos infratores na varredura — eles saem do lugar, mas ficam retidos e recuperáveis em `.nemesis/quarantine/`.
-- Resolva a quarentena com `nemesis-defender --quarantine list | show <id> | restore <id> | purge <id>`.
-- Backup ainda é boa prática, mas a quarentena elimina a perda definitiva que existia no modelo antigo de exclusão.
+A **instalação é automática**: detecta a sua IDE e configura os hooks sozinha. A partir daí o enforcement fica ativo no runtime: o pretool barra a escrita/execução hostil e o daemon (Iron Dome) vigia o filesystem. Ao **confirmar** hostilidade (por corroboração de sinais independentes, para não mover código legítimo por engano) ele **move para quarentena** (não deleta) e segura a sessão até a sua revisão; é **reversível** via `restore` ou `purge`. No Linux há ainda a camada **eBPF** opcional (opt-in) como rede no kernel caso o pretool seja contornado.
 
-**Responsabilidade após a instalação:** a partir do momento em que o Nemesis está ativo, vários arquivos passam a ser de **edição manual exclusivamente humana** (ver [Controle de paths](#controle-de-paths)). O agente de IA não pode editá-los nem excluí-los. Você pode relaxar a severidade do Nemesis editando as deny-lists, mas ao fazer isso **devolve ao modelo o poder de decidir o que move/exclui** - e esse risco passa a ser inteiramente seu. O autor não se responsabiliza por perdas decorrentes de configuração relaxada.
+As regras de **bloqueio são embutidas no binário** (tamper-proof): o agente não consegue enfraquecê-las editando arquivos. A **única** superfície que você (humano) edita é a **allowlist** (`.nemesis/denylist-customers/allowlist-customers.jsonc`): um override absoluto, **por sua conta e risco**, para liberar o que a sua stack precisa. O Nemesis é calibrado para frontend (Next/React/TS), então **backend e DevSecOps** tendem a relaxar mais por ali. E tudo é removível: a desinstalação é um comando (`nemesis-uninstall.sh`).
 
 ---
 
