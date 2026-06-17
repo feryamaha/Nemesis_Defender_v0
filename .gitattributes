@@ -1,0 +1,8 @@
+# Na raiz do repositório
+*.rs linguist-language=Rust
+Cargo.toml linguist-language=TOML
+Cargo.lock linguist-language=TOML
+*.bpf.c linguist-detectable=false
+*.bpf.o linguist-generated=true
+*.c linguist-detectable=false
+*.h linguist-detectable=false
