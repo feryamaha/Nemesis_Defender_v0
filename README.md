@@ -3,12 +3,12 @@
 > Enforcement determinístico contra comandos destrutivos e malware de supply-chain em fluxos de desenvolvimento assistido por agentes LLM. Escrito em Rust.
 
 [![Licença: AGPL-3.0](https://img.shields.io/badge/Licen%C3%A7a-AGPL--3.0-blue.svg)](LICENSE)
-[![Versão](https://img.shields.io/badge/vers%C3%A3o-2.0-00B4D8.svg)](#)
+[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.x-00B4D8.svg)](#)
 [![Testado](https://img.shields.io/badge/testado-Linux%20%C2%B7%20macOS-success.svg)](#suporte-por-plataforma)
 [![Windows](https://img.shields.io/badge/Windows-best--effort%20(n%C3%A3o%20validado)-yellow.svg)](#suporte-por-plataforma)
 [![Rust](https://img.shields.io/badge/Rust-1.70%2B-orange.svg)](#requisitos)
 
-Documentação conceitual completa (o que é, por que existe, modelo de ameaça): **[feryamaha.github.io/Nemesis_Defender_v2.0](https://feryamaha.github.io/Nemesis_Defender_v2.0/)**
+Documentação conceitual completa (o que é, por que existe, modelo de ameaça): **[feryamaha.github.io/Nemesis_Defender_v0](https://feryamaha.github.io/Nemesis_Defender_v0/)**
 
 Este README é o documento **técnico e operacional**: como instalar, configurar e usar. Para entender a filosofia e a arquitetura em profundidade, leia o site acima.
 
@@ -89,7 +89,7 @@ Alguns traços do Nemesis são frequentemente lidos como "fraqueza" por uma aval
 - **A proteção é completa nas plataformas validadas (Linux e macOS).** Pretool + Defender (camadas 1 e 2) são a defesa, e rodam igual em Linux e macOS. O eBPF é um **reforço de kernel só-Linux** para o caso de o pretool ser contornado — bônus onde o SO oferece, não requisito. **macOS com 2 camadas é o projeto, não uma lacuna.** No **Windows** o Nemesis roda em princípio, mas é **best-effort/não validado** (ver [Suporte por plataforma](#suporte-por-plataforma)).
 - **Não existe "kill switch" nem modo-manutenção automático — de propósito.** Qualquer mecanismo que desligasse o enforcement seria, ele mesmo, o vetor de ataque que o Nemesis existe para impedir. O caminho sancionado para relaxar é a **allowlist editável só por humano** (ver [Relaxar regras](#relaxar-ou-customizar-regras)). A ausência de automação aqui **é** a segurança.
 - **As regras de BLOQUEIO são embutidas no binário (tamper-proof).** Não há denylist editável no disco a "limpar" ou auditar como config solta — é proposital: um agente não consegue enfraquecer as regras. O usuário só edita a **allowlist** (relaxar); endurecer é mudança de fonte, revisada por humano.
-- **A profundidade desta documentação é intencional.** Como ferramenta de segurança, ela expõe tudo que opera na sua máquina — sem caixa-preta. O **conceito/filosofia** vive no [site](https://feryamaha.github.io/Nemesis_Defender_v2.0/); este README é a **referência técnico-operacional**. Públicos distintos, não fragmentação.
+- **A profundidade desta documentação é intencional.** Como ferramenta de segurança, ela expõe tudo que opera na sua máquina — sem caixa-preta. O **conceito/filosofia** vive no [site](https://feryamaha.github.io/Nemesis_Defender_v0/); este README é a **referência técnico-operacional**. Públicos distintos, não fragmentação.
 - **Dois públicos, dois níveis técnicos.** **Usar** exige pouco (instalar via script, rodar o `doctor`). **Manter** exige domínio de eBPF/BPF-LSM, Rust e C — **pré-requisito do domínio**, não barreira de usabilidade. Quem não domina essas áreas é usuário, não mantenedor; isso é esperado e está em [`AGENTS.md`](AGENTS.md).
 
 > Para uma avaliação técnica justa do projeto, leia primeiro `.devin/rules/nemesis-epistemic-safety.md` e `AGENTS.md` — eles declaram as invariantes e o porquê de cada decisão acima.
@@ -179,8 +179,8 @@ Um único comando baixa o instalador **e** o guia (`info-install.txt`) e já ins
 
 ## A partir da RAIZ do seu projeto:
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/nemesis-install.sh \
-     -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt \
+curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-install.sh \
+     -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/info-install.txt \
   && bash nemesis-install.sh
 ```
 
@@ -197,7 +197,7 @@ O instalador detecta SO/arch, baixa o tarball da release, **confere o SHA256 ant
 | **Gemini / Agents** | `.gemini/hooks.json` · `.agents/hooks.json` | objetos `nemesis-pretool-hook`/`nemesis-posttool-hook` com `enabled` |
 | **VS Code / GitHub Copilot** | `.github/hooks/nemesis-pretool-hook.json` (+ `.vscode/settings.json` aponta para ele) | caminho relativo `./.nemesis/bin/...` |
 
-Caminho absoluto para os binários (relativo no caso do GitHub/VS Code). Versão fixa: `NEMESIS_VERSION=v2.0.0 bash nemesis-install.sh`.
+Caminho absoluto para os binários (relativo no caso do GitHub/VS Code). Versão fixa: `NEMESIS_VERSION=v0.1.0 bash nemesis-install.sh`.
 
 > A **camada eBPF (Linux)** NÃO vem nos binários: depende de `libbpf`/`clang` e de um objeto BPF compatível com o seu kernel. É **opt-in**, construída da fonte (Opção B). O core (pretool + Defender) protege em macOS e Linux sem ela.
 
@@ -223,8 +223,8 @@ Necessário para a camada **eBPF** ou para **contribuir**.
 
 # Binários gerados em .nemesis/target/release/
 ```bash
-git clone https://github.com/feryamaha/Nemesis_Defender_v2.0.git
-cd Nemesis_Defender_v2.0/.nemesis
+git clone https://github.com/feryamaha/Nemesis_Defender_v0.git
+cd Nemesis_Defender_v0/.nemesis
 cargo build --release --workspace
 ```
 
@@ -676,7 +676,7 @@ O Nemesis possui funcionalidades presentes no código mas atualmente inativas:
 Layout base do repositório (pastas e arquivos-chave; `bin/`, `target/`, `runtime/` são gerados e **não** versionados):
 
 ```text
-Nemesis_Defender_v2.0/
+Nemesis_Defender_v0/
 ├─ README.md  AGENTS.md  CLAUDE.md            # docs canônicos (AGENTS = agente mantenedor)
 ├─ index.html                                 # landing page / documentação
 ├─ SECURITY.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md  NOTICE  LICENSE

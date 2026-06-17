@@ -22,7 +22,7 @@ O que você esperava que o Nemesis fizesse.
 
 ## Ambiente
 - **Sistema operacional:** [ex: Ubuntu 24.04 / macOS 15 / Windows 11]
-- **Versão do Nemesis:** [ex: 2.0.1]
+- **Versão do Nemesis:** [ex: 0.1.0]
 - **IDE / TUI:** [ex: Cursor, Claude Code, Devin, VS Code]
 - **Rust / Cargo:** [saída de `rustc --version`]
 - **eBPF habilitado?** [sim / não / não aplicável]

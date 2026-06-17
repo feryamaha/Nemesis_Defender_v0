@@ -13,19 +13,19 @@
 #     `curl … | sh` (pipe cego), que o próprio Nemesis bloqueia. Um comando baixa o instalador
 #     E o leia-me (info-install.txt) e já instala, a partir da raiz do SEU projeto:
 #
-#         curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/nemesis-install.sh \
-#              -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt \
+#         curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-install.sh \
+#              -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/info-install.txt \
 #           && bash nemesis-install.sh
 #
 #     (Quer inspecionar antes? Baixe sem o `&& bash …` e leia: less nemesis-install.sh)
 #
-# Variáveis: NEMESIS_VERSION (default: latest), NEMESIS_REPO (default: feryamaha/Nemesis_Defender_v2.0)
+# Variáveis: NEMESIS_VERSION (default: latest), NEMESIS_REPO (default: feryamaha/Nemesis_Defender_v0)
 # =============================================================================
 set -euo pipefail
 
-REPO="${NEMESIS_REPO:-feryamaha/Nemesis_Defender_v2.0}"
+REPO="${NEMESIS_REPO:-feryamaha/Nemesis_Defender_v0}"
 VERSION="${NEMESIS_VERSION:-latest}"
-PKG_PREFIX="nemesis-v2.0"
+PKG_PREFIX="nemesis-v0"
 
 say()  { printf '\033[0;36m[nemesis-install]\033[0m %s\n' "$*"; }
 ok()   { printf '\033[0;32m[nemesis-install] ✔\033[0m %s\n' "$*"; }

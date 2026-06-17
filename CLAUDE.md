@@ -1,4 +1,4 @@
-# Nemesis_Defender_v2.0 — instruções para o agente (Claude)
+# Nemesis_Defender_v0 — instruções para o agente (Claude)
 
 Leia **`AGENTS.md`** (na raiz) por inteiro antes de qualquer ação. É o documento canônico do
 Engenheiro Mantenedor do Nemesis (persona, invariantes de segurança, arquitetura, processo) e vale

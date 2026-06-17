@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-pretool-check-unix",
+            "command": "/home/fernando/devproj/Nemesis_Defender_v0/.nemesis/target/release/nemesis-pretool-check-unix",
             "timeout": 30
           }
         ]
@@ -22,7 +22,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/fernando/devproj/Nemesis_Defender_v2.0/.nemesis/target/release/nemesis-posttool-check-unix",
+            "command": "/home/fernando/devproj/Nemesis_Defender_v0/.nemesis/target/release/nemesis-posttool-check-unix",
             "timeout": 30
           }
         ]

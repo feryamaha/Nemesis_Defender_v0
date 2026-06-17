@@ -2,7 +2,7 @@
 
 > **Documento canônico de operação do Nemesis Framework v2.0.**
 > Substitui `doc-cargo-compile-binary.md` e `pentest-nemesis-control/instruction-daemon+ebpf-info.md` (obsoletos).
-> Todos os caminhos são relativos à raiz do projeto: `/home/fernando/devproj/Nemesis_Defender_v2.0`.
+> Todos os caminhos são relativos à raiz do projeto: `/home/fernando/devproj/Nemesis_Defender_v0`.
 
 ---
 

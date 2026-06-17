@@ -1,5 +1,5 @@
 ===============================================================================
- NEMESIS DEFENDER v2.0 — LEIA-ME DE INSTALACAO (passo a passo)
+ NEMESIS DEFENDER v0 — LEIA-ME DE INSTALACAO (passo a passo)
 ===============================================================================
 
 Este arquivo veio junto com o instalador (nemesis-install.sh). Ele te guia, na
@@ -15,8 +15,8 @@ Um unico comando baixa o instalador E este leia-me e ja instala. O arquivo vai
 para o disco antes de rodar (auditavel) — NAO e o "pipe cego" curl | sh, que o
 Nemesis bloqueia como vetor de ataque. A partir da RAIZ do seu projeto:
 
-  curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/nemesis-install.sh \
-       -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt \
+  curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-install.sh \
+       -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/info-install.txt \
     && bash nemesis-install.sh
 
 O instalador detecta SO/arquitetura, baixa o pacote da release, CONFERE o
@@ -129,7 +129,7 @@ Reinicie a IDE depois.
 -------------------------------------------------------------------------------
 Se algo que DEVERIA ser bloqueado passou, isso e um achado valioso. Por favor:
   - Abra uma issue em:
-      https://github.com/feryamaha/Nemesis_Defender_v2.0/issues
+      https://github.com/feryamaha/Nemesis_Defender_v0/issues
   - Ou entre em contato: feryamaha@hotmail.com
 
 Nao desabilite o Nemesis para "fazer funcionar". Se um bloqueio legitimo te

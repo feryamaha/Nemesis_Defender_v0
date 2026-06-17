@@ -11,7 +11,7 @@ Um resumo claro e conciso do que aconteceu.
 
 **Ambiente Operacional**
 - SO: [ex: Ubuntu 24.04, macOS Sequoia]
-- Versão do Nemesis: [ex: 2.0.0]
+- Versão do Nemesis: [ex: 0.1.0]
 - IDE/TUI utilizada: [ex: Claude Code, Cursor]
 
 **Como reproduzir**

@@ -1,6 +1,6 @@
 name: Release Nemesis Binaries
 
-# Dispara em tags v* (ex.: v2.0.0). Gera binários PRÉ-COMPILADOS do CORE cross-platform
+# Dispara em tags v* (ex.: v0.1.0). Gera binários PRÉ-COMPILADOS do CORE cross-platform
 # (mac arm64/x64, linux x64) + checksums, ANEXA ATTESTATION DE PROVENIÊNCIA (SLSA) e sobe num
 # GitHub Release como DRAFT (revisão humana antes de publicar). A camada eBPF (Linux-only) NÃO
 # entra no pacote: depende de libbpf/make e do .bpf.o do kernel-alvo — opt-in, build da fonte.
@@ -67,7 +67,7 @@ jobs:
         run: |
           set -euo pipefail
           BIN=".nemesis/target/${{ matrix.target }}/release"
-          PKG="nemesis-v2.0-${{ matrix.suffix }}"
+          PKG="nemesis-v0-${{ matrix.suffix }}"
           PENTEST_DST="$PKG/pentest-nemesis-control/nemesis-defender"
           mkdir -p "$PKG/bin" "$PENTEST_DST"
 
@@ -109,8 +109,8 @@ jobs:
         with:
           name: nemesis-${{ matrix.suffix }}
           path: |
-            nemesis-v2.0-${{ matrix.suffix }}.tar.gz
-            nemesis-v2.0-${{ matrix.suffix }}.tar.gz.sha256
+            nemesis-v0-${{ matrix.suffix }}.tar.gz
+            nemesis-v0-${{ matrix.suffix }}.tar.gz.sha256
           if-no-files-found: error
 
   release:

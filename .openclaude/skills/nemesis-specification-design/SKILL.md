@@ -26,7 +26,7 @@ Ler a paisagem do projeto para grounding da analise:
 
 ```bash
 pwd
-# Esperado: .../Nemesis_Rust_v2.0
+# Esperado: .../Nemesis_Defender_v0
 
 cat CLAUDE.md | head -50
 ls -la .nemesis/ | head -20

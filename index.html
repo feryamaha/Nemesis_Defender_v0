@@ -1214,7 +1214,7 @@
   <header class="topbar">
     <button class="burger" id="burger" aria-label="Menu">☰</button>
     <a href="#inicio" class="brand"><span class="logo">N</span> <span>NEMESIS <b>DEFENDER</b></span></a>
-    <span class="ver">v2.0 · AGPL-3.0</span>
+    <span class="ver">v0 · AGPL-3.0</span>
     <span class="spacer"></span>
     <div class="lang" role="group" aria-label="Language / Idioma">
       <button class="flag active" id="lang-pt" title="Português" aria-label="Português">
@@ -1304,8 +1304,8 @@
   <main class="main">
     <div class="content">
       <section id="inicio">
-        <div class="eyebrow" data-pt="Defense in Depth · Rust · v2.0" data-en="Defense in Depth · Rust · v2.0">Defense
-          in Depth · Rust · v2.0</div>
+        <div class="eyebrow" data-pt="Defense in Depth · Rust · v0" data-en="Defense in Depth · Rust · v0">Defense
+          in Depth · Rust · v0</div>
         <h1>Nemesis Defender</h1>
         <p class="lead"
           data-pt="Enforcement determinístico e ativo contra malware de supply-chain e abuso de agentes LLM bloqueia o ataque no momento da execução, na máquina do desenvolvedor."
@@ -1313,7 +1313,7 @@
           Enforcement determinístico e ativo contra malware de supply-chain e abuso de agentes LLM bloqueia o ataque
           no momento da execução, na máquina do desenvolvedor.</p>
         <div class="badge-row">
-          <span class="chip" data-pt="versão <b>2.0</b>" data-en="version <b>2.0</b>">versão <b>2.0</b></span>
+          <span class="chip" data-pt="versão <b>0</b>" data-en="version <b>0</b>">versão <b>0</b></span>
           <span class="chip" data-pt="workspace <b>8.2.0</b>" data-en="workspace <b>8.2.0</b>">workspace
             <b>8.2.0</b></span>
           <span class="chip" data-pt="linguagem <b>Rust</b>" data-en="language <b>Rust</b>">linguagem <b>Rust</b></span>
@@ -1975,10 +1975,10 @@
             </tbody>
           </table>
         </div>
-        <p data-pt="A deny-list do Defender contém centenas de patterns em dezenas de categorias, e foi <strong>ampliada na v2.0</strong> com vetores destilados do estado da arte (exfil surface estendida, taint-tracking, poisoning de config de IDE, typosquatting). <strong>Patterns são, por natureza, uma lista do que já foi antecipado</strong> aumentam o custo de um ataque conhecido, mas não cobrem o desconhecido."
-          data-en="The Defender deny-list contains hundreds of patterns across dozens of categories, and was <strong>expanded in v2.0</strong> with vectors distilled from the state of the art (extended exfil surface, taint-tracking, IDE-config poisoning, typosquatting). <strong>Patterns are, by nature, a list of what's already been anticipated</strong> they raise the cost of a known attack, but do not cover the unknown.">
+        <p data-pt="A deny-list do Defender contém centenas de patterns em dezenas de categorias, e foi <strong>ampliada na v0</strong> com vetores destilados do estado da arte (exfil surface estendida, taint-tracking, poisoning de config de IDE, typosquatting). <strong>Patterns são, por natureza, uma lista do que já foi antecipado</strong> aumentam o custo de um ataque conhecido, mas não cobrem o desconhecido."
+          data-en="The Defender deny-list contains hundreds of patterns across dozens of categories, and was <strong>expanded in v0</strong> with vectors distilled from the state of the art (extended exfil surface, taint-tracking, IDE-config poisoning, typosquatting). <strong>Patterns are, by nature, a list of what's already been anticipated</strong> they raise the cost of a known attack, but do not cover the unknown.">
           A deny-list do Defender contém centenas de patterns em dezenas de categorias, e foi <strong>ampliada na
-            v2.0</strong> com vetores destilados do estado da arte (exfil surface estendida, taint-tracking, poisoning
+            v0</strong> com vetores destilados do estado da arte (exfil surface estendida, taint-tracking, poisoning
           de config de IDE, typosquatting). <strong>Patterns são, por natureza, uma lista do que já foi
             antecipado</strong> aumentam o custo de um ataque conhecido, mas não cobrem o desconhecido.</p>
         <div class="callout">
@@ -2441,8 +2441,10 @@
           configuração</h2>
         <p data-pt="Num projeto pré-existente, o scanner <strong>só move para quarentena arquivos com hostilidade confirmada</strong> (modelo de corroboração) código legítimo permanece. A quarentena é reversível via <code>restore</code> ou <code>purge</code>."
           data-en="On a pre-existing project, the scanner <strong>only quarantines files with confirmed hostility</strong> (corroboration model) legitimate code stays. Quarantine is reversible via <code>restore</code> or <code>purge</code>.">
-          Num projeto pré-existente, o scanner <strong>só move para quarentena arquivos com hostilidade confirmada</strong> (modelo de
-          corroboração) código legítimo permanece. A quarentena é reversível via <code>restore</code> ou <code>purge</code>.
+          Num projeto pré-existente, o scanner <strong>só move para quarentena arquivos com hostilidade
+            confirmada</strong> (modelo de
+          corroboração) código legítimo permanece. A quarentena é reversível via <code>restore</code> ou
+          <code>purge</code>.
         </p>
         <h3 data-pt="Requisitos mínimos" data-en="Minimum requirements">Requisitos mínimos</h3>
         <ul>
@@ -2524,8 +2526,8 @@
           instala:
         </p>
         <pre><code><span class="c" data-pt="# A partir da raiz do seu projeto:" data-en="# From your project root:"># A partir da raiz do seu projeto:</span>
-curl <span class="k">-fsSLO</span> https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/nemesis-install.sh \
-     <span class="k">-O</span>      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v2.0/main/.nemesis/install/info-install.txt \
+curl <span class="k">-fsSLO</span> https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-install.sh \
+     <span class="k">-O</span>      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/info-install.txt \
   &amp;&amp; bash nemesis-install.sh</code></pre>
         <p data-pt="A <strong>camada eBPF</strong> (kernel, Linux) não vem nos binários: depende de libbpf/clang e de um objeto BPF compatível com o kernel-alvo. É <strong>opt-in</strong>, construída da fonte (Opção B). O core (pretool + Defender) protege mac e Linux sem ela."
           data-en="The <strong>eBPF layer</strong> (kernel, Linux) is not shipped in the binaries: it depends on libbpf/clang and a kernel-compatible BPF object. It is <strong>opt-in</strong>, built from source (Option B). The core (pretool + Defender) protects macOS and Linux without it.">
@@ -2621,7 +2623,7 @@ nemesis-defender <span class="k">--stop</span></code></pre>
               Pull requests, novos vetores e relatos de bypass. Veja o <code>CONTRIBUTING.md</code> e o
               <code>SECURITY.md</code>. Bypasses são reportados em privado e o pesquisador é creditado.
             </p>
-            <a class="btn2 btn2-light" href="https://github.com/feryamaha/Nemesis_Defender_v2.0" target="_blank"
+            <a class="btn2 btn2-light" href="https://github.com/feryamaha/Nemesis_Defender_v0" target="_blank"
               rel="noopener" data-pt="Abrir no GitHub" data-en="Open on GitHub">Abrir no GitHub</a>
           </div>
           <div class="support-box card-fund">
@@ -2829,35 +2831,55 @@ nemesis-defender <span class="k">--stop</span></code></pre>
         </div>
         <br>
 
-        <p data-pt="O Nemesis é um sistema de enforcement determinístico construído <strong>do conceito à validação adversarial por uma única pessoa</strong>, em cerca de 1,5 ano: arquitetura, modelagem de ameaça, três camadas de defesa e a suíte de pentest. <strong>Fernando Moreira</strong>, autodidata e estudante de Engenharia de Software, assina cada decisão de design, fluxo e regra do projeto."
-          data-en="Nemesis is a deterministic enforcement system built <strong>from concept to adversarial validation by a single person</strong>, in about 1.5 years: architecture, threat modeling, three defense layers and the pentest suite. <strong>Fernando Moreira</strong>, self-taught and a Software Engineering student, signs every design decision, flow and rule in the project.">
-          O Nemesis é um sistema de enforcement determinístico construído <strong>do conceito à validação adversarial
-            por uma única pessoa</strong>, em cerca de 1,5 ano: arquitetura, modelagem de ameaça, três camadas de defesa
-          e a suíte de pentest. <strong>Fernando Moreira</strong>, autodidata e estudante de Engenharia de Software,
-          assina cada decisão de design, fluxo e regra do projeto.
+        <p data-pt="Sou autodidata, estudante de Engenharia de Software e autor do Nemesis Defender. Antes de entrar no universo do desenvolvimento de software, passei aproximadamente 18 anos atuando em metrologia industrial, qualidade, engenharia reversa e validação dimensional. Trabalhei com GD&T avançado, MSA, CEP, programação de máquinas de medição tridimensional (CMM) e ambientes onde precisão, rastreabilidade e conformidade são requisitos obrigatórios. Foi nesse contexto que desenvolvi uma característica que continua presente em tudo o que construo: baixa tolerância à ambiguidade e alta exigência por evidências verificáveis."
+          data-en="I am self-taught, a Software Engineering student and the author of Nemesis Defender. Before entering the world of software development, I spent roughly 18 years working in industrial metrology, quality, reverse engineering and dimensional validation. I worked with advanced GD&T, MSA, SPC, coordinate measuring machine (CMM) programming and environments where precision, traceability and compliance are mandatory requirements. It was in that context that I developed a trait that remains present in everything I build: low tolerance for ambiguity and a high demand for verifiable evidence.">
+          Sou autodidata, estudante de Engenharia de Software e autor do Nemesis Defender. Antes de entrar no universo do
+          desenvolvimento de software, passei aproximadamente 18 anos atuando em metrologia industrial, qualidade,
+          engenharia reversa e validação dimensional. Trabalhei com GD&T avançado, MSA, CEP, programação de máquinas de
+          medição tridimensional (CMM) e ambientes onde precisão, rastreabilidade e conformidade são requisitos
+          obrigatórios. Foi nesse contexto que desenvolvi uma característica que continua presente em tudo o que
+          construo: baixa tolerância à ambiguidade e alta exigência por evidências verificáveis.
         </p>
 
-        <p data-pt="<strong>O projeto foi desenvolvido sob a mesma hipótese que motivou sua criação:</strong> modelos probabilísticos podem ampliar produtividade, acelerar desenvolvimento e resolver problemas complexos, mas não devem operar com autonomia operacional irrestrita sobre sistemas críticos sem governança. Durante aproximadamente 1,5 ano, a IA foi utilizada extensivamente como ferramenta de pesquisa, implementação, revisão e experimentação. Modelos como Claude Sonnet, Claude Opus, Codex e outros participaram do processo. Entretanto, arquitetura, modelagem de ameaças, validações, critérios de aceitação e direção estratégica permaneceram sob responsabilidade do autor. Mais de 90% do desenvolvimento ocorreu dentro do ecossistema Claude Code (TUI) e Devin IDE. O próprio processo de construção tornou-se uma demonstração prática da hipótese que originou o Nemesis: capacidades probabilísticas podem ser extremamente poderosas, desde que operem sob limites, supervisão e governança."
-          data-en="<strong>The project was developed under the same hypothesis that inspired its creation:</strong> probabilistic models can increase productivity, accelerate development and solve complex problems, but should not operate with unrestricted operational autonomy over critical systems without governance. For approximately 1.5 years, AI was used extensively as a tool for research, implementation, review and experimentation. Models such as Claude Sonnet, Claude Opus, Codex and others participated in the process. However, architecture, threat modeling, validations, acceptance criteria and strategic direction remained under the author's responsibility. More than 90% of development took place within the Claude Code (TUI) and Devin IDE ecosystem. The development process itself became a practical demonstration of the hypothesis that originated Nemesis: probabilistic capabilities can be extremely powerful, provided they operate under limits, supervision and governance.">
-          <strong>O projeto foi desenvolvido sob a mesma hipótese que motivou sua criação:</strong> modelos
-          probabilísticos podem ampliar produtividade, acelerar desenvolvimento e resolver problemas complexos, mas não
-          devem operar com autonomia operacional irrestrita sobre sistemas críticos sem governança. Durante
-          aproximadamente 1,5 ano, a IA foi utilizada extensivamente como ferramenta de pesquisa, implementação, revisão
-          e experimentação. Modelos como Claude Sonnet, Claude Opus, Codex e outros participaram do processo.
-          Entretanto, arquitetura, modelagem de ameaças, validações, critérios de aceitação e direção estratégica
-          permaneceram sob responsabilidade do autor. Mais de 90% do desenvolvimento ocorreu dentro do ecossistema
-          Claude Code (TUI) e Devin IDE. O próprio processo de construção tornou-se uma demonstração prática da hipótese
-          que originou o Nemesis: capacidades probabilísticas podem ser extremamente poderosas, desde que operem sob
-          limites, supervisão e governança.
+        <p data-pt="A minha formação prática não foi construída apenas através de cursos ou certificações. Grande parte dela veio da observação, da leitura, da pesquisa e da experimentação contínua. Sempre tive facilidade para conectar áreas aparentemente distantes e buscar relações entre elas. Ao longo do tempo, segurança, governança, filosofia, inteligência artificial, arquitetura de software e qualidade deixaram de parecer assuntos separados e passaram a representar diferentes perspectivas do mesmo problema: como criar sistemas confiáveis em ambientes complexos e sujeitos à incerteza."
+          data-en="My practical background was not built solely through courses or certifications. Much of it came from observation, reading, research and continuous experimentation. I have always found it easy to connect seemingly distant fields and look for the relationships between them. Over time, security, governance, philosophy, artificial intelligence, software architecture and quality stopped looking like separate subjects and came to represent different perspectives on the same problem: how to create reliable systems in complex environments subject to uncertainty.">
+          A minha formação prática não foi construída apenas através de cursos ou certificações. Grande parte dela veio da
+          observação, da leitura, da pesquisa e da experimentação contínua. Sempre tive facilidade para conectar áreas
+          aparentemente distantes e buscar relações entre elas. Ao longo do tempo, segurança, governança, filosofia,
+          inteligência artificial, arquitetura de software e qualidade deixaram de parecer assuntos separados e passaram a
+          representar diferentes perspectivas do mesmo problema: como criar sistemas confiáveis em ambientes complexos e
+          sujeitos à incerteza.
         </p>
 
-        <p data-pt="A transparência não é um detalhe — é um princípio. O uso extensivo de IA no desenvolvimento não reduz a autoria humana; torna o processo mais auditável. O autor escolhe, aprova, valida e assume responsabilidade por cada decisão. Expor esse processo abertamente não é uma tentativa de autopromoção, mas um compromisso com a credibilidade. O Nemesis defende governança para sistemas inteligentes e o próprio projeto foi construído seguindo essa mesma disciplina."
-          data-en="Transparency is not a detail — it is a principle. Extensive AI usage during development does not diminish human authorship; it makes the process more auditable. The author chooses, approves, validates and takes responsibility for every decision. Exposing this process openly is not self-promotion, but a commitment to credibility. Nemesis advocates governance for intelligent systems, and the project itself was built following that same discipline.">
-          A transparência não é um detalhe — é um princípio. O uso extensivo de IA no desenvolvimento não reduz a
-          autoria humana; torna o processo mais auditável. O autor escolhe, aprova, valida e assume responsabilidade por
-          cada decisão. Expor esse processo abertamente não é uma tentativa de autopromoção, mas um compromisso com a
-          credibilidade. O Nemesis defende governança para sistemas inteligentes e o próprio projeto foi construído
-          seguindo essa mesma disciplina.
+        <p data-pt="Foi justamente essa linha de raciocínio que me levou ao Nemesis. Conforme agentes de IA passaram a ganhar capacidade operacional real sobre ambientes de desenvolvimento, comecei a observar um padrão recorrente: modelos probabilísticos recebendo níveis de autonomia que, na minha visão, não eram compatíveis com os riscos envolvidos. A partir dessa observação surgiu uma pergunta simples, mas fundamental: quem governa quem? Foi tentando responder essa pergunta que nasceu a tese central do projeto e, posteriormente, sua implementação técnica."
+          data-en="It was precisely this line of reasoning that led me to Nemesis. As AI agents began to gain real operational capability over development environments, I started to notice a recurring pattern: probabilistic models being given levels of autonomy that, in my view, were not compatible with the risks involved. From that observation came a simple but fundamental question: who governs whom? It was while trying to answer that question that the project's central thesis was born and, later, its technical implementation.">
+          Foi justamente essa linha de raciocínio que me levou ao Nemesis. Conforme agentes de IA passaram a ganhar
+          capacidade operacional real sobre ambientes de desenvolvimento, comecei a observar um padrão recorrente:
+          modelos probabilísticos recebendo níveis de autonomia que, na minha visão, não eram compatíveis com os riscos
+          envolvidos. A partir dessa observação surgiu uma pergunta simples, mas fundamental: quem governa quem? Foi
+          tentando responder essa pergunta que nasceu a tese central do projeto e, posteriormente, sua implementação
+          técnica.
+        </p>
+
+        <p data-pt="O Nemesis Defender não surgiu de uma oportunidade comercial nem de uma tendência de mercado. Surgiu da tentativa de resolver um problema que eu observava diariamente. Durante aproximadamente um ano e meio, dediquei meu tempo ao estudo de segurança, modelagem de ameaças, arquitetura de sistemas, Rust, eBPF, governança de agentes e validação adversarial. Cada nova vulnerabilidade, CVE, técnica de evasão ou incidente envolvendo agentes autônomos passou a ser analisado não apenas como notícia, mas como uma oportunidade de aprendizado e evolução do sistema."
+          data-en="Nemesis Defender did not emerge from a commercial opportunity nor from a market trend. It emerged from the attempt to solve a problem I observed every day. For roughly a year and a half, I devoted my time to the study of security, threat modeling, systems architecture, Rust, eBPF, agent governance and adversarial validation. Every new vulnerability, CVE, evasion technique or incident involving autonomous agents became not just news, but an opportunity to learn and evolve the system.">
+          O Nemesis Defender não surgiu de uma oportunidade comercial nem de uma tendência de mercado. Surgiu da tentativa
+          de resolver um problema que eu observava diariamente. Durante aproximadamente um ano e meio, dediquei meu tempo
+          ao estudo de segurança, modelagem de ameaças, arquitetura de sistemas, Rust, eBPF, governança de agentes e
+          validação adversarial. Cada nova vulnerabilidade, CVE, técnica de evasão ou incidente envolvendo agentes
+          autônomos passou a ser analisado não apenas como notícia, mas como uma oportunidade de aprendizado e evolução
+          do sistema.
+        </p>
+
+        <p data-pt="Concebi, arquitetei, implementei, documentei, testei e validei o Nemesis de forma independente. Utilizei extensivamente ferramentas de IA durante esse processo, principalmente Claude Code (Sonnet e Opus), além de outros modelos de apoio. Entretanto, arquitetura, modelagem de ameaças, critérios de aceitação, validações, direção estratégica e responsabilidade final permaneceram sempre sob meu controle. Tenho total transparência sobre isso porque não vejo contradição alguma: o próprio processo de desenvolvimento acabou se tornando uma demonstração prática daquilo que o projeto defende. Sistemas inteligentes podem ampliar significativamente nossas capacidades, mas governança, responsabilidade e autoridade continuam sendo responsabilidades humanas."
+          data-en="I conceived, architected, implemented, documented, tested and validated Nemesis independently. I made extensive use of AI tools during this process, primarily Claude Code (Sonnet and Opus), along with other supporting models. However, architecture, threat modeling, acceptance criteria, validations, strategic direction and final responsibility always remained under my control. I am fully transparent about this because I see no contradiction at all: the development process itself became a practical demonstration of what the project advocates. Intelligent systems can significantly amplify our capabilities, but governance, responsibility and authority remain human responsibilities.">
+          Concebi, arquitetei, implementei, documentei, testei e validei o Nemesis de forma independente. Utilizei
+          extensivamente ferramentas de IA durante esse processo, principalmente Claude Code (Sonnet e Opus), além de
+          outros modelos de apoio. Entretanto, arquitetura, modelagem de ameaças, critérios de aceitação, validações,
+          direção estratégica e responsabilidade final permaneceram sempre sob meu controle. Tenho total transparência
+          sobre isso porque não vejo contradição alguma: o próprio processo de desenvolvimento acabou se tornando uma
+          demonstração prática daquilo que o projeto defende. Sistemas inteligentes podem ampliar significativamente
+          nossas capacidades, mas governança, responsabilidade e autoridade continuam sendo responsabilidades humanas.
         </p>
       </section>
 
