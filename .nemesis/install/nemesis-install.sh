@@ -92,6 +92,20 @@ chmod +x .nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh 2>/dev
 rm -f .nemesis/logs/violations.log .nemesis/logs/*.log logs/violations.log 2>/dev/null || true
 say "Binários instalados em .nemesis/bin/"
 
+# ── 5.0 Entregar o desinstalador ─────────────────────────────────────────────
+# O tarball traz só binários + pentest-control; o uninstall NÃO vem nele. Baixamos
+# para .nemesis/install/ para que 'bash .nemesis/install/nemesis-uninstall.sh' funcione
+# conforme a documentação. Se a rede falhar aqui, a desinstalação self-contained
+# (curl) descrita em info-install.txt continua funcionando.
+mkdir -p .nemesis/install
+if curl -fsSL "https://raw.githubusercontent.com/$REPO/main/.nemesis/install/nemesis-uninstall.sh" \
+     -o .nemesis/install/nemesis-uninstall.sh 2>/dev/null; then
+  chmod +x .nemesis/install/nemesis-uninstall.sh 2>/dev/null || true
+  say "Desinstalador disponível: .nemesis/install/nemesis-uninstall.sh"
+else
+  warn "Não baixei o desinstalador agora; use a desinstalação self-contained (curl) de info-install.txt."
+fi
+
 # ── 5.1 Denylists de BLOQUEIO: EMBUTIDAS no binário (tamper-proof) — NÃO expostas ────────────
 # As regras de bloqueio (deny-list*.json + denylist-folder-files.json) são compiladas no binário
 # (include_str!). Defensivo p/ tarballs antigos: remove qualquer cópia no disco e elimina a pasta

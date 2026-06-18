@@ -111,11 +111,20 @@ DUAS CAMADAS, DUAS ALLOWLISTS (importante p/ Linux):
 -------------------------------------------------------------------------------
  DESINSTALACAO
 -------------------------------------------------------------------------------
-Para remover o Nemesis deste projeto, rode na RAIZ, no terminal nativo:
+Para remover o Nemesis deste projeto, rode na RAIZ, no terminal nativo.
+
+Self-contained (funciona em QUALQUER instalacao - baixa o script e roda):
+
+  curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
+    && bash nemesis-uninstall.sh
+
+  # sem confirmacao interativa:
+  curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
+    && NEMESIS_YES=1 bash nemesis-uninstall.sh
+
+O instalador tambem deixa uma copia local; se ela existir, basta:
 
   bash .nemesis/install/nemesis-uninstall.sh
-  # sem confirmacao interativa:
-  NEMESIS_YES=1 bash .nemesis/install/nemesis-uninstall.sh
 
 O script para o daemon, desabilita o servico eBPF (se instalado, opt-in), remove
 os hooks de IDE que apontam para o Nemesis (e AVISA sobre os compartilhados, como

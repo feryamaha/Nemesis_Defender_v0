@@ -640,13 +640,19 @@ O loader do eBPF **remove** esses comandos do bloqueio ao subir o daemon (recarr
 
 ## Desinstalação
 
-Rode na **raiz do projeto**, no seu **terminal nativo** (o script reverte o `nemesis-install.sh`):
+Rode na **raiz do projeto**, no seu **terminal nativo** (o script reverte o `nemesis-install.sh`).
+
+Versão **self-contained** (funciona em qualquer instalação — baixa o script e roda, espelhando o install):
 
 ```bash
-bash .nemesis/install/nemesis-uninstall.sh
+curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
+  && bash nemesis-uninstall.sh
 # sem confirmação interativa:
-NEMESIS_YES=1 bash .nemesis/install/nemesis-uninstall.sh
+curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
+  && NEMESIS_YES=1 bash nemesis-uninstall.sh
 ```
+
+O instalador também deixa uma cópia local — se ela existir, basta `bash .nemesis/install/nemesis-uninstall.sh`.
 
 O script: para o daemon; desabilita o serviço eBPF (se você o instalou, opt-in); remove os hooks de IDE que apontam para o Nemesis (arquivos só-dele) e **avisa** sobre os compartilhados (`.claude/settings.json`, `.vscode/settings.json`) para você remover a entrada à mão preservando o resto; e remove a pasta `.nemesis/` (binários, daemon, **sua allowlist** e logs). **Git é seu** — nada é commitado/removido do versionamento; revise com `git status`. Reinicie a IDE depois.
 
