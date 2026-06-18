@@ -44,19 +44,28 @@ if [ -f .nemesis/ebpf-kernel/install-service.sh ]; then
     || warn "Se você instalou o serviço eBPF, remova-o manualmente (sudo systemctl disable --now nemesis-ebpf)."
 fi
 
-# ── 3. Remover hooks de IDE que apontam para o Nemesis ───────────────────────
-# Arquivos criados 100% pelo Nemesis: remove se referenciarem 'nemesis'.
+# ── 3. Remover hooks de IDE criados pelo Nemesis ─────────────────────────────
+# Detecta a "assinatura" do Nemesis: referência ao binário do hook ou ao .nemesis/bin.
+# (Importante: arquivos com hook quebrado fazem a IDE/TUI reclamar a cada sessão.)
+NEM_REF='nemesis-pretool\|nemesis-posttool\|\.nemesis/bin\|chat.hookFilesLocations'
+
+# 3a. Arquivos de hook que o install cria 100% para o Nemesis → remove direto.
 for f in .codex/hooks.json .cursor/hooks.json .devin/hooks.json \
          .gemini/hooks.json .agents/hooks.json \
          .github/hooks/nemesis-pretool-hook.json; do
-  if [ -f "$f" ] && grep -q "nemesis" "$f" 2>/dev/null; then
+  if [ -f "$f" ] && grep -q "$NEM_REF" "$f" 2>/dev/null; then
     rm -f "$f" && say "Hook removido: $f"
   fi
 done
-# Arquivos COMPARTILHADOS (podem ter config sua): NÃO apaga — só avisa.
+# Remove a pasta .github/hooks se ficou vazia (era só do Nemesis).
+rmdir .github/hooks 2>/dev/null || true
+
+# 3b. settings COMPARTILHADOS (podem conter SUA config): NÃO apaga automaticamente.
+# Apagar config sua seria pior que avisar — então listamos para você remover à mão.
+shared_left=""
 for f in .claude/settings.json .openclaude/settings.json .vscode/settings.json; do
-  if [ -f "$f" ] && grep -q "nemesis" "$f" 2>/dev/null; then
-    warn "Edite à mão p/ remover a entrada de hook do Nemesis (preservando o resto): $f"
+  if [ -f "$f" ] && grep -q "$NEM_REF" "$f" 2>/dev/null; then
+    shared_left="$shared_left $f"
   fi
 done
 
@@ -66,8 +75,38 @@ rm -rf .nemesis && ok "Pasta .nemesis/ removida."
 hr
 ok "NEMESIS REMOVIDO deste projeto."
 hr
+
+# ── 5. CHECKLIST FINAL — confirme que nada ficou rodando ou órfão ────────────
+echo
+say "CHECKLIST FINAL (confirme que não sobrou resíduo):"
+echo
+
+if [ -n "$shared_left" ]; then
+  warn "Settings COMPARTILHADOS ainda têm entrada do Nemesis — remova a entrada À MÃO (preserve o resto):"
+  for f in $shared_left; do printf '          - %s\n' "$f"; done
+  echo
+fi
+
 cat <<'EOF'
-  - Reinicie a IDE para os hooks pararem de carregar.
-  - Git: nada foi commitado/removido do versionamento (git é exclusivamente seu).
-    Revise com 'git status' e remova o que quiser do controle de versão.
+  [1] Procurar QUALQUER resquício de hook do Nemesis (o ideal é não retornar nada):
+        grep -rIl 'nemesis-pretool\|nemesis-posttool\|\.nemesis/bin\|chat.hookFilesLocations' \
+          .claude .openclaude .codex .cursor .devin .gemini .agents .github .vscode 2>/dev/null
+      Se listar algum arquivo, edite/remova a entrada do Nemesis nele (manualmente).
+
+  [2] Confirmar que o daemon NÃO está mais rodando:
+        pgrep -fl nemesis-defender        # vazio = ok
+      Se aparecer um PID, finalize:
+        pkill -f nemesis-defender
+
+  [3] (Linux, só se você ativou o eBPF opt-in) confirmar que o serviço de kernel parou:
+        systemctl is-active nemesis-ebpf  # inactive/failed = ok
+      Se ainda estiver ativo:
+        sudo systemctl disable --now nemesis-ebpf
+
+  [4] Reinicie a IDE para ela parar de carregar os hooks.
+      Git é seu: nada foi commitado/removido do versionamento (revise com 'git status').
 EOF
+echo
+say "Deu algum problema na desinstalação? Me escreva: feryamaha@hotmail.com — eu dou suporte."
+say "E se puder, conte o MOTIVO do uninstall: feedback positivo ou negativo me ajuda muito."
+hr

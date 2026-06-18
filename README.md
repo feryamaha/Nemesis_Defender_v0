@@ -34,6 +34,7 @@ As regras de **bloqueio são embutidas no binário** (tamper-proof): o agente n�
 - [Vetores de ataque cobertos](#vetores-de-ataque-cobertos-18)
 - [Requisitos](#requisitos)
 - [Instalação](#instalação)
+- [Desinstalação](#desinstalação)
 - [Nemesis Doctor](#nemesis-doctor)
 - [Configuração do Pretool por IDE](#configuração-do-pretool-por-ide)
 - [Configuração da camada eBPF (Linux)](#configuração-da-camada-ebpf-linux)
@@ -41,7 +42,6 @@ As regras de **bloqueio são embutidas no binário** (tamper-proof): o agente n�
 - [Uso no dia a dia](#uso-no-dia-a-dia)
 - [Verificação e diagnóstico](#verificação-e-diagnóstico)
 - [Relaxar ou customizar regras](#relaxar-ou-customizar-regras)
-- [Desinstalação](#desinstalação)
 - [Solução de problemas](#solução-de-problemas)
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Contribuição](#contribuição)
@@ -177,7 +177,7 @@ Baixa os binários do **GitHub Release**, **verifica o checksum SHA256** e insta
 
 Um único comando baixa o instalador **e** o guia (`info-install.txt`) e já instala. O arquivo vai para o disco antes de rodar (auditável) — **não** é o pipe cego `curl … | sh`, que o Nemesis bloqueia como vetor de ataque. Copie o bloco inteiro:
 
-## A partir da RAIZ do seu projeto:
+**A partir da RAIZ do seu projeto:**
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-install.sh \
      -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/info-install.txt \
@@ -221,8 +221,8 @@ O **doctor** (passo 4) imprime, em cada verificação que falha, a **ação exat
 
 Necessário para a camada **eBPF** ou para **contribuir**.
 
-# Binários gerados em .nemesis/target/release/
 ```bash
+# Binários gerados em .nemesis/target/release/
 git clone https://github.com/feryamaha/Nemesis_Defender_v0.git
 cd Nemesis_Defender_v0/.nemesis
 cargo build --release --workspace
@@ -241,6 +241,64 @@ Este é o passo que efetivamente liga o Nemesis. Cada IDE tem seu formato - ver 
 > **Caminho errado ou ausente = o Nemesis não roda.** A IDE simplesmente não invoca o hook, e você fica desprotegido sem perceber. Sempre confirme que o caminho no `command` aponta para o binário real (`nemesis-pretool-check-unix`) no seu projeto.
 
 > **Manual de operações unificado:** para instruções completas de compilação por módulo, configuração do eBPF, operação do daemon, pentest e checklist de instalação em nova máquina, consulte [`.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md`](.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md).
+
+---
+
+## Desinstalação
+
+Rode na **raiz do projeto**, no seu **terminal nativo**. O script reverte o `nemesis-install.sh`: para o daemon, desabilita o serviço eBPF (se você ativou, opt-in), remove os hooks de IDE criados pelo Nemesis e a pasta `.nemesis/`, e imprime um **checklist final** para você confirmar que não sobrou nada.
+
+**Self-contained** (funciona em qualquer instalação — baixa o script e roda, espelhando o install):
+
+## com confirmação interativa:
+```bash
+curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
+  && bash nemesis-uninstall.sh
+```
+
+# sem confirmação interativa:
+```bash
+curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
+  && NEMESIS_YES=1 bash nemesis-uninstall.sh
+```
+
+O instalador também deixa uma cópia local; se ela existir, basta :
+```bash
+bash .nemesis/install/nemesis-uninstall.sh.
+```
+
+**O que é automático e o que é manual.** O script remove com segurança os arquivos de hook que são **só do Nemesis** (`.codex`/`.cursor`/`.devin`/`.gemini`/`.agents/hooks.json` e `.github/hooks/`). Os settings **compartilhados** (`.claude/settings.json`, `.openclaude/settings.json`, `.vscode/settings.json`) podem conter **configuração sua**, então ele **não os apaga** — apenas os **lista** para você tirar a entrada do Nemesis à mão (preservando o resto). É importante limpar isso: um hook órfão apontando para um binário que não existe mais faz a IDE/TUI reclamar a cada sessão.
+
+O **checklist final** ainda te dá os comandos para confirmar que nada ficou rodando ou órfão:
+
+## procurar QUALQUER resquício de hook do Nemesis (ideal: nada):
+
+```bash
+grep -rIl 'nemesis-pretool\|nemesis-posttool\|\.nemesis/bin\|chat.hookFilesLocations' \
+  .claude .openclaude .codex .cursor .devin .gemini .agents .github .vscode 2>/dev/null
+```
+## para confirmar que o daemon parou (vazio = ok) e, se preciso, finalizar:
+```bash
+pgrep -fl nemesis-defender
+```
+## para desativar o PID do nemesis-defender
+```bash
+pkill -f nemesis-defender
+```
+
+## (Linux, só se ativou o eBPF opt-in) confirmar/parar o serviço de kernel:
+```bash
+systemctl is-active nemesis-ebpf
+```
+
+## para desativar o ebpf
+```bash
+sudo systemctl disable --now nemesis-ebpf
+```
+
+Reinicie a IDE depois para ela parar de carregar os hooks e apague manualmente qualquer resíduo restante.
+
+> 💬 **Um pedido.** Se você desinstalar, me mande um email contando o **motivo** — feedback positivo ou negativo é muito valioso para o projeto. E se algo der errado na desinstalação, escreva também: **feryamaha@hotmail.com** (eu dou suporte).
 
 ---
 
@@ -638,36 +696,6 @@ O loader do eBPF **remove** esses comandos do bloqueio ao subir o daemon (recarr
 
 ---
 
-## Desinstalação
-
-Rode na **raiz do projeto**, no seu **terminal nativo** (o script reverte o `nemesis-install.sh`).
-
-Versão **self-contained** (funciona em qualquer instalação — baixa o script e roda, espelhando o install):
-
-## com confirmação interativa:
-```bash
-curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
-  && bash nemesis-uninstall.sh
-```
-
-## sem confirmação interativa:
-```bash
-curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
-  && NEMESIS_YES=1 bash nemesis-uninstall.sh
-```
-## Observação do uninstall:
-O instalador também deixa uma cópia local — se ela existir, basta rodar ou deletar manualmente:
-
-```bash
-bash .nemesis/install/nemesis-uninstall.sh
-```
-
-## Observações:
-- Caso opte por desinstalar eu gostaria muito que me envia-se um email me informando o motivo porque sua opiniao seja positiva ou negativa é muito importante! 
-
-O script: para o daemon; desabilita o serviço eBPF (se você o instalou, opt-in); remove os hooks de IDE que apontam para o Nemesis (arquivos só-dele) e **avisa** sobre os compartilhados (`.claude/settings.json`, `.vscode/settings.json`) para você remover a entrada à mão preservando o resto; e remove a pasta `.nemesis/` (binários, daemon, **sua allowlist** e logs). **Git é seu** — nada é commitado/removido do versionamento; revise com `git status`. Reinicie a IDE depois.
-
----
 
 ## Solução de problemas
 
