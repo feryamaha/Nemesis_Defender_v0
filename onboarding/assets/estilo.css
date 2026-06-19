@@ -53,6 +53,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .topbar {
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; gap: 16px;
+  flex-wrap: wrap; row-gap: 6px;
   padding: 12px 22px;
   background: rgba(7,9,15,.86);
   backdrop-filter: blur(10px);
@@ -263,3 +264,60 @@ figcaption { font-size: 12px; color: var(--txt-2); text-align: center; margin-to
 .skip-link { position: absolute; left: -999px; }
 .skip-link:focus { left: 12px; top: 10px; background: var(--cyan); color: #04201d; padding: 8px 14px; border-radius: 6px; z-index: 100; }
 hr { border: none; border-top: 1px solid var(--border-soft); margin: 30px 0; }
+
+/* ---------- Mídia / imagens ---------- */
+img { max-width: 100%; height: auto; }
+
+/* Banner reutilizável (autor + Nemesis) */
+.banner {
+  margin: 0 0 22px; border: 1px solid var(--border); border-radius: 14px;
+  overflow: hidden; background: var(--bg-1);
+}
+.banner img { display: block; width: 100%; height: auto; }
+.banner figcaption { padding: 8px 14px 12px; text-align: left; }
+
+/* Quebra de palavras longas (paths/código em células e texto) */
+td, th { overflow-wrap: anywhere; word-break: break-word; }
+.tile .desc, .lede, p { overflow-wrap: anywhere; }
+
+/* ============================================================
+   RESPONSIVIDADE — garante uso em qualquer dispositivo
+   ============================================================ */
+
+/* Evita scroll horizontal acidental sem quebrar position:sticky (overflow-x:hidden no body
+   criaria scroll container e mataria o sticky do topbar/TOC). As fontes reais de overflow
+   já são tratadas: tabelas roláveis, img max-width, overflow-wrap em texto/código. */
+body { max-width: 100%; }
+
+/* Grid de tiles: nunca estoura em telas estreitas */
+.grid { grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
+
+/* Tablets e telas médias */
+@media (max-width: 760px) {
+  body { font-size: 15px; }
+  .wrap { padding: 18px 14px 70px; }
+  .hero { padding: 22px 18px; border-radius: 12px; }
+  h1 { font-size: clamp(22px, 7vw, 30px); }
+  h2 { font-size: 20px; }
+  /* Tabelas largas viram blocos roláveis horizontalmente (não empurram a página) */
+  table { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  /* Paginação empilha */
+  .pager { flex-direction: column; }
+  .pager a.next { text-align: left; }
+  /* Diagramas continuam roláveis no container */
+  .diagram { padding: 8px; }
+}
+
+/* Celulares pequenos */
+@media (max-width: 460px) {
+  .topbar { padding: 10px 14px; gap: 10px; }
+  .topbar nav { gap: 10px; font-size: 13px; }
+  .stat { min-width: 0; flex: 1 1 calc(50% - 12px); }
+  pre { font-size: 12.5px; }
+  .deftag { white-space: normal; }
+}
+
+/* Acessibilidade: respeita quem prefere menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; }
+}
