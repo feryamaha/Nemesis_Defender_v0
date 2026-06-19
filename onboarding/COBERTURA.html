@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matriz de cobertura — Nemesis</title>
+<link rel="stylesheet" href="assets/estilo.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Pular para o conteúdo</a>
+<header class="topbar">
+  <span class="brand">NEMESIS · <b>material de estudo</b></span><span class="spacer"></span>
+  <nav aria-label="Navegação principal"><a href="index.html">Início</a><a href="competencias.html">Competências</a><a href="COBERTURA.html">Cobertura</a><a href="RELATORIO.html">Relatório</a></nav>
+</header>
+<div class="wrap"><div class="layout with-toc"><main id="main">
+  <p class="crumb"><a href="index.html">Início</a><span class="sep">/</span>Cobertura</p>
+  <span class="deftag">conceito → arquivo-fonte → página</span>
+  <h1>Matriz de cobertura</h1>
+  <p class="lede">Mapa de cada conceito obrigatório para o arquivo-fonte que o evidencia e a página que o explica. Lacunas e sutilezas forenses estão marcadas com honestidade.</p>
+
+  <p><span class="pill ok">✓ no código</span> <span class="pill cy">parcial / sutileza</span> <span class="pill b">nome de sinal, não arquivo</span></p>
+
+  <h2>SO e baixo nível</h2>
+  <table>
+    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
+    <tr><td>exit codes / exit 2</td><td>hooks/nemesis-pretool-check-unix.rs:193; main.rs:170</td><td><a href="conceitos/10-exit-codes-exit2.html">10</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>POSIX, processos, syscalls, stdio</td><td>main.rs:106-138; pretool:1037</td><td><a href="conceitos/11-posix-processos-syscalls.html">11</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>kernel vs userspace; bprm_check_security</td><td>ebpf/nemesis-block.bpf.c:69-138</td><td><a href="conceitos/12-kernel-userspace-bprm.html">12</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>eBPF: verifier, mapas, BPF-LSM</td><td>nemesis-block.bpf.c:20-64; egress.rs</td><td><a href="conceitos/13-ebpf-verifier-mapas.html">13</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>LSM e hooks lsm/*</td><td>nemesis-block.bpf.c:69,173</td><td><a href="conceitos/14-lsm-hooks.html">14</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>capabilities, cgroups v2, Landlock</td><td>landlock.rs:14-40; bpf.c:84-94; seccomp.rs</td><td><a href="conceitos/15-capabilities-cgroups-landlock.html">15</a></td><td><span class="pill cy">cgroups: via cgroup_id; capabilities: implícito</span></td></tr>
+    <tr><td>sockets, egress allowlist, C2</td><td>egress.rs; bpf.c:173-224; egress.toml</td><td><a href="conceitos/16-sockets-egress-c2.html">16</a></td><td><span class="pill ok">✓</span></td></tr>
+  </table>
+
+  <h2>Rust</h2>
+  <table>
+    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
+    <tr><td>workspace e Cargo.lock commitado</td><td>Cargo.toml:1-8; self-audit.yml:49-56</td><td><a href="conceitos/20-workspace-cargo-lock.html">20</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>ownership/borrowing; Result/Option</td><td>decoder.rs:315-339; main.rs:149</td><td><a href="conceitos/21-ownership-result-option.html">21</a></td><td><span class="pill cy">ownership: explicado, evidência indireta</span></td></tr>
+    <tr><td>panic para fail-closed</td><td>nemesis-pretool-check-unix.rs:861-879</td><td><a href="conceitos/22-panic-fail-closed.html">22</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>regex linear / ReDoS</td><td>Cargo.toml (regex); exfil_chain.rs:85</td><td><a href="conceitos/23-regex-linear-redos.html">23</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>performance e determinismo</td><td>scanner/mod.rs:3-9; decoder.rs:22-28</td><td><a href="conceitos/24-performance-determinismo.html">24</a></td><td><span class="pill ok">✓</span></td></tr>
+  </table>
+
+  <h2>Análise de código</h2>
+  <table>
+    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
+    <tr><td>AST, tree-sitter, Visitor</td><td>ast_scanner.rs:63-86; visitors/mod.rs</td><td><a href="conceitos/30-ast-treesitter-visitor.html">30</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>pipeline de camadas</td><td>lib.rs:248-295</td><td><a href="conceitos/31-pipeline-6-camadas.html">31</a></td><td><span class="pill cy">cabeçalho diz 6, execução tem 8 chamadas</span></td></tr>
+    <tr><td>entropia de Shannon</td><td>entropy.rs:19-40</td><td><a href="conceitos/32-entropia-shannon.html">32</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>taint tracking / data-flow</td><td>taint_tracker.rs:243-327</td><td><a href="conceitos/33-taint-tracking-dataflow.html">33</a></td><td><span class="pill ok">✓</span></td></tr>
+  </table>
+
+  <h2>Segurança de IA / agentic</h2>
+  <table>
+    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
+    <tr><td>agentes LLM e hooks pretool/posttool</td><td>pretool:312-347; Cargo.toml [[bin]]</td><td><a href="conceitos/40-agentes-hooks-pretool.html">40</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>probabilístico vs determinístico</td><td>lib.rs:420-443</td><td><a href="conceitos/41-probabilistico-vs-deterministico.html">41</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>prompt injection / IDE poisoning</td><td>prompt_injection.rs; ide_config_poisoning.rs:158-206</td><td><a href="conceitos/42-prompt-injection-ide-poisoning.html">42</a></td><td><span class="pill ok">✓</span></td></tr>
+  </table>
+
+  <h2>Código malicioso / supply-chain</h2>
+  <table>
+    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
+    <tr><td>decode→exec, execução dinâmica</td><td>decoder.rs:200-217; visitors/decode_exec.rs; dynamic_cmd.rs</td><td><a href="conceitos/50-decode-exec-reverse-shell.html">50</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>reverse shell multi-runtime</td><td>lib.rs:387 (CONFIRMATORY)</td><td><a href="conceitos/50-decode-exec-reverse-shell.html">50</a></td><td><span class="pill b">sinal <code>reverse_shell</code>, sem arquivo de visitor próprio</span></td></tr>
+    <tr><td>self-clean, time-gated, Unicode steg</td><td>self_clean.rs; time_gated.rs; byte_scanner.rs:20-98; unicode_steg.rs</td><td><a href="conceitos/51-self-clean-time-gated-unicode-steg.html">51</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>manifests, typosquat, registry redirect, lockfiles</td><td>manifest_scanner.rs; manifest_abuse.rs; lib.rs:395-396</td><td><a href="conceitos/52-manifests-typosquat-lockfiles.html">52</a></td><td><span class="pill cy">typosquat/lockfile: cobertos no scanner; registry_redirect é nome de sinal</span></td></tr>
+    <tr><td>credential harvest e exfil chain</td><td>credential_harvest.rs; exfil_chain.rs:193-247</td><td><a href="conceitos/53-credential-harvest-exfil.html">53</a></td><td><span class="pill ok">✓</span></td></tr>
+  </table>
+
+  <h2>Arquitetura de defesa / processo</h2>
+  <table>
+    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
+    <tr><td>defense-in-depth; eBPF como backstop</td><td>pretool:945-981; lib.rs:216-232</td><td><a href="conceitos/60-defense-in-depth.html">60</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>severidade, corroboração, quarentena, reversibilidade</td><td>lib.rs:382-443; quarantine.rs:1-11</td><td><a href="conceitos/61-severidade-corroboracao-quarentena.html">61</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>threat modeling, não-objetivos, limitações</td><td>self-audit.yml:10-17; AGENTS.md §2</td><td><a href="conceitos/62-threat-model-limitacoes.html">62</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td>DevSecOps: SLSA, self-audit, CODEOWNERS, regras embutidas</td><td>self-audit.yml; release.yml; pretool:711-721; CODEOWNERS</td><td><a href="conceitos/63-devsecops-slsa-selfaudit.html">63</a></td><td><span class="pill cy">SLSA: declarado no release.yml (não citado linha a linha)</span></td></tr>
+    <tr><td>nemesis-doctor (G1–G7)</td><td>nemesis-doctor/src/main.rs; checks/mod.rs:3-9</td><td><a href="conceitos/64-nemesis-doctor.html">64</a></td><td><span class="pill cy">G1/G2/G7 nomeados; G3–G6 mapeados por módulo</span></td></tr>
+    <tr><td>red-teaming adversarial</td><td>run-pentest.sh; self-audit.yml:85-89; tests/</td><td><a href="conceitos/65-red-teaming.html">65</a></td><td><span class="pill ok">✓</span></td></tr>
+  </table>
+
+  <h2>Lacunas e notas de honestidade</h2>
+  <ul>
+    <li><strong>"18 visitors" do enunciado:</strong> o código tem <strong>15</strong> arquivos de visitor. Nomes como <code>reverse_shell</code> e <code>manifest_registry_redirect</code> são <em>sinais emitidos</em> (em regex/decoder/manifest_scanner), não arquivos de visitor.</li>
+    <li><strong>kubernetes_escape / mount_api_abuse / llm_output_injection:</strong> citados no enunciado, <strong>não encontrados</strong> como visitors no código atual.</li>
+    <li><strong>Ordem do pipeline:</strong> o comentário de <code>scanner/mod.rs</code> diverge da execução real em <code>lib.rs</code>; a matriz e a página 31 seguem o código.</li>
+    <li><strong>SLSA:</strong> a atestação está no fluxo de release; este material a descreve conceitualmente e aponta o arquivo, sem fixar linhas que possam defasar.</li>
+    <li><strong>Números de pentest:</strong> não fixados (auto-detectados pelo script); a página 65 explica o porquê.</li>
+  </ul>
+
+  <nav class="pager" aria-label="Navegação entre páginas">
+    <a class="prev" href="competencias.html"><span class="lbl">Anterior</span><span class="ttl">Competências</span></a>
+    <a class="next" href="RELATORIO.html"><span class="lbl">Próximo</span><span class="ttl">Relatório técnico</span></a>
+  </nav>
+  <div class="foot"><p><a href="index.html">Voltar ao índice</a>.</p></div>
+</main>
+<aside class="toc" aria-label="Sumário da página"><div class="t">Nesta página</div><nav id="toc-list"></nav></aside>
+</div></div>
+<script src="assets/nav.js"></script>
+</body>
+</html>
