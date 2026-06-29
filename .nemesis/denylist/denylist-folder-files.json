@@ -39,6 +39,9 @@
     ],
     "allowed_exceptions": ["/src/"]
   },
+  "read_allowed": [
+    ".nemesis/pentest-nemesis-control/"
+  ],
   "write_block": {
     "description": "Bloqueio de escrita/edição - leitura permitida",
     "files": [
@@ -77,7 +80,8 @@
     "paths": [
       "install.sh",
       "nemesis-install.sh",
-      ".nemesis/forensics/"
+      ".nemesis/forensics/",
+      ".claude/settings.local.json"
     ]
   }
 }

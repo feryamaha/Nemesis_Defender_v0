@@ -51,7 +51,8 @@ git diff HEAD
 
 ### Step 3: Gerar Conteudo da PR
 
-Construir PR a partir de dados reais (git diff, stat, log):
+Construir PR a partir de dados reais (git diff, stat, log). A PR DEVE conter todas as secoes
+abaixo, na ordem exata, incluindo a **CLI Table** com comandos, resultados e observacoes:
 
 ```markdown
 # PR_NNN: [Titulo Descritivo da Entrega]
@@ -83,18 +84,63 @@ Construir PR a partir de dados reais (git diff, stat, log):
 
 ## Notas Adicionais
 [Contexto adicional se relevante]
+
+## CLI Table
+
+> **IMPORTANTE**: A CLI Table contem APENAS comandos de VALIDACAO do projeto (cargo check,
+> cargo test, pentest, build, etc). NUNCA inclua comandos de analise como `git diff`,
+> `git log`, `git status` ou similares. Esses sao ferramentas internas para coletar evidencias,
+> nao validacoes do projeto.
+
+| Command | Result (OK/FAIL) | Observations |
+|---------|------------------|--------------|
+| `cargo check --workspace` | OK | Compilacao Rust valida |
+| `cargo test --workspace` | OK | Testes passam |
+| Pentest estatico | OK | 224/224 PASS (100%) |
+| Pentest full live | OK | 74/74, 0 gaps, AUTOSSUFICIENTE |
 ```
+
+### Exemplo de PR Preenchida (stub de referencia)
+
+```markdown
+# Adicao do pacote widget-accessibility
+
+## Objetivo
+Corrigir erro de modulo nao encontrado no componente AccessibilityWidget adicionando a dependencia widget-accessibility que quebrou o deploy apos a ultima PR 105.
+
+## Arquivos Afetados
+- `package.json` [modificado]
+- `bun.lock` [modificado]
+- `next-env.d.ts` [modificado]
+
+## Melhorias Implementadas
+### Dependencias
+- `package.json`: Adicionado widget-accessibility@^2.0.1 as dependencias do projeto
+- `bun.lock`: Atualizado lockfile com a nova dependencia
+- `next-env.d.ts`: Regenerado apos build
+
+## Beneficios
+- **Correcao de bug**: Resolve o erro "Module not found: Can't resolve 'widget-accessibility'" que impedia o build
+- **Funcionalidade**: O componente AccessibilityWidget agora pode carregar o modulo de acessibilidade corretamente
+
+## CLI Table
+
+| Command | Result (OK/FAIL) | Observations |
+|---------|------------------|--------------|
+| bun build | OK | Build success |
+| Pentest estatico | OK | 224/224 PASS (100%) |
+| Pentest full live | OK | 74/74, 0 gaps, AUTOSSUFICIENTE |
+```
+
+> **IMPORTANTE**: O stub acima e um EXEMPLO de como a PR deve ficar preenchida. Substitua todos
+> os valores pelos dados reais do seu git diff. NAO copie o stub literalmente. Siga a estrutura:
+> titulo com colon, secoes na ordem exata, um `### Arquivo:` por arquivo significativo, output
+> exato de `git diff --stat` em bloco de codigo, criterios de aceitacao com checkboxes marcados,
+> e **sempre** inclua a **CLI Table** com comandos, resultados (OK/FAIL) e observacoes.
 
 ### Step 4: Apresentar PR para Review
 
-**HARD-GATE**: Apresentar PR completa. BLOQUEAR ate resposta de Fernando.
-
-Tabela de validacao:
-| Comando | Resultado | Observacoes |
-|---------|-----------|-------------|
-| `cargo check --workspace` | PASS | Compilacao Rust valida |
-| `cargo test --workspace` | PASS | Testes passam |
-| `git diff --stat` | [Numero de files] | Escopo correto |
+**HARD-GATE**: Apresentar PR completa (incluindo CLI Table). BLOQUEAR ate resposta de Fernando.
 
 Perguntar:
 ```
@@ -108,8 +154,17 @@ Respostas validas: "sim", "pode", "aprovado", "ok", "prossiga"
 Apos aprovacao, salvar em:
 ```
 Feature-Documentation/PR/PR_NNN_nome-descritivo.md
-Numero: auto-increment a partir de PRs existentes (001, 002, ...)
 ```
+
+**Antes de gravar**: listar o conteudo de `Feature-Documentation/PR/` para determinar o
+proximo numero sequencial. NUNCA assumir um numero sem verificar. NUNCA criar numero
+repetido ou errado. O numero deve ser exatamente o proximo na sequencia das PRs existentes.
+
+Exemplo:
+```bash
+ls Feature-Documentation/PR/
+```
+Se existem PR_001 e PR_002, a proxima sera PR_003. Se a pasta esta vazia, a primeira sera PR_001.
 
 Arquivo markdown contendo PR completa aprovada.
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-O Nemesis SDD Pipeline e um workflow sequencial de 5 skills que governa o desenvolvimento
+O Nemesis SDD Pipeline e um workflow sequencial de 7 skills que governa o desenvolvimento
 do Nemesis Framework v2.0 Rust de forma deterministica e auditavel.
 
 Cada skill tem um proposito claro, um HARD-GATE de aprovacao, e integra-se ao proximo skill.
@@ -17,6 +17,20 @@ Cada skill tem um proposito claro, um HARD-GATE de aprovacao, e integra-se ao pr
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Skill 1: nemesis-specification-design                       │
+│ OUTPUT: Especificacao tecnica gerada (nao gravada ainda)    │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Skill 0: nemesis-critical-analysis (PONTO 1: Pre-Spec)      │
+│ VALIDACAO: Analise critica da spec antes de gravar          │
+│ OUTPUT: PROSSEGUIR (gravar spec) ou REJEITAR (ajustar)      │
+│ HARD-GATE: Veredito PROSSEGUIR para gravar spec             │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Skill 1: nemesis-specification-design (gravacao)            │
 │ OUTPUT: SPEC aprovada em Feature-Documentation/SPECS/       │
 │ HARD-GATE: Fernando aprova especificacao                    │
 └────────────────────┬────────────────────────────────────────┘
@@ -39,11 +53,30 @@ Cada skill tem um proposito claro, um HARD-GATE de aprovacao, e integra-se ao pr
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
+│ Skill 0: nemesis-critical-analysis (PONTO 2: Pre-Execution) │
+│ VALIDACAO: Analise critica do plano antes de executar       │
+│ OUTPUT: PROSSEGUIR (executar) ou REJEITAR (ajustar)         │
+│ HARD-GATE: Veredito PROSSEGUIR para executar plano          │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
 │ Skill 4: nemesis-subagent-driven-development                │
 │ EXECUCAO: Tarefa por tarefa (Agent nemesis-implementer)     │
 │ VALIDACAO: Two-stage review (spec compliance + code quality)│
 │ OUTPUT: Todas as tarefas completadas                        │
 │ EXECUCAO CONTINUA: Sem pause entre tarefas                  │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Skill 4.5: nemesis-tests                                    │
+│ VALIDACAO: cargo check + cargo test + run-pentest.sh        │
+│ SE PASS: cargo build --release + nemesis-doctor + pentest   │
+│ SE FAIL: investigar causa raiz, aprovar fix, retestar       │
+│ OUTPUT: Todos os testes PASS + binarios recompilados        │
+│ HARD-GATE: Fernando aprova cargo build --release            │
+│ HARD-GATE: Fernando aprova reconexao do pretool             │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
@@ -60,9 +93,11 @@ Cada skill tem um proposito claro, um HARD-GATE de aprovacao, e integra-se ao pr
 
 1. **NUNCA escrever codigo antes do design ser aprovado**
    - Skill 1 tem HARD-GATE — nao prosseguir sem aprovacao explícita
+   - Skill 0 (Ponto 1) valida a spec ANTES de gravar — veredito REJEITAR bloqueia gravacao
 
-2. **NUNCA executar antes do plano ser aprovado**
+2. **NUNCA executar antes do plano ser aprovado e validado**
    - Skill 3 tem HARD-GATE — nao disparar Skill 4 sem aprovacao
+   - Skill 0 (Ponto 2) valida o plano APOS aprovacao e ANTES de executar — veredito REJEITAR bloqueia execucao
 
 3. **Execucao continua entre tarefas** (Skill 4)
    - Nao pause para perguntar "posso continuar?"
@@ -75,6 +110,7 @@ Cada skill tem um proposito claro, um HARD-GATE de aprovacao, e integra-se ao pr
 5. **Validacao obrigatoria em cada fase**
    - Skill 2: validacao contra 6 regras
    - Skill 4: two-stage review apos cada tarefa
+   - Skill 4.5: cargo check + cargo test + run-pentest.sh + pentest full
    - Skill 5: cargo check + cargo test final
 
 6. **Fernando governa decisoes humanas**
@@ -85,11 +121,14 @@ Cada skill tem um proposito claro, um HARD-GATE de aprovacao, e integra-se ao pr
 
 | Skill | Entrada | Saida | Aprovacao |
 |-------|---------|-------|-----------|
-| 1: nemesis-specification-design | Request informal | SPEC_NNN.md | Fernando |
+| 0: nemesis-critical-analysis (Ponto 1) | Spec gerada + request | PROSSEGUIR/REJEITAR | (automatica) |
+| 1: nemesis-specification-design | Request informal + analise critica | SPEC_NNN.md | Fernando |
 | 2: pre-writing-rule-control | SPEC_NNN.md | PASS/FAIL + mensagem | (automatica) |
 | 3: nemesis-writing-plans | SPEC_NNN.md (validada) | PLAN_NNN.md | Fernando |
-| 4: nemesis-subagent-driven-development | PLAN_NNN.md | Todas tarefas ✅ | (continuo) |
-| 5: nemesis-finishing-branch | Workspace atualizado | PR_NNN.md | Fernando |
+| 0: nemesis-critical-analysis (Ponto 2) | SPEC + PLAN aprovados | PROSSEGUIR/REJEITAR | (automatica) |
+| 4: nemesis-subagent-driven-development | PLAN_NNN.md (validado) | Todas tarefas ✅ | (continuo) |
+| 4.5: nemesis-tests | Workspace atualizado | Testes PASS + binarios recompilados | Fernando |
+| 5: nemesis-finishing-branch | Workspace validado | PR_NNN.md | Fernando |
 
 ## Como Usar
 
@@ -104,11 +143,15 @@ Invocar: `/nemesis-specification-design`
 
 ### Fluxo Tipico
 
-1. **Skill 1**: Fernando descreve → Gera SPEC → Fernando aprova
-2. **Skill 2**: Valida SPEC contra regras → PASS
-3. **Skill 3**: Cria PLAN com tarefas → Fernando aprova
-4. **Skill 4**: Executa TODAS as tarefas (sem pause) → COMPLETA
-5. **Skill 5**: Gera PR → Fernando aprova → Choose disposition
+1. **Skill 1**: Fernando descreve → Gera especificacao tecnica
+2. **Skill 0 (Ponto 1)**: Analise critica da spec → PROSSEGUIR
+3. **Skill 1**: Grava SPEC → Fernando aprova
+4. **Skill 2**: Valida SPEC contra regras → PASS
+5. **Skill 3**: Cria PLAN com tarefas → Fernando aprova
+6. **Skill 0 (Ponto 2)**: Analise critica do plano → PROSSEGUIR
+7. **Skill 4**: Executa TODAS as tarefas (sem pause) → COMPLETA
+8. **Skill 4.5**: Testes (cargo check + cargo test + pentest) → PASS → cargo build --release → nemesis-doctor → reconectar pretool → pentest full
+9. **Skill 5**: Gera PR → Fernando aprova → Choose disposition
 
 ### Parar No Meio
 
@@ -140,9 +183,15 @@ Nao copiar binarios para outro lugar.
 ## Comandos de Validacao
 
 ```bash
-# Apos Skill 4 (antes de Skill 5)
+# Apos Skill 4 (Skill 4.5 executa estes)
 cd .nemesis && cargo check --workspace
-cd .nemesis && cargo test --workspace
+cd .nemesis && cargo test -p nemesis-defender
+bash .nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh
+
+# Apos Skill 4.5 passar (com aprovacao)
+cd .nemesis && cargo build --release --workspace
+.nemesis/target/release/nemesis-doctor
+# Reconectar pretool + executar pentest full
 
 # Apos Skill 5
 git diff --stat

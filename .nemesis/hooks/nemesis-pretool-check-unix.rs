@@ -249,6 +249,9 @@ struct NemesisInput {
 struct DenylistFolderFiles {
     absolute_block: AbsoluteBlock,
     write_block: WriteBlock,
+    /// Paths sob absolute_block liberados SOMENTE para leitura (escrita continua bloqueada).
+    #[serde(default)]
+    read_allowed: Vec<String>,
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -737,7 +740,31 @@ fn path_matches_allowed_exception(rel_path: &str, exception: &str) -> bool {
 }
 
 fn normalize_to_relative(file_path: &str) -> String {
-    let path = file_path.replace('\\', "/");
+    let mut path = file_path.replace('\\', "/");
+
+    // Resolver /proc/self/cwd/ e /proc/<pid>/cwd/ para o CWD real (fecha bypass de leitura).
+    // Estes sao symlinks kernel para o CWD do processo, mas a normalizacao literal nao os resolve.
+    if let Ok(cwd) = std::env::current_dir() {
+        let cwd_str = cwd.to_string_lossy().replace('\\', "/");
+        if path == "/proc/self/cwd" {
+            path = cwd_str;
+        } else if path.starts_with("/proc/self/cwd/") {
+            path = format!("{}/{}", cwd_str, &path[15..]);
+        } else if path.starts_with("/proc/") {
+            let after_proc = &path[6..];
+            if let Some(slash) = after_proc.find('/') {
+                let pid_str = &after_proc[..slash];
+                let rest = &after_proc[slash..];
+                if !pid_str.is_empty() && pid_str.chars().all(|c| c.is_ascii_digit()) {
+                    if rest == "/cwd" {
+                        path = cwd_str.clone();
+                    } else if rest.starts_with("/cwd/") {
+                        path = format!("{}/{}", cwd_str, &rest[5..]);
+                    }
+                }
+            }
+        }
+    }
 
     // Resolve ".." e "." ANTES de qualquer validação (fecha path traversal).
     let mut components: Vec<&str> = Vec::new();
@@ -773,6 +800,136 @@ fn trim_leading_dot_slash(path: &str) -> String {
     } else {
         path.to_string()
     }
+}
+
+/// Decodifica um escape hex de até `max` dígitos a partir de `start`. (char, novo_idx).
+fn parse_hex_escape(chars: &[char], start: usize, max: usize) -> (Option<char>, usize) {
+    let mut val: u32 = 0;
+    let mut n = 0;
+    let mut k = start;
+    while k < chars.len() && n < max && chars[k].is_ascii_hexdigit() {
+        val = val * 16 + chars[k].to_digit(16).unwrap_or(0);
+        k += 1;
+        n += 1;
+    }
+    if n == 0 { (None, start) } else { (char::from_u32(val), k) }
+}
+
+/// Expande segmentos ANSI-C ($'...') para os bytes reais, para que a checagem de path veja o
+/// que o bash executaria. Determinístico, fail-closed: malformado/não-terminado fica literal.
+/// Usado SÓ para scan, nunca executado.
+fn expand_ansi_c_quoting(cmd: &str) -> String {
+    let chars: Vec<char> = cmd.chars().collect();
+    let mut out = String::with_capacity(cmd.len());
+    let mut i = 0;
+    while i < chars.len() {
+        if chars[i] == '$' && i + 1 < chars.len() && chars[i + 1] == '\'' {
+            let mut j = i + 2;
+            let mut decoded = String::new();
+            let mut terminated = false;
+            while j < chars.len() {
+                let c = chars[j];
+                if c == '\'' { terminated = true; break; }
+                if c == '\\' && j + 1 < chars.len() {
+                    let e = chars[j + 1];
+                    match e {
+                        'n' => { decoded.push('\n'); j += 2; }
+                        't' => { decoded.push('\t'); j += 2; }
+                        'r' => { decoded.push('\r'); j += 2; }
+                        '\\' => { decoded.push('\\'); j += 2; }
+                        '\'' => { decoded.push('\''); j += 2; }
+                        '"' => { decoded.push('"'); j += 2; }
+                        'a' => { decoded.push('\u{07}'); j += 2; }
+                        'b' => { decoded.push('\u{08}'); j += 2; }
+                        'f' => { decoded.push('\u{0C}'); j += 2; }
+                        'v' => { decoded.push('\u{0B}'); j += 2; }
+                        'x' => {
+                            let (ch, nj) = parse_hex_escape(&chars, j + 2, 2);
+                            match ch { Some(c) => { decoded.push(c); j = nj; }
+                                       None => { decoded.push('\\'); decoded.push('x'); j += 2; } }
+                        }
+                        'u' => {
+                            let (ch, nj) = parse_hex_escape(&chars, j + 2, 4);
+                            match ch { Some(c) => { decoded.push(c); j = nj; }
+                                       None => { decoded.push('\\'); decoded.push('u'); j += 2; } }
+                        }
+                        'U' => {
+                            let (ch, nj) = parse_hex_escape(&chars, j + 2, 8);
+                            match ch { Some(c) => { decoded.push(c); j = nj; }
+                                       None => { decoded.push('\\'); decoded.push('U'); j += 2; } }
+                        }
+                        '0'..='7' => {
+                            let mut val: u32 = 0;
+                            let mut n = 0;
+                            let mut k = j + 1;
+                            while k < chars.len() && n < 3 && ('0'..='7').contains(&chars[k]) {
+                                val = val * 8 + (chars[k] as u32 - '0' as u32);
+                                k += 1; n += 1;
+                            }
+                            if let Some(c) = char::from_u32(val) { decoded.push(c); }
+                            j = k;
+                        }
+                        _ => { decoded.push('\\'); decoded.push(e); j += 2; }
+                    }
+                } else {
+                    decoded.push(c);
+                    j += 1;
+                }
+            }
+            if terminated {
+                out.push_str(&decoded);
+                i = j + 1;
+            } else {
+                out.push('$'); out.push('\'');
+                i += 2;
+            }
+        } else {
+            out.push(chars[i]);
+            i += 1;
+        }
+    }
+    out
+}
+
+/// Expande atribuições simples VAR=valor (aspas opcionais, sem $) e substitui $VAR/${VAR} adiante
+/// no MESMO comando. Determinístico, bounded (uma passada; replace_all não re-expande a saída),
+/// fail-closed. Usado só para scan.
+fn expand_simple_var_assignments(cmd: &str) -> String {
+    use std::collections::HashMap;
+    let assign_re = match Regex::new(
+        r#"(?:^|[\s;&|])([A-Za-z_][A-Za-z0-9_]*)=(?:'([^'$`]*)'|"([^"$`]*)"|([^\s;&|'"$()`]+))"#
+    ) {
+        Ok(r) => r,
+        Err(_) => return cmd.to_string(),
+    };
+    let mut vars: HashMap<String, String> = HashMap::new();
+    for cap in assign_re.captures_iter(cmd) {
+        if let Some(k) = cap.get(1) {
+            let v = cap.get(2).or_else(|| cap.get(3)).or_else(|| cap.get(4))
+                .map(|m| m.as_str()).unwrap_or("");
+            vars.insert(k.as_str().to_string(), v.to_string());
+        }
+    }
+    if vars.is_empty() {
+        return cmd.to_string();
+    }
+    let var_use_re = match Regex::new(r#"\$\{?([A-Za-z_][A-Za-z0-9_]*)\}?"#) {
+        Ok(r) => r,
+        Err(_) => return cmd.to_string(),
+    };
+    var_use_re.replace_all(cmd, |caps: &regex::Captures| {
+        match vars.get(&caps[1]) {
+            Some(val) => val.clone(),
+            None => caps[0].to_string(),
+        }
+    }).into_owned()
+}
+
+/// Compõe a pré-expansão usada para scan de path: ANSI-C primeiro, depois variáveis.
+/// Bounded (uma passada cada), aditivo, nunca executado.
+fn expand_shell_for_scan(cmd: &str) -> String {
+    let after_ansi = expand_ansi_c_quoting(cmd);
+    expand_simple_var_assignments(&after_ansi)
 }
 
 /// Converte um glob de shell em regex ANCORADO (^...$), com semântica de path:
@@ -830,7 +987,12 @@ fn check_folder_file_access(
                 .iter()
                 .any(|exc| path_matches_allowed_exception(&rel_path, exc));
 
-            if !is_exception {
+            // read_allowed: libera SOMENTE leitura (escrita continua bloqueada pelo absolute_block).
+            let is_read_allowed = !is_write && denylist.read_allowed
+                .iter()
+                .any(|r| path_matches_allowed_exception(&rel_path, r));
+
+            if !is_exception && !is_read_allowed {
                 return Some((
                     format!("NEMESIS SEC - {} - ARQUIVO PROTEGIDO · {}", if is_write { "ACESSO NEGADO" } else { "LEITURA NEGADA" }, rel_path),
                     "Arquivos protegidos sao gerenciados exclusivamente pelo usuario.".into(),
@@ -1084,6 +1246,8 @@ fn run_pretool() {
                 let fpath = input.get("file_path")
                     .or_else(|| input.get("path"))
                     .or_else(|| input.get("filePath"))
+                    .or_else(|| input.get("TargetFile"))   // Cascade/Windsurf (flat)
+                    .or_else(|| input.get("targetFile"))   // variante camelCase
                     .and_then(|v| v.as_str())
                     .unwrap_or("unknown")
                     .to_string();
@@ -1092,6 +1256,8 @@ fn run_pretool() {
                     .or_else(|| input.get("newContent"))
                     .or_else(|| input.get("text"))
                     .or_else(|| input.get("fileText"))
+                    .or_else(|| input.get("CodeContent"))   // Cascade/Windsurf (flat)
+                    .or_else(|| input.get("codeContent"))   // variante camelCase
                     .and_then(|v| v.as_str())
                     .unwrap_or("");
                 // Edit ops: conteúdo pode estar em new_string/newString/new_str
@@ -1237,6 +1403,10 @@ fn run_pretool() {
                 .unwrap_or("")
                 .to_string();
 
+            // SPEC_010: pré-expansão de shell (ANSI-C $'...' + VAR=valor) para a checagem ver o
+            // path que o bash de fato usaria. Aditivo, determinístico, fail-closed.
+            let bash_path_expanded = expand_shell_for_scan(&bash_path);
+
             let combined_path = format!("{} {}", path, bash_path);
 
             // DENYLIST: Verificar denylist-folder-files.json para todos os paths
@@ -1288,7 +1458,7 @@ fn run_pretool() {
                         r#"(?:^|[\s=<(])(['"]?)((?:/[^\s;|&'"><()]+|\.\.?/[^\s;|&'"><()]+|\.[a-zA-Z0-9*?\[][^\s;|&'"><()]*))['"]?"#
                     ).unwrap();
 
-                    for cap in path_re.captures_iter(&bash_path) {
+                    for cap in path_re.captures_iter(&bash_path_expanded) {
                         let raw = cap.get(2).map(|m| m.as_str()).unwrap_or("");
                         if !raw.is_empty() && raw != "." && raw != ".."
                             && raw != "./" && raw != "../"
@@ -1325,7 +1495,7 @@ fn run_pretool() {
                         let cd_re = regex::Regex::new(
                             r#"(?:^|[;&|(]|&&|\|\|)\s*(?:cd|pushd)\s+(['"]?)([^\s;|&)'"]+)"#
                         ).unwrap();
-                        for cap in cd_re.captures_iter(&bash_path) {
+                        for cap in cd_re.captures_iter(&bash_path_expanded) {
                             let target = cap.get(2).map(|m| m.as_str()).unwrap_or("");
                             if target.is_empty() || target == "." || target == ".." || target == "-" {
                                 continue;

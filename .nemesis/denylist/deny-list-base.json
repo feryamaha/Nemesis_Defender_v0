@@ -42,6 +42,16 @@
           "enabled": true
         },
         {
+          "id": "cmd-300",
+          "pattern": "\\bgit\\s+apply\\b[^\\n]*--unsafe-paths",
+          "type": "regex",
+          "severity": "critical",
+          "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",
+          "suggestion": "git apply --unsafe-paths permite escrever fora da working tree. Use patch revisado com caminhos dentro do projeto.",
+          "source": "manual",
+          "enabled": true
+        },
+        {
           "id": "cmd-004",
           "pattern": "eslint-disable|@ts-ignore|@ts-nocheck",
           "type": "regex",
@@ -1539,7 +1549,7 @@
         },
         {
           "id": "ev-015",
-          "pattern": "^source\\s+|^\\s*\\.\\s+\\S+\\.(?:sh|bash|zsh)",
+          "pattern": "^source\\s+|^\\s*\\.\\s+\\S+",
           "type": "regex",
           "severity": "critical",
           "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",

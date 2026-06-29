@@ -92,6 +92,17 @@
         "\\bsqlmap\\s+-u\\s"
       ]
     },
+    "interpreter_obfuscation": {
+      "description": "Ofuscacao de interpretador por variable-split (ex: P=python; S=3; $P$S -c)",
+      "severity": "malicious",
+      "suggestion": "Never obfuscate interpreter names via bash variable splitting. Use explicit interpreter calls if needed for legitimate purposes.",
+      "patterns": [
+        "\\b\\w{1,3}=(?:python|python3|node|nodejs|perl|ruby|php)\\b[^\\n]*\\$\\w{1,3}[^\\n]*\\s+-[ec]\\s",
+        "\\b\\w{1,3}=(?:python|python3|node|nodejs|perl|ruby|php)\\b[^\\n]*\\$\\{?\\w{1,3}\\}?\\$\\{?\\w{1,3}\\}?[^\\n]*\\s+-[ec]\\s",
+        "\\b\\w{1,3}=(?:python|python3|node|nodejs|perl|ruby|php)\\b[\\s\\S]{0,120}?\\$\\w{1,3}[\\s\\S]{0,40}?\\s+-[ec]\\s",
+        "\\b\\w{1,3}=(?:python|python3|node|nodejs|perl|ruby|php)\\b[\\s\\S]{0,120}?\\$\\{?\\w{1,3}\\}?\\$\\{?\\w{1,3}\\}?[\\s\\S]{0,40}?\\s+-[ec]\\s"
+      ]
+    },
     "data_transfer_exfiltration": {
       "description": "Comandos de transferência de dados (potencial exfiltração)",
       "severity": "malicious",

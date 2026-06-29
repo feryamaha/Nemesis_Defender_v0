@@ -48,6 +48,9 @@ use nemesis_defender;
 struct DenylistFolderFiles {
     absolute_block: AbsoluteBlock,
     write_block: WriteBlock,
+    /// Paths sob absolute_block liberados SOMENTE para leitura (escrita continua bloqueada).
+    #[serde(default)]
+    read_allowed: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1864,6 +1867,15 @@ fn check_nemesis_protected_path(file_path: &str, is_write: bool) -> Option<Valid
         ];
         if allowed_prefixes.iter().any(|prefix| rel_path.starts_with(prefix)) {
             return None;
+        }
+        // read_allowed (denylist-folder-files.json, fonte única): libera SOMENTE leitura das
+        // subpastas .nemesis/ listadas. Escrita continua bloqueada (cai no absolute_block abaixo).
+        if !is_write {
+            if let Some(dl) = load_denylist_folder_files(&get_cwd().to_string_lossy()) {
+                if dl.read_allowed.iter().any(|r| path_matches_allowed_exception(&rel_path, r)) {
+                    return None;
+                }
+            }
         }
     }
 
