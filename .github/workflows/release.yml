@@ -92,7 +92,7 @@ jobs:
           PENTEST_SRC=".nemesis/pentest-nemesis-control/nemesis-defender"
           cp "$PENTEST_SRC/run-pentest.sh"                         "$PENTEST_DST/"
           cp "$PENTEST_SRC/info.md"                                "$PENTEST_DST/"
-          cp "$PENTEST_SRC/pentest-final-amplificado-portal-dental.md" "$PENTEST_DST/"
+          cp "$PENTEST_SRC/nemesis-pentest-harness.md" "$PENTEST_DST/"
 
           # Tarball: conteúdo na raiz (bin/, pentest-nemesis-control/).
           tar -czf "$PKG.tar.gz" -C "$PKG" .

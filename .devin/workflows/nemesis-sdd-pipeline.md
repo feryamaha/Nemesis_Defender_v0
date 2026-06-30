@@ -81,6 +81,16 @@ Cada skill tem um proposito claro, um HARD-GATE de aprovacao, e integra-se ao pr
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
+│ Skill 4.6: nemesis-doc-sync (documentacao como feature)     │
+│ GATE: a mudanca afeta README.md / index.html?               │
+│ NAO PRECISA: segue. PRECISA: reconcilia (codigo=verdade,    │
+│   regra do coeficiente §3A, espelha README<->index)         │
+│ OUTPUT: doc sincronizada (ou veredito "nada a atualizar")   │
+│ HARD-GATE: Fernando aprova as mudancas de doc               │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
 │ Skill 5: nemesis-finishing-branch                           │
 │ VALIDACAO FINAL: cargo check --workspace + cargo test       │
 │ OUTPUT: PR documentada em Feature-Documentation/PR/         │
@@ -111,6 +121,7 @@ Cada skill tem um proposito claro, um HARD-GATE de aprovacao, e integra-se ao pr
    - Skill 2: validacao contra 6 regras
    - Skill 4: two-stage review apos cada tarefa
    - Skill 4.5: cargo check + cargo test + run-pentest.sh + pentest full
+   - Skill 4.6: gate de doc-sync (README/index.html refletem a mudanca? atualiza se preciso)
    - Skill 5: cargo check + cargo test final
 
 6. **Fernando governa decisoes humanas**
@@ -128,7 +139,8 @@ Cada skill tem um proposito claro, um HARD-GATE de aprovacao, e integra-se ao pr
 | 0: nemesis-critical-analysis (Ponto 2) | SPEC + PLAN aprovados | PROSSEGUIR/REJEITAR | (automatica) |
 | 4: nemesis-subagent-driven-development | PLAN_NNN.md (validado) | Todas tarefas ✅ | (continuo) |
 | 4.5: nemesis-tests | Workspace atualizado | Testes PASS + binarios recompilados | Fernando |
-| 5: nemesis-finishing-branch | Workspace validado | PR_NNN.md | Fernando |
+| 4.6: nemesis-doc-sync | git diff da mudanca | Veredito (PRECISA/NAO) + README/index sincronizados | Fernando |
+| 5: nemesis-finishing-branch | Workspace validado + doc sincronizada | PR_NNN.md | Fernando |
 
 ## Como Usar
 
@@ -151,7 +163,8 @@ Invocar: `/nemesis-specification-design`
 6. **Skill 0 (Ponto 2)**: Analise critica do plano → PROSSEGUIR
 7. **Skill 4**: Executa TODAS as tarefas (sem pause) → COMPLETA
 8. **Skill 4.5**: Testes (cargo check + cargo test + pentest) → PASS → cargo build --release → nemesis-doctor → reconectar pretool → pentest full
-9. **Skill 5**: Gera PR → Fernando aprova → Choose disposition
+9. **Skill 4.6 (doc-sync)**: gate — a mudanca afeta README/index.html? NAO → segue; SIM → reconcilia (codigo=verdade, regra do coeficiente) → Fernando aprova a doc
+10. **Skill 5**: Gera PR (ja com a doc sincronizada) → Fernando aprova → Choose disposition
 
 ### Parar No Meio
 

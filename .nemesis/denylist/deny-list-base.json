@@ -52,6 +52,16 @@
           "enabled": true
         },
         {
+          "id": "cmd-301",
+          "pattern": "\\|\\s*(?:/usr/bin/|/bin/)?(?:ba|da|z|k|a)?sh\\b",
+          "type": "regex",
+          "severity": "critical",
+          "message": "NEMESIS SEC - COMANDO NAO PERMITIDO",
+          "suggestion": "Pipe para interpretador de shell (| sh, | bash, | dash) executa stdin como script. Use chamada explicita e revisada, nao pipe para shell.",
+          "source": "manual",
+          "enabled": true
+        },
+        {
           "id": "cmd-004",
           "pattern": "eslint-disable|@ts-ignore|@ts-nocheck",
           "type": "regex",

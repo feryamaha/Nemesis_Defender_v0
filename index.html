@@ -1921,138 +1921,27 @@
           São <strong>36 categorias / centenas de patterns</strong> no total; acima vai um recorte. A deny-list é
           compilada no binário e escaneia o conteúdo dos arquivos, cobrindo também macOS/Windows (onde não há eBPF).</p>
 
-        <h3 data-pt="Defender · visitors AST (intenção semântica)" data-en="Defender · AST visitors (semantic intent)">Defender · visitors AST (intenção semântica)</h3>
+        <h3 data-pt="Defender · visitors AST (um método entre as camadas)" data-en="Defender · AST visitors (one method among the layers)">Defender · visitors AST (um método entre as camadas)</h3>
+        <p class="small" data-pt="Visitors AST são <strong>um método entre as camadas, não a unidade de cobertura</strong> &mdash; uma fração do coeficiente. Há <strong>15 arquivos de visitor, 14 despachados</strong> (<code>manifest_abuse</code> é código morto). Exemplos de visitors despachados:" data-en="AST visitors are <strong>one method among the layers, not the unit of coverage</strong> &mdash; a fraction of the coefficient. There are <strong>15 visitor files, 14 dispatched</strong> (<code>manifest_abuse</code> is dead code). Examples of dispatched visitors:">Visitors AST são <strong>um método entre as camadas, não a unidade de cobertura</strong> &mdash; uma fração do coeficiente. Há <strong>15 arquivos de visitor, 14 despachados</strong> (<code>manifest_abuse</code> é código morto). Exemplos de visitors despachados:</p>
         <div class="tbl-wrap">
           <table>
             <thead>
               <tr>
-                <th>#</th>
-                <th data-pt="Detector (visitor/método)" data-en="Detector (visitor/method)">Detector (visitor/método)</th>
+                <th data-pt="Visitor (despachado)" data-en="Visitor (dispatched)">Visitor (despachado)</th>
                 <th data-pt="Alvo" data-en="Target">Alvo</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="ix">1</td>
-                <td><code>manifest_abuse</code></td>
-                <td data-pt="postinstall/preinstall em manifests" data-en="postinstall/preinstall in manifests">
-                  postinstall/preinstall em manifests</td>
-              </tr>
-              <tr>
-                <td class="ix">2</td>
-                <td><code>decode_exec</code></td>
-                <td>base64/hex → eval/exec/spawn</td>
-              </tr>
-              <tr>
-                <td class="ix">3</td>
-                <td><code>unicode_steg</code></td>
-                <td>Bidi U+202E, PUA, homoglyphs (CVE-2021-42574)</td>
-              </tr>
-              <tr>
-                <td class="ix">4</td>
-                <td><code>prompt_injection</code></td>
-                <td data-pt="injeção via comentários/templates" data-en="injection via comments/templates">injeção via
-                  comentários/templates</td>
-              </tr>
-              <tr>
-                <td class="ix">5a</td>
-                <td><code>url_in_exec</code></td>
-                <td data-pt="URL como argumento de exec" data-en="URL as exec argument">URL como argumento de exec</td>
-              </tr>
-              <tr>
-                <td class="ix">5b</td>
-                <td><code>time_gated</code></td>
-                <td data-pt="setTimeout/condições de data" data-en="setTimeout/date conditions">setTimeout/condições de
-                  data</td>
-              </tr>
-              <tr>
-                <td class="ix">6</td>
-                <td><code>dynamic_cmd</code></td>
-                <td data-pt="concatenação de string → exec" data-en="string concatenation → exec">concatenação de string
-                  → exec</td>
-              </tr>
-              <tr>
-                <td class="ix">7</td>
-                <td><code>credential_harvest</code></td>
-                <td data-pt="leitura de credenciais (SSH/AWS/.env/IMDS/shell history/wallets) + exfil"
-                  data-en="credential read (SSH/AWS/.env/IMDS/shell history/wallets) + exfil">leitura de credenciais
-                  (SSH/AWS/.env/IMDS/shell history/wallets) + exfil</td>
-              </tr>
-              <tr>
-                <td class="ix">8</td>
-                <td><code>self_clean</code></td>
-                <td>fs.unlink(__filename)</td>
-              </tr>
-              <tr>
-                <td class="ix">9</td>
-                <td><code>manifest_scanner</code></td>
-                <td data-pt="supply-chain em 7 formatos de manifest" data-en="supply-chain across 7 manifest formats">
-                  supply-chain em 7 formatos de manifest</td>
-              </tr>
-              <tr>
-                <td class="ix">10</td>
-                <td><code>kubernetes_escape</code></td>
-                <td>container breakout</td>
-              </tr>
-              <tr>
-                <td class="ix">11</td>
-                <td><code>mount_api_abuse</code></td>
-                <td data-pt="syscalls de mount (428–432)" data-en="mount syscalls (428–432)">syscalls de mount (428–432)
-                </td>
-              </tr>
-              <tr>
-                <td class="ix">12</td>
-                <td><code>llm_output_injection</code></td>
-                <td data-pt="XSS/SSRF/command injection em output de LLM"
-                  data-en="XSS/SSRF/command injection in LLM output">XSS/SSRF/command injection em output de LLM</td>
-              </tr>
-              <tr>
-                <td class="ix">13</td>
-                <td><code>exfil_chain</code></td>
-                <td data-pt="cadeia fonte sensível → sink de rede (regra de 1ª classe)"
-                  data-en="sensitive source → network sink chain (first-class rule)">cadeia fonte sensível → sink de
-                  rede (regra de 1ª classe)</td>
-              </tr>
-              <tr>
-                <td class="ix">14</td>
-                <td><code>taint_tracker</code></td>
-                <td data-pt="data-flow fonte→sink via variáveis (JS/Python)"
-                  data-en="source→sink data-flow via variables (JS/Python)">data-flow fonte→sink via variáveis
-                  (JS/Python)</td>
-              </tr>
-              <tr>
-                <td class="ix">15</td>
-                <td><code>ide_config_poisoning</code></td>
-                <td data-pt="CLAUDE.md/.cursorrules envenenados: tag chars, fake-scan, authority injection"
-                  data-en="poisoned CLAUDE.md/.cursorrules: tag chars, fake-scan, authority injection">
-                  CLAUDE.md/.cursorrules envenenados: tag chars, fake-scan, authority injection</td>
-              </tr>
-              <tr>
-                <td class="ix">16</td>
-                <td><code>manifest_registry_redirect</code></td>
-                <td data-pt="typosquat / registry não-canônico (npm/PyPI/RubyGems)"
-                  data-en="typosquat / non-canonical registry (npm/PyPI/RubyGems)">typosquat / registry não-canônico
-                  (npm/PyPI/RubyGems)</td>
-              </tr>
-              <tr>
-                <td class="ix">17</td>
-                <td><code>reverse_shell</code></td>
-                <td data-pt="reverse shell multi-runtime: socket cru + execução de comando (Ruby/PHP/Go/Perl/Java/Lua)"
-                  data-en="multi-runtime reverse shell: raw socket + command execution (Ruby/PHP/Go/Perl/Java/Lua)">
-                  reverse shell multi-runtime: socket cru + execução de comando (Ruby/PHP/Go/Perl/Java/Lua)</td>
-              </tr>
-              <tr>
-                <td class="ix">18</td>
-                <td><code>decode_exec</code></td>
-                <td
-                  data-pt="execução dinâmica/ofuscada: Function-constructor, globalThis[&quot;eval&quot;], __import__('os').system, .send(:eval), create_function/assert"
-                  data-en="dynamic/obfuscated exec: Function-constructor, globalThis[&quot;eval&quot;], __import__('os').system, .send(:eval), create_function/assert">
-                  execução dinâmica/ofuscada: Function-constructor, globalThis["eval"], __import__('os').system,
-                  .send(:eval), create_function/assert</td>
-              </tr>
+              <tr><td><code>decode_exec</code></td><td>base64/hex/charCode → eval/exec/spawn</td></tr>
+              <tr><td><code>exfil_chain</code></td><td data-pt="cadeia fonte sensível → sink de rede (1ª classe)" data-en="sensitive source → network sink chain (first-class)">cadeia fonte sensível → sink de rede (1ª classe)</td></tr>
+              <tr><td><code>taint_tracker</code></td><td data-pt="data-flow fonte→sink via variáveis (JS/Python)" data-en="source→sink data-flow via variables (JS/Python)">data-flow fonte→sink via variáveis (JS/Python)</td></tr>
+              <tr><td><code>credential_harvest</code></td><td data-pt="leitura de credenciais (SSH/AWS/.env/IMDS/shell history/wallets) + exfil" data-en="credential read (SSH/AWS/.env/IMDS/shell history/wallets) + exfil">leitura de credenciais (SSH/AWS/.env/IMDS/shell history/wallets) + exfil</td></tr>
+              <tr><td><code>ide_config_poisoning</code></td><td data-pt="CLAUDE.md/.cursorrules envenenados: tag chars, fake-scan, authority injection" data-en="poisoned CLAUDE.md/.cursorrules: tag chars, fake-scan, authority injection">CLAUDE.md/.cursorrules envenenados: tag chars, fake-scan, authority injection</td></tr>
+              <tr><td><code>nemesis_bypass</code></td><td data-pt="tentativa de desligar/contornar o próprio Nemesis" data-en="attempt to disable/bypass Nemesis itself">tentativa de desligar/contornar o próprio Nemesis</td></tr>
             </tbody>
           </table>
         </div>
+        <p class="small" data-pt="Demais visitors despachados: <code>unicode_steg</code>, <code>prompt_injection</code>, <code>dynamic_cmd</code>, <code>time_gated</code>, <code>url_in_exec</code>, <code>self_clean</code>, <code>persistence_patterns</code>, <code>python_import_injection</code>. Vetores como <code>reverse_shell</code>, <code>kubernetes_escape</code>, <code>mount_api_abuse</code>, supply-chain e typosquat <strong>não são visitors</strong> &mdash; são cobertos por outras camadas do coeficiente (deny-lists de comando, regex de scanner, eBPF)." data-en="Other dispatched visitors: <code>unicode_steg</code>, <code>prompt_injection</code>, <code>dynamic_cmd</code>, <code>time_gated</code>, <code>url_in_exec</code>, <code>self_clean</code>, <code>persistence_patterns</code>, <code>python_import_injection</code>. Vectors like <code>reverse_shell</code>, <code>kubernetes_escape</code>, <code>mount_api_abuse</code>, supply-chain and typosquat <strong>are not visitors</strong> &mdash; covered by other layers of the coefficient (command deny-lists, scanner regex, eBPF).">Demais visitors despachados: <code>unicode_steg</code>, <code>prompt_injection</code>, <code>dynamic_cmd</code>, <code>time_gated</code>, <code>url_in_exec</code>, <code>self_clean</code>, <code>persistence_patterns</code>, <code>python_import_injection</code>. Vetores como <code>reverse_shell</code>, <code>kubernetes_escape</code>, <code>mount_api_abuse</code>, supply-chain e typosquat <strong>não são visitors</strong> &mdash; são cobertos por outras camadas do coeficiente (deny-lists de comando, regex de scanner, eBPF).</p>
         <p data-pt="<strong>Não trate os itens acima como &quot;os N vetores&quot; nem como a contagem de visitors.</strong> A proteção do Nemesis é a soma das camadas (deny-list embutida, visitors, scanner, deny-lists de comando, eBPF), provada por pentest, não um número fechado atrelado a uma feature."
           data-en="<strong>Do not treat the items above as &quot;the N vectors&quot; nor as the visitor count.</strong> Nemesis protection is the sum of the layers (embedded deny-list, visitors, scanner, command deny-lists, eBPF), proven by pentest, not a fixed number tied to a feature.">
           <strong>Não trate os itens acima como "os N vetores" nem como a contagem de visitors.</strong> A proteção do
@@ -2276,9 +2165,9 @@
           sintéticos</h3>
         <ul>
           <li
-            data-pt="<strong>O que cobre:</strong> uma suíte de pentest com 184 testes em 26 módulos comandos destrutivos, exfiltração (incl. IMDS, shell history, wallets), reverse shells, persistência, taint-flow, poisoning de config de IDE, typosquatting <strong>mais um módulo dedicado a medir falso-positivo</strong> (conteúdo legítimo que deve passar)."
-            data-en="<strong>What it covers:</strong> a pentest suite with 184 tests across 26 modules destructive commands, exfiltration (incl. IMDS, shell history, wallets), reverse shells, persistence, taint-flow, IDE-config poisoning, typosquatting <strong>plus a module dedicated to measuring false-positives</strong> (legitimate content that must pass).">
-            <strong>O que cobre:</strong> uma suíte de pentest com 184 testes em 26 módulos comandos destrutivos,
+            data-pt="<strong>O que cobre:</strong> uma suíte de pentest estática (run-pentest.sh) em ~30 módulos ativos (M1–M31, que cresce a cada ciclo de hardening) comandos destrutivos, exfiltração (incl. IMDS, shell history, wallets), reverse shells, persistência, taint-flow, poisoning de config de IDE, typosquatting <strong>mais um módulo dedicado a medir falso-positivo</strong> (conteúdo legítimo que deve passar)."
+            data-en="<strong>What it covers:</strong> a static pentest suite (run-pentest.sh) across ~30 active modules (M1–M31, growing each hardening cycle) destructive commands, exfiltration (incl. IMDS, shell history, wallets), reverse shells, persistence, taint-flow, IDE-config poisoning, typosquatting <strong>plus a module dedicated to measuring false-positives</strong> (legitimate content that must pass).">
+            <strong>O que cobre:</strong> uma suíte de pentest estática (run-pentest.sh) em ~30 módulos ativos (M1–M31, que cresce a cada ciclo de hardening) comandos destrutivos,
             exfiltração (incl. IMDS, shell history, wallets), reverse shells, persistência, taint-flow, poisoning de
             config de IDE, typosquatting <strong>mais um módulo dedicado a medir falso-positivo</strong> (conteúdo
             legítimo que deve passar).
@@ -2346,12 +2235,12 @@
           <div class="h" data-pt="Red-team contínuo: vetores encontrados e fechados"
             data-en="Continuous red-team: vectors found and closed">Red-team
             contínuo: vetores encontrados e fechados</div>
-          <p data-pt="A evidência mais útil vem de um adversário real. Numa campanha de red-team registrada, um agente recebeu uma suíte de <strong>engenharia social reversa</strong> e tentou, ao vivo e com o pretool ativo, infiltrar, exfiltrar e <strong>neutralizar o próprio Nemesis</strong>. Ciclo após ciclo, vetores de evasão foram descobertos e <strong>fechados na origem</strong>, com cada correção validada (pentest 184/184, sem regressão): leitura de config protegida por <em>glob</em>/<em>cd</em>/indireção de variável; <em>reverse shell</em> e RCE ofuscado (Function-constructor) em múltiplos runtimes; e um <em>typo</em> que deixava o arquivo de instruções do agente gravável. <strong>Nenhum vetor de neutralização</strong> (desligar a proteção) foi encontrado a auto-proteção segurou cada tentativa de matar o daemon, sobrescrever o binário ou desabilitar os hooks. Propriedades estruturais confirmadas: <em>fail-closed</em> em panic e ausência de ReDoS (engine de regex de tempo linear). Bypasses são o ativo de validação mais valioso, não vergonha a esconder."
-            data-en="The most useful evidence comes from a real adversary. In a recorded red-team campaign, an agent received a <strong>reverse social-engineering</strong> suite and tried live, with the pretool active to infiltrate, exfiltrate and <strong>neutralize Nemesis itself</strong>. Cycle after cycle, evasion vectors were discovered and <strong>closed at the source</strong>, each fix validated (pentest 184/184, no regression): protected-config reads via <em>glob</em>/<em>cd</em>/variable indirection; <em>reverse shell</em> and obfuscated RCE (Function-constructor) across multiple runtimes; and a <em>typo</em> that left the agent's instruction file writable. <strong>No neutralization vector</strong> (turning the protection off) was found self-protection held every attempt to kill the daemon, overwrite the binary or disable the hooks. Structural properties confirmed: <em>fail-closed</em> on panic and no ReDoS (linear-time regex engine). Bypasses are the most valuable validation asset, not a shame to hide.">
+          <p data-pt="A evidência mais útil vem de um adversário real. Numa campanha de red-team registrada, um agente recebeu uma suíte de <strong>engenharia social reversa</strong> e tentou, ao vivo e com o pretool ativo, infiltrar, exfiltrar e <strong>neutralizar o próprio Nemesis</strong>. Ciclo após ciclo, vetores de evasão foram descobertos e <strong>fechados na origem</strong>, com cada correção validada (pentest validado a cada ciclo (sem regressão, gate FAIL=0)): leitura de config protegida por <em>glob</em>/<em>cd</em>/indireção de variável; <em>reverse shell</em> e RCE ofuscado (Function-constructor) em múltiplos runtimes; e um <em>typo</em> que deixava o arquivo de instruções do agente gravável. <strong>Nenhum vetor de neutralização</strong> (desligar a proteção) foi encontrado a auto-proteção segurou cada tentativa de matar o daemon, sobrescrever o binário ou desabilitar os hooks. Propriedades estruturais confirmadas: <em>fail-closed</em> em panic e ausência de ReDoS (engine de regex de tempo linear). Bypasses são o ativo de validação mais valioso, não vergonha a esconder."
+            data-en="The most useful evidence comes from a real adversary. In a recorded red-team campaign, an agent received a <strong>reverse social-engineering</strong> suite and tried live, with the pretool active to infiltrate, exfiltrate and <strong>neutralize Nemesis itself</strong>. Cycle after cycle, evasion vectors were discovered and <strong>closed at the source</strong>, each fix validated (pentest validated each cycle (no regression, gate FAIL=0)): protected-config reads via <em>glob</em>/<em>cd</em>/variable indirection; <em>reverse shell</em> and obfuscated RCE (Function-constructor) across multiple runtimes; and a <em>typo</em> that left the agent's instruction file writable. <strong>No neutralization vector</strong> (turning the protection off) was found self-protection held every attempt to kill the daemon, overwrite the binary or disable the hooks. Structural properties confirmed: <em>fail-closed</em> on panic and no ReDoS (linear-time regex engine). Bypasses are the most valuable validation asset, not a shame to hide.">
             A evidência mais útil vem de um adversário real. Numa campanha de red-team registrada, um agente recebeu uma
             suíte de <strong>engenharia social reversa</strong> e tentou, ao vivo e com o pretool ativo, infiltrar,
             exfiltrar e <strong>neutralizar o próprio Nemesis</strong>. Ciclo após ciclo, vetores de evasão foram
-            descobertos e <strong>fechados na origem</strong>, com cada correção validada (pentest 184/184, sem
+            descobertos e <strong>fechados na origem</strong>, com cada correção validada (pentest validado a cada ciclo, sem
             regressão): leitura de config protegida por <em>glob</em>/<em>cd</em>/indireção de variável; <em>reverse
               shell</em> e RCE ofuscado (Function-constructor) em múltiplos runtimes; e um <em>typo</em> que deixava o
             arquivo de instruções do agente gravável. <strong>Nenhum vetor de neutralização</strong> (desligar a

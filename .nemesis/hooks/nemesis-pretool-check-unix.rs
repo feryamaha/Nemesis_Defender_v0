@@ -1349,6 +1349,11 @@ fn run_pretool() {
                 .or_else(|| tool_input_val.and_then(|ti| ti.get("query")))
                 .or_else(|| tool_input_val.and_then(|ti| ti.get("target_directory")))
                 .or_else(|| tool_input_val.and_then(|ti| ti.get("pattern")))     // Cursor Glob/Grep: pattern contém path
+                .or_else(|| tool_input_val.and_then(|ti| ti.get("TargetFile")))     // Windsurf/Cascade (flat)
+                .or_else(|| tool_input_val.and_then(|ti| ti.get("SearchPath")))     // grep_search flat
+                .or_else(|| tool_input_val.and_then(|ti| ti.get("Query")))          // grep_search flat
+                .or_else(|| tool_input_val.and_then(|ti| ti.get("DirectoryPath")))  // list_dir flat
+                .or_else(|| tool_input_val.and_then(|ti| ti.get("AbsolutePath")))   // view flat
                 .or_else(|| val.get("path"))
                 .and_then(|v| v.as_str())
                 .unwrap_or("")

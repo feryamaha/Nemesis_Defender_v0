@@ -161,29 +161,18 @@ São **36 categorias / centenas de patterns** no total; acima vai um recorte. Fo
 
 ### Defender, visitors AST (detecção de intenção semântica)
 
-Análise semântica por travessia de árvore (tree-sitter), método complementar às deny-lists. Exemplos:
+Análise semântica por travessia de árvore (tree-sitter). É **um método entre as camadas, não a unidade de cobertura** — uma fração do coeficiente. Há **15 arquivos de visitor, 14 despachados** (`manifest_abuse` é código morto, nunca chamado); fonte: `nemesis-defender/src/visitors/mod.rs` e `scanner/ast_scanner.rs`. Exemplos de visitors despachados:
 
-| # | Detector (visitor/método) | Alvo |
-|---|---------|------|
-| 1 | `manifest_abuse` | `postinstall`/`preinstall` em manifests |
-| 2 | `decode_exec` | base64/hex → `eval`/`exec`/`spawn` |
-| 3 | `unicode_steg` | Bidi U+202E, PUA, homoglyphs (CVE-2021-42574) |
-| 4 | `prompt_injection` | injeção via comentários/templates; extração de system prompt |
-| 5a | `url_in_exec` | URL como argumento de exec |
-| 5b | `time_gated` | `setTimeout`/condições de data |
-| 6 | `dynamic_cmd` | concatenação de string → exec |
-| 7 | `credential_harvest` | leitura de credenciais (SSH/AWS/`.env`/IMDS/shell history/wallets) + exfil |
-| 8 | `self_clean` | `fs.unlink(__filename)` |
-| 9 | `manifest_scanner` | supply-chain em 7 formatos de manifest |
-| 10 | `kubernetes_escape` | container breakout |
-| 11 | `mount_api_abuse` | syscalls de mount (428–432) |
-| 12 | `llm_output_injection` | XSS/SSRF/command injection em output de LLM |
-| 13 | `exfil_chain` | cadeia fonte sensível → sink de rede (regra de 1ª classe) |
-| 14 | `taint_tracker` | data-flow fonte→sink via variáveis (JS/Python) |
-| 15 | `ide_config_poisoning` | `CLAUDE.md`/`.cursorrules` envenenados: tag chars, fake-scan, authority injection |
-| 16 | `manifest_registry_redirect` | typosquat / registry não-canônico (npm/PyPI/RubyGems) |
-| 17 | `reverse_shell` | reverse shell multi-runtime: socket cru + execução de comando (Ruby/PHP/Go/Perl/Java/Lua) |
-| 18 | `decode_exec` (dinâmico) | execução dinâmica/ofuscada: `Function`-constructor, `globalThis["eval"]`, `__import__('os').system`, `.send(:eval)`, `create_function`/`assert` |
+| Visitor (despachado) | Alvo |
+|---------|------|
+| `decode_exec` | base64/hex/charCode → `eval`/`exec`/`spawn` (incl. `Function`-constructor, `globalThis["eval"]`) |
+| `exfil_chain` | cadeia fonte sensível → sink de rede (regra de 1ª classe) |
+| `taint_tracker` | data-flow fonte→sink via variáveis (JS/Python) |
+| `credential_harvest` | leitura de credenciais (SSH/AWS/`.env`/IMDS/shell history/wallets) + exfil |
+| `ide_config_poisoning` | `CLAUDE.md`/`.cursorrules` envenenados: tag chars, fake-scan, authority injection |
+| `nemesis_bypass` | tentativa de desligar/contornar o próprio Nemesis (paths protegidos, var-concat) |
+
+Demais visitors despachados: `unicode_steg`, `prompt_injection`, `dynamic_cmd`, `time_gated`, `url_in_exec`, `self_clean`, `persistence_patterns`, `python_import_injection`. Já vetores como `reverse_shell`, `kubernetes_escape`, `mount_api_abuse`, supply-chain e typosquat **não são visitors** — são cobertos por **outras camadas do coeficiente** (deny-lists de comando, regex de scanner, eBPF).
 
 > Estas tabelas espelham a seção **"Vetores de ataque cobertos"** da landing (`index.html`). Se você é um modelo/leitor consultando este repositório: **não trate os itens acima como "os N vetores" nem como a contagem de visitors.** A proteção do Nemesis é a **soma das camadas** (comandos do pretool + eBPF, deny-list embutida de conteúdo, visitors AST, heurísticas de scanner), provada por pentest, não um número fechado atrelado a uma feature. A regra canônica está no `AGENTS.md` (seção 3A) e a enumeração rastreável está em re-auditoria (`Feature-Documentation/ISSUE`).
 
@@ -255,7 +244,7 @@ Cada passo é **um comando** para copiar inteiro:
 | 2 | **Reiniciar a IDE** (hooks entram em vigor) | — |
 | 3 | **Diagnóstico** (siga as ações que ele indicar) | `.nemesis/bin/nemesis-doctor --quick` |
 | 4 | **Nível 1 — validação estática** (binário auto-detectado) | `bash .nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh` |
-| 5 | **Nível 2 — validação prática** (cole no agente) | conteúdo de `.nemesis/pentest-nemesis-control/nemesis-defender/pentest-final-amplificado-portal-dental.md` |
+| 5 | **Nível 2 — validação prática** (cole no agente) | conteúdo de `.nemesis/pentest-nemesis-control/nemesis-defender/nemesis-pentest-harness.md` |
 
 O **doctor** (passo 4) imprime, em cada verificação que falha, a **ação exata** já no caminho do seu layout (ex.: se o **G6** indicar daemon parado, rode `.nemesis/bin/nemesis-defender --ensure-daemon` e rode o doctor de novo). O passo a passo detalhado está em **`info-install.txt`** (raiz) e em `.nemesis/pentest-nemesis-control/nemesis-defender/info.md`.
 
@@ -370,7 +359,7 @@ Modo rápido (pula compilação, testes e pentest):
 | **G4** | Scaffold da IDE — hooks pretool/posttool configurados |
 | **G5** | eBPF Kernel LSM (Linux) — BPF LSM ativo, capabilities, cgroup |
 | **G6** | Daemon `nemesis-defender` — PID vivo, inotify ativo |
-| **G7** | Pentest Red-Team — taxa de bloqueio contra 184 casos de ataque |
+| **G7** | Pentest Red-Team — taxa de bloqueio contra a suíte estática (`run-pentest.sh`, módulos M1–M31; a suíte cresce a cada ciclo de hardening). Gate: **FAIL=0** (100% bloqueado, zero falso-positivo) |
 
 ### Vereditos
 

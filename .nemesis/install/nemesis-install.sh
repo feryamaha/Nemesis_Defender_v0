@@ -390,7 +390,7 @@ cat <<EOF
      Sucesso: FAIL=0 (requer 'node' no PATH).
   3) Validacao PRATICA (Nivel 2): cole no seu agente (Claude/Devin/Cursor/Codex/Gemini), na IDE
      ou no TUI, o conteudo de:
-       .nemesis/pentest-nemesis-control/nemesis-defender/pentest-final-amplificado-portal-dental.md
+       .nemesis/pentest-nemesis-control/nemesis-defender/nemesis-pentest-harness.md
      e confirme que o Nemesis BLOQUEIA cada acao (exit 2).
 
   Guias completos:  info-install.txt  (raiz)  e

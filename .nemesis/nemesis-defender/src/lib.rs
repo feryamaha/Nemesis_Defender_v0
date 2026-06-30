@@ -97,29 +97,21 @@ impl DefenderResult {
 ///
 /// Marcadores de pasta de pentest/documentação de teste (payloads catalogados).
 /// Casados como substring em qualquer ponto do path.
-const EXCLUDED_DIR_MARKERS: &[&str] = &[
-    "pentest-nemesis-control",
-    "PENTEST-NEMESIS",
-    "defender-exclude.txt",
-    "denylist-defender.json",  // legado: hoje EMBUTIDO no binário; mantido por segurança
-    // Pasta de denylists do pretool — regras EDITÁVEIS pelo usuário (ele pode/deve relaxar
-    // os regex), logo NÃO são embutidas. Contêm padrões de detecção (\brm -rf\b, \bcurl\b…)
-    // que o daemon não deve auto-escanear. Os arquivos reais são deny-list*.json (com hífen)
-    // e denylist-folder-files.json; por isso isentamos a PASTA inteira (qualquer forma de
-    // path: absoluto, relativo da raiz ou de .nemesis/ — todos contêm "denylist/").
-    "denylist/",
-    // Pasta da allowlist do usuário (override humano). É a ÚNICA superfície editável pós-install
-    // e contém literalmente comandos que o dono autorizou (rm -rf, git…) — o daemon NÃO deve
-    // auto-escaneá-la ("cobra mordendo o rabo"). Editável só por humano (absolute_block protege
-    // contra o agente). Isenção por substring cobre qualquer forma do path.
-    "denylist-customers/",
-    // Pasta dos artefatos de INSTALAÇÃO no repo-fonte (nemesis-install.sh + info-install.txt).
-    // O instalador contém legitimamente comandos `curl` (download da release) e o leia-me os
-    // documenta — disparariam data_transfer_exfiltration. Mesma classe de pentest-nemesis-control
-    // (artefatos controlados, não conteúdo de usuário/agente). Na máquina do usuário esses
-    // arquivos caem na raiz do cwd (não em .nemesis/install/), onde já são isentos por outras
-    // regras (nemesis-install.sh por nome no daemon; info-install.txt em CANONICAL_ROOT_DOCS).
-    ".nemesis/install/",
+/// Pastas de INFRAESTRUTURA do Nemesis isentas do content scan — APENAS sob `.nemesis/`.
+/// Ancoradas ao prefixo canônico (não substring bare) para que um diretório homônimo na RAIZ
+/// do projeto (ex.: `pentest-nemesis-control/` criado pelo agente) NÃO herde a isenção — esse
+/// era o vetor da ISSUE 005 (escalada do GLM). O path recebido (do pretool `scan_content` e do
+/// daemon `watcher`, ambos relativos ao projeto ou absolutos) sempre contém `.nemesis/<dir>/`
+/// para os arquivos reais. Mesmo princípio de `CANONICAL_ROOT_DOCS` (isento só na posição certa).
+/// Markers órfãos antigos (`defender-exclude.txt`, `PENTEST-NEMESIS`, `denylist-defender.json`
+/// bare) foram removidos: não existem no disco e só eram superfície de ataque; a config real
+/// fica coberta por `.nemesis/nemesis-defender/config/`.
+const EXCLUDED_NEMESIS_DIRS: &[&str] = &[
+    ".nemesis/pentest-nemesis-control/", // harness de pentest (payloads como dado de teste)
+    ".nemesis/denylist/",                // denylists do pretool (editáveis; contêm padrões)
+    ".nemesis/denylist-customers/",      // allowlist do usuário (override humano)
+    ".nemesis/install/",                 // artefatos do instalador (curl legítimo)
+    ".nemesis/nemesis-defender/config/", // denylist-defender.json (fonte; contém assinaturas)
 ];
 
 /// Documentação canônica do projeto, mantida exclusivamente por humanos.
@@ -184,9 +176,10 @@ pub fn is_path_excluded(path: &Path) -> bool {
         return true;
     }
 
-    // 1. Pastas de pentest/documentação de teste — isentas em qualquer nível.
-    for substr in EXCLUDED_DIR_MARKERS {
-        if path_str.contains(substr) {
+    // 1. Pastas de infraestrutura do Nemesis — isentas APENAS sob `.nemesis/` (não em
+    //    homônimos na raiz do projeto; mesmo princípio de CANONICAL_ROOT_DOCS). Fecha ISSUE 005.
+    for dir in EXCLUDED_NEMESIS_DIRS {
+        if path_str.contains(dir) {
             return true;
         }
     }
@@ -471,6 +464,28 @@ mod git_exclusion_tests {
             "/home/u/proj/.git/hooks/post-checkout",
         ] {
             assert!(!is_git_internal_data(Path::new(p)), "NÃO isentar hook: {p}");
+        }
+    }
+
+    #[test]
+    fn nemesis_dirs_exempt_only_under_dot_nemesis() {
+        // Isentos: harness/denylist/config reais sob `.nemesis/` (formas absoluta, relativa
+        // da raiz e com componente `./` como o daemon emite).
+        for p in [
+            "/home/u/proj/.nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh",
+            ".nemesis/pentest-nemesis-control/x.txt",
+            "proj/./.nemesis/denylist/deny-list-base.json",
+            "/home/u/proj/.nemesis/nemesis-defender/config/denylist-defender.json",
+        ] {
+            assert!(is_path_excluded(Path::new(p)), "deveria isentar: {p}");
+        }
+        // NÃO isentos: homônimo na RAIZ do projeto (vetor da ISSUE 005 — escalada do GLM).
+        for p in [
+            "pentest-nemesis-control/payload.txt",
+            "/home/u/proj/pentest-nemesis-control/neutralize.txt",
+            "denylist/fake.json",
+        ] {
+            assert!(!is_path_excluded(Path::new(p)), "NAO deveria isentar: {p}");
         }
     }
 

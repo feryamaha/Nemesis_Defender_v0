@@ -138,7 +138,7 @@ sudo .nemesis/scripts/ensure-ebpf-caps.sh
    configuracao da IDE relevante)
 2. **Verificar pretool ativo**: executar um comando benigno e confirmar que o pretool intercepta
 3. **Executar pentest full**: colar o conteudo de
-   `pentest-final-amplificado-portal-dental.md` como prompt para o agente, ou executar
+   `nemesis-pentest-harness.md` como prompt para o agente, ou executar
    manualmente os vetores das Partes 1-13
 4. **Validar resultados**:
    - Partes 1-12: sem regressao (todos bloqueados como antes)
