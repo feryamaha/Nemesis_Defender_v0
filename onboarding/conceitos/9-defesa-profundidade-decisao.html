@@ -13,6 +13,8 @@
   <span class="spacer"></span>
   <nav aria-label="Navegação principal">
     <a href="../index.html">Início</a>
+    <a href="../jornada.html">Jornada</a>
+    <a href="../diagrama-arquitetura.html">Arquitetura</a>
     <a href="../competencias.html">Competências</a>
     <a href="../COBERTURA.html">Cobertura</a>
   </nav>
@@ -45,6 +47,11 @@
 
   <h2>Como se correlaciona</h2>
   <p>As camadas independentes do <a href="6-pretool-defender-daemon.html">grupo 6</a> e o backstop de kernel do <a href="2-kernel-ebpf-lsm.html">grupo 2</a> são as três barreiras; a corroboração usa a taxonomia de sinais que os <a href="5-leitura-codigo-ast-pipeline.html">visitors</a> e o scanner emitem; e a coexistência fonte+sink do <a href="8-codigo-malicioso-supply-chain.html">grupo 8</a> é corroboração embutida num único visitor. O coeficiente é o nome que dou para a soma de tudo isso, e é o que a <a href="../COBERTURA.html">matriz de cobertura</a> recorta por camada.</p>
+
+  <figure class="diagram">
+    <img src="../diagramas/9b-coeficiente.svg" alt="A proteção do Nemesis é a soma das camadas independentes — pretool mais daemon mais eBPF — chamada de coeficiente. Não é a contagem de visitors: visitor é método de detecção, feature e não produto. A prova empírica é a suite de pentest com 184 casos.">
+    <figcaption>A regra do coeficiente: proteção = soma das camadas. Visitor é método de detecção, não unidade de cobertura; a prova é o pentest.</figcaption>
+  </figure>
 
   <h2>Como o Nemesis aplica</h2>
   <p>A decisão é em dois tiers. Tier A (confirmatório) age sozinho; Tier B (corroborante) conta tipos distintos:</p>

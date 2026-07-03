@@ -13,6 +13,8 @@
   <span class="spacer"></span>
   <nav aria-label="Navegação principal">
     <a href="../index.html">Início</a>
+    <a href="../jornada.html">Jornada</a>
+    <a href="../diagrama-arquitetura.html">Arquitetura</a>
     <a href="../competencias.html">Competências</a>
     <a href="../COBERTURA.html">Cobertura</a>
   </nav>
@@ -42,6 +44,11 @@
 
   <h2>Por que importa</h2>
   <p>O pretool pega a ação <em>antes</em> de o byte tocar o disco, é a hora certa de barrar uma escrita ruim, porque barrar é reversível. Mas e se um arquivo hostil chegar ao disco por um caminho que o hook não viu? Aí entra o daemon: ele vigia o filesystem e age depois, sobre o arquivo já materializado. Como agir depois pode significar destruir, o daemon nunca deleta: ele move para a quarentena e chama o humano. Interceptar e conter são dois tempos do mesmo problema.</p>
+
+  <figure class="diagram">
+    <img src="../diagramas/6b-quarentena-ciclo.svg" alt="Ciclo da quarentena: hostilidade confirmada por corroboração; o arquivo é movido para .nemesis/quarantine com meta.json do motivo; a sessão é barrada com exit 2; o humano revisa com list e show e decide entre restore e purge. Nada é deletado sem decisão humana.">
+    <figcaption>O ciclo de vida da quarentena: mover, registrar o motivo, barrar a sessão e devolver a decisão ao humano — <code>restore</code> ou <code>purge</code>.</figcaption>
+  </figure>
 
   <h2>Como se correlaciona</h2>
   <p>Eles se invocam em cadeia. O pretool, ao rodar, garante que o daemon esteja no ar (fire-and-forget) e, no Linux, garante também o daemon eBPF do <a href="2-kernel-ebpf-lsm.html">grupo 2</a>. Pretool e daemon compartilham o mesmo motor <code>scan_content</code> (mesma fonte de regras, mesmo veredito para bytes iguais, ver <a href="visao-geral.html">visão geral</a>). E a decisão de severidade aqui é a mesma que o <a href="9-defesa-profundidade-decisao.html">grupo 9</a> aprofunda na corroboração e na quarentena.</p>

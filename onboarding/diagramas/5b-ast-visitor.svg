@@ -1,0 +1,75 @@
+<svg viewBox="0 0 980 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="O código-fonte é parseado pelo tree-sitter em uma árvore sintática; um visitor percorre os nós e reconhece o padrão semântico decode seguido de eval, mesmo com variáveis renomeadas; o resultado vira sinal para compute_severity.">
+  <defs>
+    <marker id="arr5b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#56708f"/></marker>
+    <marker id="arr5bQz" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#f5b54a"/></marker>
+  </defs>
+  <style>
+    text{font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif}
+    .t{fill:#e8edf6;font-size:14px;font-weight:600}
+    .s{fill:#8595ab;font-size:12px}
+    .m{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace}
+    .code{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace;font-size:12.5px}
+    .node{fill:#121826;stroke:#38e1d3}
+    .edge{stroke:#56708f;stroke-width:1.6;fill:none}
+    .tree{stroke:#56708f;stroke-width:1.2;fill:none}
+  </style>
+
+  <!-- código -->
+  <rect x="30" y="60" width="250" height="120" rx="10" fill="#05070c" stroke="#243043"/>
+  <text x="50" y="88" class="s m" fill="#8595ab">// código-fonte (JS)</text>
+  <text x="50" y="114" class="code" fill="#d6e0f0">const p = "cm0gLXJm...";</text>
+  <text x="50" y="138" class="code" fill="#d6e0f0">const x = atob(p);</text>
+  <text x="50" y="162" class="code" fill="#ffd7d7">eval(x);</text>
+
+  <path class="edge" d="M280 120 H336" marker-end="url(#arr5b)"/>
+  <text x="308" y="106" text-anchor="middle" class="s m">parse</text>
+
+  <!-- tree-sitter -->
+  <rect x="340" y="84" width="170" height="72" rx="10" class="node"/>
+  <text x="425" y="112" text-anchor="middle" class="t m" fill="#38e1d3">tree-sitter</text>
+  <text x="425" y="136" text-anchor="middle" class="s">parser real da linguagem</text>
+
+  <path class="edge" d="M510 120 H566" marker-end="url(#arr5b)"/>
+
+  <!-- árvore -->
+  <rect x="570" y="30" width="380" height="290" rx="12" fill="#0c1019" stroke="#243043"/>
+  <text x="590" y="56" class="s m" fill="#38e1d3" font-weight="700" letter-spacing=".12em">ÁRVORE SINTÁTICA (AST)</text>
+
+  <rect x="700" y="72" width="120" height="34" rx="7" class="node"/>
+  <text x="760" y="94" text-anchor="middle" class="s m" fill="#e8edf6">program</text>
+
+  <path class="tree" d="M760 106 V128"/>
+  <rect x="680" y="130" width="160" height="34" rx="7" class="node" stroke="#f5b54a" stroke-width="1.6"/>
+  <text x="760" y="152" text-anchor="middle" class="s m" fill="#ffeccb">call_expression</text>
+
+  <path class="tree" d="M714 164 C690 180 668 190 652 198"/>
+  <path class="tree" d="M806 164 C830 180 852 190 868 198"/>
+
+  <rect x="588" y="200" width="130" height="34" rx="7" fill="#2a1014" stroke="#ff6b6b"/>
+  <text x="653" y="222" text-anchor="middle" class="s m" fill="#ffd7d7">callee: eval</text>
+
+  <rect x="800" y="200" width="136" height="34" rx="7" class="node"/>
+  <text x="868" y="222" text-anchor="middle" class="s m" fill="#e8edf6">args: [ x ]</text>
+
+  <path class="tree" d="M868 234 V256"/>
+  <rect x="782" y="258" width="172" height="34" rx="7" fill="#2a1014" stroke="#ff6b6b"/>
+  <text x="868" y="280" text-anchor="middle" class="s m" fill="#ffd7d7">x ← atob(p)  ⟵ taint</text>
+
+  <!-- visitor -->
+  <ellipse cx="760" cy="147" rx="105" ry="30" fill="none" stroke="#f5b54a" stroke-dasharray="5 4"/>
+  <text x="614" y="300" class="s" fill="#d9c08a">o visitor percorre os nós e reconhece a estrutura,</text>
+  <text x="614" y="316" class="s" fill="#d9c08a">não o texto: renomear variável não engana.</text>
+
+  <!-- sinal -->
+  <path class="edge" d="M760 320 C700 360 600 380 520 388" stroke="#f5b54a" marker-end="url(#arr5bQz)"/>
+  <rect x="240" y="360" width="280" height="60" rx="10" fill="#2a2410" stroke="#f5b54a"/>
+  <text x="380" y="386" text-anchor="middle" class="t" fill="#ffeccb">sinal: decode → exec</text>
+  <text x="380" y="408" text-anchor="middle" class="s m" fill="#d9c08a">alimenta compute_severity</text>
+
+  <!-- nota -->
+  <rect x="30" y="240" width="250" height="90" rx="8" fill="#0c1019" stroke="#21a99e" stroke-dasharray="4 3"/>
+  <text x="155" y="268" text-anchor="middle" class="s" fill="#b8c4d6">Regex vê texto; o visitor vê</text>
+  <text x="155" y="286" text-anchor="middle" class="s" fill="#b8c4d6">estrutura. É análise semântica:</text>
+  <text x="155" y="304" text-anchor="middle" class="s" fill="#b8c4d6">um método de detecção a mais</text>
+  <text x="155" y="320" text-anchor="middle" class="s" fill="#b8c4d6">no coeficiente, não o produto.</text>
+</svg>

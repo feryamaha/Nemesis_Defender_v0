@@ -13,6 +13,8 @@
   <span class="spacer"></span>
   <nav aria-label="Navegação principal">
     <a href="../index.html">Início</a>
+    <a href="../jornada.html">Jornada</a>
+    <a href="../diagrama-arquitetura.html">Arquitetura</a>
     <a href="../competencias.html">Competências</a>
     <a href="../COBERTURA.html">Cobertura</a>
   </nav>
@@ -42,6 +44,11 @@
 
   <h2>Por que importa</h2>
   <p>Pensa no pior caso: o scanner recebe um arquivo construído para derrubá-lo. Se ele estourasse a pilha, entrasse em loop ou crashasse silenciosamente, o atacante teria achado um jeito de <em>desligar a defesa só escrevendo um arquivo</em>. Rust me deixa fechar essas portas: erro é tratado, pânico vira bloqueio, regex não explode, e há teto para recursão e tamanho. A ferramenta falha fechada, nunca aberta.</p>
+
+  <figure class="diagram">
+    <img src="../diagramas/4b-fail-open-fail-closed.svg" alt="Comparação: no fail-open, um erro interno é engolido e a ação passa sem scan, virando o próprio vetor de ataque; no fail-closed do Nemesis, o pânico é capturado e vira exit 2, então o erro nunca abre a porta.">
+    <figcaption>Fail-open vs fail-closed: o mesmo erro interno, dois destinos opostos. No Nemesis, derrubar o scanner não abre nada.</figcaption>
+  </figure>
 
   <h2>Como se correlaciona</h2>
   <p>Tudo aqui serve ao contrato do <a href="1-contrato-posix-exit2.html">grupo 1</a>: o fail-closed é o que garante que mesmo um erro interno termine em <code>exit 2</code>, mantendo o contrato de bloqueio honrado. Os limites de profundidade conversam com o <a href="8-codigo-malicioso-supply-chain.html">decoder recursivo</a> (payload aninhado não vira DoS) e com o <a href="5-leitura-codigo-ast-pipeline.html">pipeline</a> (ordem determinística). E a <code>Cargo.lock</code> commitada é parte da postura de <a href="10-processo-honestidade.html">supply chain</a>: sem bump silencioso de dependência.</p>

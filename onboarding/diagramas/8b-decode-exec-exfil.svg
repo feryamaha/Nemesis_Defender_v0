@@ -1,0 +1,71 @@
+<svg viewBox="0 0 980 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Duas cadeias de detecção: decode-then-exec (payload codificado que decodifica e executa) é confirmatório e bloqueia sozinho; a cadeia de exfiltração exige fonte sensível mais sink de rede juntos — cada um sozinho é inocente, os dois combinados condenam.">
+  <defs>
+    <marker id="arr8b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#56708f"/></marker>
+    <marker id="arr8bBad" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#ff6b6b"/></marker>
+  </defs>
+  <style>
+    text{font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif}
+    .t{fill:#e8edf6;font-size:13.5px;font-weight:600}
+    .s{fill:#8595ab;font-size:11.5px}
+    .m{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace}
+    .lbl{font-size:12px;font-weight:700;letter-spacing:.1em}
+    .edge{stroke:#56708f;stroke-width:1.6;fill:none}
+  </style>
+
+  <!-- cadeia A -->
+  <rect x="20" y="20" width="940" height="170" rx="12" fill="#0c1019" stroke="#243043"/>
+  <text x="40" y="48" class="lbl m" fill="#ff6b6b">CADEIA A · DECODE-THEN-EXEC — CONFIRMATÓRIA (1 basta)</text>
+
+  <rect x="40" y="70" width="250" height="88" rx="10" fill="#121826" stroke="#38e1d3"/>
+  <text x="165" y="100" text-anchor="middle" class="t">payload codificado</text>
+  <text x="165" y="122" text-anchor="middle" class="s m" fill="#38e1d3">"cm0gLXJmIC8..."</text>
+  <text x="165" y="142" text-anchor="middle" class="s">base64 · hex · aninhado</text>
+
+  <path class="edge" d="M290 114 H336" marker-end="url(#arr8b)"/>
+
+  <rect x="340" y="70" width="220" height="88" rx="10" fill="#121826" stroke="#38e1d3"/>
+  <text x="450" y="100" text-anchor="middle" class="t">decodificação</text>
+  <text x="450" y="122" text-anchor="middle" class="s m" fill="#38e1d3">atob · Buffer.from</text>
+  <text x="450" y="142" text-anchor="middle" class="s m" fill="#38e1d3">base64 -d</text>
+
+  <path class="edge" d="M560 114 H606" marker-end="url(#arr8b)"/>
+
+  <rect x="610" y="70" width="180" height="88" rx="10" fill="#121826" stroke="#38e1d3"/>
+  <text x="700" y="100" text-anchor="middle" class="t">execução</text>
+  <text x="700" y="122" text-anchor="middle" class="s m" fill="#38e1d3">eval · exec</text>
+  <text x="700" y="142" text-anchor="middle" class="s m" fill="#38e1d3">child_process</text>
+
+  <path class="edge" d="M790 114 H836" stroke="#ff6b6b" marker-end="url(#arr8bBad)"/>
+
+  <rect x="840" y="78" width="100" height="72" rx="10" fill="#2a1014" stroke="#ff6b6b" stroke-width="1.6"/>
+  <text x="890" y="108" text-anchor="middle" class="t m" fill="#ffd7d7">BLOQUEIA</text>
+  <text x="890" y="130" text-anchor="middle" class="s m" fill="#e8a0a0">exit 2</text>
+
+  <!-- cadeia B -->
+  <rect x="20" y="210" width="940" height="170" rx="12" fill="#0c1019" stroke="#243043"/>
+  <text x="40" y="238" class="lbl m" fill="#f5b54a">CADEIA B · EXFILTRAÇÃO — FONTE + SINK (a soma condena)</text>
+
+  <rect x="40" y="260" width="300" height="88" rx="10" fill="#121826" stroke="#38e1d3"/>
+  <text x="190" y="290" text-anchor="middle" class="t">fonte sensível</text>
+  <text x="190" y="312" text-anchor="middle" class="s m" fill="#38e1d3">.env · chaves SSH · tokens</text>
+  <text x="190" y="332" text-anchor="middle" class="s">sozinha: leitura pode ser legítima</text>
+
+  <text x="378" y="312" text-anchor="middle" fill="#f5b54a" font-size="26" font-weight="700">+</text>
+
+  <rect x="415" y="260" width="300" height="88" rx="10" fill="#121826" stroke="#38e1d3"/>
+  <text x="565" y="290" text-anchor="middle" class="t">sink de rede</text>
+  <text x="565" y="312" text-anchor="middle" class="s m" fill="#38e1d3">fetch · curl · webhook externo</text>
+  <text x="565" y="332" text-anchor="middle" class="s">sozinho: rede pode ser legítima</text>
+
+  <path class="edge" d="M715 304 H756" stroke="#ff6b6b" marker-end="url(#arr8bBad)"/>
+  <text x="736" y="290" text-anchor="middle" class="s m" fill="#ff6b6b">juntos</text>
+
+  <rect x="760" y="252" width="180" height="104" rx="10" fill="#2a1014" stroke="#ff6b6b" stroke-width="1.6"/>
+  <text x="850" y="284" text-anchor="middle" class="t" fill="#ffd7d7">cadeia de exfil</text>
+  <text x="850" y="306" text-anchor="middle" class="s" fill="#e8a0a0">o taint liga a fonte</text>
+  <text x="850" y="322" text-anchor="middle" class="s" fill="#e8a0a0">ao destino externo</text>
+  <text x="850" y="344" text-anchor="middle" class="t m" fill="#ffd7d7">BLOQUEIA</text>
+
+  <!-- nota -->
+  <text x="490" y="416" text-anchor="middle" class="s" fill="#b8c4d6">A corroboração existe para não condenar código legítimo: um sinal inocente + contexto inocente = passa; a combinação que só existe em ataque = bloqueia.</text>
+</svg>

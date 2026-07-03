@@ -13,6 +13,8 @@
   <span class="spacer"></span>
   <nav aria-label="Navegação principal">
     <a href="../index.html">Início</a>
+    <a href="../jornada.html">Jornada</a>
+    <a href="../diagrama-arquitetura.html">Arquitetura</a>
     <a href="../competencias.html">Competências</a>
     <a href="../COBERTURA.html">Cobertura</a>
   </nav>
@@ -39,6 +41,11 @@
 
   <h2>Do zero: de onde vem o exit code</h2>
   <p>No modelo POSIX, um processo é criado por <code>fork</code>/<code>exec</code> e, quando morre, entrega ao processo pai um status via <code>wait</code>. Desse status o pai lê um byte: o código de saída. A convenção é antiga e universal: <code>0</code> quer dizer "deu certo", qualquer valor de <code>1</code> a <code>255</code> quer dizer "deu errado", e cada programa pode atribuir significados aos códigos diferentes de zero. O agente conversa com o hook por três descritores padrão: entrada (stdin), saída (stdout) e erro (stderr). O hook recebe o pedido em stdin como JSON, processa, e o que importa para a decisão não é o que ele imprime, e sim com qual número ele termina.</p>
+
+  <figure class="diagram">
+    <img src="../diagramas/1b-processo-stdio.svg" alt="A IDE (processo pai) cria o hook por fork e exec; o pedido entra pelo stdin como JSON; stdout e stderr são só diagnóstico; a decisão volta ao pai como código de saída, entregue pelo kernel via wait.">
+    <figcaption>O modelo de processos por baixo do contrato: <code>fork</code>/<code>exec</code>, stdin com o pedido, e o veredito voltando ao pai via <code>wait()</code>.</figcaption>
+  </figure>
 
   <h2>Por que importa</h2>
   <p>Eu precisava de um sinal que o agente não pudesse "convencer" a mudar. Texto no prompt é probabilístico: o modelo pode ignorar. Já o código de saída de um processo é um fato do sistema operacional. Quando a IDE combina "se o hook pré-ação sair com 2, eu cancelo a ação", o controle deixa de depender da boa vontade do modelo e passa a depender do kernel entregar o status do processo, o que ele sempre faz.</p>

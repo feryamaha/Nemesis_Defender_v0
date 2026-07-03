@@ -13,6 +13,8 @@
   <span class="spacer"></span>
   <nav aria-label="Navegação principal">
     <a href="../index.html">Início</a>
+    <a href="../jornada.html">Jornada</a>
+    <a href="../diagrama-arquitetura.html">Arquitetura</a>
     <a href="../competencias.html">Competências</a>
     <a href="../COBERTURA.html">Cobertura</a>
   </nav>
@@ -42,6 +44,11 @@
 
   <h2>Por que importa</h2>
   <p>Atacante esconde intenção. Um <code>eval</code> de string concatenada, um segredo lido e mandado para a rede, um comando montado em pedaços, nada disso é pego por uma busca ingênua de substring sem gerar montanha de falso-positivo. Lendo a estrutura, eu distingo "a palavra <code>exec</code> aparece num comentário" de "há uma chamada de <code>exec</code> sobre um valor decodificado em runtime". É a diferença entre alarme falso e detecção real.</p>
+
+  <figure class="diagram">
+    <img src="../diagramas/5b-ast-visitor.svg" alt="O código-fonte é parseado pelo tree-sitter em uma árvore sintática; um visitor percorre os nós e reconhece o padrão semântico decode seguido de eval, mesmo com variáveis renomeadas; o resultado vira sinal para compute_severity.">
+    <figcaption>Regex vê texto; o visitor vê estrutura. Renomear a variável não muda a árvore — o padrão <em>decode → exec</em> continua lá.</figcaption>
+  </figure>
 
   <h2>Como se correlaciona</h2>
   <p>As camadas se encadeiam do barato ao caro: o byte-scan roda sem parser; a entropia e o regex são rápidos; a AST só roda em linguagens suportadas; e o decoder fecha decodificando o que estava escondido e <em>reescaneando</em>. O taint é uma passada de conteúdo completa acoplada à AST. A severidade que sai dali alimenta o <a href="9-defesa-profundidade-decisao.html">modelo de decisão</a>, e muitos visitors deste pipeline são exatamente os que caçam os ataques do <a href="8-codigo-malicioso-supply-chain.html">grupo 8</a>.</p>

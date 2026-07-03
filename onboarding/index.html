@@ -14,6 +14,8 @@
   <span class="spacer"></span>
   <nav aria-label="Navegação principal">
     <a href="index.html">Início</a>
+    <a href="jornada.html">Jornada</a>
+    <a href="diagrama-arquitetura.html">Arquitetura</a>
     <a href="competencias.html">Competências</a>
     <a href="COBERTURA.html">Cobertura</a>
   </nav>
@@ -49,12 +51,12 @@
   <section class="card">
     <h3 style="margin-top:4px">Por onde começar</h3>
     <p>A <a href="jornada.html"><strong>jornada</strong></a> abre o material e te leva pela trilha; os dez grupos aprofundam cada bloco; a <a href="conceitos/visao-geral.html">visão geral</a> fecha juntando tudo. A proteção do Nemesis é a <strong>soma das camadas</strong> (o coeficiente), não a contagem de uma feature: visitor é método de detecção, não unidade de cobertura.</p>
-    <ol>
-      <li><strong>O contrato:</strong> <a href="conceitos/1-contrato-posix-exit2.html">exit 2</a> → <a href="conceitos/2-kernel-ebpf-lsm.html">kernel/eBPF/LSM</a> → <a href="conceitos/3-confinamento-kernel-egress.html">confinamento e egress</a>.</li>
-      <li><strong>A engenharia:</strong> <a href="conceitos/4-rust-defesa.html">Rust de defesa</a> → <a href="conceitos/5-leitura-codigo-ast-pipeline.html">AST e pipeline</a>.</li>
-      <li><strong>A mecânica e as ameaças:</strong> <a href="conceitos/6-pretool-defender-daemon.html">pretool/defender/daemon</a> → <a href="conceitos/7-prompt-injection-ide-poisoning.html">prompt injection</a> → <a href="conceitos/8-codigo-malicioso-supply-chain.html">supply-chain</a>.</li>
-      <li><strong>Decisão e processo:</strong> <a href="conceitos/9-defesa-profundidade-decisao.html">defesa em profundidade</a> → <a href="conceitos/10-processo-honestidade.html">processo e honestidade</a>.</li>
-      <li><strong>Síntese:</strong> <a href="conceitos/visao-geral.html">visão geral</a>.</li>
+    <ol class="trail">
+      <li><span class="dot">1</span><span class="lbl"><b>O contrato:</b> <a href="conceitos/1-contrato-posix-exit2.html">exit 2</a> → <a href="conceitos/2-kernel-ebpf-lsm.html">kernel/eBPF/LSM</a> → <a href="conceitos/3-confinamento-kernel-egress.html">confinamento e egress</a>.</span></li>
+      <li><span class="dot">2</span><span class="lbl"><b>A engenharia:</b> <a href="conceitos/4-rust-defesa.html">Rust de defesa</a> → <a href="conceitos/5-leitura-codigo-ast-pipeline.html">AST e pipeline</a>.</span></li>
+      <li><span class="dot">3</span><span class="lbl"><b>A mecânica e as ameaças:</b> <a href="conceitos/6-pretool-defender-daemon.html">pretool/defender/daemon</a> → <a href="conceitos/7-prompt-injection-ide-poisoning.html">prompt injection</a> → <a href="conceitos/8-codigo-malicioso-supply-chain.html">supply-chain</a>.</span></li>
+      <li><span class="dot">4</span><span class="lbl"><b>Decisão e processo:</b> <a href="conceitos/9-defesa-profundidade-decisao.html">defesa em profundidade</a> → <a href="conceitos/10-processo-honestidade.html">processo e honestidade</a>.</span></li>
+      <li><span class="dot">∑</span><span class="lbl"><b>Síntese:</b> <a href="conceitos/visao-geral.html">visão geral</a> e a <a href="diagrama-arquitetura.html">arquitetura em diagramas</a>.</span></li>
     </ol>
   </section>
 
@@ -105,6 +107,7 @@
     <h2><span class="ix">∑</span> Síntese e apoio</h2>
     <div class="grid">
       <a class="tile" href="conceitos/visao-geral.html"><span class="num">∑</span><span class="name">Visão geral</span><span class="desc">O sistema inteiro convergindo: camadas, pipeline e o caminho do exit 2.</span></a>
+      <a class="tile" href="diagrama-arquitetura.html"><span class="num">◇</span><span class="name">Arquitetura em diagramas</span><span class="desc">O fluxo completo e as três camadas lado a lado, em visual.</span></a>
       <a class="tile" href="competencias.html"><span class="num">★</span><span class="name">Competências de engenharia</span><span class="desc">Evidência de estudo autodidata por domínio.</span></a>
       <a class="tile" href="COBERTURA.html"><span class="num">★</span><span class="name">Matriz de cobertura</span><span class="desc">Conceito → arquivo-fonte → página, com lacunas.</span></a>
     </div>

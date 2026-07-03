@@ -1,0 +1,53 @@
+<svg viewBox="0 0 980 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A IDE (processo pai) cria o hook por fork e exec; o pedido entra pelo stdin como JSON; stdout e stderr são só diagnóstico; a decisão volta ao pai como código de saída, entregue pelo kernel via wait.">
+  <defs>
+    <marker id="arr1b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#56708f"/></marker>
+    <marker id="arr1bC" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#38e1d3"/></marker>
+    <marker id="arr1bV" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#b794f6"/></marker>
+  </defs>
+  <style>
+    text{font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif}
+    .t{fill:#e8edf6;font-size:15px;font-weight:600}
+    .s{fill:#8595ab;font-size:12px}
+    .m{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace}
+    .edge{stroke:#56708f;stroke-width:1.6;fill:none}
+  </style>
+
+  <!-- IDE, processo pai -->
+  <rect x="30" y="70" width="210" height="110" rx="10" fill="#0d1424" stroke="#5aa9ff"/>
+  <text x="135" y="105" text-anchor="middle" class="t">IDE / agente</text>
+  <text x="135" y="127" text-anchor="middle" class="s" fill="#9db8dc">processo pai</text>
+  <text x="135" y="147" text-anchor="middle" class="s" fill="#9db8dc">orquestra a ação</text>
+
+  <!-- fork + exec -->
+  <path class="edge" d="M240 100 H358" marker-end="url(#arr1b)"/>
+  <text x="299" y="88" text-anchor="middle" class="s m" fill="#8595ab">fork + exec</text>
+
+  <!-- hook, processo filho -->
+  <rect x="360" y="40" width="260" height="170" rx="10" fill="#121826" stroke="#38e1d3"/>
+  <text x="490" y="74" text-anchor="middle" class="t">hook pretool</text>
+  <text x="490" y="96" text-anchor="middle" class="s">processo filho, vida curta</text>
+  <text x="490" y="118" text-anchor="middle" class="s">lê, decide, termina</text>
+  <text x="490" y="148" text-anchor="middle" class="s m" fill="#38e1d3">stdin ← pedido (JSON)</text>
+  <text x="490" y="170" text-anchor="middle" class="s m" fill="#8595ab">stdout/stderr → texto</text>
+  <text x="490" y="190" text-anchor="middle" class="s" fill="#8595ab">(diagnóstico, não decide)</text>
+
+  <!-- exit(status) -->
+  <path class="edge" d="M620 125 H738" stroke="#38e1d3" marker-end="url(#arr1bC)"/>
+  <text x="679" y="113" text-anchor="middle" class="s m" fill="#38e1d3">exit(0 | 2)</text>
+
+  <!-- kernel -->
+  <rect x="740" y="70" width="210" height="110" rx="10" fill="#1e1830" stroke="#b794f6"/>
+  <text x="845" y="105" text-anchor="middle" class="t" fill="#efe6ff">KERNEL</text>
+  <text x="845" y="127" text-anchor="middle" class="s" fill="#b9a8dc">guarda o status do</text>
+  <text x="845" y="147" text-anchor="middle" class="s" fill="#b9a8dc">processo que terminou</text>
+
+  <!-- wait de volta ao pai -->
+  <path class="edge" d="M845 180 V250 H135 V184" stroke="#b794f6" marker-end="url(#arr1bV)"/>
+  <text x="490" y="238" text-anchor="middle" class="s m" fill="#b794f6">wait() → o pai lê o código de saída</text>
+
+  <!-- nota -->
+  <rect x="190" y="300" width="600" height="96" rx="8" fill="#0c1019" stroke="#21a99e" stroke-dasharray="4 3"/>
+  <text x="490" y="330" text-anchor="middle" class="t" fill="#b8c4d6" font-size="13">A decisão é o número, nunca o texto impresso.</text>
+  <text x="490" y="354" text-anchor="middle" class="s" fill="#b8c4d6">0 = sucesso · ≠0 = falha (convenção POSIX) · 2 = "bloqueie" (contrato com as IDEs de agente).</text>
+  <text x="490" y="376" text-anchor="middle" class="s" fill="#b8c4d6">O kernel sempre entrega o status ao pai — é um fato do SO, não uma sugestão ao modelo.</text>
+</svg>

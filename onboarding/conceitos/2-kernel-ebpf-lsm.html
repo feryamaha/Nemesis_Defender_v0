@@ -13,6 +13,8 @@
   <span class="spacer"></span>
   <nav aria-label="Navegação principal">
     <a href="../index.html">Início</a>
+    <a href="../jornada.html">Jornada</a>
+    <a href="../diagrama-arquitetura.html">Arquitetura</a>
     <a href="../competencias.html">Competências</a>
     <a href="../COBERTURA.html">Cobertura</a>
   </nav>
@@ -45,6 +47,11 @@
 
   <h2>Como se correlaciona</h2>
   <p>eBPF, verifier e LSM se encaixam assim: o <strong>LSM</strong> oferece os ganchos (onde decidir); o <strong>eBPF</strong> é a tecnologia que me deixa carregar lógica nesses ganchos sem recompilar o kernel; e o <strong>verifier</strong> é o que torna isso aceitável, ele prova, antes de carregar, que meu programa termina e não corrompe nada. Por isso meus loops são de tamanho fixo com <code>#pragma unroll</code> e os caminhos são limitados: é o que o verifier exige. As estruturas de dados que ligo a esse programa são <em>mapas</em> BPF, e eu uso vários tipos conforme a necessidade.</p>
+
+  <figure class="diagram">
+    <img src="../diagramas/2b-verifier-mapas.svg" alt="O caminho do programa eBPF: fonte C compilada pelo clang em bytecode BPF, aprovada pelo verifier do kernel, convertida por JIT e ancorada no hook LSM; os mapas BPF são a ponte entre o userspace, que escreve as regras, e o kernel, que as consulta.">
+    <figcaption>O caminho do programa eBPF até o kernel — e os mapas como ponte userspace ↔ kernel para atualizar regras sem recarregar nada.</figcaption>
+  </figure>
 
   <h2>Como o Nemesis aplica</h2>
   <p>Eu declaro os mapas que o programa usa: uma tabela hash com os comandos bloqueados, um ring buffer para emitir eventos ao userspace, e tries LPM para a allowlist de egress (que detalho no <a href="3-confinamento-kernel-egress.html">grupo 3</a>).</p>

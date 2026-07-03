@@ -13,6 +13,8 @@
   <span class="spacer"></span>
   <nav aria-label="Navegação principal">
     <a href="../index.html">Início</a>
+    <a href="../jornada.html">Jornada</a>
+    <a href="../diagrama-arquitetura.html">Arquitetura</a>
     <a href="../competencias.html">Competências</a>
     <a href="../COBERTURA.html">Cobertura</a>
   </nav>
@@ -81,6 +83,16 @@
 
   <h2>Como se correlaciona: o caminho do comando</h2>
   <p>O fluxo que amarra os dez grupos é este. O agente pede uma ação. O pretool a traduz (o nome da ferramenta vira uma intenção, <code>pre_run_command</code> / <code>pre_write_code</code>), passa o conteúdo pelo motor, e o motor devolve uma severidade. Se for bloqueio, o processo sai com <code>exit 2</code>, e a IDE entende isso como "negado". Se um arquivo hostil escapou para o disco, o daemon o encontra e o move para a quarentena. No Linux, se alguém tentar <em>executar</em> um binário destrutivo, o eBPF nega no kernel com <code>-EPERM</code>, mesmo que o pretool esteja desconectado.</p>
+
+  <figure class="diagram">
+    <img src="../diagramas/fluxo.svg" alt="Fluxo completo do Nemesis: o agente de IA tenta uma ação; a camada 1 (pretool) intercepta antes de executar e bloqueia o hostil com exit 2; a camada 2 (daemon) isola em quarentena o que escapou para o disco; a camada 3 (eBPF, no kernel) é a rede de segurança; tudo é registrado localmente.">
+    <figcaption>O caminho completo do comando: da ação do agente ao veredito, com as três camadas e o log 100% local.</figcaption>
+  </figure>
+
+  <figure class="diagram">
+    <img src="../diagramas/tres-camadas.svg" alt="Comparação das três camadas lado a lado: quando agem, onde rodam, o que fazem e o que pegam. Camadas independentes; a proteção é a soma delas.">
+    <figcaption>As três camadas lado a lado: quando, onde, o que fazem e o que pegam.</figcaption>
+  </figure>
 
   <h2>Como o Nemesis aplica</h2>
   <p>O orquestrador é a função <code>scan_content</code>. Eu a escrevi para rodar os estágios em ordem e delegar a decisão final a <code>compute_severity</code>.</p>

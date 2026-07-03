@@ -13,6 +13,8 @@
   <span class="spacer"></span>
   <nav aria-label="Navegação principal">
     <a href="../index.html">Início</a>
+    <a href="../jornada.html">Jornada</a>
+    <a href="../diagrama-arquitetura.html">Arquitetura</a>
     <a href="../competencias.html">Competências</a>
     <a href="../COBERTURA.html">Cobertura</a>
   </nav>
@@ -45,6 +47,11 @@
 
   <h2>Como se correlaciona</h2>
   <p>O fio é o meu princípio de <strong>coexistência</strong>: nenhuma peça isolada precisa ser conclusiva se a combinação é inequívoca. Decode sozinho pode ser legítimo; decode que vira exec, não. Ler <code>~/.ssh/id_rsa</code> pode ser backup; ler e mandar por <code>fetch</code> é exfiltração. Por isso o decoder do <a href="5-leitura-codigo-ast-pipeline.html">pipeline</a> reescaneia o conteúdo revelado, e a cadeia de exfil exige fonte e sink juntos. Isso conversa direto com a <a href="9-defesa-profundidade-decisao.html">corroboração</a>: sinais que se confirmam mutuamente.</p>
+
+  <figure class="diagram">
+    <img src="../diagramas/8b-decode-exec-exfil.svg" alt="Duas cadeias de detecção: decode-then-exec (payload codificado que decodifica e executa) é confirmatório e bloqueia sozinho; a cadeia de exfiltração exige fonte sensível mais sink de rede juntos — cada um sozinho é inocente, os dois combinados condenam.">
+    <figcaption>As duas cadeias canônicas: <em>decode → exec</em> condena sozinha (confirmatória); a exfiltração exige fonte + sink juntos.</figcaption>
+  </figure>
 
   <h2>Como o Nemesis aplica</h2>
   <p>O decoder executa a decodificação e, no conteúdo revelado, procura comandos da deny-list, é o vetor ClawHub clássico:</p>

@@ -424,6 +424,110 @@
       font-weight: 600
     }
 
+    /* ===== CTA / BOTÕES GLOBAIS ===== */
+    .btn2 {
+      display: inline-block;
+      font-family: var(--body);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: .01em;
+      padding: 12px 22px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease
+    }
+
+    .btn2:hover {
+      transform: translateY(-2px)
+    }
+
+    .btn2-accent {
+      background: linear-gradient(135deg, var(--success), var(--secondary));
+      color: #04121A;
+      border: 1px solid transparent;
+      box-shadow: 0 10px 26px -10px rgba(56, 229, 166, .7)
+    }
+
+    .btn2-accent:hover {
+      box-shadow: 0 12px 32px -8px rgba(56, 229, 166, .8)
+    }
+
+    .btn2-ghost {
+      border: 1px solid var(--border-2);
+      color: var(--foreground);
+      background: rgba(0, 229, 255, .04)
+    }
+
+    .btn2-ghost:hover {
+      box-shadow: 0 0 18px rgba(0, 229, 255, .2);
+      color: var(--primary)
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 24px 0 8px
+    }
+
+    /* ===== CADEIA DE AUTORIDADE (hero) ===== */
+    .authline {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 22px 0 6px;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, .5)
+    }
+
+    .a-node {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 6px 13px;
+      border-radius: 8px;
+      border: 1px solid
+    }
+
+    .a-node.ok {
+      color: var(--success);
+      border-color: rgba(56, 229, 166, .4);
+      background: rgba(56, 229, 166, .07)
+    }
+
+    .a-node.cy {
+      color: var(--primary);
+      border-color: rgba(0, 229, 255, .45);
+      background: rgba(0, 229, 255, .07)
+    }
+
+    .a-node.bl {
+      color: #5AA9FF;
+      border-color: rgba(90, 169, 255, .4);
+      background: rgba(90, 169, 255, .07)
+    }
+
+    .a-node.vi {
+      color: #B794F6;
+      border-color: rgba(183, 148, 246, .4);
+      background: rgba(183, 148, 246, .07)
+    }
+
+    .a-arr {
+      color: var(--fg-4);
+      font-size: 14px
+    }
+
+    .a-cap {
+      flex-basis: 100%;
+      font-size: 13px;
+      color: var(--fg-3);
+      font-style: italic
+    }
+
     /* ===== CONTACT CARD ===== */
     .contact-card {
       margin: 8px 0 4px;
@@ -1275,11 +1379,11 @@
     </div>
     <div class="nav-group">
       <div class="gtitle" data-pt="Garantias" data-en="Guarantees">Garantias</div>
-      <a class="nav-link" href="#validacao"><span class="num">10</span> <span data-pt="Validação"
+      <a class="nav-link" href="#validacao"><span class="num">09</span> <span data-pt="Validação"
           data-en="Validation">Validação</span></a>
-      <a class="nav-link" href="#ameaca"><span class="num">11</span> <span data-pt="Modelo de ameaça"
+      <a class="nav-link" href="#ameaca"><span class="num">10</span> <span data-pt="Modelo de ameaça"
           data-en="Threat model">Modelo de ameaça</span></a>
-      <a class="nav-link" href="#priorart"><span class="num">12</span> <span data-pt="Prior art"
+      <a class="nav-link" href="#priorart"><span class="num">11</span> <span data-pt="Prior art"
           data-en="Prior art">Prior art</span></a>
     </div>
     <div class="nav-group">
@@ -1289,17 +1393,17 @@
       <a class="nav-link" href="onboarding/index.html" target="_blank" rel="noopener"><span class="num">📖</span> <span
           data-pt="Onboarding · material de estudo" data-en="Onboarding · study material">Onboarding · material de
           estudo</span></a>
-      <a class="nav-link" href="#instalacao"><span class="num">13</span> <span data-pt="Instalação & requisitos"
+      <a class="nav-link" href="#instalacao"><span class="num">12</span> <span data-pt="Instalação & requisitos"
           data-en="Install & requirements">Instalação & requisitos</span></a>
 
-      <a class="nav-link" href="#workflow"><span class="num">15</span> <span data-pt="Workflow"
+      <a class="nav-link" href="#workflow"><span class="num">13</span> <span data-pt="Workflow"
           data-en="Workflow">Workflow</span></a>
-      <a class="nav-link" href="#tese"><span class="num">16</span> <span data-pt="Tese" data-en="Thesis">Tese</span></a>
+      <a class="nav-link" href="#tese"><span class="num">14</span> <span data-pt="Tese" data-en="Thesis">Tese</span></a>
       <a class="nav-link" href="#criador"><span class="num">✦</span> <span data-pt="Quem construiu"
           data-en="Who built it">Quem construiu</span></a>
       <a class="nav-link" href="#contribuir"><span class="num">★</span> <span data-pt="Contribuir & apoiar"
           data-en="Contribute & support">Contribuir & apoiar</span></a>
-      <a class="nav-link" href="#disclosure"><span class="num">17</span> <span data-pt="Disclosure & licença"
+      <a class="nav-link" href="#disclosure"><span class="num">15</span> <span data-pt="Disclosure & licença"
           data-en="Disclosure & license">Disclosure & licença</span></a>
     </div>
   </nav>
@@ -1324,6 +1428,29 @@
             data-en="platform <b>Linux + fallback</b>">plataforma <b>Linux + fallback</b></span>
           <span class="chip" data-pt="licença <b>AGPL-3.0</b>" data-en="license <b>AGPL-3.0</b>">licença
             <b>AGPL-3.0</b></span>
+        </div>
+
+        <div class="cta-row">
+          <a class="btn2 btn2-accent" href="#instalacao" data-pt="Instalar o Nemesis" data-en="Install Nemesis">Instalar
+            o Nemesis</a>
+          <a class="btn2 btn2-ghost" href="onboarding/index.html" target="_blank" rel="noopener"
+            data-pt="Estudar o onboarding" data-en="Study the onboarding">Estudar o onboarding</a>
+          <a class="btn2 btn2-ghost" href="https://github.com/feryamaha/Nemesis_Defender_v0" target="_blank"
+            rel="noopener" data-pt="Ver o código no GitHub" data-en="View the code on GitHub">Ver o código no GitHub</a>
+        </div>
+
+        <div class="authline" role="img" aria-label="Cadeia de autoridade: Humano, Nemesis, Agente de IA, Sistema">
+          <span class="a-node ok" data-pt="HUMANO" data-en="HUMAN">HUMANO</span>
+          <span class="a-arr">→</span>
+          <span class="a-node cy">NEMESIS</span>
+          <span class="a-arr">→</span>
+          <span class="a-node bl" data-pt="AGENTE DE IA" data-en="AI AGENT">AGENTE DE IA</span>
+          <span class="a-arr">→</span>
+          <span class="a-node vi" data-pt="SISTEMA" data-en="SYSTEM">SISTEMA</span>
+          <span class="a-cap"
+            data-pt="A cadeia de autoridade que o enforcement preserva — inteligência não implica autoridade."
+            data-en="The authority chain the enforcement preserves — intelligence does not imply authority.">A cadeia de
+            autoridade que o enforcement preserva — inteligência não implica autoridade.</span>
         </div>
 
         <div class="callout">
@@ -2089,7 +2216,7 @@
       </section>
 
       <section id="validacao">
-        <div class="eyebrow" data-pt="10 Validação" data-en="10 Validation">10 Validação</div>
+        <div class="eyebrow" data-pt="09 Validação" data-en="09 Validation">09 Validação</div>
         <h2 data-pt="Quatro tipos de evidência" data-en="Four kinds of evidence">Quatro tipos de evidência</h2>
         <p data-pt="Da mais forte para a mais fraca. A ordem é deliberada: a evidência que mais importa é a que mais se parece com o uso real."
           data-en="From strongest to weakest. The order is deliberate: the evidence that matters most is the one closest to real use.">
@@ -2252,7 +2379,7 @@
       </section>
 
       <section id="ameaca">
-        <div class="eyebrow" data-pt="11 Modelo de ameaça" data-en="11 Threat model">11 Modelo de ameaça</div>
+        <div class="eyebrow" data-pt="10 Modelo de ameaça" data-en="10 Threat model">10 Modelo de ameaça</div>
         <h2 data-pt="O que protege, o que não protege" data-en="What it protects, what it doesn't">O que protege, o que
           não protege</h2>
         <div class="cols">
@@ -2306,7 +2433,7 @@
       </section>
 
       <section id="priorart">
-        <div class="eyebrow" data-pt="12 Prior art" data-en="12 Prior art">12 Prior art</div>
+        <div class="eyebrow" data-pt="11 Prior art" data-en="11 Prior art">11 Prior art</div>
         <h2 data-pt="Como se compara ao que já existe" data-en="How it compares to what already exists">Como se compara
           ao que já existe</h2>
         <p data-pt="Por honestidade: a técnica central tem prior art maduro. Isso não diminui o projeto situa ele."
@@ -2421,7 +2548,7 @@
       </section>
 
       <section id="instalacao">
-        <div class="eyebrow" data-pt="13 Instalação & requisitos" data-en="13 Install & requirements">13
+        <div class="eyebrow" data-pt="12 Instalação & requisitos" data-en="12 Install & requirements">12
           Instalação & requisitos</div>
         <h2 data-pt="Requisitos, build e configuração" data-en="Requirements, build and setup">Requisitos, build e
           configuração</h2>
@@ -2571,7 +2698,7 @@ nemesis-defender <span class="k">--stop</span></code></pre>
 
 
       <section id="workflow">
-        <div class="eyebrow" data-pt="15 Workflow" data-en="15 Workflow">15 Workflow</div>
+        <div class="eyebrow" data-pt="13 Workflow" data-en="13 Workflow">13 Workflow</div>
         <h2 data-pt="Processo de desenvolvimento ≠ regra do Nemesis" data-en="Development process ≠ a Nemesis rule">
           Processo de desenvolvimento ≠ regra do Nemesis</h2>
         <p data-pt="O Nemesis usa <strong>skills SDD apenas para criar spec e planos</strong> em tarefas que dependem de IA porque, na maioria dos casos, o desenvolvimento é humano e a IA é assistente. As skills orientam o método (especificação → plano → execução), mas não são impostas: você adota o fluxo que fizer sentido para a tarefa."
@@ -2628,7 +2755,7 @@ nemesis-defender <span class="k">--stop</span></code></pre>
       </section>
 
       <section id="tese">
-        <div class="eyebrow" data-pt="16 Tese" data-en="16 Thesis">16 Tese</div>
+        <div class="eyebrow" data-pt="14 Tese" data-en="14 Thesis">14 Tese</div>
         <h2 data-pt="A Governança Determinística de Sistemas Probabilísticos"
           data-en="The Deterministic Governance of Probabilistic Systems">A Governança Determinística de Sistemas
           Probabilísticos</h2>
@@ -2870,7 +2997,7 @@ nemesis-defender <span class="k">--stop</span></code></pre>
       </section>
 
       <section id="disclosure">
-        <div class="eyebrow" data-pt="16 Disclosure & licença" data-en="16 Disclosure & license">16 Disclosure &
+        <div class="eyebrow" data-pt="15 Disclosure & licença" data-en="15 Disclosure & license">15 Disclosure &
           licença</div>
         <h2 data-pt="Encontrou um bypass? Reporte em privado." data-en="Found a bypass? Report it privately.">Encontrou
           um bypass? Reporte em privado.</h2>

@@ -1,0 +1,63 @@
+<svg viewBox="0 0 980 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ciclo da quarentena: hostilidade confirmada por corroboração; o arquivo é movido para .nemesis/quarantine com meta.json do motivo; a sessão é barrada com exit 2; o humano revisa com list e show e decide entre restore e purge. Nada é deletado sem decisão humana.">
+  <defs>
+    <marker id="arr6b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#56708f"/></marker>
+    <marker id="arr6bOk" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5fd38a"/></marker>
+    <marker id="arr6bBad" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#ff6b6b"/></marker>
+  </defs>
+  <style>
+    text{font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif}
+    .t{fill:#e8edf6;font-size:13.5px;font-weight:600}
+    .s{fill:#8595ab;font-size:11.5px}
+    .m{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace}
+    .edge{stroke:#56708f;stroke-width:1.6;fill:none}
+  </style>
+
+  <!-- 1 confirmação -->
+  <rect x="20" y="60" width="215" height="96" rx="10" fill="#2a1014" stroke="#ff6b6b"/>
+  <text x="127" y="90" text-anchor="middle" class="t" fill="#ffd7d7">hostilidade confirmada</text>
+  <text x="127" y="112" text-anchor="middle" class="s" fill="#e8a0a0">sinal confirmatório, ou 2+</text>
+  <text x="127" y="128" text-anchor="middle" class="s" fill="#e8a0a0">sinais heurísticos concordando</text>
+
+  <path class="edge" d="M235 108 H266" marker-end="url(#arr6b)"/>
+
+  <!-- 2 move -->
+  <rect x="270" y="48" width="235" height="120" rx="10" fill="#2a2410" stroke="#f5b54a"/>
+  <text x="387" y="78" text-anchor="middle" class="t" fill="#ffeccb">move para quarentena</text>
+  <text x="387" y="100" text-anchor="middle" class="s m" fill="#d9c08a">.nemesis/quarantine/&lt;id&gt;/</text>
+  <text x="387" y="122" text-anchor="middle" class="s m" fill="#d9c08a">+ meta.json (o motivo)</text>
+  <text x="387" y="146" text-anchor="middle" class="s" fill="#d9c08a">move — não deleta</text>
+
+  <path class="edge" d="M505 108 H536" marker-end="url(#arr6b)"/>
+
+  <!-- 3 sessão -->
+  <rect x="540" y="60" width="190" height="96" rx="10" fill="#121826" stroke="#38e1d3"/>
+  <text x="635" y="92" text-anchor="middle" class="t">sessão barrada</text>
+  <text x="635" y="114" text-anchor="middle" class="s m" fill="#38e1d3">exit 2</text>
+  <text x="635" y="136" text-anchor="middle" class="s">até a revisão humana</text>
+
+  <path class="edge" d="M730 108 H761" marker-end="url(#arr6b)"/>
+
+  <!-- 4 revisão -->
+  <rect x="765" y="48" width="195" height="120" rx="10" fill="#1e1830" stroke="#b794f6"/>
+  <text x="862" y="80" text-anchor="middle" class="t" fill="#efe6ff">revisão humana</text>
+  <text x="862" y="104" text-anchor="middle" class="s m" fill="#b9a8dc">nemesis-defender list</text>
+  <text x="862" y="124" text-anchor="middle" class="s m" fill="#b9a8dc">nemesis-defender show</text>
+  <text x="862" y="148" text-anchor="middle" class="s" fill="#b9a8dc">só o humano decide</text>
+
+  <!-- desfechos -->
+  <path class="edge" d="M840 168 C780 220 700 244 636 256" stroke="#5fd38a" marker-end="url(#arr6bOk)"/>
+  <path class="edge" d="M884 168 C900 210 906 232 908 250" stroke="#ff6b6b" marker-end="url(#arr6bBad)"/>
+
+  <rect x="420" y="260" width="220" height="72" rx="10" fill="#0e2a1a" stroke="#5fd38a"/>
+  <text x="530" y="288" text-anchor="middle" class="t m" fill="#d7ffe6">restore</text>
+  <text x="530" y="312" text-anchor="middle" class="s" fill="#9fd8b4">falso positivo: o arquivo volta intacto</text>
+
+  <rect x="740" y="260" width="220" height="72" rx="10" fill="#2a1014" stroke="#ff6b6b"/>
+  <text x="850" y="288" text-anchor="middle" class="t m" fill="#ffd7d7">purge</text>
+  <text x="850" y="312" text-anchor="middle" class="s" fill="#e8a0a0">confirmado: descarta de vez</text>
+
+  <!-- nota -->
+  <rect x="20" y="260" width="360" height="72" rx="8" fill="#0c1019" stroke="#21a99e" stroke-dasharray="4 3"/>
+  <text x="200" y="288" text-anchor="middle" class="s" fill="#b8c4d6">Reversível por desenho: o Defender nunca deleta</text>
+  <text x="200" y="308" text-anchor="middle" class="s" fill="#b8c4d6">sozinho. A autoridade final é sempre do humano.</text>
+</svg>

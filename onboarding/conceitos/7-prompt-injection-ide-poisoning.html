@@ -13,6 +13,8 @@
   <span class="spacer"></span>
   <nav aria-label="Navegação principal">
     <a href="../index.html">Início</a>
+    <a href="../jornada.html">Jornada</a>
+    <a href="../diagrama-arquitetura.html">Arquitetura</a>
     <a href="../competencias.html">Competências</a>
     <a href="../COBERTURA.html">Cobertura</a>
   </nav>
@@ -42,6 +44,11 @@
 
   <h2>Por que importa</h2>
   <p>Os próprios arquivos de instrução do Nemesis (o <code>AGENTS.md</code>, o <code>CLAUDE.md</code>) são autoridade que eu mando o agente respeitar. Se um atacante consegue editar um desses, ou plantar um <code>.cursorrules</code> envenenado, ele fala com a voz do projeto. Por isso a regra que eu sigo é dura: esses arquivos de config são <strong>escaneados</strong> contra poisoning e nunca isentados do scan. A defesa precisava tratar a config como conteúdo não-confiável, não como verdade.</p>
+
+  <figure class="diagram">
+    <img src="../diagramas/7b-cadeia-autoridade.svg" alt="A cadeia de autoridade que o Nemesis preserva: o humano decide e revisa; o Nemesis contém com enforcement determinístico; o agente de IA opera mas não destrói; o sistema executa só o que passou. Inteligência não implica autoridade.">
+    <figcaption>O que o poisoning tenta subverter é exatamente isto: a cadeia de autoridade. Humano → Nemesis → IA → Sistema.</figcaption>
+  </figure>
 
   <h2>Como se correlaciona</h2>
   <p>Prompt injection e poisoning são o mesmo vetor em dois lugares: o pattern de injeção é o coração, e o poisoning é ele aplicado a um arquivo-alvo de IDE, somado a truques de engenharia social (falsa autoridade, scan falso). A coleta de credencial que o "scan falso" tenta provocar é a ponte para o <a href="8-codigo-malicioso-supply-chain.html">grupo 8</a> (exfiltração). E o fato de eu escanear meus próprios arquivos de regra é parte da postura de <a href="10-processo-honestidade.html">proteger o próprio Nemesis</a>.</p>

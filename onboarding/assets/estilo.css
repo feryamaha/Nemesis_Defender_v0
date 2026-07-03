@@ -217,6 +217,12 @@ details p { margin: 8px 0 2px; color: var(--txt-1); }
   background: linear-gradient(135deg, #0d1424, #07090f 70%);
   border: 1px solid var(--border); border-radius: 16px;
   padding: 34px 30px; margin-bottom: 28px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan) 30%, var(--blue) 70%, transparent);
+  opacity: .7;
 }
 .hero h1 { margin-bottom: 8px; }
 .hero p { color: var(--txt-1); max-width: 70ch; }
@@ -236,6 +242,22 @@ details p { margin: 8px 0 2px; color: var(--txt-1); }
 .search-box::placeholder { color: var(--txt-2); }
 #search-count { font-size: 12px; color: var(--txt-2); font-family: var(--mono); }
 
+/* ---------- Trilha de estudo (index) ---------- */
+.trail { list-style: none; padding: 0; margin: 18px 0 4px; }
+.trail li { display: flex; gap: 14px; align-items: flex-start; padding: 0 0 20px; margin: 0; position: relative; }
+.trail .dot {
+  flex: none; width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-2); border: 1px solid var(--cyan-dim);
+  color: var(--cyan); font-family: var(--mono); font-size: 13px; font-weight: 700;
+}
+.trail li:not(:last-child)::after {
+  content: ""; position: absolute; left: 14.5px; top: 34px; bottom: 4px;
+  width: 1px; background: linear-gradient(var(--cyan-dim), transparent);
+}
+.trail .lbl { padding-top: 4px; }
+.trail .lbl b { color: var(--txt-0); margin-right: 6px; }
+
 .domain { margin-top: 34px; }
 .domain h2 { display: flex; align-items: center; gap: 10px; }
 .domain h2 .ix { font-family: var(--mono); font-size: 14px; color: var(--cyan-dim); }
@@ -244,7 +266,8 @@ details p { margin: 8px 0 2px; color: var(--txt-1); }
   display: block; background: var(--bg-1); border: 1px solid var(--border);
   border-radius: 10px; padding: 14px 16px; color: var(--txt-1);
 }
-.tile:hover { border-color: var(--cyan-dim); text-decoration: none; transform: translateY(-1px); transition: .15s; }
+.tile { transition: border-color .18s, transform .18s, box-shadow .18s; }
+.tile:hover { border-color: var(--cyan-dim); text-decoration: none; transform: translateY(-2px); box-shadow: 0 6px 22px rgba(0,0,0,.35), 0 0 14px rgba(56,225,211,.07); }
 .tile .num { font-family: var(--mono); font-size: 11px; color: var(--cyan-dim); }
 .tile .name { display: block; color: var(--txt-0); font-weight: 600; margin: 2px 0; }
 .tile .desc { font-size: 13px; color: var(--txt-2); }
