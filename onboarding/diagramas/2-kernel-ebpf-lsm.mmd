@@ -1,11 +1,11 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart TB
-U["USERSPACE<br/>agente tenta executar um binário<br/>execve(...)"] ==>|"syscall"| HK["KERNEL · hook LSM<br/>bprm_check_security"]
-HK ==> BPF["programa eBPF<br/>verificado antes de carregar (seguro)"]
-BPF ==> Q{"binário na blocklist?"}
-Q ==>|"não"| OK["permite o exec<br/>a syscall segue normal"]
-Q ==>|"sim"| EP["-EPERM<br/>o exec morre antes de nascer"]
-EP -.-> N["Rede de contenção: funciona mesmo se a IDE<br/>pular o hook pretool. Linux · opt-in"]
+U["USERSPACE<br/>agent tries to execute a binary<br/>execve(...)"] ==>|"syscall"| HK["KERNEL · LSM hook<br/>bprm_check_security"]
+HK ==> BPF["eBPF program<br/>verified before loading (safe)"]
+BPF ==> Q{"binary in the blocklist?"}
+Q ==>|"no"| OK["allows the exec<br/>the syscall proceeds normally"]
+Q ==>|"yes"| EP["-EPERM<br/>the exec dies before it is born"]
+EP -.-> N["Containment net: works even if the IDE<br/>skips the pretool hook. Linux · opt-in"]
 
 classDef ok fill:#0e2a1a,stroke:#5fd38a,color:#d7ffe6;
 classDef blk fill:#2a1014,stroke:#ff6b6b,color:#ffd7d7;

@@ -1,4 +1,4 @@
-<svg viewBox="0 0 980 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="O código-fonte é parseado pelo tree-sitter em uma árvore sintática; um visitor percorre os nós e reconhece o padrão semântico decode seguido de eval, mesmo com variáveis renomeadas; o resultado vira sinal para compute_severity.">
+<svg viewBox="0 0 980 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Source code is parsed by tree-sitter into a syntax tree; a visitor walks the nodes and recognizes the semantic decode-then-eval pattern even with renamed variables; the result becomes a signal for compute_severity.">
   <defs>
     <marker id="arr5b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#56708f"/></marker>
     <marker id="arr5bQz" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#f5b54a"/></marker>
@@ -16,7 +16,7 @@
 
   <!-- código -->
   <rect x="30" y="60" width="250" height="120" rx="10" fill="#05070c" stroke="#243043"/>
-  <text x="50" y="88" class="s m" fill="#8595ab">// código-fonte (JS)</text>
+  <text x="50" y="88" class="s m" fill="#8595ab">// source code (JS)</text>
   <text x="50" y="114" class="code" fill="#d6e0f0">const p = "cm0gLXJm...";</text>
   <text x="50" y="138" class="code" fill="#d6e0f0">const x = atob(p);</text>
   <text x="50" y="162" class="code" fill="#ffd7d7">eval(x);</text>
@@ -27,13 +27,13 @@
   <!-- tree-sitter -->
   <rect x="340" y="84" width="170" height="72" rx="10" class="node"/>
   <text x="425" y="112" text-anchor="middle" class="t m" fill="#38e1d3">tree-sitter</text>
-  <text x="425" y="136" text-anchor="middle" class="s">parser real da linguagem</text>
+  <text x="425" y="136" text-anchor="middle" class="s">real language parser</text>
 
   <path class="edge" d="M510 120 H566" marker-end="url(#arr5b)"/>
 
   <!-- árvore -->
   <rect x="570" y="30" width="380" height="290" rx="12" fill="#0c1019" stroke="#243043"/>
-  <text x="590" y="56" class="s m" fill="#38e1d3" font-weight="700" letter-spacing=".12em">ÁRVORE SINTÁTICA (AST)</text>
+  <text x="590" y="56" class="s m" fill="#38e1d3" font-weight="700" letter-spacing=".12em">SYNTAX TREE (AST)</text>
 
   <rect x="700" y="72" width="120" height="34" rx="7" class="node"/>
   <text x="760" y="94" text-anchor="middle" class="s m" fill="#e8edf6">program</text>
@@ -57,19 +57,19 @@
 
   <!-- visitor -->
   <ellipse cx="760" cy="147" rx="105" ry="30" fill="none" stroke="#f5b54a" stroke-dasharray="5 4"/>
-  <text x="614" y="300" class="s" fill="#d9c08a">o visitor percorre os nós e reconhece a estrutura,</text>
-  <text x="614" y="316" class="s" fill="#d9c08a">não o texto: renomear variável não engana.</text>
+  <text x="614" y="300" class="s" fill="#d9c08a">the visitor walks the nodes and recognizes the structure,</text>
+  <text x="614" y="316" class="s" fill="#d9c08a">not the text: renaming a variable does not fool it.</text>
 
   <!-- sinal -->
   <path class="edge" d="M760 320 C700 360 600 380 520 388" stroke="#f5b54a" marker-end="url(#arr5bQz)"/>
   <rect x="240" y="360" width="280" height="60" rx="10" fill="#2a2410" stroke="#f5b54a"/>
-  <text x="380" y="386" text-anchor="middle" class="t" fill="#ffeccb">sinal: decode → exec</text>
-  <text x="380" y="408" text-anchor="middle" class="s m" fill="#d9c08a">alimenta compute_severity</text>
+  <text x="380" y="386" text-anchor="middle" class="t" fill="#ffeccb">signal: decode → exec</text>
+  <text x="380" y="408" text-anchor="middle" class="s m" fill="#d9c08a">feeds compute_severity</text>
 
   <!-- nota -->
   <rect x="30" y="240" width="250" height="90" rx="8" fill="#0c1019" stroke="#21a99e" stroke-dasharray="4 3"/>
-  <text x="155" y="268" text-anchor="middle" class="s" fill="#b8c4d6">Regex vê texto; o visitor vê</text>
-  <text x="155" y="286" text-anchor="middle" class="s" fill="#b8c4d6">estrutura. É análise semântica:</text>
-  <text x="155" y="304" text-anchor="middle" class="s" fill="#b8c4d6">um método de detecção a mais</text>
-  <text x="155" y="320" text-anchor="middle" class="s" fill="#b8c4d6">no coeficiente, não o produto.</text>
+  <text x="155" y="268" text-anchor="middle" class="s" fill="#b8c4d6">Regex sees text; the visitor sees</text>
+  <text x="155" y="286" text-anchor="middle" class="s" fill="#b8c4d6">structure. Semantic analysis:</text>
+  <text x="155" y="304" text-anchor="middle" class="s" fill="#b8c4d6">one more detection method</text>
+  <text x="155" y="320" text-anchor="middle" class="s" fill="#b8c4d6">in the coefficient, not the product.</text>
 </svg>

@@ -1,11 +1,11 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart TB
-IN["arquivo hostil mira o próprio scanner<br/>payload aninhado · regex bomba · panic"] ==> R["garantias do Rust"]
-R ==> E1["erro como valor<br/>Result, sem exceção não tratada"]
-R ==> E2["panic contido<br/>catch_unwind converte em exit 2"]
-R ==> E3["regex tempo-linear<br/>sem backtracking: imune a ReDoS"]
-R ==> E4["limites de recursão<br/>profundidade + tamanho"]
-E1 ==> FC["FAIL-CLOSED<br/>na dúvida, nega; o erro nunca vira porta aberta"]
+IN["hostile file targets the scanner itself<br/>nested payload · regex bomb · panic"] ==> R["Rust guarantees"]
+R ==> E1["error as value<br/>Result, no unhandled exception"]
+R ==> E2["panic contained<br/>catch_unwind converts into exit 2"]
+R ==> E3["linear-time regex<br/>no backtracking: immune to ReDoS"]
+R ==> E4["recursion limits<br/>depth + size"]
+E1 ==> FC["FAIL-CLOSED<br/>when in doubt, deny; an error never becomes an open door"]
 E2 ==> FC
 E3 ==> FC
 E4 ==> FC

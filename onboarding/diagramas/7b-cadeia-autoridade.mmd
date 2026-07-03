@@ -1,9 +1,9 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart LR
-H["HUMANO<br/>decide, revisa a quarentena;<br/>único que edita a allowlist e usa o git"] ==> N["NEMESIS<br/>contém: enforcement determinístico,<br/>exit 2 não se negocia"]
-N ==> A["AGENTE DE IA<br/>opera com autonomia, mas não destrói:<br/>probabilístico sob contenção determinística"]
-A ==> S["SISTEMA<br/>executa somente o que passou pelas camadas"]
-S -.-> M["Inteligência não implica autoridade."]
+H["HUMAN<br/>decides, reviews the quarantine;<br/>the only one who edits the allowlist and uses git"] ==> N["NEMESIS<br/>contains: deterministic enforcement,<br/>exit 2 is non-negotiable"]
+N ==> A["AI AGENT<br/>operates with autonomy but does not destroy:<br/>probabilistic under deterministic containment"]
+A ==> S["SYSTEM<br/>executes only what passed through the layers"]
+S -.-> M["Intelligence does not imply authority."]
 
 classDef ok fill:#0e2a1a,stroke:#5fd38a,color:#d7ffe6;
 classDef nem fill:#0d1f1d,stroke:#38e1d3,color:#e8edf6;

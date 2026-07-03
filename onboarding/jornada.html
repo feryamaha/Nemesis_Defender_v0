@@ -8,64 +8,91 @@
 <link rel="stylesheet" href="assets/estilo.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Pular para o conteúdo</a>
+<a class="skip-link" href="#main" data-pt="Pular para o conteúdo" data-en="Skip to content">Pular para o conteúdo</a>
 <header class="topbar">
   <span class="brand">NEMESIS · <b>material de estudo</b></span>
   <span class="spacer"></span>
+  <div class="lang" role="group" aria-label="Language / Idioma">
+    <button class="flag active" id="lang-pt" title="Português" aria-label="Português">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#009B3A" />
+        <path d="M14 2.4 25.2 10 14 17.6 2.8 10z" fill="#FEDF00" />
+        <circle cx="14" cy="10" r="3.9" fill="#002776" />
+        <path d="M10.4 8.9a4 4 0 0 1 7.2 1c-2.3-.8-4.9-.9-7.2-.1z" fill="#fff" />
+      </svg>
+    </button>
+    <button class="flag" id="lang-en" title="English" aria-label="English">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#B22234" />
+        <g fill="#fff">
+          <rect y="1.5" width="28" height="1.5" /><rect y="4.6" width="28" height="1.5" />
+          <rect y="7.7" width="28" height="1.5" /><rect y="10.8" width="28" height="1.5" />
+          <rect y="13.9" width="28" height="1.5" /><rect y="17" width="28" height="1.5" />
+        </g>
+        <rect width="12" height="10.8" fill="#3C3B6E" />
+      </svg>
+    </button>
+  </div>
   <nav aria-label="Navegação principal">
-    <a href="index.html">Início</a>
-    <a href="jornada.html">Jornada</a>
-    <a href="diagrama-arquitetura.html">Arquitetura</a>
-    <a href="competencias.html">Competências</a>
-    <a href="COBERTURA.html">Cobertura</a>
+    <a href="index.html" data-pt="Início" data-en="Home">Início</a>
+    <a href="jornada.html" data-pt="Jornada" data-en="Journey">Jornada</a>
+    <a href="diagrama-arquitetura.html" data-pt="Arquitetura" data-en="Architecture">Arquitetura</a>
+    <a href="competencias.html" data-pt="Competências" data-en="Skills">Competências</a>
+    <a href="COBERTURA.html" data-pt="Cobertura" data-en="Coverage">Cobertura</a>
   </nav>
 </header>
 
 <div class="wrap">
 <div class="layout with-toc">
 <main id="main">
-  <p class="crumb"><a href="index.html">Início</a><span class="sep">/</span>A jornada</p>
+  <p class="crumb"><a href="index.html" data-pt="Início" data-en="Home">Início</a><span class="sep">/</span><span data-pt="A jornada" data-en="The journey">A jornada</span></p>
 
-  <span class="deftag">abertura · como ler este material</span>
-  <h1>A jornada</h1>
-  <p class="lede">Esta é a porta de entrada. Eu organizei o estudo do Nemesis Defender em dez grupos de conceito que se aprofundam, e uma visão geral que fecha juntando tudo. Aqui eu te conto o caminho e por que ele é nessa ordem.</p>
+  <span class="deftag" data-pt="abertura · como ler este material" data-en="opening · how to read this material">abertura · como ler este material</span>
+  <h1 data-pt="A jornada" data-en="The journey">A jornada</h1>
+  <p class="lede" data-pt="Esta é a porta de entrada. O estudo do Nemesis Defender está organizado em dez grupos de conceito que se aprofundam, e uma visão geral que fecha juntando tudo. Abaixo, o caminho e por que ele é nessa ordem." data-en="This is the entry point. The study of Nemesis Defender is organized into ten deepening concept groups, plus an overview that closes by tying everything together. Below, the path and why it is in this order.">Esta é a porta de entrada. O estudo do Nemesis Defender está organizado em dez grupos de conceito que se aprofundam, e uma visão geral que fecha juntando tudo. Abaixo, o caminho e por que ele é nessa ordem.</p>
 
   <div class="sec30">
-    <span class="t">Em 30 segundos</span>
-    <p>O Nemesis existe por uma tese: <strong>instrução probabilística não contém; enforcement determinístico contém.</strong> Um agente de IA pode ignorar um pedido educado no prompt, mas não pode ignorar um processo que sai com <code>exit 2</code> antes da ação acontecer. A jornada começa nesse contrato, desce ao kernel, passa pelo Rust e pela leitura de código, mostra o malware que eu caço, a arquitetura de decisão e o processo, e fecha na visão geral.</p>
+    <span class="t" data-pt="Em 30 segundos" data-en="In 30 seconds">Em 30 segundos</span>
+    <p data-pt="O Nemesis existe por uma tese: <strong>instrução probabilística não contém; enforcement determinístico contém.</strong> Um agente de IA pode ignorar um pedido educado no prompt, mas não pode ignorar um processo que sai com <code>exit 2</code> antes da ação acontecer. A jornada começa nesse contrato, desce ao kernel, passa pelo Rust e pela leitura de código, mostra o malware que o motor caça, a arquitetura de decisão e o processo, e fecha na visão geral." data-en="Nemesis exists because of one thesis: <strong>probabilistic instruction does not contain; deterministic enforcement does.</strong> An AI agent can ignore a polite request in the prompt, but cannot ignore a process that exits with <code>exit 2</code> before the action happens. The journey starts at that contract, descends to the kernel, passes through Rust and code reading, shows the malware the engine hunts, the decision architecture and the process, and closes with the overview.">O Nemesis existe por uma tese: <strong>instrução probabilística não contém; enforcement determinístico contém.</strong> Um agente de IA pode ignorar um pedido educado no prompt, mas não pode ignorar um processo que sai com <code>exit 2</code> antes da ação acontecer. A jornada começa nesse contrato, desce ao kernel, passa pelo Rust e pela leitura de código, mostra o malware que o motor caça, a arquitetura de decisão e o processo, e fecha na visão geral.</p>
   </div>
 
-  <h2>A trilha (na ordem que eu recomendo)</h2>
+  <figure class="diagram">
+    <img src="diagramas/tres-camadas.svg" alt="Comparação das três camadas: quando agem, onde rodam, o que fazem e o que pegam. Camadas independentes; a proteção é a soma delas." data-alt-en="The three layers side by side: when they act, where, what they do and what they catch. Independent layers; protection is their sum.">
+    <figcaption data-pt="O mapa que a trilha percorre: três camadas independentes, do userspace ao kernel." data-en="The map the trail covers: three independent layers, from userspace to the kernel.">O mapa que a trilha percorre: três camadas independentes, do userspace ao kernel.</figcaption>
+  </figure>
+
+  <h2 data-pt="A trilha (na ordem recomendada)" data-en="The trail (in the recommended order)">A trilha (na ordem recomendada)</h2>
   <ol>
-    <li><strong>O contrato:</strong> <a href="conceitos/1-contrato-posix-exit2.html">1 · Contrato POSIX e o exit 2</a>. Onde tudo começa: por que o código de saída 2 é o enforcement.</li>
-    <li><strong>O kernel:</strong> <a href="conceitos/2-kernel-ebpf-lsm.html">2 · Kernel, eBPF e LSM</a> e <a href="conceitos/3-confinamento-kernel-egress.html">3 · Confinamento e egress</a>. A decisão no kernel e como conter sem dano colateral.</li>
-    <li><strong>A linguagem:</strong> <a href="conceitos/4-rust-defesa.html">4 · Rust como linguagem de defesa</a>. Por que o defensor não pode ser fonte de bug nem de DoS.</li>
-    <li><strong>A leitura de código:</strong> <a href="conceitos/5-leitura-codigo-ast-pipeline.html">5 · AST, pipeline e detecção semântica</a>. Como o Nemesis entende intenção.</li>
-    <li><strong>A mecânica:</strong> <a href="conceitos/6-pretool-defender-daemon.html">6 · Pretool, defender e daemon</a>. Interceptar, decidir e conter.</li>
-    <li><strong>O que ele caça:</strong> <a href="conceitos/7-prompt-injection-ide-poisoning.html">7 · Prompt injection e IDE poisoning</a> e <a href="conceitos/8-codigo-malicioso-supply-chain.html">8 · Código malicioso e supply-chain</a>.</li>
-    <li><strong>A decisão:</strong> <a href="conceitos/9-defesa-profundidade-decisao.html">9 · Defesa em profundidade e decisão</a>. Conter sem apagar o que é legítimo.</li>
-    <li><strong>O processo:</strong> <a href="conceitos/10-processo-honestidade.html">10 · Processo e honestidade</a>. Threat model, DevSecOps, doctor, red-team.</li>
-    <li><strong>O fecho:</strong> <a href="conceitos/visao-geral.html">Visão geral</a>. O sistema inteiro convergindo num quadro só.</li>
+    <li data-pt="<strong>O contrato:</strong> <a href=&quot;conceitos/1-contrato-posix-exit2.html&quot;>1 · Contrato POSIX e o exit 2</a>. Onde tudo começa: por que o código de saída 2 é o enforcement." data-en="<strong>The contract:</strong> <a href=&quot;conceitos/1-contrato-posix-exit2.html&quot;>1 · The POSIX contract and exit 2</a>. Where it all starts: why exit code 2 is the enforcement."><strong>O contrato:</strong> <a href="conceitos/1-contrato-posix-exit2.html">1 · Contrato POSIX e o exit 2</a>. Onde tudo começa: por que o código de saída 2 é o enforcement.</li>
+    <li data-pt="<strong>O kernel:</strong> <a href=&quot;conceitos/2-kernel-ebpf-lsm.html&quot;>2 · Kernel, eBPF e LSM</a> e <a href=&quot;conceitos/3-confinamento-kernel-egress.html&quot;>3 · Confinamento e egress</a>. A decisão no kernel e como conter sem dano colateral." data-en="<strong>The kernel:</strong> <a href=&quot;conceitos/2-kernel-ebpf-lsm.html&quot;>2 · Kernel, eBPF and LSM</a> and <a href=&quot;conceitos/3-confinamento-kernel-egress.html&quot;>3 · Confinement and egress</a>. The decision in the kernel and how to contain without collateral damage."><strong>O kernel:</strong> <a href="conceitos/2-kernel-ebpf-lsm.html">2 · Kernel, eBPF e LSM</a> e <a href="conceitos/3-confinamento-kernel-egress.html">3 · Confinamento e egress</a>. A decisão no kernel e como conter sem dano colateral.</li>
+    <li data-pt="<strong>A linguagem:</strong> <a href=&quot;conceitos/4-rust-defesa.html&quot;>4 · Rust como linguagem de defesa</a>. Por que o defensor não pode ser fonte de bug nem de DoS." data-en="<strong>The language:</strong> <a href=&quot;conceitos/4-rust-defesa.html&quot;>4 · Rust as a defense language</a>. Why the defender cannot be a source of bugs or DoS."><strong>A linguagem:</strong> <a href="conceitos/4-rust-defesa.html">4 · Rust como linguagem de defesa</a>. Por que o defensor não pode ser fonte de bug nem de DoS.</li>
+    <li data-pt="<strong>A leitura de código:</strong> <a href=&quot;conceitos/5-leitura-codigo-ast-pipeline.html&quot;>5 · AST, pipeline e detecção semântica</a>. Como o Nemesis entende intenção." data-en="<strong>Code reading:</strong> <a href=&quot;conceitos/5-leitura-codigo-ast-pipeline.html&quot;>5 · AST, pipeline and semantic detection</a>. How Nemesis understands intent."><strong>A leitura de código:</strong> <a href="conceitos/5-leitura-codigo-ast-pipeline.html">5 · AST, pipeline e detecção semântica</a>. Como o Nemesis entende intenção.</li>
+    <li data-pt="<strong>A mecânica:</strong> <a href=&quot;conceitos/6-pretool-defender-daemon.html&quot;>6 · Pretool, defender e daemon</a>. Interceptar, decidir e conter." data-en="<strong>The mechanics:</strong> <a href=&quot;conceitos/6-pretool-defender-daemon.html&quot;>6 · Pretool, defender and daemon</a>. Intercept, decide and contain."><strong>A mecânica:</strong> <a href="conceitos/6-pretool-defender-daemon.html">6 · Pretool, defender e daemon</a>. Interceptar, decidir e conter.</li>
+    <li data-pt="<strong>O que ele caça:</strong> <a href=&quot;conceitos/7-prompt-injection-ide-poisoning.html&quot;>7 · Prompt injection e IDE poisoning</a> e <a href=&quot;conceitos/8-codigo-malicioso-supply-chain.html&quot;>8 · Código malicioso e supply-chain</a>." data-en="<strong>What it hunts:</strong> <a href=&quot;conceitos/7-prompt-injection-ide-poisoning.html&quot;>7 · Prompt injection and IDE poisoning</a> and <a href=&quot;conceitos/8-codigo-malicioso-supply-chain.html&quot;>8 · Malicious code and supply chain</a>."><strong>O que ele caça:</strong> <a href="conceitos/7-prompt-injection-ide-poisoning.html">7 · Prompt injection e IDE poisoning</a> e <a href="conceitos/8-codigo-malicioso-supply-chain.html">8 · Código malicioso e supply-chain</a>.</li>
+    <li data-pt="<strong>A decisão:</strong> <a href=&quot;conceitos/9-defesa-profundidade-decisao.html&quot;>9 · Defesa em profundidade e decisão</a>. Conter sem apagar o que é legítimo." data-en="<strong>The decision:</strong> <a href=&quot;conceitos/9-defesa-profundidade-decisao.html&quot;>9 · Defense in depth and decision</a>. Contain without erasing what is legitimate."><strong>A decisão:</strong> <a href="conceitos/9-defesa-profundidade-decisao.html">9 · Defesa em profundidade e decisão</a>. Conter sem apagar o que é legítimo.</li>
+    <li data-pt="<strong>O processo:</strong> <a href=&quot;conceitos/10-processo-honestidade.html&quot;>10 · Processo e honestidade</a>. Threat model, DevSecOps, doctor, red-team." data-en="<strong>The process:</strong> <a href=&quot;conceitos/10-processo-honestidade.html&quot;>10 · Process and honesty</a>. Threat model, DevSecOps, doctor, red-team."><strong>O processo:</strong> <a href="conceitos/10-processo-honestidade.html">10 · Processo e honestidade</a>. Threat model, DevSecOps, doctor, red-team.</li>
+    <li data-pt="<strong>O fecho:</strong> <a href=&quot;conceitos/visao-geral.html&quot;>Visão geral</a>. O sistema inteiro convergindo num quadro só." data-en="<strong>The close:</strong> <a href=&quot;conceitos/visao-geral.html&quot;>Overview</a>. The whole system converging in a single picture."><strong>O fecho:</strong> <a href="conceitos/visao-geral.html">Visão geral</a>. O sistema inteiro convergindo num quadro só.</li>
   </ol>
 
-  <div class="callout tip"><span class="t">Atalho</span>Se você quiser o mapa completo de tiles por domínio, o <a href="index.html">índice</a> tem todos os dez grupos mais as páginas de apoio. Se quiser ver conceito mapeado a arquivo-fonte, vá direto à <a href="COBERTURA.html">matriz de cobertura</a>.</div>
+  <div class="callout tip"><span class="t" data-pt="Atalho" data-en="Shortcut">Atalho</span><span data-pt="Se você quiser o mapa completo de tiles por domínio, o <a href=&quot;index.html&quot;>índice</a> tem todos os dez grupos mais as páginas de apoio. Se quiser ver conceito mapeado a arquivo-fonte, vá direto à <a href=&quot;COBERTURA.html&quot;>matriz de cobertura</a>." data-en="If you want the full tile map by domain, the <a href=&quot;index.html&quot;>index</a> has all ten groups plus the support pages. To see concepts mapped to source files, go straight to the <a href=&quot;COBERTURA.html&quot;>coverage matrix</a>.">Se você quiser o mapa completo de tiles por domínio, o <a href="index.html">índice</a> tem todos os dez grupos mais as páginas de apoio. Se quiser ver conceito mapeado a arquivo-fonte, vá direto à <a href="COBERTURA.html">matriz de cobertura</a>.</span></div>
 
-  <h2>Por que essa ordem</h2>
-  <p>Eu agrupei conceitos que se chamam, que são causa e efeito, ou que são o mesmo assunto por ângulos diferentes. O exit 2 vem primeiro porque é o contrato que todo o resto honra. O kernel vem antes do Rust porque define <em>onde</em> a decisão acontece. A leitura de código vem antes do malware porque é <em>como</em> eu o reconheço. E a decisão e o processo fecham, porque é onde a engenharia vira disciplina. A visão geral, no fim, só faz sentido depois que você viu as peças.</p>
+  <h2 data-pt="Por que essa ordem" data-en="Why this order">Por que essa ordem</h2>
+  <p data-pt="Os grupos reúnem conceitos que se chamam, que são causa e efeito, ou que são o mesmo assunto por ângulos diferentes. O exit 2 vem primeiro porque é o contrato que todo o resto honra. O kernel vem antes do Rust porque define <em>onde</em> a decisão acontece. A leitura de código vem antes do malware porque é <em>como</em> ele é reconhecido. E a decisão e o processo fecham, porque é onde a engenharia vira disciplina. A visão geral, no fim, só faz sentido depois que você viu as peças." data-en="The groups gather concepts that call each other, that are cause and effect, or that are the same subject from different angles. Exit 2 comes first because it is the contract everything else honors. The kernel comes before Rust because it defines <em>where</em> the decision happens. Code reading comes before malware because it is <em>how</em> it is recognized. Decision and process close, because that is where engineering becomes discipline. The overview, at the end, only makes sense after the pieces are seen.">Os grupos reúnem conceitos que se chamam, que são causa e efeito, ou que são o mesmo assunto por ângulos diferentes. O exit 2 vem primeiro porque é o contrato que todo o resto honra. O kernel vem antes do Rust porque define <em>onde</em> a decisão acontece. A leitura de código vem antes do malware porque é <em>como</em> ele é reconhecido. E a decisão e o processo fecham, porque é onde a engenharia vira disciplina. A visão geral, no fim, só faz sentido depois que você viu as peças.</p>
 
   <nav class="pager" aria-label="Navegação entre páginas">
-    <a class="prev" href="index.html"><span class="lbl">Anterior</span><span class="ttl">Índice</span></a>
-    <a class="next" href="conceitos/1-contrato-posix-exit2.html"><span class="lbl">Próximo</span><span class="ttl">1 · Contrato POSIX e o exit 2</span></a>
+    <a class="prev" href="index.html"><span class="lbl" data-pt="Anterior" data-en="Previous">Anterior</span><span class="ttl" data-pt="Índice" data-en="Index">Índice</span></a>
+    <a class="next" href="conceitos/1-contrato-posix-exit2.html"><span class="lbl" data-pt="Próximo" data-en="Next">Próximo</span><span class="ttl" data-pt="1 · Contrato POSIX e o exit 2" data-en="1 · The POSIX contract and exit 2">1 · Contrato POSIX e o exit 2</span></a>
   </nav>
-  <div class="foot"><p>Material que eu escrevi a partir de análise forense da codebase. <a href="index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p data-pt="Material construído por análise forense da codebase. <a href=&quot;index.html&quot;>Voltar ao índice</a>." data-en="Material built by forensic analysis of the codebase.">Material construído por análise forense da codebase. <a href="index.html" data-pt="Voltar ao índice" data-en="Back to the index">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">
-  <div class="t">Nesta página</div>
+  <div class="t" data-pt="Nesta página" data-en="On this page">Nesta página</div>
   <nav id="toc-list"></nav>
 </aside>
 </div>
 </div>
 <script src="assets/nav.js"></script>
+<script src="assets/lang.js"></script>
 </body>
 </html>

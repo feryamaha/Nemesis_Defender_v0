@@ -1,16 +1,16 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 45, "rankSpacing": 55}}}%%
 flowchart LR
-subgraph A["cadeia A · decode-then-exec, confirmatória (1 basta)"]
+subgraph A["chain A · decode-then-exec, confirmatory (1 suffices)"]
   direction LR
-  P1["payload codificado<br/>base64 · hex · aninhado"] ==> P2["decodificação<br/>atob · Buffer.from · base64 -d"]
-  P2 ==> P3["execução<br/>eval · exec · child_process"]
-  P3 ==> B1["BLOQUEIA · exit 2"]
+  P1["encoded payload<br/>base64 · hex · nested"] ==> P2["decoding<br/>atob · Buffer.from · base64 -d"]
+  P2 ==> P3["execution<br/>eval · exec · child_process"]
+  P3 ==> B1["BLOCKS · exit 2"]
 end
-subgraph B["cadeia B · exfiltração, fonte + sink (a soma condena)"]
+subgraph B["chain B · exfiltration, source + sink (the sum convicts)"]
   direction LR
-  F["fonte sensível<br/>.env · chaves SSH · tokens<br/>sozinha pode ser legítima"] ==> J["+"]
-  S["sink de rede<br/>fetch · curl · webhook externo<br/>sozinho pode ser legítimo"] ==> J
-  J ==>|"juntos"| B2["cadeia de exfil<br/>o taint liga a fonte ao destino externo<br/>BLOQUEIA"]
+  F["sensitive source<br/>.env · SSH keys · tokens<br/>alone it may be legitimate"] ==> J["+"]
+  S["network sink<br/>fetch · curl · external webhook<br/>alone it may be legitimate"] ==> J
+  J ==>|"together"| B2["exfil chain<br/>taint links the source to the external destination<br/>BLOQUEIA"]
 end
 
 classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;

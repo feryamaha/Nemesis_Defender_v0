@@ -1,9 +1,9 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart LR
-IDE["IDE / agente<br/>processo pai, orquestra a ação"] ==>|"fork + exec"| H["hook pretool<br/>processo filho, vida curta<br/>stdin ← pedido (JSON)<br/>stdout/stderr → diagnóstico (não decide)"]
-H ==>|"exit(0 | 2)"| K["KERNEL<br/>guarda o status do processo que terminou"]
-K -.->|"wait(): o pai lê o código de saída"| IDE
-K -.-> N["A decisão é o número, nunca o texto impresso.<br/>0 = sucesso · ≠0 = falha (POSIX) · 2 = bloqueie (contrato das IDEs de agente)."]
+IDE["IDE / agent<br/>parent process, orchestrates the action"] ==>|"fork + exec"| H["pretool hook<br/>child process, short-lived<br/>stdin ← request (JSON)<br/>stdout/stderr → diagnostics (does not decide)"]
+H ==>|"exit(0 | 2)"| K["KERNEL<br/>holds the status of the finished process"]
+K -.->|"wait(): the parent reads the exit code"| IDE
+K -.-> N["The decision is the number, never the printed text.<br/>0 = success · ≠0 = failure (POSIX) · 2 = block (agent IDE contract)."]
 
 classDef ag fill:#0d1424,stroke:#5aa9ff,color:#e8edf6;
 classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;

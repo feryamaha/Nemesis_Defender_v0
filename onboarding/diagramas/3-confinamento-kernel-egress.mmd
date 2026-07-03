@@ -1,13 +1,13 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart TB
-LL["Landlock: roda sem root<br/>privilégio mínimo"] -.-> CG
-CG["cgroup do agente<br/>delimita o enforcement só ao agente:<br/>IDE, terminal e sistema ficam de fora"]
-CG ==> EX["bloqueio de exec<br/>só para processos do agente"]
-CG ==> EG["controle de egress<br/>toda conexão de saída do agente"]
-EG ==> AL{"destino na allowlist?<br/>CIDR:porta"}
-AL ==>|"sim"| PASS["conexão permitida<br/>destino aprovado por humano"]
-AL ==>|"não"| DENY["-EPERM<br/>nega por padrão: bloqueia exfiltração e C2"]
-NOTE["allowlist própria e separada (allowlist-ebpf.toml),<br/>editável só por humano"] -.-> AL
+LL["Landlock: runs without root<br/>least privilege"] -.-> CG
+CG["agent cgroup<br/>scopes enforcement to the agent only:<br/>IDE, terminal and system stay out"]
+CG ==> EX["exec blocking<br/>agent processes only"]
+CG ==> EG["egress control<br/>every agent outbound connection"]
+EG ==> AL{"destination in the allowlist?<br/>CIDR:port"}
+AL ==>|"yes"| PASS["connection allowed<br/>human-approved destination"]
+AL ==>|"no"| DENY["-EPERM<br/>denies by default: blocks exfiltration and C2"]
+NOTE["separate dedicated allowlist (allowlist-ebpf.toml),<br/>human-editable only"] -.-> AL
 
 classDef ok fill:#0e2a1a,stroke:#5fd38a,color:#d7ffe6;
 classDef blk fill:#2a1014,stroke:#ff6b6b,color:#ffd7d7;

@@ -7,54 +7,75 @@
 <link rel="stylesheet" href="../assets/estilo.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Pular para o conteúdo</a>
+<a class="skip-link" href="#main" data-pt="Pular para o conteúdo" data-en="Skip to content">Pular para o conteúdo</a>
 <header class="topbar">
   <span class="brand">NEMESIS · <b>material de estudo</b></span>
   <span class="spacer"></span>
+  <div class="lang" role="group" aria-label="Language / Idioma">
+    <button class="flag active" id="lang-pt" title="Português" aria-label="Português">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#009B3A" />
+        <path d="M14 2.4 25.2 10 14 17.6 2.8 10z" fill="#FEDF00" />
+        <circle cx="14" cy="10" r="3.9" fill="#002776" />
+        <path d="M10.4 8.9a4 4 0 0 1 7.2 1c-2.3-.8-4.9-.9-7.2-.1z" fill="#fff" />
+      </svg>
+    </button>
+    <button class="flag" id="lang-en" title="English" aria-label="English">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#B22234" />
+        <g fill="#fff">
+          <rect y="1.5" width="28" height="1.5" /><rect y="4.6" width="28" height="1.5" />
+          <rect y="7.7" width="28" height="1.5" /><rect y="10.8" width="28" height="1.5" />
+          <rect y="13.9" width="28" height="1.5" /><rect y="17" width="28" height="1.5" />
+        </g>
+        <rect width="12" height="10.8" fill="#3C3B6E" />
+      </svg>
+    </button>
+  </div>
   <nav aria-label="Navegação principal">
-    <a href="../index.html">Início</a>
-    <a href="../jornada.html">Jornada</a>
-    <a href="../diagrama-arquitetura.html">Arquitetura</a>
-    <a href="../competencias.html">Competências</a>
-    <a href="../COBERTURA.html">Cobertura</a>
+    <a href="../index.html" data-pt="Início" data-en="Home">Início</a>
+    <a href="../jornada.html" data-pt="Jornada" data-en="Journey">Jornada</a>
+    <a href="../diagrama-arquitetura.html" data-pt="Arquitetura" data-en="Architecture">Arquitetura</a>
+    <a href="../competencias.html" data-pt="Competências" data-en="Skills">Competências</a>
+    <a href="../COBERTURA.html" data-pt="Cobertura" data-en="Coverage">Cobertura</a>
   </nav>
 </header>
 
 <div class="wrap">
 <div class="layout with-toc">
 <main id="main">
-  <p class="crumb"><a href="../index.html">Início</a><span class="sep">/</span>Conceitos<span class="sep">/</span>6 · Pretool, defender e daemon</p>
+  <p class="crumb"><a href="../index.html" data-pt="Início" data-en="Home">Início</a><span class="sep">/</span><span data-pt="Conceitos" data-en="Concepts">Conceitos</span><span class="sep">/</span><span data-pt="6 · Pretool, defender e daemon" data-en="6 · Pretool, defender and daemon">6 · Pretool, defender e daemon</span></p>
 
-  <span class="deftag">conceito 6 · interceptação e contenção</span>
-  <h1>Pretool, defender e daemon: interceptação, decisão e contenção</h1>
-  <p class="lede">Três peças que se chamam e formam o fluxo: o pretool intercepta a ação antes de acontecer, o nemesis-defender é o cérebro que escaneia e dá o veredito, e o daemon é o processo de fundo que observa o filesystem e move o malware confirmado para a quarentena.</p>
+  <span class="deftag" data-pt="conceito 6 · interceptação e contenção" data-en="concept 6 · interception and containment">conceito 6 · interceptação e contenção</span>
+  <h1 data-pt="Pretool, defender e daemon: interceptação, decisão e contenção" data-en="Pretool, defender and daemon: interception, decision and containment">Pretool, defender e daemon: interceptação, decisão e contenção</h1>
+  <p class="lede" data-pt="Três peças que se chamam e formam o fluxo: o pretool intercepta a ação antes de acontecer, o nemesis-defender é o cérebro que escaneia e dá o veredito, e o daemon é o processo de fundo que observa o filesystem e move o malware confirmado para a quarentena." data-en="Three pieces that call each other and form the flow: the pretool intercepts the action before it happens, nemesis-defender is the brain that scans and issues the verdict, and the daemon is the background process that watches the filesystem and moves confirmed malware to quarantine.">Três peças que se chamam e formam o fluxo: o pretool intercepta a ação antes de acontecer, o nemesis-defender é o cérebro que escaneia e dá o veredito, e o daemon é o processo de fundo que observa o filesystem e move o malware confirmado para a quarentena.</p>
 
   <div class="sec30">
-    <span class="t">Em 30 segundos</span>
-    <p>O <strong>pretool</strong> é um hook síncrono e fail-closed: a IDE o chama antes de cada ação do agente, ele traduz o pedido e passa o conteúdo ao motor. O <strong>nemesis-defender</strong> é esse motor: a função <code>compute_severity</code>, pura, decide Clean / Suspicious / Malicious. O <strong>daemon</strong> é um processo que roda em background, desacoplado do shell, observando o filesystem; quando confirma hostilidade, ele <em>move</em> o arquivo para a quarentena (não deleta) e trava a sessão para revisão humana.</p>
+    <span class="t" data-pt="Em 30 segundos" data-en="In 30 seconds">Em 30 segundos</span>
+    <p data-pt="O <strong>pretool</strong> é um hook síncrono e fail-closed: a IDE o chama antes de cada ação do agente, ele traduz o pedido e passa o conteúdo ao motor. O <strong>nemesis-defender</strong> é esse motor: a função <code>compute_severity</code>, pura, decide Clean / Suspicious / Malicious. O <strong>daemon</strong> é um processo que roda em background, desacoplado do shell, observando o filesystem; quando confirma hostilidade, ele <em>move</em> o arquivo para a quarentena (não deleta) e trava a sessão para revisão humana." data-en="The <strong>pretool</strong> is a synchronous, fail-closed hook: the IDE calls it before each agent action; it translates the request and hands the content to the engine. <strong>nemesis-defender</strong> is that engine: the pure function <code>compute_severity</code> decides Clean / Suspicious / Malicious. The <strong>daemon</strong> is a background process, detached from the shell, watching the filesystem; on confirming hostility it <em>moves</em> the file to quarantine (no deletion) and holds the session for human review.">O <strong>pretool</strong> é um hook síncrono e fail-closed: a IDE o chama antes de cada ação do agente, ele traduz o pedido e passa o conteúdo ao motor. O <strong>nemesis-defender</strong> é esse motor: a função <code>compute_severity</code>, pura, decide Clean / Suspicious / Malicious. O <strong>daemon</strong> é um processo que roda em background, desacoplado do shell, observando o filesystem; quando confirma hostilidade, ele <em>move</em> o arquivo para a quarentena (não deleta) e trava a sessão para revisão humana.</p>
   </div>
 
   <figure class="diagram">
-    <img src="../diagramas/6-pretool-defender-daemon.svg" alt="O pretool (hook de vida curta, antes de executar) e o daemon (servico que vigia o disco) usam o mesmo motor compute_severity; o pretool barra a escrita com exit 2, o daemon move o malicioso ja no disco para quarentena, e o humano decide.">
-    <figcaption>Pretool (antes, hook) e daemon (depois, serviço) usam o mesmo motor; barrar é reversível, por isso o daemon move, não deleta.</figcaption>
+    <img src="../diagramas/6-pretool-defender-daemon.svg" alt="O pretool (hook de vida curta, antes de executar) e o daemon (servico que vigia o disco) usam o mesmo motor compute_severity; o pretool barra a escrita com exit 2, o daemon move o malicioso ja no disco para quarentena, e o humano decide." data-alt-en="The pretool (short-lived hook) and the daemon (disk-watching service) share compute_severity; the pretool blocks the write with exit 2, the daemon quarantines malicious files on disk, and the human decides.">
+    <figcaption data-pt="Pretool (antes, hook) e daemon (depois, serviço) usam o mesmo motor; barrar é reversível, por isso o daemon move, não deleta." data-en="Pretool (before, hook) and daemon (after, service) use the same engine; blocking is reversible, which is why the daemon moves instead of deleting.">Pretool (antes, hook) e daemon (depois, serviço) usam o mesmo motor; barrar é reversível, por isso o daemon move, não deleta.</figcaption>
   </figure>
 
-  <h2>Do zero: o que é um daemon</h2>
-  <p>Um <strong>daemon</strong> é um processo que roda continuamente em segundo plano, sem terminal nem interação direta, normalmente iniciado uma vez e vivo enquanto o serviço existir. Ele é <em>desacoplado</em> do PID do shell que o lançou: fecha-se o terminal e ele continua. É o oposto de um hook, que nasce, decide e morre a cada invocação. O pretool é hook (vida curta, write-time, síncrono); o defender-daemon é serviço (vida longa, observando eventos de arquivo). Essa diferença de natureza é o que permite as duas cobrirem janelas de tempo diferentes.</p>
+  <h2 data-pt="Do zero: o que é um daemon" data-en="From scratch: what a daemon is">Do zero: o que é um daemon</h2>
+  <p data-pt="Um <strong>daemon</strong> é um processo que roda continuamente em segundo plano, sem terminal nem interação direta, normalmente iniciado uma vez e vivo enquanto o serviço existir. Ele é <em>desacoplado</em> do PID do shell que o lançou: fecha-se o terminal e ele continua. É o oposto de um hook, que nasce, decide e morre a cada invocação. O pretool é hook (vida curta, write-time, síncrono); o defender-daemon é serviço (vida longa, observando eventos de arquivo). Essa diferença de natureza é o que permite as duas cobrirem janelas de tempo diferentes." data-en="A <strong>daemon</strong> is a process that runs continuously in the background, no terminal, no direct interaction, usually started once and alive for as long as the service exists. It is <em>detached</em> from the PID of the shell that launched it: close the terminal and it keeps running. The opposite of a hook, which is born, decides and dies on every invocation. The pretool is a hook (short-lived, write-time, synchronous); the defender-daemon is a service (long-lived, watching file events). That difference in nature is what lets the two cover different windows of time.">Um <strong>daemon</strong> é um processo que roda continuamente em segundo plano, sem terminal nem interação direta, normalmente iniciado uma vez e vivo enquanto o serviço existir. Ele é <em>desacoplado</em> do PID do shell que o lançou: fecha-se o terminal e ele continua. É o oposto de um hook, que nasce, decide e morre a cada invocação. O pretool é hook (vida curta, write-time, síncrono); o defender-daemon é serviço (vida longa, observando eventos de arquivo). Essa diferença de natureza é o que permite as duas cobrirem janelas de tempo diferentes.</p>
 
-  <h2>Por que importa</h2>
-  <p>O pretool pega a ação <em>antes</em> de o byte tocar o disco, é a hora certa de barrar uma escrita ruim, porque barrar é reversível. Mas e se um arquivo hostil chegar ao disco por um caminho que o hook não viu? Aí entra o daemon: ele vigia o filesystem e age depois, sobre o arquivo já materializado. Como agir depois pode significar destruir, o daemon nunca deleta: ele move para a quarentena e chama o humano. Interceptar e conter são dois tempos do mesmo problema.</p>
+  <h2 data-pt="Por que importa" data-en="Why it matters">Por que importa</h2>
+  <p data-pt="O pretool pega a ação <em>antes</em> de o byte tocar o disco, é a hora certa de barrar uma escrita ruim, porque barrar é reversível. Mas e se um arquivo hostil chegar ao disco por um caminho que o hook não viu? Aí entra o daemon: ele vigia o filesystem e age depois, sobre o arquivo já materializado. Como agir depois pode significar destruir, o daemon nunca deleta: ele move para a quarentena e chama o humano. Interceptar e conter são dois tempos do mesmo problema." data-en="The pretool catches the action <em>before</em> the byte touches the disk, the right time to stop a bad write, because blocking is reversible. But what if a hostile file reaches the disk through a path the hook never saw? That is where the daemon comes in: it watches the filesystem and acts afterwards, on the materialized file. Since acting afterwards could mean destroying, the daemon never deletes: it moves to quarantine and calls the human. Intercepting and containing are two beats of the same problem.">O pretool pega a ação <em>antes</em> de o byte tocar o disco, é a hora certa de barrar uma escrita ruim, porque barrar é reversível. Mas e se um arquivo hostil chegar ao disco por um caminho que o hook não viu? Aí entra o daemon: ele vigia o filesystem e age depois, sobre o arquivo já materializado. Como agir depois pode significar destruir, o daemon nunca deleta: ele move para a quarentena e chama o humano. Interceptar e conter são dois tempos do mesmo problema.</p>
 
   <figure class="diagram">
-    <img src="../diagramas/6b-quarentena-ciclo.svg" alt="Ciclo da quarentena: hostilidade confirmada por corroboração; o arquivo é movido para .nemesis/quarantine com meta.json do motivo; a sessão é barrada com exit 2; o humano revisa com list e show e decide entre restore e purge. Nada é deletado sem decisão humana.">
-    <figcaption>O ciclo de vida da quarentena: mover, registrar o motivo, barrar a sessão e devolver a decisão ao humano: <code>restore</code> ou <code>purge</code>.</figcaption>
+    <img src="../diagramas/6b-quarentena-ciclo.svg" alt="Ciclo da quarentena: hostilidade confirmada por corroboração; o arquivo é movido para .nemesis/quarantine com meta.json do motivo; a sessão é barrada com exit 2; o humano revisa com list e show e decide entre restore e purge. Nada é deletado sem decisão humana." data-alt-en="Quarantine lifecycle: hostility confirmed; the file is moved to .nemesis/quarantine with a meta.json reason; the session is blocked with exit 2; the human reviews and chooses restore or purge.">
+    <figcaption data-pt="O ciclo de vida da quarentena: mover, registrar o motivo, barrar a sessão e devolver a decisão ao humano: <code>restore</code> ou <code>purge</code>." data-en="The quarantine lifecycle: move, record the reason, hold the session and hand the decision back to the human: <code>restore</code> or <code>purge</code>.">O ciclo de vida da quarentena: mover, registrar o motivo, barrar a sessão e devolver a decisão ao humano: <code>restore</code> ou <code>purge</code>.</figcaption>
   </figure>
 
-  <h2>Como se correlaciona</h2>
-  <p>Eles se invocam em cadeia. O pretool, ao rodar, garante que o daemon esteja no ar (fire-and-forget) e, no Linux, garante também o daemon eBPF do <a href="2-kernel-ebpf-lsm.html">grupo 2</a>. Pretool e daemon compartilham o mesmo motor <code>scan_content</code> (mesma fonte de regras, mesmo veredito para bytes iguais, ver <a href="visao-geral.html">visão geral</a>). E a decisão de severidade aqui é a mesma que o <a href="9-defesa-profundidade-decisao.html">grupo 9</a> aprofunda na corroboração e na quarentena.</p>
+  <h2 data-pt="Como se correlaciona" data-en="How it correlates">Como se correlaciona</h2>
+  <p data-pt="Eles se invocam em cadeia. O pretool, ao rodar, garante que o daemon esteja no ar (fire-and-forget) e, no Linux, garante também o daemon eBPF do <a href=&quot;2-kernel-ebpf-lsm.html&quot;>grupo 2</a>. Pretool e daemon compartilham o mesmo motor <code>scan_content</code> (mesma fonte de regras, mesmo veredito para bytes iguais, ver <a href=&quot;visao-geral.html&quot;>visão geral</a>). E a decisão de severidade aqui é a mesma que o <a href=&quot;9-defesa-profundidade-decisao.html&quot;>grupo 9</a> aprofunda na corroboração e na quarentena." data-en="They invoke each other in a chain. The pretool, when it runs, ensures the daemon is up (fire-and-forget) and, on Linux, also ensures the eBPF daemon of <a href=&quot;2-kernel-ebpf-lsm.html&quot;>group 2</a>. Pretool and daemon share the same <code>scan_content</code> engine (same rule source, same verdict for identical bytes, see the <a href=&quot;visao-geral.html&quot;>overview</a>). And the severity decision here is the same one <a href=&quot;9-defesa-profundidade-decisao.html&quot;>group 9</a> deepens with corroboration and quarantine.">Eles se invocam em cadeia. O pretool, ao rodar, garante que o daemon esteja no ar (fire-and-forget) e, no Linux, garante também o daemon eBPF do <a href="2-kernel-ebpf-lsm.html">grupo 2</a>. Pretool e daemon compartilham o mesmo motor <code>scan_content</code> (mesma fonte de regras, mesmo veredito para bytes iguais, ver <a href="visao-geral.html">visão geral</a>). E a decisão de severidade aqui é a mesma que o <a href="9-defesa-profundidade-decisao.html">grupo 9</a> aprofunda na corroboração e na quarentena.</p>
 
-  <h2>Como o Nemesis aplica</h2>
-  <p>A interceptação começa traduzindo o nome da ferramenta da IDE em uma intenção do Nemesis, isso é o que normaliza Devin, Claude, Cursor, Codex e outros num vocabulário só:</p>
+  <h2 data-pt="Como o Nemesis aplica" data-en="How Nemesis applies it">Como o Nemesis aplica</h2>
+  <p data-pt="A interceptação começa traduzindo o nome da ferramenta da IDE em uma intenção do Nemesis, isso é o que normaliza Devin, Claude, Cursor, Codex e outros num vocabulário só:" data-en="Interception starts by translating the IDE tool name into a Nemesis intent, which is what normalizes Devin, Claude, Cursor, Codex and others into a single vocabulary:">A interceptação começa traduzindo o nome da ferramenta da IDE em uma intenção do Nemesis, isso é o que normaliza Devin, Claude, Cursor, Codex e outros num vocabulário só:</p>
   <span class="src-ref">📄 <b>.nemesis/hooks/nemesis-pretool-check-unix.rs:312-347</b> · tradução de ferramenta em intenção</span>
   <pre><code class="rust">let agent_action = match tool_name {
     "Edit" | "Write" | "MultiEdit" => "pre_write_code",
@@ -64,7 +85,7 @@
     s if s.starts_with("mcp__") => "pre_mcp_tool_use",
     _ => "pre_write_code",
 };</code></pre>
-  <p>O cérebro é a função pura de severidade: instrução probabilística não contém; enforcement determinístico contém. Um sinal confirmatório basta para Malicious; senão, conta-se quantos tipos distintos de sinal corroborante apareceram:</p>
+  <p data-pt="O cérebro é a função pura de severidade: instrução probabilística não contém; enforcement determinístico contém. Um sinal confirmatório basta para Malicious; senão, conta-se quantos tipos distintos de sinal corroborante apareceram:" data-en="The brain is the pure severity function: probabilistic instruction does not contain; deterministic enforcement does. One confirmatory signal is enough for Malicious; otherwise, the count is of distinct corroborating signal types:">O cérebro é a função pura de severidade: instrução probabilística não contém; enforcement determinístico contém. Um sinal confirmatório basta para Malicious; senão, conta-se quantos tipos distintos de sinal corroborante apareceram:</p>
   <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:413-437</b> · compute_severity (função pura)</span>
   <pre><code class="rust">fn compute_severity(violations: &[DefenderViolation]) -> Severity {
     if violations.iter().any(|v| CONFIRMATORY_VISITORS.contains(&v.visitor.as_str())) {
@@ -77,50 +98,51 @@
         _ => Severity::Malicious,    // 2+ métodos independentes concordam
     }
 }</code></pre>
-  <p>O pretool sobe o daemon eBPF como fire-and-forget quando o kernel suporta BPF-LSM, sem esperar:</p>
+  <p data-pt="O pretool sobe o daemon eBPF como fire-and-forget quando o kernel suporta BPF-LSM, sem esperar:" data-en="The pretool starts the eBPF daemon fire-and-forget when the kernel supports BPF-LSM, without waiting:">O pretool sobe o daemon eBPF como fire-and-forget quando o kernel suporta BPF-LSM, sem esperar:</p>
   <span class="src-ref">📄 <b>.nemesis/hooks/nemesis-pretool-check-unix.rs:1107-1141</b> · backstop eBPF (Linux)</span>
   <pre><code class="rust">let lsm_ok = std::fs::read_to_string("/sys/kernel/security/lsm")
     .map(|s| s.contains("bpf")).unwrap_or(false);
 if lsm_ok { /* spawn nemesis-ebpf-daemon --ensure-daemon (não espera) */ }</code></pre>
-  <p>E a contenção é movimento, não destruição: o daemon move o arquivo confirmado para uma pasta de quarentena com metadados, e trava a sessão enquanto houver pendência:</p>
+  <p data-pt="E a contenção é movimento, não destruição: o daemon move o arquivo confirmado para uma pasta de quarentena com metadados, e trava a sessão enquanto houver pendência:" data-en="And containment is movement, not destruction: the daemon moves the confirmed file to a quarantine folder with metadata, and holds the session while anything is pending:">E a contenção é movimento, não destruição: o daemon move o arquivo confirmado para uma pasta de quarentena com metadados, e trava a sessão enquanto houver pendência:</p>
   <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/quarantine.rs:1-11</b> · mover para quarentena, não deletar</span>
   <pre><code class="rust">//! em vez de DELETAR arquivos maliciosos, o nemesis-defender os MOVE para
 //! .nemesis/quarantine/ e os retém para revisão humana.
 //!   - o arquivo original (preservado, inerte) + meta.json (por quê)
 //! enquanto houver itens pendentes, o pretool bloqueia a sessão (exit 2).</code></pre>
 
-  <h2>Decisões e limites</h2>
-  <p>Eu fiz o daemon <strong>security-only</strong>: regra de qualidade nunca chega nele. Qualidade eu resolvo bloqueando a escrita, que é reversível; deletar arquivo é irreversível, e eu não deixo o daemon fazer isso por regra de estilo. A única divergência que eu aceito entre pretool e daemon é essa camada de qualidade, exclusiva do pretool no write-time.</p>
-  <p>O daemon eu subo como fire-and-forget para não travar a IDE, mas no install eu proíbo isso de propósito: o daemon recém-subido quarentenaria o próprio instalador. O install faz só o essencial, e a validação (doctor + pentest) é um passo manual que eu deixo para depois, documentado no <code>info-install.txt</code>. Por fim, escrevi <code>compute_severity</code> para contar <strong>tipos distintos</strong> de sinal, não hits: vários matches da mesma causa num arquivo não escalam indevidamente para Malicious.</p>
+  <h2 data-pt="Decisões e limites" data-en="Decisions and limits">Decisões e limites</h2>
+  <p data-pt="O daemon é <strong>security-only</strong>: regra de qualidade nunca chega nele. Qualidade se resolve bloqueando a escrita, que é reversível; deletar arquivo é irreversível, e o daemon não faz isso por regra de estilo. A única divergência aceita entre pretool e daemon é essa camada de qualidade, exclusiva do pretool no write-time." data-en="The daemon is <strong>security-only</strong>: quality rules never reach it. Quality is solved by blocking the write, which is reversible; deleting a file is irreversible, and the daemon does not do that over style rules. The only accepted divergence between pretool and daemon is that quality layer, exclusive to the pretool at write-time.">O daemon é <strong>security-only</strong>: regra de qualidade nunca chega nele. Qualidade se resolve bloqueando a escrita, que é reversível; deletar arquivo é irreversível, e o daemon não faz isso por regra de estilo. A única divergência aceita entre pretool e daemon é essa camada de qualidade, exclusiva do pretool no write-time.</p>
+  <p data-pt="O daemon sobe como fire-and-forget para não travar a IDE, mas no install isso é proibido de propósito: o daemon recém-subido quarentenaria o próprio instalador. O install faz só o essencial, e a validação (doctor + pentest) é um passo manual posterior, documentado no <code>info-install.txt</code>. Por fim, <code>compute_severity</code> conta <strong>tipos distintos</strong> de sinal, não hits: vários matches da mesma causa num arquivo não escalam indevidamente para Malicious." data-en="The daemon starts fire-and-forget so the IDE never stalls, but during install that is forbidden on purpose: a freshly started daemon would quarantine the installer itself. The install does only the essentials, and validation (doctor + pentest) is a manual later step, documented in <code>info-install.txt</code>. Finally, <code>compute_severity</code> counts <strong>distinct types</strong> of signal, not hits: several matches of the same cause in one file do not wrongly escalate to Malicious.">O daemon sobe como fire-and-forget para não travar a IDE, mas no install isso é proibido de propósito: o daemon recém-subido quarentenaria o próprio instalador. O install faz só o essencial, e a validação (doctor + pentest) é um passo manual posterior, documentado no <code>info-install.txt</code>. Por fim, <code>compute_severity</code> conta <strong>tipos distintos</strong> de sinal, não hits: vários matches da mesma causa num arquivo não escalam indevidamente para Malicious.</p>
 
-  <h2>Auto-checagem</h2>
-  <details><summary>Por que o pretool barra escrita mas o daemon move para quarentena?</summary>
-  <p>Porque o pretool age antes do disco (barrar é reversível) e o daemon age depois, sobre o arquivo já materializado (deletar seria irreversível). Mover preserva a evidência e devolve a decisão ao humano.</p></details>
-  <details><summary>O que torna a decisão determinística e não probabilística?</summary>
-  <p><code>compute_severity</code> é uma função pura: mesmos sinais, mesmo veredito. Não há "talvez" do modelo; há regra. Instrução no prompt pode ser ignorada, a função não.</p></details>
-  <details><summary>Por que um daemon e não outro hook?</summary>
-  <p>Porque o daemon vive em background, desacoplado do shell, e observa eventos do filesystem ao longo do tempo, uma janela que o hook (vida curta, write-time) não cobre.</p></details>
+  <h2 data-pt="Auto-checagem" data-en="Self-check">Auto-checagem</h2>
+  <details><summary data-pt="Por que o pretool barra escrita mas o daemon move para quarentena?" data-en="Why does the pretool block writes while the daemon moves to quarantine?">Por que o pretool barra escrita mas o daemon move para quarentena?</summary>
+  <p data-pt="Porque o pretool age antes do disco (barrar é reversível) e o daemon age depois, sobre o arquivo já materializado (deletar seria irreversível). Mover preserva a evidência e devolve a decisão ao humano." data-en="Because the pretool acts before the disk (blocking is reversible) and the daemon acts afterwards, on the materialized file (deleting would be irreversible). Moving preserves the evidence and returns the decision to the human.">Porque o pretool age antes do disco (barrar é reversível) e o daemon age depois, sobre o arquivo já materializado (deletar seria irreversível). Mover preserva a evidência e devolve a decisão ao humano.</p></details>
+  <details><summary data-pt="O que torna a decisão determinística e não probabilística?" data-en="What makes the decision deterministic rather than probabilistic?">O que torna a decisão determinística e não probabilística?</summary>
+  <p data-pt="<code>compute_severity</code> é uma função pura: mesmos sinais, mesmo veredito. Não há &quot;talvez&quot; do modelo; há regra. Instrução no prompt pode ser ignorada, a função não." data-en="<code>compute_severity</code> is a pure function: same signals, same verdict. There is no model &quot;maybe&quot;; there is a rule. A prompt instruction can be ignored, the function cannot."><code>compute_severity</code> é uma função pura: mesmos sinais, mesmo veredito. Não há "talvez" do modelo; há regra. Instrução no prompt pode ser ignorada, a função não.</p></details>
+  <details><summary data-pt="Por que um daemon e não outro hook?" data-en="Why a daemon and not another hook?">Por que um daemon e não outro hook?</summary>
+  <p data-pt="Porque o daemon vive em background, desacoplado do shell, e observa eventos do filesystem ao longo do tempo, uma janela que o hook (vida curta, write-time) não cobre." data-en="Because the daemon lives in the background, detached from the shell, watching filesystem events over time, a window the short-lived write-time hook does not cover.">Porque o daemon vive em background, desacoplado do shell, e observa eventos do filesystem ao longo do tempo, uma janela que o hook (vida curta, write-time) não cobre.</p></details>
 
-  <h2>Para ir além</h2>
+  <h2 data-pt="Para ir além" data-en="Further reading">Para ir além</h2>
   <ul>
     <li><a href="https://man7.org/linux/man-pages/man7/daemon.7.html">man7, daemon(7)</a>.</li>
-    <li><a href="https://docs.devin.ai/">Documentação de hooks de agente (Devin)</a>.</li>
+    <li><a href="https://docs.devin.ai/" data-pt="Documentação de hooks de agente (Devin)" data-en="<a href=&quot;https://docs.devin.ai/&quot;>Agent hook documentation (Devin)</a>.">Documentação de hooks de agente (Devin)</a>.</li>
     <li><a href="https://owasp.org/www-project-proactive-controls/">OWASP Proactive Controls</a>.</li>
   </ul>
 
   <nav class="pager" aria-label="Navegação entre páginas">
-    <a class="prev" href="5-leitura-codigo-ast-pipeline.html"><span class="lbl">Anterior</span><span class="ttl">Como o Nemesis lê código</span></a>
-    <a class="next" href="7-prompt-injection-ide-poisoning.html"><span class="lbl">Próximo</span><span class="ttl">Prompt injection e IDE poisoning</span></a>
+    <a class="prev" href="5-leitura-codigo-ast-pipeline.html"><span class="lbl" data-pt="Anterior" data-en="Previous">Anterior</span><span class="ttl" data-pt="Como o Nemesis lê código" data-en="How Nemesis reads code">Como o Nemesis lê código</span></a>
+    <a class="next" href="7-prompt-injection-ide-poisoning.html"><span class="lbl" data-pt="Próximo" data-en="Next">Próximo</span><span class="ttl" data-pt="Prompt injection e IDE poisoning" data-en="Prompt injection and IDE poisoning">Prompt injection e IDE poisoning</span></a>
   </nav>
-  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p><span data-pt="Citações verificadas contra o repositório." data-en="Citations verified against the repository.">Citações verificadas contra o repositório.</span> <a href="../index.html" data-pt="Voltar ao índice" data-en="Back to the index">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">
-  <div class="t">Nesta página</div>
+  <div class="t" data-pt="Nesta página" data-en="On this page">Nesta página</div>
   <nav id="toc-list"></nav>
 </aside>
 </div>
 </div>
 <script src="../assets/nav.js"></script>
+<script src="../assets/lang.js"></script>
 </body>
 </html>

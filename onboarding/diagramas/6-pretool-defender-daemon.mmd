@@ -1,12 +1,12 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart TB
-AG["ação do agente<br/>escrita de arquivo · comando"] ==> PT["PRETOOL<br/>hook de vida curta, antes da execução"]
-PT ==> M["compute_severity<br/>o mesmo motor nas duas camadas<br/>Clean · Suspicious · Malicious"]
-DA["DAEMON<br/>serviço em 2º plano, vigia o filesystem"] ==> M
-M ==>|"hostil na escrita"| B["exit 2<br/>barra a escrita antes de tocar o disco"]
-M ==>|"malicioso no disco"| QA["quarentena<br/>move, não deleta: reversível"]
-QA ==> HU["humano decide<br/>list · show · restore · purge"]
-M -.-> N["Duas camadas, um motor: o pretool age antes (síncrono),<br/>o daemon age depois (assíncrono). Nada é deletado sem decisão humana."]
+AG["agent action<br/>file write · command"] ==> PT["PRETOOL<br/>short-lived hook, before execution"]
+PT ==> M["compute_severity<br/>the same engine in both layers<br/>Clean · Suspicious · Malicious"]
+DA["DAEMON<br/>background service, watches the filesystem"] ==> M
+M ==>|"hostile at write-time"| B["exit 2<br/>blocks the write before it touches the disk"]
+M ==>|"malicious on disk"| QA["quarentena<br/>moves, does not delete: reversible"]
+QA ==> HU["human decides<br/>list · show · restore · purge"]
+M -.-> N["Two layers, one engine: the pretool acts before (sync),<br/>the daemon acts after (async). Nothing is deleted without a human decision."]
 
 classDef ag fill:#0d1424,stroke:#5aa9ff,color:#e8edf6;
 classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;

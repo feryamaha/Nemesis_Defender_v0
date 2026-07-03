@@ -1,11 +1,11 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart LR
-C1["hostilidade confirmada<br/>sinal confirmatório, ou 2+ heurísticos concordando"] ==> C2["move para quarentena<br/>.nemesis/quarantine/&lt;id&gt;/ + meta.json (o motivo)"]
-C2 ==> C3["sessão barrada<br/>exit 2 até a revisão humana"]
-C3 ==> C4["revisão humana<br/>nemesis-defender list · show"]
-C4 ==> R["restore<br/>falso positivo: o arquivo volta intacto"]
-C4 ==> P["purge<br/>confirmado: descarta de vez"]
-C4 -.-> N["Reversível por desenho: o Defender nunca deleta sozinho.<br/>A autoridade final é sempre do humano."]
+C1["confirmed hostility<br/>confirmatory signal, or 2+ heuristics agreeing"] ==> C2["moves to quarantine<br/>.nemesis/quarantine/&lt;id&gt;/ + meta.json (the reason)"]
+C2 ==> C3["session blocked<br/>exit 2 until human review"]
+C3 ==> C4["human review<br/>nemesis-defender list · show"]
+C4 ==> R["restore<br/>false positive: the file returns intact"]
+C4 ==> P["purge<br/>confirmed: discarded for good"]
+C4 -.-> N["Reversible by design: the Defender never deletes on its own.<br/>Final authority is always human."]
 
 classDef blk fill:#2a1014,stroke:#ff6b6b,color:#ffd7d7;
 classDef qz fill:#2a2410,stroke:#f5b54a,color:#ffeccb;

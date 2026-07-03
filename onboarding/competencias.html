@@ -7,91 +7,117 @@
 <link rel="stylesheet" href="assets/estilo.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Pular para o conteúdo</a>
+<a class="skip-link" href="#main" data-pt="Pular para o conteúdo" data-en="Skip to content">Pular para o conteúdo</a>
 <header class="topbar">
   <span class="brand">NEMESIS · <b>material de estudo</b></span><span class="spacer"></span>
-  <nav aria-label="Navegação principal"><a href="index.html">Início</a>
-    <a href="jornada.html">Jornada</a>
-    <a href="diagrama-arquitetura.html">Arquitetura</a><a href="competencias.html">Competências</a><a href="COBERTURA.html">Cobertura</a></nav>
+  <div class="lang" role="group" aria-label="Language / Idioma">
+    <button class="flag active" id="lang-pt" title="Português" aria-label="Português">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#009B3A" />
+        <path d="M14 2.4 25.2 10 14 17.6 2.8 10z" fill="#FEDF00" />
+        <circle cx="14" cy="10" r="3.9" fill="#002776" />
+        <path d="M10.4 8.9a4 4 0 0 1 7.2 1c-2.3-.8-4.9-.9-7.2-.1z" fill="#fff" />
+      </svg>
+    </button>
+    <button class="flag" id="lang-en" title="English" aria-label="English">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#B22234" />
+        <g fill="#fff">
+          <rect y="1.5" width="28" height="1.5" /><rect y="4.6" width="28" height="1.5" />
+          <rect y="7.7" width="28" height="1.5" /><rect y="10.8" width="28" height="1.5" />
+          <rect y="13.9" width="28" height="1.5" /><rect y="17" width="28" height="1.5" />
+        </g>
+        <rect width="12" height="10.8" fill="#3C3B6E" />
+      </svg>
+    </button>
+  </div>
+  <nav aria-label="Navegação principal"><a href="index.html" data-pt="Início" data-en="Home">Início</a>
+    <a href="jornada.html" data-pt="Jornada" data-en="Journey">Jornada</a>
+    <a href="diagrama-arquitetura.html" data-pt="Arquitetura" data-en="Architecture">Arquitetura</a><a href="competencias.html" data-pt="Competências" data-en="Skills">Competências</a><a href="COBERTURA.html" data-pt="Cobertura" data-en="Coverage">Cobertura</a></nav>
 </header>
 <div class="wrap"><div class="layout with-toc"><main id="main">
-  <p class="crumb"><a href="index.html">Início</a><span class="sep">/</span>Competências</p>
-  <span class="deftag">evidência de estudo autodidata</span>
-  <h1>Competências de engenharia que eu apliquei no projeto</h1>
-  <p class="lede">O Nemesis exercita, na prática, um conjunto amplo de competências: sistemas operacionais, kernel, segurança, Rust e DevSecOps. Aqui eu mapeio cada uma ao ponto do código que a evidencia e à página que a explica.</p>
+  <p class="crumb"><a href="index.html" data-pt="Início" data-en="Home">Início</a><span class="sep">/</span><span data-pt="Competências" data-en="Skills">Competências</span></p>
+  <span class="deftag" data-pt="evidência de estudo autodidata" data-en="evidence of self-taught study">evidência de estudo autodidata</span>
+  <h1 data-pt="Competências de engenharia aplicadas no projeto" data-en="Engineering skills applied in the project">Competências de engenharia aplicadas no projeto</h1>
+  <p class="lede" data-pt="O Nemesis exercita, na prática, um conjunto amplo de competências: sistemas operacionais, kernel, segurança, Rust e DevSecOps. Cada uma está mapeada ao ponto do código que a evidencia e à página que a explica." data-en="Nemesis exercises, in practice, a broad set of skills: operating systems, kernel, security, Rust and DevSecOps. Each one is mapped to the point in the code that evidences it and to the page that explains it.">O Nemesis exercita, na prática, um conjunto amplo de competências: sistemas operacionais, kernel, segurança, Rust e DevSecOps. Cada uma está mapeada ao ponto do código que a evidencia e à página que a explica.</p>
 
   <figure class="banner">
-    <img src="assets/gjeXH.png" alt="Banner: Fernando Moreira, autor do Nemesis Defender · Full-Stack TypeScript (React/Next.js), OWASP. Stack Rust, eBPF/LSM, Next.js, fail-closed. Ilustração de um escudo com cadeado e a regra 'rm -rf → exit 2 · DENIED'. Arquitetura de 3 camadas que bloqueia antes da execução.">
-    <figcaption>Enforcement determinístico de três camadas, em Rust, que bloqueia antes da execução.</figcaption>
+    <img src="assets/gjeXH.png" alt="Banner: Fernando Moreira, autor do Nemesis Defender · Full-Stack TypeScript (React/Next.js), OWASP. Stack Rust, eBPF/LSM, Next.js, fail-closed. Ilustração de um escudo com cadeado e a regra 'rm -rf → exit 2 · DENIED'. Arquitetura de 3 camadas que bloqueia antes da execução." data-alt-en="Banner: Fernando Moreira, author of Nemesis Defender. Full-Stack TypeScript (React/Next.js), OWASP. Rust, eBPF/LSM, fail-closed. A shield with a padlock and the rule rm -rf to exit 2, DENIED. Three-layer architecture that blocks before execution.">
+    <figcaption data-pt="Enforcement determinístico de três camadas, em Rust, que bloqueia antes da execução." data-en="Three-layer deterministic enforcement, in Rust, that blocks before execution.">Enforcement determinístico de três camadas, em Rust, que bloqueia antes da execução.</figcaption>
   </figure>
 
-  <div class="callout"><span class="t">Como ler</span>Cada linha aponta para a página de conceito e o arquivo-fonte real. É um índice rastreável do que eu estudei e apliquei, não uma lista de buzzwords. E sigo a regra do material: a proteção é a soma das camadas (o coeficiente), nunca a contagem de visitors.</div>
+  <div class="callout"><span class="t" data-pt="Como ler" data-en="How to read">Como ler</span><span data-pt="Cada linha aponta para a página de conceito e o arquivo-fonte real. É um índice rastreável de estudo aplicado, não uma lista de buzzwords. E vale a regra do material: a proteção é a soma das camadas (o coeficiente), nunca a contagem de visitors." data-en="Each row points to the concept page and the real source file. It is a traceable index of applied study, not a buzzword list. And the material’s rule holds: protection is the sum of layers (the coefficient), never the count of visitors.">Cada linha aponta para a página de conceito e o arquivo-fonte real. É um índice rastreável de estudo aplicado, não uma lista de buzzwords. E vale a regra do material: a proteção é a soma das camadas (o coeficiente), nunca a contagem de visitors.</span></div>
 
   <div class="sec30">
-    <span class="t">Em 30 segundos</span>
-    <p>Eu juntei o baixo nível (kernel, eBPF, LSM, Landlock) com a engenharia de software defensiva (Rust fail-closed, regex linear, determinismo) e a análise estática (AST, taint, entropia), e amarrei isso num processo de DevSecOps com gate adversarial. As três camadas (o conceito isolado), a forma como elas se reforçam (a correlação) e o bloqueio real antes da execução (a convergência) são o que cada página detalha.</p>
+    <span class="t" data-pt="Em 30 segundos" data-en="In 30 seconds">Em 30 segundos</span>
+    <p data-pt="O projeto junta o baixo nível (kernel, eBPF, LSM, Landlock) com a engenharia de software defensiva (Rust fail-closed, regex linear, determinismo) e a análise estática (AST, taint, entropia), amarrados num processo de DevSecOps com gate adversarial. As três camadas (o conceito isolado), a forma como elas se reforçam (a correlação) e o bloqueio real antes da execução (a convergência) são o que cada página detalha." data-en="The project joins the low level (kernel, eBPF, LSM, Landlock) with defensive software engineering (fail-closed Rust, linear regex, determinism) and static analysis (AST, taint, entropy), tied into a DevSecOps process with an adversarial gate. The three layers (the isolated concept), the way they reinforce each other (the correlation) and the real block before execution (the convergence) are what each page details.">O projeto junta o baixo nível (kernel, eBPF, LSM, Landlock) com a engenharia de software defensiva (Rust fail-closed, regex linear, determinismo) e a análise estática (AST, taint, entropia), amarrados num processo de DevSecOps com gate adversarial. As três camadas (o conceito isolado), a forma como elas se reforçam (a correlação) e o bloqueio real antes da execução (a convergência) são o que cada página detalha.</p>
   </div>
 
-  <h2>O conceito isolado: as competências por domínio</h2>
+  <h2 data-pt="O conceito isolado: as competências por domínio" data-en="The isolated concept: skills by domain">O conceito isolado: as competências por domínio</h2>
 
-  <h3>Engenharia de sistemas operacionais e baixo nível</h3>
+  <h3 data-pt="Engenharia de sistemas operacionais e baixo nível" data-en="Operating systems and low-level engineering">Engenharia de sistemas operacionais e baixo nível</h3>
   <table>
-    <tr><th>Competência</th><th>Evidência no código</th><th>Estudo</th></tr>
-    <tr><td>Modelo de processos POSIX, stdio, exit code como contrato</td><td>hook lê stdin, <code>std::process::exit(2)</code>; spawn com stdio nulo</td><td><a href="conceitos/1-contrato-posix-exit2.html">1</a></td></tr>
-    <tr><td>Programação de kernel com eBPF, verifier e BPF-LSM</td><td><code>nemesis-block.bpf.c</code>, mapas, <code>lsm/bprm_check_security</code></td><td><a href="conceitos/2-kernel-ebpf-lsm.html">2</a></td></tr>
-    <tr><td>Sandbox sem root e controle de egress (cgroup, Landlock)</td><td><code>landlock.rs::apply_sandbox</code>, <code>lsm/socket_connect</code>, LPM trie</td><td><a href="conceitos/3-confinamento-kernel-egress.html">3</a></td></tr>
+    <tr><th data-pt="Competência" data-en="Skill">Competência</th><th data-pt="Evidência no código" data-en="Evidence in the code">Evidência no código</th><th data-pt="Estudo" data-en="Study">Estudo</th></tr>
+    <tr><td data-pt="Modelo de processos POSIX, stdio, exit code como contrato" data-en="POSIX process model, stdio, exit code as contract">Modelo de processos POSIX, stdio, exit code como contrato</td><td data-pt="hook lê stdin, <code>std::process::exit(2)</code>; spawn com stdio nulo" data-en="hook reads stdin, <code>std::process::exit(2)</code>; spawn with null stdio">hook lê stdin, <code>std::process::exit(2)</code>; spawn com stdio nulo</td><td><a href="conceitos/1-contrato-posix-exit2.html">1</a></td></tr>
+    <tr><td data-pt="Programação de kernel com eBPF, verifier e BPF-LSM" data-en="Kernel programming with eBPF, verifier and BPF-LSM">Programação de kernel com eBPF, verifier e BPF-LSM</td><td><code>nemesis-block.bpf.c</code>, mapas, <code>lsm/bprm_check_security</code></td><td><a href="conceitos/2-kernel-ebpf-lsm.html">2</a></td></tr>
+    <tr><td data-pt="Sandbox sem root e controle de egress (cgroup, Landlock)" data-en="Rootless sandbox and egress control (cgroup, Landlock)">Sandbox sem root e controle de egress (cgroup, Landlock)</td><td><code>landlock.rs::apply_sandbox</code>, <code>lsm/socket_connect</code>, LPM trie</td><td><a href="conceitos/3-confinamento-kernel-egress.html">3</a></td></tr>
   </table>
 
-  <h3>Rust e engenharia de software</h3>
+  <h3 data-pt="Rust e engenharia de software" data-en="Rust and software engineering">Rust e engenharia de software</h3>
   <table>
-    <tr><th>Competência</th><th>Evidência no código</th><th>Estudo</th></tr>
-    <tr><td>Workspace, build reprodutível, Cargo.lock commitada</td><td><code>Cargo.toml</code>, <code>--locked</code> no CI</td><td><a href="conceitos/4-rust-defesa.html">4</a></td></tr>
-    <tr><td>Erro sem exceções (Result/Option) e fail-closed (catch_unwind → exit 2)</td><td><code>main.rs</code> match em <code>fs::read</code>; <code>nemesis-pretool-check-unix.rs::main</code></td><td><a href="conceitos/4-rust-defesa.html">4</a></td></tr>
-    <tr><td>Segurança de algoritmo (regex linear, ReDoS) e determinismo</td><td>crate <code>regex</code>; <code>MAX_DECODE_DEPTH</code>, faixas de tamanho</td><td><a href="conceitos/4-rust-defesa.html">4</a></td></tr>
+    <tr><th data-pt="Competência" data-en="Skill">Competência</th><th data-pt="Evidência no código" data-en="Evidence in the code">Evidência no código</th><th data-pt="Estudo" data-en="Study">Estudo</th></tr>
+    <tr><td data-pt="Workspace, build reprodutível, Cargo.lock commitada" data-en="Workspace, reproducible build, committed Cargo.lock">Workspace, build reprodutível, Cargo.lock commitada</td><td><code>Cargo.toml</code>, <code>--locked</code> no CI</td><td><a href="conceitos/4-rust-defesa.html">4</a></td></tr>
+    <tr><td data-pt="Erro sem exceções (Result/Option) e fail-closed (catch_unwind → exit 2)" data-en="Errors without exceptions (Result/Option) and fail-closed (catch_unwind → exit 2)">Erro sem exceções (Result/Option) e fail-closed (catch_unwind → exit 2)</td><td><code>main.rs</code> match em <code>fs::read</code>; <code>nemesis-pretool-check-unix.rs::main</code></td><td><a href="conceitos/4-rust-defesa.html">4</a></td></tr>
+    <tr><td data-pt="Segurança de algoritmo (regex linear, ReDoS) e determinismo" data-en="Algorithmic safety (linear regex, ReDoS) and determinism">Segurança de algoritmo (regex linear, ReDoS) e determinismo</td><td>crate <code>regex</code>; <code>MAX_DECODE_DEPTH</code>, faixas de tamanho</td><td><a href="conceitos/4-rust-defesa.html">4</a></td></tr>
   </table>
 
-  <h3>Análise estática e teoria de linguagens</h3>
+  <h3 data-pt="Análise estática e teoria de linguagens" data-en="Static analysis and language theory">Análise estática e teoria de linguagens</h3>
   <table>
-    <tr><th>Competência</th><th>Evidência no código</th><th>Estudo</th></tr>
-    <tr><td>Parsing e travessia de AST (tree-sitter, padrão Visitor)</td><td><code>ast_scanner.rs::traverse_*</code></td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td></tr>
-    <tr><td>Arquitetura de pipeline em camadas</td><td><code>lib.rs::scan_content</code></td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td></tr>
-    <tr><td>Teoria da informação (entropia) e fluxo de dados (taint)</td><td><code>entropy.rs::shannon_entropy</code>; <code>taint_tracker.rs</code> (3 passadas)</td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td></tr>
+    <tr><th data-pt="Competência" data-en="Skill">Competência</th><th data-pt="Evidência no código" data-en="Evidence in the code">Evidência no código</th><th data-pt="Estudo" data-en="Study">Estudo</th></tr>
+    <tr><td data-pt="Parsing e travessia de AST (tree-sitter, padrão Visitor)" data-en="Parsing and AST traversal (tree-sitter, Visitor pattern)">Parsing e travessia de AST (tree-sitter, padrão Visitor)</td><td><code>ast_scanner.rs::traverse_*</code></td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td></tr>
+    <tr><td data-pt="Arquitetura de pipeline em camadas" data-en="Layered pipeline architecture">Arquitetura de pipeline em camadas</td><td><code>lib.rs::scan_content</code></td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td></tr>
+    <tr><td data-pt="Teoria da informação (entropia) e fluxo de dados (taint)" data-en="Information theory (entropy) and data flow (taint)">Teoria da informação (entropia) e fluxo de dados (taint)</td><td><code>entropy.rs::shannon_entropy</code>; <code>taint_tracker.rs</code> (3 passadas)</td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td></tr>
   </table>
 
-  <h3>Segurança de IA e de aplicações</h3>
+  <h3 data-pt="Segurança de IA e de aplicações" data-en="AI and application security">Segurança de IA e de aplicações</h3>
   <table>
-    <tr><th>Competência</th><th>Evidência no código</th><th>Estudo</th></tr>
-    <tr><td>Integração com agentes (hooks multi-IDE), interceptação</td><td>tradução de ferramenta em intenção no pretool</td><td><a href="conceitos/6-pretool-defender-daemon.html">6</a></td></tr>
-    <tr><td>Enforcement determinístico vs probabilístico</td><td><code>compute_severity</code> (função pura)</td><td><a href="conceitos/6-pretool-defender-daemon.html">6</a></td></tr>
-    <tr><td>Defesa contra prompt injection e IDE poisoning</td><td><code>prompt_injection.rs</code>, <code>ide_config_poisoning.rs</code></td><td><a href="conceitos/7-prompt-injection-ide-poisoning.html">7</a></td></tr>
-    <tr><td>Detecção de malware e supply-chain</td><td>decoder recursivo + <code>manifest_scanner</code> + visitors AST (método)</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td></tr>
+    <tr><th data-pt="Competência" data-en="Skill">Competência</th><th data-pt="Evidência no código" data-en="Evidence in the code">Evidência no código</th><th data-pt="Estudo" data-en="Study">Estudo</th></tr>
+    <tr><td data-pt="Integração com agentes (hooks multi-IDE), interceptação" data-en="Agent integration (multi-IDE hooks), interception">Integração com agentes (hooks multi-IDE), interceptação</td><td data-pt="tradução de ferramenta em intenção no pretool" data-en="tool-to-intent translation in the pretool">tradução de ferramenta em intenção no pretool</td><td><a href="conceitos/6-pretool-defender-daemon.html">6</a></td></tr>
+    <tr><td data-pt="Enforcement determinístico vs probabilístico" data-en="Deterministic vs probabilistic enforcement">Enforcement determinístico vs probabilístico</td><td data-pt="<code>compute_severity</code> (função pura)" data-en="<code>compute_severity</code> (pure function)"><code>compute_severity</code> (função pura)</td><td><a href="conceitos/6-pretool-defender-daemon.html">6</a></td></tr>
+    <tr><td data-pt="Defesa contra prompt injection e IDE poisoning" data-en="Defense against prompt injection and IDE poisoning">Defesa contra prompt injection e IDE poisoning</td><td><code>prompt_injection.rs</code>, <code>ide_config_poisoning.rs</code></td><td><a href="conceitos/7-prompt-injection-ide-poisoning.html">7</a></td></tr>
+    <tr><td data-pt="Detecção de malware e supply-chain" data-en="Malware and supply chain detection">Detecção de malware e supply-chain</td><td data-pt="decoder recursivo + <code>manifest_scanner</code> + visitors AST (método)" data-en="recursive decoder + <code>manifest_scanner</code> + AST visitors (method)">decoder recursivo + <code>manifest_scanner</code> + visitors AST (método)</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td></tr>
   </table>
 
-  <h3>Arquitetura de defesa e DevSecOps</h3>
+  <h3 data-pt="Arquitetura de defesa e DevSecOps" data-en="Defense architecture and DevSecOps">Arquitetura de defesa e DevSecOps</h3>
   <table>
-    <tr><th>Competência</th><th>Evidência no código</th><th>Estudo</th></tr>
-    <tr><td>Defesa em profundidade (3 camadas independentes)</td><td>pretool + daemon + eBPF</td><td><a href="conceitos/9-defesa-profundidade-decisao.html">9</a></td></tr>
-    <tr><td>Modelagem de confiança (corroboração, reversibilidade)</td><td>Tier A/B em <code>compute_severity</code>, quarentena</td><td><a href="conceitos/9-defesa-profundidade-decisao.html">9</a></td></tr>
-    <tr><td>Threat modeling honesto (limites declarados)</td><td><code>self-audit.yml</code> notas, <code>AGENTS.md</code> §2</td><td><a href="conceitos/10-processo-honestidade.html">10</a></td></tr>
-    <tr><td>Cadeia de build (SLSA, pin de SHA, audit) e observabilidade</td><td><code>self-audit.yml</code>, <code>release.yml</code>, <code>nemesis-doctor</code>, <code>run-pentest.sh</code></td><td><a href="conceitos/10-processo-honestidade.html">10</a></td></tr>
+    <tr><th data-pt="Competência" data-en="Skill">Competência</th><th data-pt="Evidência no código" data-en="Evidence in the code">Evidência no código</th><th data-pt="Estudo" data-en="Study">Estudo</th></tr>
+    <tr><td data-pt="Defesa em profundidade (3 camadas independentes)" data-en="Defense in depth (3 independent layers)">Defesa em profundidade (3 camadas independentes)</td><td>pretool + daemon + eBPF</td><td><a href="conceitos/9-defesa-profundidade-decisao.html">9</a></td></tr>
+    <tr><td data-pt="Modelagem de confiança (corroboração, reversibilidade)" data-en="Trust modeling (corroboration, reversibility)">Modelagem de confiança (corroboração, reversibilidade)</td><td>Tier A/B em <code>compute_severity</code>, quarentena</td><td><a href="conceitos/9-defesa-profundidade-decisao.html">9</a></td></tr>
+    <tr><td data-pt="Threat modeling honesto (limites declarados)" data-en="Honest threat modeling (declared limits)">Threat modeling honesto (limites declarados)</td><td><code>self-audit.yml</code> notas, <code>AGENTS.md</code> §2</td><td><a href="conceitos/10-processo-honestidade.html">10</a></td></tr>
+    <tr><td data-pt="Cadeia de build (SLSA, pin de SHA, audit) e observabilidade" data-en="Build chain (SLSA, SHA pinning, audit) and observability">Cadeia de build (SLSA, pin de SHA, audit) e observabilidade</td><td><code>self-audit.yml</code>, <code>release.yml</code>, <code>nemesis-doctor</code>, <code>run-pentest.sh</code></td><td><a href="conceitos/10-processo-honestidade.html">10</a></td></tr>
   </table>
 
-  <h2>Como se correlaciona</h2>
-  <p>Nenhuma dessas competências vale isolada. O exit code (1) só contém porque o fail-closed do Rust (4) garante que até o erro termine em bloqueio; o kernel (2) só age com escopo porque o cgroup (3) sabe qual processo é o agente; a leitura de código (5) só serve porque alimenta a decisão (9); e a decisão só é confiável porque o processo (10) a valida de forma adversarial. A maturidade não está em saber cada peça, está em fazê-las se reforçarem.</p>
+  <h2 data-pt="Como se correlaciona" data-en="How it correlates">Como se correlaciona</h2>
+  <p data-pt="Nenhuma dessas competências vale isolada. O exit code (1) só contém porque o fail-closed do Rust (4) garante que até o erro termine em bloqueio; o kernel (2) só age com escopo porque o cgroup (3) sabe qual processo é o agente; a leitura de código (5) só serve porque alimenta a decisão (9); e a decisão só é confiável porque o processo (10) a valida de forma adversarial. A maturidade não está em saber cada peça, está em fazê-las se reforçarem." data-en="None of these skills stands alone. Exit code (1) only contains because Rust's fail-closed (4) guarantees even an error ends in a block; the kernel (2) only acts with scope because the cgroup (3) knows which process is the agent; code reading (5) only matters because it feeds the decision (9); and the decision is only trustworthy because the process (10) validates it adversarially. Maturity is not in knowing each piece, it is in making them reinforce each other.">Nenhuma dessas competências vale isolada. O exit code (1) só contém porque o fail-closed do Rust (4) garante que até o erro termine em bloqueio; o kernel (2) só age com escopo porque o cgroup (3) sabe qual processo é o agente; a leitura de código (5) só serve porque alimenta a decisão (9); e a decisão só é confiável porque o processo (10) a valida de forma adversarial. A maturidade não está em saber cada peça, está em fazê-las se reforçarem.</p>
 
-  <h2>Como o Nemesis aplica (a convergência)</h2>
-  <p>Tudo isso converge num único fato observável: um comando destrutivo ou um payload malicioso é barrado com <code>exit 2</code> (ou <code>-EPERM</code> no kernel) <strong>antes</strong> de executar, ou um arquivo hostil é movido para a quarentena antes de causar dano. É o que separa um protótipo de uma ferramenta de segurança: a engenharia vira contenção real, reversível e honesta sobre seus limites.</p>
+  <h2 data-pt="Como o Nemesis aplica (a convergência)" data-en="How Nemesis applies it (the convergence)">Como o Nemesis aplica (a convergência)</h2>
+  <figure class="diagram">
+    <img src="diagramas/fluxo.svg" alt="Fluxo completo: a ação do agente passa pelo pretool, pelo motor de scan e pelo veredito; o daemon isola em quarentena o que escapou; o eBPF segura no kernel; tudo com log local." data-alt-en="Nemesis flow: the agent attempts an action; layer 1 (pretool) blocks the hostile one with exit 2; layer 2 (daemon) quarantines what escaped; layer 3 (eBPF, kernel) is the safety net; everything is logged locally.">
+    <figcaption data-pt="A convergência observável: as competências viram contenção real, do pedido do agente ao veredito." data-en="The observable convergence: the skills become real containment, from the agent request to the verdict.">A convergência observável: as competências viram contenção real, do pedido do agente ao veredito.</figcaption>
+  </figure>
+  <p data-pt="Tudo isso converge num único fato observável: um comando destrutivo ou um payload malicioso é barrado com <code>exit 2</code> (ou <code>-EPERM</code> no kernel) <strong>antes</strong> de executar, ou um arquivo hostil é movido para a quarentena antes de causar dano. É o que separa um protótipo de uma ferramenta de segurança: a engenharia vira contenção real, reversível e honesta sobre seus limites." data-en="All of this converges into a single observable fact: a destructive command or a malicious payload is blocked with <code>exit 2</code> (or <code>-EPERM</code> in the kernel) <strong>before</strong> executing, or a hostile file is moved to quarantine before causing damage. That is what separates a prototype from a security tool: engineering becomes real containment, reversible and honest about its limits.">Tudo isso converge num único fato observável: um comando destrutivo ou um payload malicioso é barrado com <code>exit 2</code> (ou <code>-EPERM</code> no kernel) <strong>antes</strong> de executar, ou um arquivo hostil é movido para a quarentena antes de causar dano. É o que separa um protótipo de uma ferramenta de segurança: a engenharia vira contenção real, reversível e honesta sobre seus limites.</p>
 
-  <div class="callout tip"><span class="t">Síntese</span>O fio condutor é juntar baixo nível (kernel/eBPF) com engenharia de software defensiva (Rust fail-closed, determinismo) e processo (CI como gate adversarial), com honestidade sobre limites. Esse conjunto é o que eu desenvolvi e o que este material evidencia.</div>
+  <div class="callout tip"><span class="t" data-pt="Síntese" data-en="Synthesis">Síntese</span><span data-pt="O fio condutor é juntar baixo nível (kernel/eBPF) com engenharia de software defensiva (Rust fail-closed, determinismo) e processo (CI como gate adversarial), com honestidade sobre limites. Esse conjunto é o que o projeto desenvolve e o que este material evidencia." data-en="The thread is joining the low level (kernel/eBPF) with defensive software engineering (fail-closed Rust, determinism) and process (CI as an adversarial gate), with honesty about limits. That set is what the project develops and what this material evidences.">O fio condutor é juntar baixo nível (kernel/eBPF) com engenharia de software defensiva (Rust fail-closed, determinismo) e processo (CI como gate adversarial), com honestidade sobre limites. Esse conjunto é o que o projeto desenvolve e o que este material evidencia.</span></div>
 
   <nav class="pager" aria-label="Navegação entre páginas">
-    <a class="prev" href="conceitos/visao-geral.html"><span class="lbl">Anterior</span><span class="ttl">Visão geral</span></a>
-    <a class="next" href="COBERTURA.html"><span class="lbl">Próximo</span><span class="ttl">Matriz de cobertura</span></a>
+    <a class="prev" href="conceitos/visao-geral.html"><span class="lbl" data-pt="Anterior" data-en="Previous">Anterior</span><span class="ttl" data-pt="Visão geral" data-en="Overview">Visão geral</span></a>
+    <a class="next" href="COBERTURA.html"><span class="lbl" data-pt="Próximo" data-en="Next">Próximo</span><span class="ttl" data-pt="Matriz de cobertura" data-en="Coverage matrix">Matriz de cobertura</span></a>
   </nav>
-  <div class="foot"><p><a href="index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p><a href="index.html" data-pt="Voltar ao índice" data-en="<a href=&quot;index.html&quot;>Back to the index</a>.">Voltar ao índice</a>.</p></div>
 </main>
-<aside class="toc" aria-label="Sumário da página"><div class="t">Nesta página</div><nav id="toc-list"></nav></aside>
+<aside class="toc" aria-label="Sumário da página"><div class="t" data-pt="Nesta página" data-en="On this page">Nesta página</div><nav id="toc-list"></nav></aside>
 </div></div>
 <script src="assets/nav.js"></script>
+<script src="assets/lang.js"></script>
 </body>
 </html>

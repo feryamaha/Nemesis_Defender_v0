@@ -1,15 +1,15 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart TB
-TM["THREAT MODEL<br/>declara escopo e limites abertamente<br/>risco residual: trusting-trust"]
+TM["THREAT MODEL<br/>declares scope and limits openly<br/>residual risk: trusting-trust"]
 TM ==> GATE
-subgraph GATE["CI como gate (DevSecOps)"]
+subgraph GATE["CI as gate (DevSecOps)"]
   direction TB
-  SA["self-audit<br/>pentest contra o próprio motor<br/>cargo audit + lockfile, a cada mudança"]
-  RE["release<br/>prova de origem SLSA<br/>+ revisor humano obrigatório"]
-  CO["CODEOWNERS<br/>revisão humana obrigatória nos<br/>paths críticos (regras, hooks, motor)"]
+  SA["self-audit<br/>pentest against its own engine<br/>cargo audit + lockfile, on every change"]
+  RE["release<br/>SLSA provenance proof<br/>+ mandatory human reviewer"]
+  CO["CODEOWNERS<br/>mandatory human review on<br/>critical paths (rules, hooks, engine)"]
 end
-GATE ==> DOC["nemesis-doctor<br/>observabilidade por camada: G1–G7<br/>veredito SAUDÁVEL · ATENÇÃO · CRÍTICO"]
-DOC ==> RT["red-team<br/>prova empírica: a suite de pentest contra o motor real"]
+GATE ==> DOC["nemesis-doctor<br/>observability per layer: G1 to G7<br/>verdict HEALTHY · WARNING · CRITICAL"]
+DOC ==> RT["red-team<br/>empirical proof: the pentest suite against the real engine"]
 
 classDef tm fill:#1e1830,stroke:#b794f6,color:#efe6ff;
 classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;

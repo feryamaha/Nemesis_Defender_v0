@@ -1,18 +1,18 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart TB
-AG["AGENTE DE IA<br/>Claude · Cursor · Codex · Devin · Copilot"]
-AG ==> ACT["ação do agente<br/>escrita de arquivo ou comando shell"]
-ACT ==> P["CAMADA 1 · PRETOOL HOOK<br/>intercepta antes da execução"]
-P ==> ENG["motor scan_content<br/>análise de conteúdo + comando (6 layers)"]
-ENG ==> SEV{"hostil?"}
-SEV ==>|"não"| OK["PERMITE<br/>a ação segue normal"]
-SEV ==>|"sim"| BLK["BLOQUEIA<br/>exit 2 · nada executa"]
-BLK -. "chegou ao disco?" .-> DM["CAMADA 2 · DAEMON<br/>vigia o filesystem em 2º plano"]
-DM ==> Q["QUARENTENA<br/>isola o arquivo · não deleta"]
-Q ==> HUM["humano decide<br/>restore · purge"]
-ACT -. "Linux · paralelo" .-> K["CAMADA 3 · eBPF (kernel)<br/>rede de contenção caso o pretool<br/>seja desligado ou contornado"]
-K ==> EP["BLOQUEIA no kernel<br/>-EPERM"]
-OK -.-> LOG["log 100% local<br/>nada sai da sua máquina"]
+AG["AI AGENT<br/>Claude · Cursor · Codex · Devin · Copilot"]
+AG ==> ACT["agent action<br/>file write or shell command"]
+ACT ==> P["LAYER 1 · PRETOOL HOOK<br/>intercepts before execution"]
+P ==> ENG["scan_content engine<br/>content + command analysis (6 layers)"]
+ENG ==> SEV{"hostile?"}
+SEV ==>|"no"| OK["PERMITE<br/>action proceeds normally"]
+SEV ==>|"yes"| BLK["BLOQUEIA<br/>exit 2 · nothing executes"]
+BLK -. "reached disk?" .-> DM["LAYER 2 · DAEMON<br/>watches the filesystem in background"]
+DM ==> Q["QUARENTENA<br/>isolates the file · no delete"]
+Q ==> HUM["human decides<br/>restore · purge"]
+ACT -. "Linux · parallel" .-> K["LAYER 3 · eBPF (kernel)<br/>containment net in case the pretool<br/>is disabled or bypassed"]
+K ==> EP["BLOCKS in the kernel<br/>-EPERM"]
+OK -.-> LOG["100% local log<br/>nothing leaves your machine"]
 BLK -.-> LOG
 EP -.-> LOG
 

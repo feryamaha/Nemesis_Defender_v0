@@ -7,132 +7,158 @@
 <link rel="stylesheet" href="assets/estilo.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Pular para o conteúdo</a>
+<a class="skip-link" href="#main" data-pt="Pular para o conteúdo" data-en="Skip to content">Pular para o conteúdo</a>
 <header class="topbar">
   <span class="brand">NEMESIS · <b>material de estudo</b></span><span class="spacer"></span>
-  <nav aria-label="Navegação principal"><a href="index.html">Início</a>
-    <a href="jornada.html">Jornada</a>
-    <a href="diagrama-arquitetura.html">Arquitetura</a><a href="competencias.html">Competências</a><a href="COBERTURA.html">Cobertura</a></nav>
+  <div class="lang" role="group" aria-label="Language / Idioma">
+    <button class="flag active" id="lang-pt" title="Português" aria-label="Português">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#009B3A" />
+        <path d="M14 2.4 25.2 10 14 17.6 2.8 10z" fill="#FEDF00" />
+        <circle cx="14" cy="10" r="3.9" fill="#002776" />
+        <path d="M10.4 8.9a4 4 0 0 1 7.2 1c-2.3-.8-4.9-.9-7.2-.1z" fill="#fff" />
+      </svg>
+    </button>
+    <button class="flag" id="lang-en" title="English" aria-label="English">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#B22234" />
+        <g fill="#fff">
+          <rect y="1.5" width="28" height="1.5" /><rect y="4.6" width="28" height="1.5" />
+          <rect y="7.7" width="28" height="1.5" /><rect y="10.8" width="28" height="1.5" />
+          <rect y="13.9" width="28" height="1.5" /><rect y="17" width="28" height="1.5" />
+        </g>
+        <rect width="12" height="10.8" fill="#3C3B6E" />
+      </svg>
+    </button>
+  </div>
+  <nav aria-label="Navegação principal"><a href="index.html" data-pt="Início" data-en="Home">Início</a>
+    <a href="jornada.html" data-pt="Jornada" data-en="Journey">Jornada</a>
+    <a href="diagrama-arquitetura.html" data-pt="Arquitetura" data-en="Architecture">Arquitetura</a><a href="competencias.html" data-pt="Competências" data-en="Skills">Competências</a><a href="COBERTURA.html" data-pt="Cobertura" data-en="Coverage">Cobertura</a></nav>
 </header>
 <div class="wrap"><div class="layout with-toc"><main id="main">
-  <p class="crumb"><a href="index.html">Início</a><span class="sep">/</span>Cobertura</p>
-  <span class="deftag">conceito → arquivo-fonte → página</span>
-  <h1>Matriz de cobertura</h1>
-  <p class="lede">Mapa de cada conceito para o arquivo-fonte que o evidencia e a página que o explica, na numeração 1 a 10. Onde o repo diverge ou um nome não corresponde a um arquivo, eu marco isso abertamente. A proteção é descrita como soma de camadas (o coeficiente), nunca como contagem de visitors.</p>
+  <p class="crumb"><a href="index.html" data-pt="Início" data-en="Home">Início</a><span class="sep">/</span><span data-pt="Cobertura" data-en="Coverage">Cobertura</span></p>
+  <span class="deftag" data-pt="conceito → arquivo-fonte → página" data-en="concept → source file → page">conceito → arquivo-fonte → página</span>
+  <h1 data-pt="Matriz de cobertura" data-en="Coverage matrix">Matriz de cobertura</h1>
+  <p class="lede" data-pt="Mapa de cada conceito para o arquivo-fonte que o evidencia e a página que o explica, na numeração 1 a 10. Onde o repo diverge ou um nome não corresponde a um arquivo, a marcação é aberta. A proteção é descrita como soma de camadas (o coeficiente), nunca como contagem de visitors." data-en="A map from each concept to the source file that evidences it and the page that explains it, numbered 1 to 10. Where the repo diverges or a name does not match a file, the marking is open. Protection is described as a sum of layers (the coefficient), never as a count of visitors.">Mapa de cada conceito para o arquivo-fonte que o evidencia e a página que o explica, na numeração 1 a 10. Onde o repo diverge ou um nome não corresponde a um arquivo, a marcação é aberta. A proteção é descrita como soma de camadas (o coeficiente), nunca como contagem de visitors.</p>
 
-  <p><span class="pill ok">✓ no código</span> <span class="pill cy">parcial / sutileza</span> <span class="pill b">nome de sinal, não arquivo</span></p>
+  <p><span class="pill ok" data-pt="✓ no código" data-en="✓ in the code">✓ no código</span> <span class="pill cy" data-pt="parcial / sutileza" data-en="partial / nuance">parcial / sutileza</span> <span class="pill b" data-pt="nome de sinal, não arquivo" data-en="signal name, not file">nome de sinal, não arquivo</span></p>
 
-  <h2>1 · Contrato POSIX e o exit 2</h2>
+  <h2 data-pt="1 · Contrato POSIX e o exit 2" data-en="1 · The POSIX contract and exit 2">1 · Contrato POSIX e o exit 2</h2>
   <table>
-    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
-    <tr><td>exit code como contrato; o exit 2</td><td>hooks/nemesis-pretool-check-unix.rs:190-194</td><td><a href="conceitos/1-contrato-posix-exit2.html">1</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>modelo de processos POSIX, stdio, spawn</td><td>main.rs:106-126; pretool lê stdin</td><td><a href="conceitos/1-contrato-posix-exit2.html">1</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><th data-pt="Conceito" data-en="Concept">Conceito</th><th data-pt="Arquivo-fonte" data-en="Source file">Arquivo-fonte</th><th data-pt="Página" data-en="Page">Página</th><th data-pt="Status" data-en="Status">Status</th></tr>
+    <tr><td data-pt="exit code como contrato; o exit 2" data-en="exit code as contract; the exit 2">exit code como contrato; o exit 2</td><td>hooks/nemesis-pretool-check-unix.rs:190-194</td><td><a href="conceitos/1-contrato-posix-exit2.html">1</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="modelo de processos POSIX, stdio, spawn" data-en="POSIX process model, stdio, spawn">modelo de processos POSIX, stdio, spawn</td><td data-pt="main.rs:106-126; pretool lê stdin" data-en="main.rs:106-126; pretool reads stdin">main.rs:106-126; pretool lê stdin</td><td><a href="conceitos/1-contrato-posix-exit2.html">1</a></td><td><span class="pill ok">✓</span></td></tr>
   </table>
 
-  <h2>2 · Kernel, eBPF e LSM</h2>
+  <h2 data-pt="2 · Kernel, eBPF e LSM" data-en="2 · Kernel, eBPF and LSM">2 · Kernel, eBPF e LSM</h2>
   <table>
-    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
-    <tr><td>kernel vs userspace; hook bprm_check_security</td><td>ebpf/nemesis-block.bpf.c:68-138</td><td><a href="conceitos/2-kernel-ebpf-lsm.html">2</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>eBPF: verifier, mapas (hash/ringbuf/array/LPM trie)</td><td>nemesis-block.bpf.c:20-67</td><td><a href="conceitos/2-kernel-ebpf-lsm.html">2</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>BPF-LSM como ponto de decisão</td><td>nemesis-block.bpf.c:68,173</td><td><a href="conceitos/2-kernel-ebpf-lsm.html">2</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><th data-pt="Conceito" data-en="Concept">Conceito</th><th data-pt="Arquivo-fonte" data-en="Source file">Arquivo-fonte</th><th data-pt="Página" data-en="Page">Página</th><th data-pt="Status" data-en="Status">Status</th></tr>
+    <tr><td data-pt="kernel vs userspace; hook bprm_check_security" data-en="kernel vs userspace; bprm_check_security hook">kernel vs userspace; hook bprm_check_security</td><td>ebpf/nemesis-block.bpf.c:68-138</td><td><a href="conceitos/2-kernel-ebpf-lsm.html">2</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="eBPF: verifier, mapas (hash/ringbuf/array/LPM trie)" data-en="eBPF: verifier, maps (hash/ringbuf/array/LPM trie)">eBPF: verifier, mapas (hash/ringbuf/array/LPM trie)</td><td>nemesis-block.bpf.c:20-67</td><td><a href="conceitos/2-kernel-ebpf-lsm.html">2</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="BPF-LSM como ponto de decisão" data-en="BPF-LSM as the decision point">BPF-LSM como ponto de decisão</td><td>nemesis-block.bpf.c:68,173</td><td><a href="conceitos/2-kernel-ebpf-lsm.html">2</a></td><td><span class="pill ok">✓</span></td></tr>
   </table>
 
-  <h2>3 · Confinamento do kernel e egress</h2>
+  <h2 data-pt="3 · Confinamento do kernel e egress" data-en="3 · Kernel confinement and egress">3 · Confinamento do kernel e egress</h2>
   <table>
-    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
-    <tr><td>escopo por cgroup do agente</td><td>nemesis-block.bpf.c:83-94</td><td><a href="conceitos/3-confinamento-kernel-egress.html">3</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>Landlock sem root (no_new_privs)</td><td>ebpf-kernel/src/landlock.rs:24-38</td><td><a href="conceitos/3-confinamento-kernel-egress.html">3</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>egress allowlist, C2, fail-closed</td><td>bpf.c:173-205; src/egress.rs:1-6</td><td><a href="conceitos/3-confinamento-kernel-egress.html">3</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>capabilities</td><td>postura (no_new_privs, sem root), não chamada explícita</td><td><a href="conceitos/3-confinamento-kernel-egress.html">3</a></td><td><span class="pill cy">princípio aplicado, não feature isolada</span></td></tr>
+    <tr><th data-pt="Conceito" data-en="Concept">Conceito</th><th data-pt="Arquivo-fonte" data-en="Source file">Arquivo-fonte</th><th data-pt="Página" data-en="Page">Página</th><th data-pt="Status" data-en="Status">Status</th></tr>
+    <tr><td data-pt="escopo por cgroup do agente" data-en="scope by the agent cgroup">escopo por cgroup do agente</td><td>nemesis-block.bpf.c:83-94</td><td><a href="conceitos/3-confinamento-kernel-egress.html">3</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="Landlock sem root (no_new_privs)" data-en="Landlock without root (no_new_privs)">Landlock sem root (no_new_privs)</td><td>ebpf-kernel/src/landlock.rs:24-38</td><td><a href="conceitos/3-confinamento-kernel-egress.html">3</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="egress allowlist, C2, fail-closed" data-en="egress allowlist, C2, fail-closed">egress allowlist, C2, fail-closed</td><td>bpf.c:173-205; src/egress.rs:1-6</td><td><a href="conceitos/3-confinamento-kernel-egress.html">3</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="capabilities" data-en="capabilities">capabilities</td><td data-pt="postura (no_new_privs, sem root), não chamada explícita" data-en="posture (no_new_privs, no root), not an explicit call">postura (no_new_privs, sem root), não chamada explícita</td><td><a href="conceitos/3-confinamento-kernel-egress.html">3</a></td><td><span class="pill cy" data-pt="princípio aplicado, não feature isolada" data-en="applied principle, not an isolated feature">princípio aplicado, não feature isolada</span></td></tr>
   </table>
 
-  <h2>4 · Rust como linguagem de defesa</h2>
+  <h2 data-pt="4 · Rust como linguagem de defesa" data-en="4 · Rust as a defense language">4 · Rust como linguagem de defesa</h2>
   <table>
-    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
-    <tr><td>workspace e Cargo.lock commitada</td><td>Cargo.toml:1-9; release.yml (--locked)</td><td><a href="conceitos/4-rust-defesa.html">4</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>Result/Option, erro sem exceções</td><td>main.rs:149-156</td><td><a href="conceitos/4-rust-defesa.html">4</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>fail-closed (catch_unwind → exit 2)</td><td>nemesis-pretool-check-unix.rs:1023-1041</td><td><a href="conceitos/4-rust-defesa.html">4</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>regex linear/ReDoS; limites contra DoS</td><td>crate regex; decoder.rs:22-28</td><td><a href="conceitos/4-rust-defesa.html">4</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><th data-pt="Conceito" data-en="Concept">Conceito</th><th data-pt="Arquivo-fonte" data-en="Source file">Arquivo-fonte</th><th data-pt="Página" data-en="Page">Página</th><th data-pt="Status" data-en="Status">Status</th></tr>
+    <tr><td data-pt="workspace e Cargo.lock commitada" data-en="workspace and committed Cargo.lock">workspace e Cargo.lock commitada</td><td>Cargo.toml:1-9; release.yml (--locked)</td><td><a href="conceitos/4-rust-defesa.html">4</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="Result/Option, erro sem exceções" data-en="Result/Option, errors without exceptions">Result/Option, erro sem exceções</td><td>main.rs:149-156</td><td><a href="conceitos/4-rust-defesa.html">4</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="fail-closed (catch_unwind → exit 2)" data-en="fail-closed (catch_unwind → exit 2)">fail-closed (catch_unwind → exit 2)</td><td>nemesis-pretool-check-unix.rs:1023-1041</td><td><a href="conceitos/4-rust-defesa.html">4</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="regex linear/ReDoS; limites contra DoS" data-en="linear regex/ReDoS; limits against DoS">regex linear/ReDoS; limites contra DoS</td><td>crate regex; decoder.rs:22-28</td><td><a href="conceitos/4-rust-defesa.html">4</a></td><td><span class="pill ok">✓</span></td></tr>
   </table>
 
-  <h2>5 · AST, pipeline e detecção semântica</h2>
+  <h2 data-pt="5 · AST, pipeline e detecção semântica" data-en="5 · AST, pipeline and semantic detection">5 · AST, pipeline e detecção semântica</h2>
   <table>
-    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
-    <tr><td>AST, tree-sitter, padrão Visitor</td><td>ast_scanner.rs:58-79; visitors/mod.rs</td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>pipeline em camadas</td><td>lib.rs:242-288</td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td><td><span class="pill cy">cabeçalho de scanner/mod.rs diz 6; execução tem mais chamadas</span></td></tr>
-    <tr><td>entropia de Shannon</td><td>entropy.rs:14-40</td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>taint tracking (3 passadas)</td><td>taint_tracker.rs:251-318</td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><th data-pt="Conceito" data-en="Concept">Conceito</th><th data-pt="Arquivo-fonte" data-en="Source file">Arquivo-fonte</th><th data-pt="Página" data-en="Page">Página</th><th data-pt="Status" data-en="Status">Status</th></tr>
+    <tr><td data-pt="AST, tree-sitter, padrão Visitor" data-en="AST, tree-sitter, Visitor pattern">AST, tree-sitter, padrão Visitor</td><td>ast_scanner.rs:58-79; visitors/mod.rs</td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="pipeline em camadas" data-en="layered pipeline">pipeline em camadas</td><td>lib.rs:242-288</td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td><td><span class="pill cy" data-pt="cabeçalho de scanner/mod.rs diz 6; execução tem mais chamadas" data-en="scanner/mod.rs header says 6; execution has more calls">cabeçalho de scanner/mod.rs diz 6; execução tem mais chamadas</span></td></tr>
+    <tr><td data-pt="entropia de Shannon" data-en="Shannon entropy">entropia de Shannon</td><td>entropy.rs:14-40</td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="taint tracking (3 passadas)" data-en="taint tracking (3 passes)">taint tracking (3 passadas)</td><td>taint_tracker.rs:251-318</td><td><a href="conceitos/5-leitura-codigo-ast-pipeline.html">5</a></td><td><span class="pill ok">✓</span></td></tr>
   </table>
 
-  <h2>6 · Pretool, defender e daemon</h2>
+  <h2 data-pt="6 · Pretool, defender e daemon" data-en="6 · Pretool, defender and daemon">6 · Pretool, defender e daemon</h2>
   <table>
-    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
-    <tr><td>interceptação multi-IDE (tradução de ferramenta)</td><td>pretool:312-347</td><td><a href="conceitos/6-pretool-defender-daemon.html">6</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>compute_severity (função pura, determinístico)</td><td>lib.rs:413-437</td><td><a href="conceitos/6-pretool-defender-daemon.html">6</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>daemon, fire-and-forget, quarentena</td><td>pretool:1107-1141; quarantine.rs:1-11</td><td><a href="conceitos/6-pretool-defender-daemon.html">6</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><th data-pt="Conceito" data-en="Concept">Conceito</th><th data-pt="Arquivo-fonte" data-en="Source file">Arquivo-fonte</th><th data-pt="Página" data-en="Page">Página</th><th data-pt="Status" data-en="Status">Status</th></tr>
+    <tr><td data-pt="interceptação multi-IDE (tradução de ferramenta)" data-en="multi-IDE interception (tool translation)">interceptação multi-IDE (tradução de ferramenta)</td><td>pretool:312-347</td><td><a href="conceitos/6-pretool-defender-daemon.html">6</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="compute_severity (função pura, determinístico)" data-en="compute_severity (pure function, deterministic)">compute_severity (função pura, determinístico)</td><td>lib.rs:413-437</td><td><a href="conceitos/6-pretool-defender-daemon.html">6</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="daemon, fire-and-forget, quarentena" data-en="daemon, fire-and-forget, quarantine">daemon, fire-and-forget, quarentena</td><td>pretool:1107-1141; quarantine.rs:1-11</td><td><a href="conceitos/6-pretool-defender-daemon.html">6</a></td><td><span class="pill ok">✓</span></td></tr>
   </table>
 
-  <h2>7 · Prompt injection e IDE poisoning</h2>
+  <h2 data-pt="7 · Prompt injection e IDE poisoning" data-en="7 · Prompt injection and IDE poisoning">7 · Prompt injection e IDE poisoning</h2>
   <table>
-    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
-    <tr><td>prompt injection, extração de system prompt</td><td>prompt_injection.rs:1-29</td><td><a href="conceitos/7-prompt-injection-ide-poisoning.html">7</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>IDE poisoning, authority injection, scan falso</td><td>ide_config_poisoning.rs:157-206</td><td><a href="conceitos/7-prompt-injection-ide-poisoning.html">7</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><th data-pt="Conceito" data-en="Concept">Conceito</th><th data-pt="Arquivo-fonte" data-en="Source file">Arquivo-fonte</th><th data-pt="Página" data-en="Page">Página</th><th data-pt="Status" data-en="Status">Status</th></tr>
+    <tr><td data-pt="prompt injection, extração de system prompt" data-en="prompt injection, system prompt extraction">prompt injection, extração de system prompt</td><td>prompt_injection.rs:1-29</td><td><a href="conceitos/7-prompt-injection-ide-poisoning.html">7</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="IDE poisoning, authority injection, scan falso" data-en="IDE poisoning, authority injection, fake scan">IDE poisoning, authority injection, scan falso</td><td>ide_config_poisoning.rs:157-206</td><td><a href="conceitos/7-prompt-injection-ide-poisoning.html">7</a></td><td><span class="pill ok">✓</span></td></tr>
   </table>
 
-  <h2>8 · Código malicioso e supply-chain</h2>
+  <h2 data-pt="8 · Código malicioso e supply-chain" data-en="8 · Malicious code and supply chain">8 · Código malicioso e supply-chain</h2>
   <table>
-    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
-    <tr><td>decode→exec (decoder executa e reescaneia)</td><td>decoder.rs:200-217; visitors/decode_exec.rs</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>reverse shell multi-runtime</td><td>lib.rs:387 (sinal CONFIRMATÓRIO)</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td><td><span class="pill b">sinal <code>reverse_shell</code>, sem arquivo de visitor próprio</span></td></tr>
-    <tr><td>evasão: self-clean, time-gated, Unicode steg (Trojan Source)</td><td>self_clean.rs; time_gated.rs; byte_scanner.rs:17-46; unicode_steg.rs</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>manifestos (postinstall/build.rs), typosquat, lockfiles</td><td>manifest_scanner.rs:1-12; manifest_abuse.rs</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td><td><span class="pill cy">registry_redirect é nome de sinal</span></td></tr>
-    <tr><td>credential harvest + exfil chain (source+sink)</td><td>credential_harvest.rs; exfil_chain.rs:192-247</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><th data-pt="Conceito" data-en="Concept">Conceito</th><th data-pt="Arquivo-fonte" data-en="Source file">Arquivo-fonte</th><th data-pt="Página" data-en="Page">Página</th><th data-pt="Status" data-en="Status">Status</th></tr>
+    <tr><td data-pt="decode→exec (decoder executa e reescaneia)" data-en="decode→exec (decoder runs and rescans)">decode→exec (decoder executa e reescaneia)</td><td>decoder.rs:200-217; visitors/decode_exec.rs</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="reverse shell multi-runtime" data-en="multi-runtime reverse shell">reverse shell multi-runtime</td><td>lib.rs:387 (sinal CONFIRMATÓRIO)</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td><td><span class="pill b" data-pt="sinal <code>reverse_shell</code>, sem arquivo de visitor próprio" data-en="signal <code>reverse_shell</code>, no visitor file of its own">sinal <code>reverse_shell</code>, sem arquivo de visitor próprio</span></td></tr>
+    <tr><td data-pt="evasão: self-clean, time-gated, Unicode steg (Trojan Source)" data-en="evasion: self-clean, time-gated, Unicode steg (Trojan Source)">evasão: self-clean, time-gated, Unicode steg (Trojan Source)</td><td>self_clean.rs; time_gated.rs; byte_scanner.rs:17-46; unicode_steg.rs</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="manifestos (postinstall/build.rs), typosquat, lockfiles" data-en="manifests (postinstall/build.rs), typosquat, lockfiles">manifestos (postinstall/build.rs), typosquat, lockfiles</td><td>manifest_scanner.rs:1-12; manifest_abuse.rs</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td><td><span class="pill cy" data-pt="registry_redirect é nome de sinal" data-en="registry_redirect is a signal name">registry_redirect é nome de sinal</span></td></tr>
+    <tr><td data-pt="credential harvest + exfil chain (source+sink)" data-en="credential harvest + exfil chain (source+sink)">credential harvest + exfil chain (source+sink)</td><td>credential_harvest.rs; exfil_chain.rs:192-247</td><td><a href="conceitos/8-codigo-malicioso-supply-chain.html">8</a></td><td><span class="pill ok">✓</span></td></tr>
   </table>
 
-  <h2>9 · Defesa em profundidade e decisão</h2>
+  <h2 data-pt="9 · Defesa em profundidade e decisão" data-en="9 · Defense in depth and decision">9 · Defesa em profundidade e decisão</h2>
   <table>
-    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
-    <tr><td>3 camadas independentes; eBPF como backstop</td><td>pretool:1107-1141; lib.rs:216-232</td><td><a href="conceitos/9-defesa-profundidade-decisao.html">9</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>severidade, corroboração (Tier A/B), quarentena reversível</td><td>lib.rs:377-437; quarantine.rs:1-11</td><td><a href="conceitos/9-defesa-profundidade-decisao.html">9</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><th data-pt="Conceito" data-en="Concept">Conceito</th><th data-pt="Arquivo-fonte" data-en="Source file">Arquivo-fonte</th><th data-pt="Página" data-en="Page">Página</th><th data-pt="Status" data-en="Status">Status</th></tr>
+    <tr><td data-pt="3 camadas independentes; eBPF como backstop" data-en="3 independent layers; eBPF as backstop">3 camadas independentes; eBPF como backstop</td><td>pretool:1107-1141; lib.rs:216-232</td><td><a href="conceitos/9-defesa-profundidade-decisao.html">9</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="severidade, corroboração (Tier A/B), quarentena reversível" data-en="severity, corroboration (Tier A/B), reversible quarantine">severidade, corroboração (Tier A/B), quarentena reversível</td><td>lib.rs:377-437; quarantine.rs:1-11</td><td><a href="conceitos/9-defesa-profundidade-decisao.html">9</a></td><td><span class="pill ok">✓</span></td></tr>
   </table>
 
-  <h2>10 · Processo e honestidade</h2>
+  <h2 data-pt="10 · Processo e honestidade" data-en="10 · Process and honesty">10 · Processo e honestidade</h2>
   <table>
-    <tr><th>Conceito</th><th>Arquivo-fonte</th><th>Página</th><th>Status</th></tr>
-    <tr><td>threat model, limites declarados (trusting-trust)</td><td>self-audit.yml:10-17; AGENTS.md §2/§10</td><td><a href="conceitos/10-processo-honestidade.html">10</a></td><td><span class="pill ok">✓</span></td></tr>
-    <tr><td>DevSecOps: SLSA, self-audit, CODEOWNERS</td><td>self-audit.yml:85-89; release.yml:8-16; CODEOWNERS:18-21</td><td><a href="conceitos/10-processo-honestidade.html">10</a></td><td><span class="pill cy">SLSA declarado no release.yml, não fixado linha a linha</span></td></tr>
-    <tr><td>nemesis-doctor (observabilidade)</td><td>nemesis-doctor/src/main.rs:10; checks/mod.rs:3-9</td><td><a href="conceitos/10-processo-honestidade.html">10</a></td><td><span class="pill cy">G1/G2/G7 nomeados; demais por módulo</span></td></tr>
-    <tr><td>red-teaming (pentest como gate)</td><td>run-pentest.sh; self-audit.yml:85-89</td><td><a href="conceitos/10-processo-honestidade.html">10</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><th data-pt="Conceito" data-en="Concept">Conceito</th><th data-pt="Arquivo-fonte" data-en="Source file">Arquivo-fonte</th><th data-pt="Página" data-en="Page">Página</th><th data-pt="Status" data-en="Status">Status</th></tr>
+    <tr><td data-pt="threat model, limites declarados (trusting-trust)" data-en="threat model, declared limits (trusting-trust)">threat model, limites declarados (trusting-trust)</td><td>self-audit.yml:10-17; AGENTS.md §2/§10</td><td><a href="conceitos/10-processo-honestidade.html">10</a></td><td><span class="pill ok">✓</span></td></tr>
+    <tr><td data-pt="DevSecOps: SLSA, self-audit, CODEOWNERS" data-en="DevSecOps: SLSA, self-audit, CODEOWNERS">DevSecOps: SLSA, self-audit, CODEOWNERS</td><td>self-audit.yml:85-89; release.yml:8-16; CODEOWNERS:18-21</td><td><a href="conceitos/10-processo-honestidade.html">10</a></td><td><span class="pill cy" data-pt="SLSA declarado no release.yml, não fixado linha a linha" data-en="SLSA declared in release.yml, not pinned line by line">SLSA declarado no release.yml, não fixado linha a linha</span></td></tr>
+    <tr><td data-pt="nemesis-doctor (observabilidade)" data-en="nemesis-doctor (observability)">nemesis-doctor (observabilidade)</td><td>nemesis-doctor/src/main.rs:10; checks/mod.rs:3-9</td><td><a href="conceitos/10-processo-honestidade.html">10</a></td><td><span class="pill cy" data-pt="G1/G2/G7 nomeados; demais por módulo" data-en="G1/G2/G7 named; the rest by module">G1/G2/G7 nomeados; demais por módulo</span></td></tr>
+    <tr><td data-pt="red-teaming (pentest como gate)" data-en="red-teaming (pentest as gate)">red-teaming (pentest como gate)</td><td>run-pentest.sh; self-audit.yml:85-89</td><td><a href="conceitos/10-processo-honestidade.html">10</a></td><td><span class="pill ok">✓</span></td></tr>
   </table>
 
-  <h2>Camadas de proteção (o coeficiente)</h2>
-  <p>A proteção do Nemesis é a <strong>soma das camadas</strong>, não a contagem de visitors (visitor é método, não vetor). Recorte por camada:</p>
+  <h2 data-pt="Camadas de proteção (o coeficiente)" data-en="Protection layers (the coefficient)">Camadas de proteção (o coeficiente)</h2>
+  <figure class="diagram">
+    <img src="diagramas/9b-coeficiente.svg" alt="A proteção é a soma das camadas independentes (pretool, daemon, eBPF), o coeficiente. Não é a contagem de visitors; a prova empírica é a suite de pentest." data-alt-en="Protection is the sum of independent layers (pretool plus daemon plus eBPF), the coefficient. Not the count of visitors; the empirical proof is the pentest suite.">
+    <figcaption data-pt="Proteção = soma das camadas. Visitor é método de detecção, não unidade de cobertura." data-en="Protection = sum of layers. A visitor is a detection method, not a unit of coverage; the proof is the pentest.">Proteção = soma das camadas. Visitor é método de detecção, não unidade de cobertura.</figcaption>
+  </figure>
+  <p data-pt="A proteção do Nemesis é a <strong>soma das camadas</strong>, não a contagem de visitors (visitor é método, não vetor). Recorte por camada:" data-en="Nemesis protection is the <strong>sum of layers</strong>, not the count of visitors (a visitor is a method, not a vector). Broken down per layer:">A proteção do Nemesis é a <strong>soma das camadas</strong>, não a contagem de visitors (visitor é método, não vetor). Recorte por camada:</p>
   <table>
-    <tr><th>Camada</th><th>O que bloqueia (exemplos)</th><th>Fonte</th></tr>
-    <tr><td>Pretool + eBPF (comando; kernel no Linux)</td><td>destruição, permissões, filesystem, banco, exfil, recon/exploit, persistência/privesc</td><td>denylist-ebpf/commands.toml; .nemesis/denylist/</td></tr>
-    <tr><td>eBPF: exec + egress (Linux)</td><td><code>-EPERM</code> em exec de comando bloqueado e conexão fora da allowlist de egress</td><td>nemesis-block.bpf.c:68-138, 173-205; egress.toml</td></tr>
-    <tr><td>Defender: deny-list embutida (conteúdo)</td><td><strong>37 categorias</strong> (reverse_shells, data_exfiltration_compound, persistence_mechanisms, supply_chain_registry, container_escape, prompt_injection_*, llm_template_injection, xss_unsanitized_html, nemesis_evasion, pii_detection, ...)</td><td>denylist-defender.json (.categories); embutida via include_str! (denylist_loader.rs:33)</td></tr>
-    <tr><td>Defender: scanner + visitors AST (método)</td><td>byte (BiDi/PUA/homoglyph/zero-width), entropia, regex, manifesto, decoder recursivo; e os visitors de intenção semântica</td><td>scanner/; visitors/ (15 arquivos de visitor)</td></tr>
+    <tr><th data-pt="Camada" data-en="Layer">Camada</th><th data-pt="O que bloqueia (exemplos)" data-en="What it blocks (examples)">O que bloqueia (exemplos)</th><th data-pt="Fonte" data-en="Source">Fonte</th></tr>
+    <tr><td data-pt="Pretool + eBPF (comando; kernel no Linux)" data-en="Pretool + eBPF (command; kernel on Linux)">Pretool + eBPF (comando; kernel no Linux)</td><td data-pt="destruição, permissões, filesystem, banco, exfil, recon/exploit, persistência/privesc" data-en="destruction, permissions, filesystem, database, exfil, recon/exploit, persistence/privesc">destruição, permissões, filesystem, banco, exfil, recon/exploit, persistência/privesc</td><td>denylist-ebpf/commands.toml; .nemesis/denylist/</td></tr>
+    <tr><td data-pt="eBPF: exec + egress (Linux)" data-en="eBPF: exec + egress (Linux)">eBPF: exec + egress (Linux)</td><td data-pt="<code>-EPERM</code> em exec de comando bloqueado e conexão fora da allowlist de egress" data-en="<code>-EPERM</code> on exec of a blocked command and connection outside the egress allowlist"><code>-EPERM</code> em exec de comando bloqueado e conexão fora da allowlist de egress</td><td>nemesis-block.bpf.c:68-138, 173-205; egress.toml</td></tr>
+    <tr><td data-pt="Defender: deny-list embutida (conteúdo)" data-en="Defender: embedded deny-list (content)">Defender: deny-list embutida (conteúdo)</td><td><strong data-pt="37 categorias" data-en="37 categories">37 categorias</strong> (reverse_shells, data_exfiltration_compound, persistence_mechanisms, supply_chain_registry, container_escape, prompt_injection_*, llm_template_injection, xss_unsanitized_html, nemesis_evasion, pii_detection, ...)</td><td>denylist-defender.json (.categories); embutida via include_str! (denylist_loader.rs:33)</td></tr>
+    <tr><td data-pt="Defender: scanner + visitors AST (método)" data-en="Defender: scanner + AST visitors (method)">Defender: scanner + visitors AST (método)</td><td data-pt="byte (BiDi/PUA/homoglyph/zero-width), entropia, regex, manifesto, decoder recursivo; e os visitors de intenção semântica" data-en="byte (BiDi/PUA/homoglyph/zero-width), entropy, regex, manifest, recursive decoder; and the semantic-intent visitors">byte (BiDi/PUA/homoglyph/zero-width), entropia, regex, manifesto, decoder recursivo; e os visitors de intenção semântica</td><td>scanner/; visitors/ (15 arquivos de visitor)</td></tr>
   </table>
-  <p>Prova empírica: a suíte de pentest estático como gate de CI. Regra canônica do enquadramento: <code>AGENTS.md</code> §3A.</p>
+  <p data-pt="Prova empírica: a suíte de pentest estático como gate de CI. Regra canônica do enquadramento: <code>AGENTS.md</code> §3A." data-en="Empirical proof: the static pentest suite as a CI gate. Canonical rule of the framing: <code>AGENTS.md</code> §3A.">Prova empírica: a suíte de pentest estático como gate de CI. Regra canônica do enquadramento: <code>AGENTS.md</code> §3A.</p>
 
-  <h2>O que diverge e o que eu não fixo</h2>
+  <h2 data-pt="O que diverge e o que não é fixado" data-en="What diverges and what is not fixed">O que diverge e o que não é fixado</h2>
   <ul>
-    <li><strong>"18 visitors":</strong> o código tem <strong>15</strong> arquivos de visitor. Nomes como <code>reverse_shell</code> e <code>manifest_registry_redirect</code> são <em>sinais emitidos</em> (em regex/decoder/manifest_scanner), não arquivos de visitor. E, de qualquer forma, contar visitors não mede a cobertura: visitor é método.</li>
-    <li><strong>Ordem do pipeline:</strong> o comentário de <code>scanner/mod.rs</code> diz seis camadas; a execução real em <code>lib.rs</code> tem mais chamadas (byte com quatro sub-scans, mais ide e exfil). A matriz e a página 5 seguem o código.</li>
-    <li><strong>Número de pentest:</strong> divergem entre fontes (<code>run-pentest.sh</code> cita "184 testes / 26 módulos"; <code>self-audit.yml</code> e <code>AGENTS.md</code> citam "194/194"). O script auto-detecta; eu não fixo um número que possa defasar e aponto a divergência. Detalhe na página 10.</li>
-    <li><strong>SLSA:</strong> a attestation está no fluxo de release; este material a descreve e aponta o arquivo, sem fixar linhas que possam defasar.</li>
-    <li><strong>nemesis-doctor:</strong> o código nomeia G1 (compile), G2 (testes) e G7 (pentest) na ajuda; os demais grupos mapeiam para os módulos de <code>checks/</code>.</li>
+    <li data-pt="<strong>&quot;18 visitors&quot;:</strong> o código tem <strong>15</strong> arquivos de visitor. Nomes como <code>reverse_shell</code> e <code>manifest_registry_redirect</code> são <em>sinais emitidos</em> (em regex/decoder/manifest_scanner), não arquivos de visitor. E, de qualquer forma, contar visitors não mede a cobertura: visitor é método." data-en="<strong>&quot;18 visitors&quot;:</strong> the code has <strong>15</strong> visitor files. Names like <code>reverse_shell</code> and <code>manifest_registry_redirect</code> are <em>emitted signals</em> (in regex/decoder/manifest_scanner), not visitor files. And, either way, counting visitors does not measure coverage: a visitor is a method."><strong>"18 visitors":</strong> o código tem <strong>15</strong> arquivos de visitor. Nomes como <code>reverse_shell</code> e <code>manifest_registry_redirect</code> são <em>sinais emitidos</em> (em regex/decoder/manifest_scanner), não arquivos de visitor. E, de qualquer forma, contar visitors não mede a cobertura: visitor é método.</li>
+    <li data-pt="<strong>Ordem do pipeline:</strong> o comentário de <code>scanner/mod.rs</code> diz seis camadas; a execução real em <code>lib.rs</code> tem mais chamadas (byte com quatro sub-scans, mais ide e exfil). A matriz e a página 5 seguem o código." data-en="<strong>Pipeline order:</strong> the <code>scanner/mod.rs</code> comment says six layers; the real execution in <code>lib.rs</code> has more calls (byte with four sub-scans, plus ide and exfil). The matrix and page 5 follow the code."><strong>Ordem do pipeline:</strong> o comentário de <code>scanner/mod.rs</code> diz seis camadas; a execução real em <code>lib.rs</code> tem mais chamadas (byte com quatro sub-scans, mais ide e exfil). A matriz e a página 5 seguem o código.</li>
+    <li data-pt="<strong>Número de pentest:</strong> divergem entre fontes (<code>run-pentest.sh</code> cita &quot;184 testes / 26 módulos&quot;; <code>self-audit.yml</code> e <code>AGENTS.md</code> citam &quot;194/194&quot;). O script auto-detecta; nenhum número fica fixado aqui (poderia defasar) e a divergência fica apontada. Detalhe na página 10." data-en="<strong>Pentest count:</strong> the sources diverge (<code>run-pentest.sh</code> cites &quot;184 tests / 26 modules&quot;; <code>self-audit.yml</code> and <code>AGENTS.md</code> cite &quot;194/194&quot;). The script auto-detects; no number that could go stale is fixed here, and the divergence is pointed out. Detail on page 10."><strong>Número de pentest:</strong> divergem entre fontes (<code>run-pentest.sh</code> cita "184 testes / 26 módulos"; <code>self-audit.yml</code> e <code>AGENTS.md</code> citam "194/194"). O script auto-detecta; nenhum número fica fixado aqui (poderia defasar) e a divergência fica apontada. Detalhe na página 10.</li>
+    <li data-pt="<strong>SLSA:</strong> a attestation está no fluxo de release; este material a descreve e aponta o arquivo, sem fixar linhas que possam defasar." data-en="<strong>SLSA:</strong> the attestation is in the release flow; this material describes it and points to the file, without pinning lines that could go stale."><strong>SLSA:</strong> a attestation está no fluxo de release; este material a descreve e aponta o arquivo, sem fixar linhas que possam defasar.</li>
+    <li data-pt="<strong>nemesis-doctor:</strong> o código nomeia G1 (compile), G2 (testes) e G7 (pentest) na ajuda; os demais grupos mapeiam para os módulos de <code>checks/</code>." data-en="<strong>nemesis-doctor:</strong> the code names G1 (compile), G2 (tests) and G7 (pentest) in the help; the other groups map to the <code>checks/</code> modules."><strong>nemesis-doctor:</strong> o código nomeia G1 (compile), G2 (testes) e G7 (pentest) na ajuda; os demais grupos mapeiam para os módulos de <code>checks/</code>.</li>
   </ul>
 
   <nav class="pager" aria-label="Navegação entre páginas">
-    <a class="prev" href="competencias.html"><span class="lbl">Anterior</span><span class="ttl">Competências</span></a>
-    <a class="next" href="index.html"><span class="lbl">Voltar</span><span class="ttl">Índice</span></a>
+    <a class="prev" href="competencias.html"><span class="lbl" data-pt="Anterior" data-en="Previous">Anterior</span><span class="ttl" data-pt="Competências" data-en="Skills">Competências</span></a>
+    <a class="next" href="index.html"><span class="lbl">Voltar</span><span class="ttl" data-pt="Índice" data-en="Index">Índice</span></a>
   </nav>
-  <div class="foot"><p><a href="index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p><a href="index.html" data-pt="Voltar ao índice" data-en="<a href=&quot;index.html&quot;>Back to the index</a>.">Voltar ao índice</a>.</p></div>
 </main>
-<aside class="toc" aria-label="Sumário da página"><div class="t">Nesta página</div><nav id="toc-list"></nav></aside>
+<aside class="toc" aria-label="Sumário da página"><div class="t" data-pt="Nesta página" data-en="On this page">Nesta página</div><nav id="toc-list"></nav></aside>
 </div></div>
 <script src="assets/nav.js"></script>
+<script src="assets/lang.js"></script>
 </body>
 </html>

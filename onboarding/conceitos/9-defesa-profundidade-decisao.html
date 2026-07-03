@@ -7,54 +7,75 @@
 <link rel="stylesheet" href="../assets/estilo.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Pular para o conteúdo</a>
+<a class="skip-link" href="#main" data-pt="Pular para o conteúdo" data-en="Skip to content">Pular para o conteúdo</a>
 <header class="topbar">
   <span class="brand">NEMESIS · <b>material de estudo</b></span>
   <span class="spacer"></span>
+  <div class="lang" role="group" aria-label="Language / Idioma">
+    <button class="flag active" id="lang-pt" title="Português" aria-label="Português">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#009B3A" />
+        <path d="M14 2.4 25.2 10 14 17.6 2.8 10z" fill="#FEDF00" />
+        <circle cx="14" cy="10" r="3.9" fill="#002776" />
+        <path d="M10.4 8.9a4 4 0 0 1 7.2 1c-2.3-.8-4.9-.9-7.2-.1z" fill="#fff" />
+      </svg>
+    </button>
+    <button class="flag" id="lang-en" title="English" aria-label="English">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#B22234" />
+        <g fill="#fff">
+          <rect y="1.5" width="28" height="1.5" /><rect y="4.6" width="28" height="1.5" />
+          <rect y="7.7" width="28" height="1.5" /><rect y="10.8" width="28" height="1.5" />
+          <rect y="13.9" width="28" height="1.5" /><rect y="17" width="28" height="1.5" />
+        </g>
+        <rect width="12" height="10.8" fill="#3C3B6E" />
+      </svg>
+    </button>
+  </div>
   <nav aria-label="Navegação principal">
-    <a href="../index.html">Início</a>
-    <a href="../jornada.html">Jornada</a>
-    <a href="../diagrama-arquitetura.html">Arquitetura</a>
-    <a href="../competencias.html">Competências</a>
-    <a href="../COBERTURA.html">Cobertura</a>
+    <a href="../index.html" data-pt="Início" data-en="Home">Início</a>
+    <a href="../jornada.html" data-pt="Jornada" data-en="Journey">Jornada</a>
+    <a href="../diagrama-arquitetura.html" data-pt="Arquitetura" data-en="Architecture">Arquitetura</a>
+    <a href="../competencias.html" data-pt="Competências" data-en="Skills">Competências</a>
+    <a href="../COBERTURA.html" data-pt="Cobertura" data-en="Coverage">Cobertura</a>
   </nav>
 </header>
 
 <div class="wrap">
 <div class="layout with-toc">
 <main id="main">
-  <p class="crumb"><a href="../index.html">Início</a><span class="sep">/</span>Conceitos<span class="sep">/</span>9 · Defesa em profundidade e decisão</p>
+  <p class="crumb"><a href="../index.html" data-pt="Início" data-en="Home">Início</a><span class="sep">/</span><span data-pt="Conceitos" data-en="Concepts">Conceitos</span><span class="sep">/</span><span data-pt="9 · Defesa em profundidade e decisão" data-en="9 · Defense in depth and decision">9 · Defesa em profundidade e decisão</span></p>
 
-  <span class="deftag">conceito 9 · arquitetura de decisão</span>
-  <h1>Arquitetura de defesa em profundidade e decisão</h1>
-  <p class="lede">Como eu junto as camadas independentes e decido sem apagar código legítimo: três camadas que não dependem uma da outra, severidade por corroboração (dois sinais independentes), quarentena reversível em vez de deleção, e a ideia do coeficiente de proteção como soma.</p>
+  <span class="deftag" data-pt="conceito 9 · arquitetura de decisão" data-en="concept 9 · decision architecture">conceito 9 · arquitetura de decisão</span>
+  <h1 data-pt="Arquitetura de defesa em profundidade e decisão" data-en="Defense in depth and decision architecture">Arquitetura de defesa em profundidade e decisão</h1>
+  <p class="lede" data-pt="Como as camadas independentes se juntam e a decisão acontece sem apagar código legítimo: três camadas que não dependem uma da outra, severidade por corroboração (dois sinais independentes), quarentena reversível em vez de deleção, e a ideia do coeficiente de proteção como soma." data-en="How independent layers come together and the decision happens without erasing legitimate code: three layers that do not depend on one another, severity by corroboration (two independent signals), reversible quarantine instead of deletion, and the idea of the protection coefficient as a sum.">Como as camadas independentes se juntam e a decisão acontece sem apagar código legítimo: três camadas que não dependem uma da outra, severidade por corroboração (dois sinais independentes), quarentena reversível em vez de deleção, e a ideia do coeficiente de proteção como soma.</p>
 
   <div class="sec30">
-    <span class="t">Em 30 segundos</span>
-    <p>Três camadas independentes: pretool (write-time), daemon (filesystem) e eBPF (backstop de kernel no Linux). A decisão usa corroboração: um sinal confirmatório (Tier A) basta; sinais heurísticos (Tier B) precisam de dois tipos distintos para confirmar, senão ficam como Suspicious (logado, mantido). Quando confirma, o daemon move para a quarentena (reversível), não deleta. E a proteção total é a soma das camadas, o coeficiente, não a contagem de uma feature.</p>
+    <span class="t" data-pt="Em 30 segundos" data-en="In 30 seconds">Em 30 segundos</span>
+    <p data-pt="Três camadas independentes: pretool (write-time), daemon (filesystem) e eBPF (backstop de kernel no Linux). A decisão usa corroboração: um sinal confirmatório (Tier A) basta; sinais heurísticos (Tier B) precisam de dois tipos distintos para confirmar, senão ficam como Suspicious (logado, mantido). Quando confirma, o daemon move para a quarentena (reversível), não deleta. E a proteção total é a soma das camadas, o coeficiente, não a contagem de uma feature." data-en="Three independent layers: pretool (write-time), daemon (filesystem) and eBPF (kernel backstop on Linux). The decision uses corroboration: one confirmatory signal (Tier A) suffices; heuristic signals (Tier B) need two distinct types to confirm, otherwise they stay Suspicious (logged, kept). On confirmation, the daemon moves to quarantine (reversible), it does not delete. And total protection is the sum of layers, the coefficient, not the count of a feature.">Três camadas independentes: pretool (write-time), daemon (filesystem) e eBPF (backstop de kernel no Linux). A decisão usa corroboração: um sinal confirmatório (Tier A) basta; sinais heurísticos (Tier B) precisam de dois tipos distintos para confirmar, senão ficam como Suspicious (logado, mantido). Quando confirma, o daemon move para a quarentena (reversível), não deleta. E a proteção total é a soma das camadas, o coeficiente, não a contagem de uma feature.</p>
   </div>
 
   <figure class="diagram">
-    <img src="../diagramas/9-defesa-profundidade-decisao.svg" alt="Tres camadas independentes (pretool, daemon, eBPF); a decisao usa corroboracao: um sinal confirmatorio (Tier A) basta, um heuristico (Tier B) precisa de dois tipos distintos, senao fica Suspicious; ao confirmar, quarentena reversivel; protecao e a soma das camadas, o coeficiente.">
-    <figcaption>3 camadas independentes; decisão por corroboração; quarentena reversível; proteção = soma das camadas (o coeficiente).</figcaption>
+    <img src="../diagramas/9-defesa-profundidade-decisao.svg" alt="Tres camadas independentes (pretool, daemon, eBPF); a decisao usa corroboracao: um sinal confirmatorio (Tier A) basta, um heuristico (Tier B) precisa de dois tipos distintos, senao fica Suspicious; ao confirmar, quarentena reversivel; protecao e a soma das camadas, o coeficiente." data-alt-en="Three independent layers; decision by corroboration (one confirmatory signal suffices, a heuristic needs two types); reversible quarantine; protection is the sum of layers, the coefficient.">
+    <figcaption data-pt="3 camadas independentes; decisão por corroboração; quarentena reversível; proteção = soma das camadas (o coeficiente)." data-en="3 independent layers; decision by corroboration; reversible quarantine; protection = sum of layers (the coefficient).">3 camadas independentes; decisão por corroboração; quarentena reversível; proteção = soma das camadas (o coeficiente).</figcaption>
   </figure>
 
-  <h2>Do zero: defense-in-depth e modelo de confiança</h2>
-  <p><strong>Defesa em profundidade</strong> é não depender de uma só barreira: se uma falha, a próxima ainda contém. <strong>Corroboração</strong> é exigir mais de uma evidência independente antes de uma ação cara: na medicina, dois exames; aqui, dois métodos de detecção distintos. <strong>Reversibilidade</strong> é preferir a ação que dá para desfazer: bloquear uma escrita ou mover um arquivo se desfaz; deletar não. Esses três princípios existem para resolver a tensão central de uma ferramenta de segurança: ser dura com o ataque sem destruir o trabalho legítimo do usuário.</p>
+  <h2 data-pt="Do zero: defense-in-depth e modelo de confiança" data-en="From scratch: defense-in-depth and the trust model">Do zero: defense-in-depth e modelo de confiança</h2>
+  <p data-pt="<strong>Defesa em profundidade</strong> é não depender de uma só barreira: se uma falha, a próxima ainda contém. <strong>Corroboração</strong> é exigir mais de uma evidência independente antes de uma ação cara: na medicina, dois exames; aqui, dois métodos de detecção distintos. <strong>Reversibilidade</strong> é preferir a ação que dá para desfazer: bloquear uma escrita ou mover um arquivo se desfaz; deletar não. Esses três princípios existem para resolver a tensão central de uma ferramenta de segurança: ser dura com o ataque sem destruir o trabalho legítimo do usuário." data-en="<strong>Defense in depth</strong> means not relying on a single barrier: if one fails, the next still contains. <strong>Corroboration</strong> is requiring more than one independent piece of evidence before a costly action: in medicine, two tests; here, two distinct detection methods. <strong>Reversibility</strong> is preferring the action that can be undone: blocking a write or moving a file can be undone; deleting cannot. These three principles exist to resolve the central tension of a security tool: being hard on the attack without destroying the user's legitimate work."><strong>Defesa em profundidade</strong> é não depender de uma só barreira: se uma falha, a próxima ainda contém. <strong>Corroboração</strong> é exigir mais de uma evidência independente antes de uma ação cara: na medicina, dois exames; aqui, dois métodos de detecção distintos. <strong>Reversibilidade</strong> é preferir a ação que dá para desfazer: bloquear uma escrita ou mover um arquivo se desfaz; deletar não. Esses três princípios existem para resolver a tensão central de uma ferramenta de segurança: ser dura com o ataque sem destruir o trabalho legítimo do usuário.</p>
 
-  <h2>Por que importa</h2>
-  <p>O custo de errar não é simétrico. Deixar passar um ataque é ruim; apagar o código legítimo do usuário por um falso-positivo é, muitas vezes, pior, porque quebra a confiança e destrói trabalho. Então eu calibrei a decisão para que só a evidência forte (confirmatória) aja sozinha, e a evidência fraca precise de companhia. E quando ajo, ajo de forma reversível. Isso é o que separa uma ferramenta que as pessoas mantêm ligada de uma que elas desligam no primeiro susto.</p>
+  <h2 data-pt="Por que importa" data-en="Why it matters">Por que importa</h2>
+  <p data-pt="O custo de errar não é simétrico. Deixar passar um ataque é ruim; apagar o código legítimo do usuário por um falso-positivo é, muitas vezes, pior, porque quebra a confiança e destrói trabalho. Então a decisão foi calibrada para que só a evidência forte (confirmatória) aja sozinha, e a evidência fraca precise de companhia. E quando a ação vem, ela é reversível. Isso é o que separa uma ferramenta que as pessoas mantêm ligada de uma que elas desligam no primeiro susto." data-en="The cost of being wrong is not symmetric. Letting an attack through is bad; deleting the user's legitimate code over a false positive is often worse, because it breaks trust and destroys work. So the decision was calibrated so that only strong (confirmatory) evidence acts alone, and weak evidence needs company. And when action comes, it is reversible. That is what separates a tool people keep enabled from one they turn off at the first scare.">O custo de errar não é simétrico. Deixar passar um ataque é ruim; apagar o código legítimo do usuário por um falso-positivo é, muitas vezes, pior, porque quebra a confiança e destrói trabalho. Então a decisão foi calibrada para que só a evidência forte (confirmatória) aja sozinha, e a evidência fraca precise de companhia. E quando a ação vem, ela é reversível. Isso é o que separa uma ferramenta que as pessoas mantêm ligada de uma que elas desligam no primeiro susto.</p>
 
-  <h2>Como se correlaciona</h2>
-  <p>As camadas independentes do <a href="6-pretool-defender-daemon.html">grupo 6</a> e o backstop de kernel do <a href="2-kernel-ebpf-lsm.html">grupo 2</a> são as três barreiras; a corroboração usa a taxonomia de sinais que os <a href="5-leitura-codigo-ast-pipeline.html">visitors</a> e o scanner emitem; e a coexistência fonte+sink do <a href="8-codigo-malicioso-supply-chain.html">grupo 8</a> é corroboração embutida num único visitor. O coeficiente é o nome que dou para a soma de tudo isso, e é o que a <a href="../COBERTURA.html">matriz de cobertura</a> recorta por camada.</p>
+  <h2 data-pt="Como se correlaciona" data-en="How it correlates">Como se correlaciona</h2>
+  <p data-pt="As camadas independentes do <a href=&quot;6-pretool-defender-daemon.html&quot;>grupo 6</a> e o backstop de kernel do <a href=&quot;2-kernel-ebpf-lsm.html&quot;>grupo 2</a> são as três barreiras; a corroboração usa a taxonomia de sinais que os <a href=&quot;5-leitura-codigo-ast-pipeline.html&quot;>visitors</a> e o scanner emitem; e a coexistência fonte+sink do <a href=&quot;8-codigo-malicioso-supply-chain.html&quot;>grupo 8</a> é corroboração embutida num único visitor. Coeficiente é o nome dado à soma de tudo isso, e é o que a <a href=&quot;../COBERTURA.html&quot;>matriz de cobertura</a> recorta por camada." data-en="The independent layers of <a href=&quot;6-pretool-defender-daemon.html&quot;>group 6</a> and the kernel backstop of <a href=&quot;2-kernel-ebpf-lsm.html&quot;>group 2</a> are the three barriers; corroboration uses the signal taxonomy the <a href=&quot;5-leitura-codigo-ast-pipeline.html&quot;>visitors</a> and the scanner emit; and the source+sink coexistence of <a href=&quot;8-codigo-malicioso-supply-chain.html&quot;>group 8</a> is corroboration baked into a single visitor. Coefficient is the name given to the sum of all this, and it is what the <a href=&quot;../COBERTURA.html&quot;>coverage matrix</a> breaks down per layer.">As camadas independentes do <a href="6-pretool-defender-daemon.html">grupo 6</a> e o backstop de kernel do <a href="2-kernel-ebpf-lsm.html">grupo 2</a> são as três barreiras; a corroboração usa a taxonomia de sinais que os <a href="5-leitura-codigo-ast-pipeline.html">visitors</a> e o scanner emitem; e a coexistência fonte+sink do <a href="8-codigo-malicioso-supply-chain.html">grupo 8</a> é corroboração embutida num único visitor. Coeficiente é o nome dado à soma de tudo isso, e é o que a <a href="../COBERTURA.html">matriz de cobertura</a> recorta por camada.</p>
 
   <figure class="diagram">
-    <img src="../diagramas/9b-coeficiente.svg" alt="A proteção do Nemesis é a soma das camadas independentes — pretool mais daemon mais eBPF — chamada de coeficiente. Não é a contagem de visitors: visitor é método de detecção, feature e não produto. A prova empírica é a suite de pentest com 184 casos.">
-    <figcaption>A regra do coeficiente: proteção = soma das camadas. Visitor é método de detecção, não unidade de cobertura; a prova é o pentest.</figcaption>
+    <img src="../diagramas/9b-coeficiente.svg" alt="A proteção do Nemesis é a soma das camadas independentes (pretool mais daemon mais eBPF), chamada de coeficiente. Não é a contagem de visitors: visitor é método de detecção, feature e não produto. A prova empírica é a suite de pentest com 184 casos." data-alt-en="Protection is the sum of independent layers (pretool plus daemon plus eBPF), the coefficient. Not the count of visitors; the empirical proof is the pentest suite.">
+    <figcaption data-pt="A regra do coeficiente: proteção = soma das camadas. Visitor é método de detecção, não unidade de cobertura; a prova é o pentest." data-en="The coefficient rule: protection = sum of layers. A visitor is a detection method, not a unit of coverage; the proof is the pentest.">A regra do coeficiente: proteção = soma das camadas. Visitor é método de detecção, não unidade de cobertura; a prova é o pentest.</figcaption>
   </figure>
 
-  <h2>Como o Nemesis aplica</h2>
-  <p>A decisão é em dois tiers. Tier A (confirmatório) age sozinho; Tier B (corroborante) conta tipos distintos:</p>
+  <h2 data-pt="Como o Nemesis aplica" data-en="How Nemesis applies it">Como o Nemesis aplica</h2>
+  <p data-pt="A decisão é em dois tiers. Tier A (confirmatório) age sozinho; Tier B (corroborante) conta tipos distintos:" data-en="The decision has two tiers. Tier A (confirmatory) acts alone; Tier B (corroborating) counts distinct types:">A decisão é em dois tiers. Tier A (confirmatório) age sozinho; Tier B (corroborante) conta tipos distintos:</p>
   <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:377-437</b> · Tier A/B e compute_severity</span>
   <pre><code class="rust">const CONFIRMATORY_VISITORS: &[&str] = &[  // Tier A: 1 hit confirma
     "decode_exec", "reverse_shell", "exfil_chain", "taint_tracker",
@@ -62,49 +83,50 @@
 const CORROBORATING_VISITORS: &[&str] = &[ // Tier B: heurístico, sujeito a FP
     "prompt_injection", "self_clean", "time_gated", "high_entropy", /* ... */ ];
 // 0 → Clean · 1 tipo → Suspicious (loga, mantém) · 2+ tipos → Malicious</code></pre>
-  <p>O daemon é security-only e nunca trata qualidade, justamente porque a ação dele é irreversível por natureza (ele atua no arquivo já no disco):</p>
+  <p data-pt="O daemon é security-only e nunca trata qualidade, justamente porque a ação dele é irreversível por natureza (ele atua no arquivo já no disco):" data-en="The daemon is security-only and never handles quality, precisely because its action is irreversible by nature (moving a materialized file), while the pretool blocks writes (reversible):">O daemon é security-only e nunca trata qualidade, justamente porque a ação dele é irreversível por natureza (ele atua no arquivo já no disco):</p>
   <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:216-232</b> · daemon security-only</span>
   <pre><code class="rust">// regras de QUALIDADE NUNCA chegam ao daemon: qualidade ⇒ bloquear escrita
 // (reversível), JAMAIS deletar arquivo (irreversível). O daemon é SECURITY-ONLY.</code></pre>
-  <p>E a contenção confirmada é movimento reversível, com PENDING travando a sessão até o humano decidir restaurar ou expurgar:</p>
+  <p data-pt="E a contenção confirmada é movimento reversível, com PENDING travando a sessão até o humano decidir restaurar ou expurgar:" data-en="And confirmed containment is a reversible move, with PENDING holding the session until the human decides to restore or purge:">E a contenção confirmada é movimento reversível, com PENDING travando a sessão até o humano decidir restaurar ou expurgar:</p>
   <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/quarantine.rs:1-11</b> · quarentena reversível</span>
   <pre><code class="rust">//! MOVE para .nemesis/quarantine/ e retém para revisão humana (não deleta).
 //! O humano decide: restore (falso-positivo) ou purge (expurga de vez).</code></pre>
-  <p>No Linux, o eBPF é a terceira camada, independente do hook: o pretool só o garante no ar, mas a decisão de kernel não depende do pretool estar conectado.</p>
+  <p data-pt="No Linux, o eBPF é a terceira camada, independente do hook: o pretool só o garante no ar, mas a decisão de kernel não depende do pretool estar conectado." data-en="On Linux, eBPF is the third layer, independent of the hook: the pretool only ensures it is up, but the kernel decision does not depend on the IDE calling anything:">No Linux, o eBPF é a terceira camada, independente do hook: o pretool só o garante no ar, mas a decisão de kernel não depende do pretool estar conectado.</p>
   <span class="src-ref">📄 <b>.nemesis/hooks/nemesis-pretool-check-unix.rs:945-981</b> · eBPF como backstop</span>
 
-  <h2>Decisões e limites</h2>
-  <p>Eu conto <strong>tipos distintos</strong> de sinal, não hits, de propósito: várias ocorrências da mesma causa num arquivo não devem escalar para Malicious; o que confirma é métodos independentes concordando. "Independente" é o ponto da arquitetura: se as três camadas dependessem da mesma condição, seriam a mesma barreira repintada. Desenhei para que o eBPF no kernel não dependa do hook e o daemon não dependa de a IDE chamar nada.</p>
-  <p>E Suspicious não é deixar passar: é registrado e mantido para revisão. A reversibilidade vale também aqui; eu prefiro observar a deletar na dúvida.</p>
+  <h2 data-pt="Decisões e limites" data-en="Decisions and limits">Decisões e limites</h2>
+  <p data-pt="A contagem é por <strong>tipos distintos</strong> de sinal, não por hits, de propósito: várias ocorrências da mesma causa num arquivo não devem escalar para Malicious; o que confirma é métodos independentes concordando. &quot;Independente&quot; é o ponto da arquitetura: se as três camadas dependessem da mesma condição, seriam a mesma barreira repintada. O desenho garante que o eBPF no kernel não dependa do hook e que o daemon não dependa de a IDE chamar nada." data-en="The count is by <strong>distinct types</strong> of signal, not by hits, on purpose: several occurrences of the same cause in one file should not escalate to Malicious; what confirms is independent methods agreeing. &quot;Independent&quot; is the architecture's point: if the three layers depended on the same condition, they would be the same barrier repainted. The design ensures the eBPF in the kernel does not depend on the hook and the daemon does not depend on the IDE calling anything.">A contagem é por <strong>tipos distintos</strong> de sinal, não por hits, de propósito: várias ocorrências da mesma causa num arquivo não devem escalar para Malicious; o que confirma é métodos independentes concordando. "Independente" é o ponto da arquitetura: se as três camadas dependessem da mesma condição, seriam a mesma barreira repintada. O desenho garante que o eBPF no kernel não dependa do hook e que o daemon não dependa de a IDE chamar nada.</p>
+  <p data-pt="E Suspicious não é deixar passar: é registrado e mantido para revisão. A reversibilidade vale também aqui: observar é preferível a deletar na dúvida." data-en="And Suspicious is not letting it through: it is logged and kept for review. Reversibility applies here too: observing is preferable to deleting when in doubt.">E Suspicious não é deixar passar: é registrado e mantido para revisão. A reversibilidade vale também aqui: observar é preferível a deletar na dúvida.</p>
 
-  <h2>Auto-checagem</h2>
-  <details><summary>Por que dois sinais distintos para confirmar (em vez de um heurístico só)?</summary>
-  <p>Porque um heurístico isolado tem taxa de falso-positivo; exigir dois métodos independentes concordando reduz o risco de apagar código legítimo. Sinal confirmatório (determinístico ou multi-condição) é a exceção que age sozinho.</p></details>
-  <details><summary>Por que quarentena em vez de deletar?</summary>
-  <p>Porque mover é reversível e preserva a evidência para revisão humana; deletar é irreversível. O humano decide restaurar (se foi falso-positivo) ou expurgar.</p></details>
-  <details><summary>O que é o coeficiente de proteção?</summary>
-  <p>A soma das camadas independentes e suas taxonomias (denylist embutida, scanner, visitors, denylists de comando, eBPF). É a medida real de cobertura, e por isso ela não se reduz ao número de visitors.</p></details>
+  <h2 data-pt="Auto-checagem" data-en="Self-check">Auto-checagem</h2>
+  <details><summary data-pt="Por que dois sinais distintos para confirmar (em vez de um heurístico só)?" data-en="Why two distinct signals to confirm (instead of a single heuristic)?">Por que dois sinais distintos para confirmar (em vez de um heurístico só)?</summary>
+  <p data-pt="Porque um heurístico isolado tem taxa de falso-positivo; exigir dois métodos independentes concordando reduz o risco de apagar código legítimo. Sinal confirmatório (determinístico ou multi-condição) é a exceção que age sozinho." data-en="Because an isolated heuristic has a false-positive rate; requiring two independent methods to agree lowers the risk of erasing legitimate code. A confirmatory signal (deterministic or multi-condition) is strong enough to act alone.">Porque um heurístico isolado tem taxa de falso-positivo; exigir dois métodos independentes concordando reduz o risco de apagar código legítimo. Sinal confirmatório (determinístico ou multi-condição) é a exceção que age sozinho.</p></details>
+  <details><summary data-pt="Por que quarentena em vez de deletar?" data-en="Why quarantine instead of delete?">Por que quarentena em vez de deletar?</summary>
+  <p data-pt="Porque mover é reversível e preserva a evidência para revisão humana; deletar é irreversível. O humano decide restaurar (se foi falso-positivo) ou expurgar." data-en="Because moving is reversible and preserves the evidence for human review; deleting is irreversible. The human decides to restore (if it was a false positive) or purge.">Porque mover é reversível e preserva a evidência para revisão humana; deletar é irreversível. O humano decide restaurar (se foi falso-positivo) ou expurgar.</p></details>
+  <details><summary data-pt="O que é o coeficiente de proteção?" data-en="What is the protection coefficient?">O que é o coeficiente de proteção?</summary>
+  <p data-pt="A soma das camadas independentes e suas taxonomias (denylist embutida, scanner, visitors, denylists de comando, eBPF). É a medida real de cobertura, e por isso ela não se reduz ao número de visitors." data-en="The sum of the independent layers and their taxonomies (embedded denylist, scanner, visitors, command denylists, eBPF). It is the real measure of coverage, and that is why it does not reduce to the number of visitors.">A soma das camadas independentes e suas taxonomias (denylist embutida, scanner, visitors, denylists de comando, eBPF). É a medida real de cobertura, e por isso ela não se reduz ao número de visitors.</p></details>
 
-  <h2>Para ir além</h2>
+  <h2 data-pt="Para ir além" data-en="Further reading">Para ir além</h2>
   <ul>
-    <li><a href="https://csrc.nist.gov/glossary/term/defense_in_depth">NIST, defense in depth</a>.</li>
-    <li><a href="https://owasp.org/www-project-proactive-controls/">OWASP Proactive Controls</a>.</li>
-    <li><a href="https://attack.mitre.org/">MITRE ATT&CK</a> como taxonomia de técnicas.</li>
+    <li><a href="https://csrc.nist.gov/glossary/term/defense_in_depth" data-pt="NIST, defense in depth" data-en="<a href=&quot;https://csrc.nist.gov/glossary/term/defense_in_depth&quot;>NIST, defense in depth</a>.">NIST, defense in depth</a>.</li>
+    <li><a href="https://owasp.org/www-project-proactive-controls/" data-pt="OWASP Proactive Controls" data-en="<a href=&quot;https://owasp.org/www-project-proactive-controls/&quot;>OWASP Proactive Controls</a>.">OWASP Proactive Controls</a>.</li>
+    <li><a href="https://attack.mitre.org/" data-pt="MITRE ATT&CK" data-en="<a href=&quot;https://attack.mitre.org/&quot;>MITRE ATT&amp;CK</a> as a technique taxonomy.">MITRE ATT&CK</a> como taxonomia de técnicas.</li>
   </ul>
 
   <nav class="pager" aria-label="Navegação entre páginas">
-    <a class="prev" href="8-codigo-malicioso-supply-chain.html"><span class="lbl">Anterior</span><span class="ttl">Código malicioso e supply-chain</span></a>
-    <a class="next" href="10-processo-honestidade.html"><span class="lbl">Próximo</span><span class="ttl">Processo e honestidade</span></a>
+    <a class="prev" href="8-codigo-malicioso-supply-chain.html"><span class="lbl" data-pt="Anterior" data-en="Previous">Anterior</span><span class="ttl" data-pt="Código malicioso e supply-chain" data-en="Malicious code and supply chain">Código malicioso e supply-chain</span></a>
+    <a class="next" href="10-processo-honestidade.html"><span class="lbl" data-pt="Próximo" data-en="Next">Próximo</span><span class="ttl" data-pt="Processo e honestidade" data-en="Process and honesty">Processo e honestidade</span></a>
   </nav>
-  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p><span data-pt="Citações verificadas contra o repositório." data-en="Citations verified against the repository.">Citações verificadas contra o repositório.</span> <a href="../index.html" data-pt="Voltar ao índice" data-en="Back to the index">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">
-  <div class="t">Nesta página</div>
+  <div class="t" data-pt="Nesta página" data-en="On this page">Nesta página</div>
   <nav id="toc-list"></nav>
 </aside>
 </div>
 </div>
 <script src="../assets/nav.js"></script>
+<script src="../assets/lang.js"></script>
 </body>
 </html>

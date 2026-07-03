@@ -1,12 +1,12 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart TB
-ERR["erro interno durante o scan<br/>panic, bug, input que derruba o parser"]
-ERR ==> FO1["FAIL-OPEN (o anti-padrão)<br/>o erro é engolido em silêncio"]
-ERR ==> FC1["FAIL-CLOSED (Nemesis)<br/>o pânico é capturado (catch_unwind)"]
-FO1 ==> FO2["a ação passa sem ser escaneada"]
-FC1 ==> FC2["a sessão termina com veredito<br/>exit 2: nada executa"]
-FO2 ==> FO3["✗ derrubar o scanner vira o próprio ataque"]
-FC2 ==> FC3["✓ o erro nunca abre a porta"]
+ERR["internal error during the scan<br/>panic, bug, input that crashes the parser"]
+ERR ==> FO1["FAIL-OPEN (the anti-pattern)<br/>the error is silently swallowed"]
+ERR ==> FC1["FAIL-CLOSED (Nemesis)<br/>the panic is captured (catch_unwind)"]
+FO1 ==> FO2["the action passes unscanned"]
+FC1 ==> FC2["the session ends with a verdict<br/>exit 2: nothing executes"]
+FO2 ==> FO3["✗ crashing the scanner becomes the attack itself"]
+FC2 ==> FC3["✓ the error never opens the door"]
 
 classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;
 classDef blk fill:#2a1014,stroke:#ff6b6b,color:#ffd7d7;

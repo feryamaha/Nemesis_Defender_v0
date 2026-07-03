@@ -7,54 +7,75 @@
 <link rel="stylesheet" href="../assets/estilo.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Pular para o conteúdo</a>
+<a class="skip-link" href="#main" data-pt="Pular para o conteúdo" data-en="Skip to content">Pular para o conteúdo</a>
 <header class="topbar">
   <span class="brand">NEMESIS · <b>material de estudo</b></span>
   <span class="spacer"></span>
+  <div class="lang" role="group" aria-label="Language / Idioma">
+    <button class="flag active" id="lang-pt" title="Português" aria-label="Português">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#009B3A" />
+        <path d="M14 2.4 25.2 10 14 17.6 2.8 10z" fill="#FEDF00" />
+        <circle cx="14" cy="10" r="3.9" fill="#002776" />
+        <path d="M10.4 8.9a4 4 0 0 1 7.2 1c-2.3-.8-4.9-.9-7.2-.1z" fill="#fff" />
+      </svg>
+    </button>
+    <button class="flag" id="lang-en" title="English" aria-label="English">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#B22234" />
+        <g fill="#fff">
+          <rect y="1.5" width="28" height="1.5" /><rect y="4.6" width="28" height="1.5" />
+          <rect y="7.7" width="28" height="1.5" /><rect y="10.8" width="28" height="1.5" />
+          <rect y="13.9" width="28" height="1.5" /><rect y="17" width="28" height="1.5" />
+        </g>
+        <rect width="12" height="10.8" fill="#3C3B6E" />
+      </svg>
+    </button>
+  </div>
   <nav aria-label="Navegação principal">
-    <a href="../index.html">Início</a>
-    <a href="../jornada.html">Jornada</a>
-    <a href="../diagrama-arquitetura.html">Arquitetura</a>
-    <a href="../competencias.html">Competências</a>
-    <a href="../COBERTURA.html">Cobertura</a>
+    <a href="../index.html" data-pt="Início" data-en="Home">Início</a>
+    <a href="../jornada.html" data-pt="Jornada" data-en="Journey">Jornada</a>
+    <a href="../diagrama-arquitetura.html" data-pt="Arquitetura" data-en="Architecture">Arquitetura</a>
+    <a href="../competencias.html" data-pt="Competências" data-en="Skills">Competências</a>
+    <a href="../COBERTURA.html" data-pt="Cobertura" data-en="Coverage">Cobertura</a>
   </nav>
 </header>
 
 <div class="wrap">
 <div class="layout with-toc">
 <main id="main">
-  <p class="crumb"><a href="../index.html">Início</a><span class="sep">/</span>Conceitos<span class="sep">/</span>7 · Prompt injection e IDE poisoning</p>
+  <p class="crumb"><a href="../index.html" data-pt="Início" data-en="Home">Início</a><span class="sep">/</span><span data-pt="Conceitos" data-en="Concepts">Conceitos</span><span class="sep">/</span><span data-pt="7 · Prompt injection e IDE poisoning" data-en="7 · Prompt injection and IDE poisoning">7 · Prompt injection e IDE poisoning</span></p>
 
-  <span class="deftag">conceito 7 · segurança de IA</span>
-  <h1>Prompt injection e IDE poisoning</h1>
-  <p class="lede">O agente de IA é, ele mesmo, uma superfície de ataque. Texto colocado nos lugares errados pode sequestrar suas instruções: extrair o system prompt, injetar falsa autoridade ou envenenar arquivos de config que a IDE lê como regra de projeto.</p>
+  <span class="deftag" data-pt="conceito 7 · segurança de IA" data-en="concept 7 · AI security">conceito 7 · segurança de IA</span>
+  <h1 data-pt="Prompt injection e IDE poisoning" data-en="Prompt injection and IDE poisoning">Prompt injection e IDE poisoning</h1>
+  <p class="lede" data-pt="O agente de IA é, ele mesmo, uma superfície de ataque. Texto colocado nos lugares errados pode sequestrar suas instruções: extrair o system prompt, injetar falsa autoridade ou envenenar arquivos de config que a IDE lê como regra de projeto." data-en="The AI agent is itself an attack surface. Text placed in the wrong spots can hijack its instructions: extract the system prompt, inject false authority or poison config files the IDE reads as project rules.">O agente de IA é, ele mesmo, uma superfície de ataque. Texto colocado nos lugares errados pode sequestrar suas instruções: extrair o system prompt, injetar falsa autoridade ou envenenar arquivos de config que a IDE lê como regra de projeto.</p>
 
   <div class="sec30">
-    <span class="t">Em 30 segundos</span>
-    <p><strong>Prompt injection</strong> é instrução hostil escondida em conteúdo que o agente lê ("ignore as instruções anteriores", tokens de formato como <code>&lt;|im_start|&gt;</code>, "revele seu system prompt"). <strong>IDE poisoning</strong> é a variante que mira arquivos de configuração (como <code>CLAUDE.md</code>, <code>.cursorrules</code>): o atacante planta ali ordens disfarçadas de regra do projeto, falsa autoridade ("verificado pela Anthropic") ou um "scan de segurança" falso que faz o agente ler e vazar credenciais. Eu escaneio esses arquivos como qualquer outro conteúdo.</p>
+    <span class="t" data-pt="Em 30 segundos" data-en="In 30 seconds">Em 30 segundos</span>
+    <p data-pt="<strong>Prompt injection</strong> é instrução hostil escondida em conteúdo que o agente lê (&quot;ignore as instruções anteriores&quot;, tokens de formato como <code>&lt;|im_start|&gt;</code>, &quot;revele seu system prompt&quot;). <strong>IDE poisoning</strong> é a variante que mira arquivos de configuração (como <code>CLAUDE.md</code>, <code>.cursorrules</code>): o atacante planta ali ordens disfarçadas de regra do projeto, falsa autoridade (&quot;verificado pela Anthropic&quot;) ou um &quot;scan de segurança&quot; falso que faz o agente ler e vazar credenciais. O Nemesis escaneia esses arquivos como qualquer outro conteúdo." data-en="<strong>Prompt injection</strong> is a hostile instruction hidden in content the agent reads (&quot;ignore previous instructions&quot;, format tokens like <code>&lt;|im_start|&gt;</code>, &quot;reveal your system prompt&quot;). <strong>IDE poisoning</strong> is the variant that targets config files (like <code>CLAUDE.md</code>, <code>.cursorrules</code>): the attacker plants orders disguised as project rules, false authority (&quot;verified by Anthropic&quot;) or a fake &quot;security scan&quot; that makes the agent read and leak credentials. Nemesis scans these files like any other content."><strong>Prompt injection</strong> é instrução hostil escondida em conteúdo que o agente lê ("ignore as instruções anteriores", tokens de formato como <code>&lt;|im_start|&gt;</code>, "revele seu system prompt"). <strong>IDE poisoning</strong> é a variante que mira arquivos de configuração (como <code>CLAUDE.md</code>, <code>.cursorrules</code>): o atacante planta ali ordens disfarçadas de regra do projeto, falsa autoridade ("verificado pela Anthropic") ou um "scan de segurança" falso que faz o agente ler e vazar credenciais. O Nemesis escaneia esses arquivos como qualquer outro conteúdo.</p>
   </div>
 
   <figure class="diagram">
-    <img src="../diagramas/7-prompt-injection-ide-poisoning.svg" alt="Texto hostil entra pelo proprio pedido (injecao direta) ou por conteudo que o agente le (injecao indireta); o IDE poisoning mira arquivos de config tratados como regra do projeto; o Nemesis escaneia a config como conteudo nao-confiavel e bloqueia.">
-    <figcaption>Injeção direta ou indireta; o poisoning mira config de IDE; o Nemesis trata a config como conteúdo não-confiável.</figcaption>
+    <img src="../diagramas/7-prompt-injection-ide-poisoning.svg" alt="Texto hostil entra pelo proprio pedido (injecao direta) ou por conteudo que o agente le (injecao indireta); o IDE poisoning mira arquivos de config tratados como regra do projeto; o Nemesis escaneia a config como conteudo nao-confiavel e bloqueia." data-alt-en="Hostile text enters via the request (direct injection) or content the agent reads (indirect injection); IDE poisoning targets config files treated as rules; Nemesis scans config as untrusted content and blocks.">
+    <figcaption data-pt="Injeção direta ou indireta; o poisoning mira config de IDE; o Nemesis trata a config como conteúdo não-confiável." data-en="Direct or indirect injection; poisoning targets IDE config; Nemesis treats config as untrusted content.">Injeção direta ou indireta; o poisoning mira config de IDE; o Nemesis trata a config como conteúdo não-confiável.</figcaption>
   </figure>
 
-  <h2>Do zero: por que o texto vira comando</h2>
-  <p>Um LLM não separa de forma dura "dados" de "instruções": tudo é texto no contexto. Se o agente lê um arquivo do projeto e dentro dele há uma frase imperativa convincente, o modelo pode obedecer como se fosse o usuário falando. Daí os dois nomes. <strong>Prompt injection</strong> direta vem no próprio pedido; a <strong>indireta</strong> vem de conteúdo que o agente busca (um README, um issue, um arquivo de config). <strong>IDE poisoning</strong> é injeção indireta com alvo escolhido: os arquivos que a IDE trata como autoridade de projeto, justamente os que o agente tende a obedecer sem questionar.</p>
+  <h2 data-pt="Do zero: por que o texto vira comando" data-en="From scratch: why text becomes command">Do zero: por que o texto vira comando</h2>
+  <p data-pt="Um LLM não separa de forma dura &quot;dados&quot; de &quot;instruções&quot;: tudo é texto no contexto. Se o agente lê um arquivo do projeto e dentro dele há uma frase imperativa convincente, o modelo pode obedecer como se fosse o usuário falando. Daí os dois nomes. <strong>Prompt injection</strong> direta vem no próprio pedido; a <strong>indireta</strong> vem de conteúdo que o agente busca (um README, um issue, um arquivo de config). <strong>IDE poisoning</strong> é injeção indireta com alvo escolhido: os arquivos que a IDE trata como autoridade de projeto, justamente os que o agente tende a obedecer sem questionar." data-en="An LLM does not hard-separate &quot;data&quot; from &quot;instructions&quot;: it is all text in the context. If the agent reads a project file and inside it sits a convincing imperative sentence, the model may obey as if the user had spoken. Hence the two names. Direct <strong>prompt injection</strong> comes in the request itself; the <strong>indirect</strong> one comes from content the agent fetches (a README, an issue, a config file). <strong>IDE poisoning</strong> is indirect injection with a chosen target: the files the IDE treats as project authority, exactly the ones the agent tends to obey without question.">Um LLM não separa de forma dura "dados" de "instruções": tudo é texto no contexto. Se o agente lê um arquivo do projeto e dentro dele há uma frase imperativa convincente, o modelo pode obedecer como se fosse o usuário falando. Daí os dois nomes. <strong>Prompt injection</strong> direta vem no próprio pedido; a <strong>indireta</strong> vem de conteúdo que o agente busca (um README, um issue, um arquivo de config). <strong>IDE poisoning</strong> é injeção indireta com alvo escolhido: os arquivos que a IDE trata como autoridade de projeto, justamente os que o agente tende a obedecer sem questionar.</p>
 
-  <h2>Por que importa</h2>
-  <p>Os próprios arquivos de instrução do Nemesis (o <code>AGENTS.md</code>, o <code>CLAUDE.md</code>) são autoridade que o agente deve respeitar. Se um atacante consegue editar um desses, ou plantar um <code>.cursorrules</code> envenenado, ele fala com a voz do projeto. Esses arquivos de config são <strong>escaneados</strong> contra poisoning e nunca isentados do scan. A defesa precisava tratar a config como conteúdo não-confiável, não como verdade.</p>
+  <h2 data-pt="Por que importa" data-en="Why it matters">Por que importa</h2>
+  <p data-pt="Os próprios arquivos de instrução do Nemesis (o <code>AGENTS.md</code>, o <code>CLAUDE.md</code>) são autoridade que o agente deve respeitar. Se um atacante consegue editar um desses, ou plantar um <code>.cursorrules</code> envenenado, ele fala com a voz do projeto. Esses arquivos de config são <strong>escaneados</strong> contra poisoning e nunca isentados do scan. A defesa precisava tratar a config como conteúdo não-confiável, não como verdade." data-en="Nemesis's own instruction files (the <code>AGENTS.md</code>, the <code>CLAUDE.md</code>) are authority the agent is told to respect. If an attacker manages to edit one of them, or plant a poisoned <code>.cursorrules</code>, they speak with the project's voice. That is why the rule is strict: these config files are <strong>scanned</strong> against poisoning and never exempted from the scan. The defense had to treat config as untrusted content, not as truth.">Os próprios arquivos de instrução do Nemesis (o <code>AGENTS.md</code>, o <code>CLAUDE.md</code>) são autoridade que o agente deve respeitar. Se um atacante consegue editar um desses, ou plantar um <code>.cursorrules</code> envenenado, ele fala com a voz do projeto. Esses arquivos de config são <strong>escaneados</strong> contra poisoning e nunca isentados do scan. A defesa precisava tratar a config como conteúdo não-confiável, não como verdade.</p>
 
   <figure class="diagram">
-    <img src="../diagramas/7b-cadeia-autoridade.svg" alt="A cadeia de autoridade que o Nemesis preserva: o humano decide e revisa; o Nemesis contém com enforcement determinístico; o agente de IA opera mas não destrói; o sistema executa só o que passou. Inteligência não implica autoridade.">
-    <figcaption>O que o poisoning tenta subverter é exatamente isto: a cadeia de autoridade. Humano → Nemesis → IA → Sistema.</figcaption>
+    <img src="../diagramas/7b-cadeia-autoridade.svg" alt="A cadeia de autoridade que o Nemesis preserva: o humano decide e revisa; o Nemesis contém com enforcement determinístico; o agente de IA opera mas não destrói; o sistema executa só o que passou. Inteligência não implica autoridade." data-alt-en="The authority chain Nemesis preserves: the human decides; Nemesis contains with deterministic enforcement; the AI agent operates but does not destroy; the system executes only what passed.">
+    <figcaption data-pt="O que o poisoning tenta subverter é exatamente isto: a cadeia de autoridade. Humano → Nemesis → IA → Sistema." data-en="What poisoning tries to subvert is exactly this: the authority chain. Human → Nemesis → AI → System.">O que o poisoning tenta subverter é exatamente isto: a cadeia de autoridade. Humano → Nemesis → IA → Sistema.</figcaption>
   </figure>
 
-  <h2>Como se correlaciona</h2>
-  <p>Prompt injection e poisoning são o mesmo vetor em dois lugares: o pattern de injeção é o coração, e o poisoning é ele aplicado a um arquivo-alvo de IDE, somado a truques de engenharia social (falsa autoridade, scan falso). A coleta de credencial que o "scan falso" tenta provocar é a ponte para o <a href="8-codigo-malicioso-supply-chain.html">grupo 8</a> (exfiltração). E o fato de eu escanear meus próprios arquivos de regra é parte da postura de <a href="10-processo-honestidade.html">proteger o próprio Nemesis</a>.</p>
+  <h2 data-pt="Como se correlaciona" data-en="How it correlates">Como se correlaciona</h2>
+  <p data-pt="Prompt injection e poisoning são o mesmo vetor em dois lugares: o pattern de injeção é o coração, e o poisoning é ele aplicado a um arquivo-alvo de IDE, somado a truques de engenharia social (falsa autoridade, scan falso). A coleta de credencial que o &quot;scan falso&quot; tenta provocar é a ponte para o <a href=&quot;8-codigo-malicioso-supply-chain.html&quot;>grupo 8</a> (exfiltração). E escanear os próprios arquivos de regra é parte da postura de <a href=&quot;10-processo-honestidade.html&quot;>proteger o próprio Nemesis</a>." data-en="Prompt injection and poisoning are the same vector in two places: the injection pattern is the core, and poisoning is it applied to an IDE target file, plus social-engineering tricks (false authority, fake scan). The credential harvest the &quot;fake scan&quot; tries to provoke is the bridge to <a href=&quot;8-codigo-malicioso-supply-chain.html&quot;>group 8</a> (exfiltration). And scanning its own rule files is part of the posture of <a href=&quot;10-processo-honestidade.html&quot;>protecting Nemesis itself</a>.">Prompt injection e poisoning são o mesmo vetor em dois lugares: o pattern de injeção é o coração, e o poisoning é ele aplicado a um arquivo-alvo de IDE, somado a truques de engenharia social (falsa autoridade, scan falso). A coleta de credencial que o "scan falso" tenta provocar é a ponte para o <a href="8-codigo-malicioso-supply-chain.html">grupo 8</a> (exfiltração). E escanear os próprios arquivos de regra é parte da postura de <a href="10-processo-honestidade.html">proteger o próprio Nemesis</a>.</p>
 
-  <h2>Como o Nemesis aplica</h2>
-  <p>O visitor de injeção carrega uma lista de padrões: ordens de ignorar instruções, tokens de formato de IA e tentativas de extração do system prompt.</p>
+  <h2 data-pt="Como o Nemesis aplica" data-en="How Nemesis applies it">Como o Nemesis aplica</h2>
+  <p data-pt="O visitor de injeção carrega uma lista de padrões: ordens de ignorar instruções, tokens de formato de IA e tentativas de extração do system prompt." data-en="The injection visitor carries a pattern list: orders to ignore instructions, AI format tokens and system-prompt extraction attempts.">O visitor de injeção carrega uma lista de padrões: ordens de ignorar instruções, tokens de formato de IA e tentativas de extração do system prompt.</p>
   <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/visitors/prompt_injection.rs:1-29</b> · padrões de injeção</span>
   <pre><code class="rust">//! Detecta instrução de IA injetada em strings/comentários:
 //! - "ignore previous instructions"
@@ -63,7 +84,7 @@
 const INJECTION_PATTERNS: &[&str] = &[
     "ignore previous instructions", "override safety", "bypass restrictions",
     "&lt;|im_start|&gt;", "[INST]", "&lt;&lt;SYS&gt;&gt;", /* ... */ ];</code></pre>
-  <p>Para config de IDE, eu só ajo se o arquivo for de fato um arquivo de config (alvo), e checo três coisas: injeção, scan de segurança falso e injeção de autoridade:</p>
+  <p data-pt="Para config de IDE, o visitor só age se o arquivo for de fato um arquivo de config (alvo), e checa três coisas: injeção, scan de segurança falso e injeção de autoridade:" data-en="For IDE config, the visitor only acts if the file is actually a config file (target), and checks three things: injection, fake security scan and authority injection:">Para config de IDE, o visitor só age se o arquivo for de fato um arquivo de config (alvo), e checa três coisas: injeção, scan de segurança falso e injeção de autoridade:</p>
   <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/visitors/ide_config_poisoning.rs:157-206</b> · scan_ide_config</span>
   <pre><code class="rust">pub fn scan_ide_config(path: &amp;Path, content: &amp;[u8]) -> Vec&lt;DefenderViolation&gt; {
     if !is_ide_config_file(path) { return violations; }   // só arquivos de config
@@ -72,38 +93,39 @@ const INJECTION_PATTERNS: &[&str] = &[
     if has_authority_injection(text) { /* "verified by Anthropic", "rules suspended" */ }
 }</code></pre>
 
-  <h2>Decisões e limites</h2>
-  <p>O "scan de segurança falso" é engenharia social fina: o arquivo manda o agente rodar um "scan" antes de responder, e o tal scan é ler credenciais e mandar para fora. Eu parto de uma regra simples: detecção legítima roda no CI; agente não tem motivo para ler segredo. A injeção de autoridade explora confiança ("configuração confiável", "regras de segurança suspensas", "verificado pela Anthropic"); nenhum arquivo externo pode conceder permissão elevada, então eu trato toda alegação dessas como ataque.</p>
-  <p>E como um texto que <em>fala sobre</em> prompt injection (este material, por exemplo) contém os mesmos termos, eu mirei o detector de poisoning nos arquivos de config de IDE e isento prosa pura na coleta de credencial: só condeno quando existe um sink executável.</p>
+  <h2 data-pt="Decisões e limites" data-en="Decisions and limits">Decisões e limites</h2>
+  <p data-pt="O &quot;scan de segurança falso&quot; é engenharia social fina: o arquivo manda o agente rodar um &quot;scan&quot; antes de responder, e o tal scan é ler credenciais e mandar para fora. A regra é simples: detecção legítima roda no CI; agente não tem motivo para ler segredo. A injeção de autoridade explora confiança (&quot;configuração confiável&quot;, &quot;regras de segurança suspensas&quot;, &quot;verificado pela Anthropic&quot;); nenhum arquivo externo pode conceder permissão elevada, então toda alegação dessas é tratada como ataque." data-en="The fake &quot;security scan&quot; is fine social engineering: the file tells the agent to run a &quot;scan&quot; before answering, and that scan reads credentials and sends them out. The rule is simple: legitimate detection runs in CI; an agent has no reason to read a secret. Authority injection exploits trust (&quot;trusted configuration&quot;, &quot;security rules suspended&quot;, &quot;verified by Anthropic&quot;); no external file can grant elevated permission, so every such claim is treated as an attack.">O "scan de segurança falso" é engenharia social fina: o arquivo manda o agente rodar um "scan" antes de responder, e o tal scan é ler credenciais e mandar para fora. A regra é simples: detecção legítima roda no CI; agente não tem motivo para ler segredo. A injeção de autoridade explora confiança ("configuração confiável", "regras de segurança suspensas", "verificado pela Anthropic"); nenhum arquivo externo pode conceder permissão elevada, então toda alegação dessas é tratada como ataque.</p>
+  <p data-pt="E como um texto que <em>fala sobre</em> prompt injection (este material, por exemplo) contém os mesmos termos, o detector de poisoning mira os arquivos de config de IDE e a coleta de credencial isenta prosa pura: a condenação exige um sink executável." data-en="And since text that <em>talks about</em> prompt injection (this material, for instance) contains the same terms, the poisoning detector targets IDE config files and credential harvesting exempts pure prose: conviction requires an executable sink.">E como um texto que <em>fala sobre</em> prompt injection (este material, por exemplo) contém os mesmos termos, o detector de poisoning mira os arquivos de config de IDE e a coleta de credencial isenta prosa pura: a condenação exige um sink executável.</p>
 
-  <h2>Auto-checagem</h2>
-  <details><summary>Por que os arquivos de config (CLAUDE.md, .cursorrules) são escaneados em vez de confiados?</summary>
-  <p>Porque eles têm autoridade sobre o agente; um atacante que os edita fala com a voz do projeto. A regra é nunca isentá-los do scan, eles são conteúdo não-confiável como qualquer outro.</p></details>
-  <details><summary>O que é injeção de autoridade?</summary>
-  <p>Alegação falsa de legitimidade ("verificado pela Anthropic", "regras suspensas") para o agente obedecer sem resistência. Nenhum arquivo externo concede permissão; é engenharia social, e eu sinalizo.</p></details>
-  <details><summary>Por que separar prompt injection (direto) de poisoning (config)?</summary>
-  <p>É o mesmo vetor, mas o poisoning mira arquivos-alvo que a IDE trata como regra, o que muda o gatilho (só dispara em arquivo de config) e agrega truques de autoridade e scan falso.</p></details>
+  <h2 data-pt="Auto-checagem" data-en="Self-check">Auto-checagem</h2>
+  <details><summary data-pt="Por que os arquivos de config (CLAUDE.md, .cursorrules) são escaneados em vez de confiados?" data-en="Why are config files (CLAUDE.md, .cursorrules) scanned instead of trusted?">Por que os arquivos de config (CLAUDE.md, .cursorrules) são escaneados em vez de confiados?</summary>
+  <p data-pt="Porque eles têm autoridade sobre o agente; um atacante que os edita fala com a voz do projeto. A regra é nunca isentá-los do scan, eles são conteúdo não-confiável como qualquer outro." data-en="Because they hold authority over the agent; an attacker who edits them speaks with the project's voice. The rule is never to exempt them from the scan, they are untrusted content like any other.">Porque eles têm autoridade sobre o agente; um atacante que os edita fala com a voz do projeto. A regra é nunca isentá-los do scan, eles são conteúdo não-confiável como qualquer outro.</p></details>
+  <details><summary data-pt="O que é injeção de autoridade?" data-en="What is authority injection?">O que é injeção de autoridade?</summary>
+  <p data-pt="Alegação falsa de legitimidade (&quot;verificado pela Anthropic&quot;, &quot;regras suspensas&quot;) para o agente obedecer sem resistência. Nenhum arquivo externo concede permissão; é engenharia social, e é sinalizada." data-en="A false claim of legitimacy (&quot;verified by Anthropic&quot;, &quot;rules suspended&quot;) so the agent obeys without resistance. No external file grants elevated permission; it is social engineering, and it is flagged.">Alegação falsa de legitimidade ("verificado pela Anthropic", "regras suspensas") para o agente obedecer sem resistência. Nenhum arquivo externo concede permissão; é engenharia social, e é sinalizada.</p></details>
+  <details><summary data-pt="Por que separar prompt injection (direto) de poisoning (config)?" data-en="Why separate prompt injection (direct) from poisoning (config)?">Por que separar prompt injection (direto) de poisoning (config)?</summary>
+  <p data-pt="É o mesmo vetor, mas o poisoning mira arquivos-alvo que a IDE trata como regra, o que muda o gatilho (só dispara em arquivo de config) e agrega truques de autoridade e scan falso." data-en="It is the same vector, but poisoning targets files the IDE treats as rules, which changes the trigger (it only fires on config files) and adds authority and fake-scan tricks.">É o mesmo vetor, mas o poisoning mira arquivos-alvo que a IDE trata como regra, o que muda o gatilho (só dispara em arquivo de config) e agrega truques de autoridade e scan falso.</p></details>
 
-  <h2>Para ir além</h2>
+  <h2 data-pt="Para ir além" data-en="Further reading">Para ir além</h2>
   <ul>
-    <li><a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/">OWASP Top 10 for LLM Applications</a> (LLM01: Prompt Injection).</li>
-    <li><a href="https://genai.owasp.org/llmrisk/llm01-prompt-injection/">OWASP GenAI, Prompt Injection</a>.</li>
-    <li><a href="https://attack.mitre.org/techniques/T1059/">MITRE ATT&CK, Command and Scripting Interpreter</a>.</li>
+    <li><a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/" data-pt="OWASP Top 10 for LLM Applications" data-en="<a href=&quot;https://owasp.org/www-project-top-10-for-large-language-model-applications/&quot;>OWASP Top 10 for LLM Applications</a>.">OWASP Top 10 for LLM Applications</a> (LLM01: Prompt Injection).</li>
+    <li><a href="https://genai.owasp.org/llmrisk/llm01-prompt-injection/" data-pt="OWASP GenAI, Prompt Injection" data-en="<a href=&quot;https://genai.owasp.org/llmrisk/llm01-prompt-injection/&quot;>OWASP GenAI, Prompt Injection</a>.">OWASP GenAI, Prompt Injection</a>.</li>
+    <li><a href="https://attack.mitre.org/techniques/T1059/" data-pt="MITRE ATT&CK, Command and Scripting Interpreter" data-en="<a href=&quot;https://attack.mitre.org/techniques/T1059/&quot;>MITRE ATT&amp;CK, Command and Scripting Interpreter</a>.">MITRE ATT&CK, Command and Scripting Interpreter</a>.</li>
   </ul>
 
   <nav class="pager" aria-label="Navegação entre páginas">
-    <a class="prev" href="6-pretool-defender-daemon.html"><span class="lbl">Anterior</span><span class="ttl">Pretool, defender e daemon</span></a>
-    <a class="next" href="8-codigo-malicioso-supply-chain.html"><span class="lbl">Próximo</span><span class="ttl">Código malicioso e supply-chain</span></a>
+    <a class="prev" href="6-pretool-defender-daemon.html"><span class="lbl" data-pt="Anterior" data-en="Previous">Anterior</span><span class="ttl" data-pt="Pretool, defender e daemon" data-en="Pretool, defender and daemon">Pretool, defender e daemon</span></a>
+    <a class="next" href="8-codigo-malicioso-supply-chain.html"><span class="lbl" data-pt="Próximo" data-en="Next">Próximo</span><span class="ttl" data-pt="Código malicioso e supply-chain" data-en="Malicious code and supply chain">Código malicioso e supply-chain</span></a>
   </nav>
-  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p><span data-pt="Citações verificadas contra o repositório." data-en="Citations verified against the repository.">Citações verificadas contra o repositório.</span> <a href="../index.html" data-pt="Voltar ao índice" data-en="Back to the index">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">
-  <div class="t">Nesta página</div>
+  <div class="t" data-pt="Nesta página" data-en="On this page">Nesta página</div>
   <nav id="toc-list"></nav>
 </aside>
 </div>
 </div>
 <script src="../assets/nav.js"></script>
+<script src="../assets/lang.js"></script>
 </body>
 </html>

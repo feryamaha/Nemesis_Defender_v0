@@ -7,49 +7,70 @@
 <link rel="stylesheet" href="../assets/estilo.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Pular para o conteúdo</a>
+<a class="skip-link" href="#main" data-pt="Pular para o conteúdo" data-en="Skip to content">Pular para o conteúdo</a>
 <header class="topbar">
   <span class="brand">NEMESIS · <b>material de estudo</b></span>
   <span class="spacer"></span>
+  <div class="lang" role="group" aria-label="Language / Idioma">
+    <button class="flag active" id="lang-pt" title="Português" aria-label="Português">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#009B3A" />
+        <path d="M14 2.4 25.2 10 14 17.6 2.8 10z" fill="#FEDF00" />
+        <circle cx="14" cy="10" r="3.9" fill="#002776" />
+        <path d="M10.4 8.9a4 4 0 0 1 7.2 1c-2.3-.8-4.9-.9-7.2-.1z" fill="#fff" />
+      </svg>
+    </button>
+    <button class="flag" id="lang-en" title="English" aria-label="English">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#B22234" />
+        <g fill="#fff">
+          <rect y="1.5" width="28" height="1.5" /><rect y="4.6" width="28" height="1.5" />
+          <rect y="7.7" width="28" height="1.5" /><rect y="10.8" width="28" height="1.5" />
+          <rect y="13.9" width="28" height="1.5" /><rect y="17" width="28" height="1.5" />
+        </g>
+        <rect width="12" height="10.8" fill="#3C3B6E" />
+      </svg>
+    </button>
+  </div>
   <nav aria-label="Navegação principal">
-    <a href="../index.html">Início</a>
-    <a href="../jornada.html">Jornada</a>
-    <a href="../diagrama-arquitetura.html">Arquitetura</a>
-    <a href="../competencias.html">Competências</a>
-    <a href="../COBERTURA.html">Cobertura</a>
+    <a href="../index.html" data-pt="Início" data-en="Home">Início</a>
+    <a href="../jornada.html" data-pt="Jornada" data-en="Journey">Jornada</a>
+    <a href="../diagrama-arquitetura.html" data-pt="Arquitetura" data-en="Architecture">Arquitetura</a>
+    <a href="../competencias.html" data-pt="Competências" data-en="Skills">Competências</a>
+    <a href="../COBERTURA.html" data-pt="Cobertura" data-en="Coverage">Cobertura</a>
   </nav>
 </header>
 
 <div class="wrap">
 <div class="layout with-toc">
 <main id="main">
-  <p class="crumb"><a href="../index.html">Início</a><span class="sep">/</span>Conceitos<span class="sep">/</span>3 · Confinamento do kernel e egress</p>
+  <p class="crumb"><a href="../index.html" data-pt="Início" data-en="Home">Início</a><span class="sep">/</span><span data-pt="Conceitos" data-en="Concepts">Conceitos</span><span class="sep">/</span><span data-pt="3 · Confinamento do kernel e egress" data-en="3 · Kernel confinement and egress">3 · Confinamento do kernel e egress</span></p>
 
-  <span class="deftag">conceito 3 · confinamento</span>
-  <h1>Confinamento do kernel: capabilities, cgroups, Landlock e egress</h1>
-  <p class="lede">Decidir "não" é metade do trabalho. A outra metade é limitar o raio de ação: confinar o bloqueio ao processo certo (cgroup), rodar com o mínimo de privilégio (Landlock, sem root) e cortar a saída de rede que serve à exfiltração e ao C2 (allowlist de egress).</p>
+  <span class="deftag" data-pt="conceito 3 · confinamento" data-en="concept 3 · confinement">conceito 3 · confinamento</span>
+  <h1 data-pt="Confinamento do kernel: capabilities, cgroups, Landlock e egress" data-en="Kernel confinement: capabilities, cgroups, Landlock and egress">Confinamento do kernel: capabilities, cgroups, Landlock e egress</h1>
+  <p class="lede" data-pt="Decidir &quot;não&quot; é metade do trabalho. A outra metade é limitar o raio de ação: confinar o bloqueio ao processo certo (cgroup), rodar com o mínimo de privilégio (Landlock, sem root) e cortar a saída de rede que serve à exfiltração e ao C2 (allowlist de egress)." data-en="Deciding &quot;no&quot; is half the job. The other half is limiting the blast radius: confining the block to the right process (cgroup), running with minimum privilege (Landlock, no root) and cutting the network egress that serves exfiltration and C2 (egress allowlist).">Decidir "não" é metade do trabalho. A outra metade é limitar o raio de ação: confinar o bloqueio ao processo certo (cgroup), rodar com o mínimo de privilégio (Landlock, sem root) e cortar a saída de rede que serve à exfiltração e ao C2 (allowlist de egress).</p>
 
   <div class="sec30">
-    <span class="t">Em 30 segundos</span>
-    <p>Eu não quero bloquear o sistema inteiro, só o agente. Por isso o programa eBPF só age sobre processos do <strong>cgroup</strong> do agente. Para o próprio Nemesis rodar com pouco poder, uso o <strong>Landlock</strong>, que restringe o que o processo pode executar e tocar sem precisar de root, ligando <code>no_new_privs</code> antes. E para impedir que dados saiam, mantenho uma <strong>allowlist de egress</strong>: por padrão nega tudo, só passa o que está explicitamente liberado.</p>
+    <span class="t" data-pt="Em 30 segundos" data-en="In 30 seconds">Em 30 segundos</span>
+    <p data-pt="O objetivo não é bloquear o sistema inteiro, só o agente. Por isso o programa eBPF só age sobre processos do <strong>cgroup</strong> do agente. Para o próprio Nemesis rodar com pouco poder, entra o <strong>Landlock</strong>, que restringe o que o processo pode executar e tocar sem precisar de root, ligando <code>no_new_privs</code> antes. E para impedir que dados saiam, uma <strong>allowlist de egress</strong>: por padrão nega tudo, só passa o que está explicitamente liberado." data-en="The goal is not to block the whole system, only the agent. That is why the eBPF program only acts on processes in the agent <strong>cgroup</strong>. For Nemesis itself to run with little power, there is <strong>Landlock</strong>, which restricts what the process can execute and touch without root, enabling <code>no_new_privs</code> first. And to keep data from leaving, an <strong>egress allowlist</strong>: deny-all by default, only what is explicitly allowed passes.">O objetivo não é bloquear o sistema inteiro, só o agente. Por isso o programa eBPF só age sobre processos do <strong>cgroup</strong> do agente. Para o próprio Nemesis rodar com pouco poder, entra o <strong>Landlock</strong>, que restringe o que o processo pode executar e tocar sem precisar de root, ligando <code>no_new_privs</code> antes. E para impedir que dados saiam, uma <strong>allowlist de egress</strong>: por padrão nega tudo, só passa o que está explicitamente liberado.</p>
   </div>
 
   <figure class="diagram">
-    <img src="../diagramas/3-confinamento-kernel-egress.svg" alt="O cgroup do agente identifica quem e o agente e restringe o bloqueio de execucao e o controle de egress a ele; a allowlist de egress nega saida por padrao; o Landlock faz o Nemesis rodar sem root.">
-    <figcaption>O cgroup restringe ao agente; a allowlist de egress nega saída por padrão; o Landlock roda sem root.</figcaption>
+    <img src="../diagramas/3-confinamento-kernel-egress.svg" alt="O cgroup do agente identifica quem e o agente e restringe o bloqueio de execucao e o controle de egress a ele; a allowlist de egress nega saida por padrao; o Landlock faz o Nemesis rodar sem root." data-alt-en="The agent cgroup scopes enforcement to the agent; exec blocking and egress control derive from it; the egress allowlist denies by default, blocking exfiltration and C2; Landlock runs without root.">
+    <figcaption data-pt="O cgroup restringe ao agente; a allowlist de egress nega saída por padrão; o Landlock roda sem root." data-en="The cgroup scopes to the agent; the egress allowlist denies outbound by default; Landlock runs without root.">O cgroup restringe ao agente; a allowlist de egress nega saída por padrão; o Landlock roda sem root.</figcaption>
   </figure>
 
-  <h2>Do zero: os três mecanismos</h2>
-  <p><strong>Capabilities</strong> quebram o poder do root em pedaços: em vez de "tudo ou nada", um processo recebe só a capacidade de que precisa. <strong>cgroups</strong> (control groups) agrupam processos para a contabilidade e o controle do kernel; cada grupo tem um identificador, o <code>cgroup_id</code>, e é por ele que eu sei "este processo é do agente". <strong>Landlock</strong> é um LSM que deixa um processo comum se autolimitar (sandbox sem privilégio): ele declara o que pode fazer e o kernel passa a recusar o resto, inclusive para os filhos. <strong>Egress</strong> é o tráfego de saída; controlá-lo é decidir para onde o processo pode abrir conexão.</p>
+  <h2 data-pt="Do zero: os três mecanismos" data-en="From scratch: the three mechanisms">Do zero: os três mecanismos</h2>
+  <p data-pt="<strong>Capabilities</strong> quebram o poder do root em pedaços: em vez de &quot;tudo ou nada&quot;, um processo recebe só a capacidade de que precisa. <strong>cgroups</strong> (control groups) agrupam processos para a contabilidade e o controle do kernel; cada grupo tem um identificador, o <code>cgroup_id</code>, e é por ele que o sistema sabe &quot;este processo é do agente&quot;. <strong>Landlock</strong> é um LSM que deixa um processo comum se autolimitar (sandbox sem privilégio): ele declara o que pode fazer e o kernel passa a recusar o resto, inclusive para os filhos. <strong>Egress</strong> é o tráfego de saída; controlá-lo é decidir para onde o processo pode abrir conexão." data-en="<strong>Capabilities</strong> split root power into pieces: instead of &quot;all or nothing&quot;, a process receives only the capability it needs. <strong>cgroups</strong> (control groups) group processes for kernel accounting and control; each group has an identifier, the <code>cgroup_id</code>, and that is how the system knows &quot;this process belongs to the agent&quot;. <strong>Landlock</strong> is an LSM that lets an ordinary process sandbox itself (no privilege needed): it declares what it may do and the kernel starts refusing the rest, including for its children. <strong>Egress</strong> is outbound traffic; controlling it means deciding where the process may open connections."><strong>Capabilities</strong> quebram o poder do root em pedaços: em vez de "tudo ou nada", um processo recebe só a capacidade de que precisa. <strong>cgroups</strong> (control groups) agrupam processos para a contabilidade e o controle do kernel; cada grupo tem um identificador, o <code>cgroup_id</code>, e é por ele que o sistema sabe "este processo é do agente". <strong>Landlock</strong> é um LSM que deixa um processo comum se autolimitar (sandbox sem privilégio): ele declara o que pode fazer e o kernel passa a recusar o resto, inclusive para os filhos. <strong>Egress</strong> é o tráfego de saída; controlá-lo é decidir para onde o processo pode abrir conexão.</p>
 
-  <h2>Por que importa</h2>
-  <p>Um agente comprometido tende a fazer duas coisas: executar algo destrutivo e mandar dado para fora (exfiltração, ou buscar ordens de um servidor de comando e controle, o C2). Confinar ao cgroup garante que minha contenção mire só o agente, não o sistema do usuário. Rodar sem root garante que o próprio Nemesis não seja um vetor de escalonamento. E negar egress por padrão fecha o caminho de saída do dado, que é o objetivo final de boa parte dos ataques.</p>
+  <h2 data-pt="Por que importa" data-en="Why it matters">Por que importa</h2>
+  <p data-pt="Um agente comprometido tende a fazer duas coisas: executar algo destrutivo e mandar dado para fora (exfiltração, ou buscar ordens de um servidor de comando e controle, o C2). Confinar ao cgroup garante que a contenção mire só o agente, não o sistema do usuário. Rodar sem root garante que o próprio Nemesis não seja um vetor de escalonamento. E negar egress por padrão fecha o caminho de saída do dado, que é o objetivo final de boa parte dos ataques." data-en="A compromised agent tends to do two things: execute something destructive and send data out (exfiltration, or fetching orders from a command and control server, the C2). Confining to the cgroup guarantees the containment targets only the agent, not the user's system. Running without root guarantees Nemesis itself is not an escalation vector. And denying egress by default closes the data's way out, which is the end goal of a large share of attacks.">Um agente comprometido tende a fazer duas coisas: executar algo destrutivo e mandar dado para fora (exfiltração, ou buscar ordens de um servidor de comando e controle, o C2). Confinar ao cgroup garante que a contenção mire só o agente, não o sistema do usuário. Rodar sem root garante que o próprio Nemesis não seja um vetor de escalonamento. E negar egress por padrão fecha o caminho de saída do dado, que é o objetivo final de boa parte dos ataques.</p>
 
-  <h2>Como se correlaciona</h2>
-  <p>O escopo por cgroup é o que liga os outros dois ao agente: o gancho de exec do <a href="2-kernel-ebpf-lsm.html">grupo 2</a> só atua se o processo for do cgroup do agente, e o mesmo vale para a decisão de egress. O Landlock é uma camada complementar no userspace privilegiado-mínimo, e a allowlist de egress é a contrapartida de rede do bloqueio de exec: um corta o que roda, o outro corta para onde fala. Juntos eles transformam "detectei" em "contive sem dano colateral".</p>
+  <h2 data-pt="Como se correlaciona" data-en="How it correlates">Como se correlaciona</h2>
+  <p data-pt="O escopo por cgroup é o que liga os outros dois ao agente: o gancho de exec do <a href=&quot;2-kernel-ebpf-lsm.html&quot;>grupo 2</a> só atua se o processo for do cgroup do agente, e o mesmo vale para a decisão de egress. O Landlock é uma camada complementar no userspace privilegiado-mínimo, e a allowlist de egress é a contrapartida de rede do bloqueio de exec: um corta o que roda, o outro corta para onde fala. Juntos eles transformam &quot;detectei&quot; em &quot;contive sem dano colateral&quot;." data-en="The cgroup scoping is what ties the other two to the agent: the exec hook from <a href=&quot;2-kernel-ebpf-lsm.html&quot;>group 2</a> only acts if the process belongs to the agent cgroup, and the same goes for the egress decision. Landlock is a complementary least-privilege layer in userspace, and the egress allowlist is the network counterpart of exec blocking: one cuts what runs, the other cuts where it talks to. Together they turn &quot;detected&quot; into &quot;contained without collateral damage&quot;.">O escopo por cgroup é o que liga os outros dois ao agente: o gancho de exec do <a href="2-kernel-ebpf-lsm.html">grupo 2</a> só atua se o processo for do cgroup do agente, e o mesmo vale para a decisão de egress. O Landlock é uma camada complementar no userspace privilegiado-mínimo, e a allowlist de egress é a contrapartida de rede do bloqueio de exec: um corta o que roda, o outro corta para onde fala. Juntos eles transformam "detectei" em "contive sem dano colateral".</p>
 
-  <h2>Como o Nemesis aplica</h2>
-  <p>O sandbox Landlock liga <code>no_new_privs</code> via <code>prctl</code> (obrigatório para restringir sem <code>CAP_SYS_ADMIN</code>) e declara as classes de acesso que vai controlar:</p>
+  <h2 data-pt="Como o Nemesis aplica" data-en="How Nemesis applies it">Como o Nemesis aplica</h2>
+  <p data-pt="O sandbox Landlock liga <code>no_new_privs</code> via <code>prctl</code> (obrigatório para restringir sem <code>CAP_SYS_ADMIN</code>) e declara as classes de acesso que vai controlar:" data-en="The Landlock sandbox enables <code>no_new_privs</code> via <code>prctl</code> (mandatory to restrict without <code>CAP_SYS_ADMIN</code>) and declares the access classes it will control:">O sandbox Landlock liga <code>no_new_privs</code> via <code>prctl</code> (obrigatório para restringir sem <code>CAP_SYS_ADMIN</code>) e declara as classes de acesso que vai controlar:</p>
   <span class="src-ref">📄 <b>.nemesis/ebpf-kernel/src/landlock.rs:24-38</b> · apply_sandbox, sem root</span>
   <pre><code class="rust">let r = unsafe { libc::prctl(libc::PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) };
 // ABI V5 (kernel 6.8); degrada em kernels mais antigos
@@ -58,7 +79,7 @@ let ruleset_result = Ruleset::default()
     .and_then(|r| r.handle_access(AccessFs::WriteFile))
     .and_then(|r| r.handle_access(AccessFs::ReadFile))
     .and_then(|r| r.create());</code></pre>
-  <p>O escopo por cgroup vive no gancho do kernel: se o cgroup do agente não está configurado, ou o processo não é dele, o programa permite e sai. Só processos do agente são verificados:</p>
+  <p data-pt="O escopo por cgroup vive no gancho do kernel: se o cgroup do agente não está configurado, ou o processo não é dele, o programa permite e sai. Só processos do agente são verificados:" data-en="The cgroup scoping lives in the kernel hook: if the agent cgroup is not configured, or the process is not the agent's, the program allows and exits. Only agent processes are checked:">O escopo por cgroup vive no gancho do kernel: se o cgroup do agente não está configurado, ou o processo não é dele, o programa permite e sai. Só processos do agente são verificados:</p>
   <span class="src-ref">📄 <b>.nemesis/ebpf-kernel/ebpf/nemesis-block.bpf.c:83-94</b> · escopo por cgroup do agente</span>
   <pre><code class="rust">u64 *agent_cgroup = bpf_map_lookup_elem(&agent_cgroup_map, &cgroup_key);
 if (!agent_cgroup || *agent_cgroup == 0)
@@ -66,7 +87,7 @@ if (!agent_cgroup || *agent_cgroup == 0)
 u64 current_cgroup = bpf_get_current_cgroup_id();
 if (current_cgroup != *agent_cgroup)
     return 0;                       // processo não é do agente, permite</code></pre>
-  <p>O egress é decidido no gancho <code>socket_connect</code>: com enforce ligado, o destino precisa estar na allowlist (trie LPM por CIDR e porta), senão é <code>-EPERM</code>. A lógica pura da allowlist é fail-closed por construção: lista vazia significa nenhuma conexão.</p>
+  <p data-pt="O egress é decidido no gancho <code>socket_connect</code>: com enforce ligado, o destino precisa estar na allowlist (trie LPM por CIDR e porta), senão é <code>-EPERM</code>. A lógica pura da allowlist é fail-closed por construção: lista vazia significa nenhuma conexão." data-en="Egress is decided at the <code>socket_connect</code> hook: with enforce on, the destination must be in the allowlist (LPM trie by CIDR and port), otherwise it is <code>-EPERM</code>. The allowlist's pure logic is fail-closed by construction: an empty list means no connections.">O egress é decidido no gancho <code>socket_connect</code>: com enforce ligado, o destino precisa estar na allowlist (trie LPM por CIDR e porta), senão é <code>-EPERM</code>. A lógica pura da allowlist é fail-closed por construção: lista vazia significa nenhuma conexão.</p>
   <span class="src-ref">📄 <b>.nemesis/ebpf-kernel/ebpf/nemesis-block.bpf.c:173-205</b> e <b>src/egress.rs:1-6</b></span>
   <pre><code class="rust">struct egress_val *val = bpf_map_lookup_elem(&egress_allow_v4, &key);
 if (val && (val->port == 0 || val->port == dport))
@@ -74,19 +95,19 @@ if (val && (val->port == 0 || val->port == dport))
 egress_emit("ipv4");
 return -EPERM;                      // fora da allowlist, nega</code></pre>
 
-  <h2>Decisões e limites</h2>
-  <p>Eu dei ao egress um interruptor de <strong>enforce</strong>: desligado, ele só observa e loga (modo rollout). Escolhi esse default para não quebrar a máquina de ninguém antes de a allowlist estar afinada. Famílias de socket que não são rede (como <code>AF_UNIX</code>) eu permito, porque bloqueá-las quebraria comunicação local legítima.</p>
-  <p>Capabilities, aqui, são mais postura do que chamada explícita no código: eu não exijo root e uso <code>no_new_privs</code> para que nem os processos filhos ganhem privilégio. É <em>least privilege</em> aplicado de ponta a ponta.</p>
+  <h2 data-pt="Decisões e limites" data-en="Decisions and limits">Decisões e limites</h2>
+  <p data-pt="O egress tem um interruptor de <strong>enforce</strong>: desligado, ele só observa e loga (modo rollout), um default escolhido para não quebrar a máquina de ninguém antes de a allowlist estar afinada. Famílias de socket que não são rede (como <code>AF_UNIX</code>) são permitidas, porque bloqueá-las quebraria comunicação local legítima." data-en="Egress has an <strong>enforce</strong> switch: off, it only observes and logs (rollout mode), a default chosen so nobody's machine breaks before the allowlist is tuned. Non-network socket families (like <code>AF_UNIX</code>) are allowed, because blocking them would break legitimate local communication.">O egress tem um interruptor de <strong>enforce</strong>: desligado, ele só observa e loga (modo rollout), um default escolhido para não quebrar a máquina de ninguém antes de a allowlist estar afinada. Famílias de socket que não são rede (como <code>AF_UNIX</code>) são permitidas, porque bloqueá-las quebraria comunicação local legítima.</p>
+  <p data-pt="Capabilities, aqui, são mais postura do que chamada explícita no código: o sistema não exige root e usa <code>no_new_privs</code> para que nem os processos filhos ganhem privilégio. É <em>least privilege</em> aplicado de ponta a ponta." data-en="Capabilities here are more posture than explicit calls in the code: the system does not require root and uses <code>no_new_privs</code> so not even child processes gain privilege. It is <em>least privilege</em> applied end to end.">Capabilities, aqui, são mais postura do que chamada explícita no código: o sistema não exige root e usa <code>no_new_privs</code> para que nem os processos filhos ganhem privilégio. É <em>least privilege</em> aplicado de ponta a ponta.</p>
 
-  <h2>Auto-checagem</h2>
-  <details><summary>Por que o bloqueio é restrito ao cgroup do agente?</summary>
-  <p>Para conter só o agente, sem afetar o resto do sistema do usuário. Se o processo não pertence ao cgroup do agente, o programa eBPF permite e sai imediatamente.</p></details>
-  <details><summary>O que significa a allowlist de egress ser fail-closed?</summary>
-  <p>Que o default é negar: allowlist vazia implica nenhuma conexão de saída permitida. Só passa o que eu liberei de propósito, o que fecha o canal de exfiltração e C2.</p></details>
-  <details><summary>Como o Landlock roda sem root?</summary>
-  <p>Ligando <code>no_new_privs</code> via <code>prctl</code> antes de aplicar o ruleset; com isso o kernel aceita a autolimitação sem exigir <code>CAP_SYS_ADMIN</code>.</p></details>
+  <h2 data-pt="Auto-checagem" data-en="Self-check">Auto-checagem</h2>
+  <details><summary data-pt="Por que o bloqueio é restrito ao cgroup do agente?" data-en="Why is blocking restricted to the agent cgroup?">Por que o bloqueio é restrito ao cgroup do agente?</summary>
+  <p data-pt="Para conter só o agente, sem afetar o resto do sistema do usuário. Se o processo não pertence ao cgroup do agente, o programa eBPF permite e sai imediatamente." data-en="To contain only the agent without touching the rest of the user's system. If the process does not belong to the agent cgroup, the eBPF program allows and exits immediately.">Para conter só o agente, sem afetar o resto do sistema do usuário. Se o processo não pertence ao cgroup do agente, o programa eBPF permite e sai imediatamente.</p></details>
+  <details><summary data-pt="O que significa a allowlist de egress ser fail-closed?" data-en="What does it mean for the egress allowlist to be fail-closed?">O que significa a allowlist de egress ser fail-closed?</summary>
+  <p data-pt="Que o default é negar: allowlist vazia implica nenhuma conexão de saída permitida. Só passa o que foi liberado de propósito, o que fecha o canal de exfiltração e C2." data-en="That the default is deny: an empty allowlist means no outbound connection is allowed. Only what was deliberately allowed passes, which closes the exfiltration and C2 channel.">Que o default é negar: allowlist vazia implica nenhuma conexão de saída permitida. Só passa o que foi liberado de propósito, o que fecha o canal de exfiltração e C2.</p></details>
+  <details><summary data-pt="Como o Landlock roda sem root?" data-en="How does Landlock run without root?">Como o Landlock roda sem root?</summary>
+  <p data-pt="Ligando <code>no_new_privs</code> via <code>prctl</code> antes de aplicar o ruleset; com isso o kernel aceita a autolimitação sem exigir <code>CAP_SYS_ADMIN</code>." data-en="By enabling <code>no_new_privs</code> via <code>prctl</code> before applying the ruleset; the kernel then accepts the self-restriction without requiring <code>CAP_SYS_ADMIN</code>.">Ligando <code>no_new_privs</code> via <code>prctl</code> antes de aplicar o ruleset; com isso o kernel aceita a autolimitação sem exigir <code>CAP_SYS_ADMIN</code>.</p></details>
 
-  <h2>Para ir além</h2>
+  <h2 data-pt="Para ir além" data-en="Further reading">Para ir além</h2>
   <ul>
     <li><a href="https://docs.kernel.org/userspace-api/landlock.html">kernel.org, Landlock</a>.</li>
     <li><a href="https://docs.kernel.org/admin-guide/cgroup-v2.html">kernel.org, cgroup v2</a>.</li>
@@ -94,18 +115,19 @@ return -EPERM;                      // fora da allowlist, nega</code></pre>
   </ul>
 
   <nav class="pager" aria-label="Navegação entre páginas">
-    <a class="prev" href="2-kernel-ebpf-lsm.html"><span class="lbl">Anterior</span><span class="ttl">Kernel, eBPF e LSM</span></a>
-    <a class="next" href="4-rust-defesa.html"><span class="lbl">Próximo</span><span class="ttl">Rust como linguagem de defesa</span></a>
+    <a class="prev" href="2-kernel-ebpf-lsm.html"><span class="lbl" data-pt="Anterior" data-en="Previous">Anterior</span><span class="ttl" data-pt="Kernel, eBPF e LSM" data-en="Kernel, eBPF and LSM">Kernel, eBPF e LSM</span></a>
+    <a class="next" href="4-rust-defesa.html"><span class="lbl" data-pt="Próximo" data-en="Next">Próximo</span><span class="ttl" data-pt="Rust como linguagem de defesa" data-en="Rust as a defense language">Rust como linguagem de defesa</span></a>
   </nav>
-  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p><span data-pt="Citações verificadas contra o repositório." data-en="Citations verified against the repository.">Citações verificadas contra o repositório.</span> <a href="../index.html" data-pt="Voltar ao índice" data-en="Back to the index">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">
-  <div class="t">Nesta página</div>
+  <div class="t" data-pt="Nesta página" data-en="On this page">Nesta página</div>
   <nav id="toc-list"></nav>
 </aside>
 </div>
 </div>
 <script src="../assets/nav.js"></script>
+<script src="../assets/lang.js"></script>
 </body>
 </html>

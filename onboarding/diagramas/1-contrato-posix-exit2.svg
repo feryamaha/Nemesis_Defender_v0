@@ -1,4 +1,4 @@
-<svg viewBox="0 0 980 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="O agente pede uma ação; o hook pretool lê pelo stdin e decide; o processo termina com 0 (a IDE permite) ou 2 (a IDE cancela). O número é entregue pelo kernel.">
+<svg viewBox="0 0 980 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The agent requests an action; the pretool hook reads it via stdin and decides; the process exits with 0 (IDE allows) or 2 (IDE cancels). The number is delivered by the kernel: the agent cannot argue.">
   <defs>
     <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#56708f"/></marker>
     <marker id="arrOk" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5fd38a"/></marker>
@@ -14,40 +14,40 @@
 
   <!-- Agente -->
   <rect x="20" y="124" width="175" height="72" rx="10" fill="#121826" stroke="#38e1d3"/>
-  <text x="107" y="154" text-anchor="middle" class="t">Agente de IA</text>
-  <text x="107" y="176" text-anchor="middle" class="s">pede uma ação</text>
+  <text x="107" y="154" text-anchor="middle" class="t">AI Agent</text>
+  <text x="107" y="176" text-anchor="middle" class="s">requests an action</text>
 
   <path class="edge" d="M195 160 H243" marker-end="url(#arr)"/>
 
-  <!-- Hook pretool -->
+  <!-- Pretool hook -->
   <rect x="245" y="112" width="215" height="96" rx="10" fill="#121826" stroke="#38e1d3"/>
-  <text x="352" y="144" text-anchor="middle" class="t">Hook pretool</text>
-  <text x="352" y="166" text-anchor="middle" class="s">lê o pedido via</text>
+  <text x="352" y="144" text-anchor="middle" class="t">Pretool hook</text>
+  <text x="352" y="166" text-anchor="middle" class="s">reads the request via</text>
   <text x="352" y="186" text-anchor="middle" class="s m" fill="#38e1d3">stdin (JSON)</text>
 
   <path class="edge" d="M460 160 H503" marker-end="url(#arr)"/>
 
   <!-- Decisão -->
   <polygon points="580,105 655,160 580,215 505,160" fill="#121826" stroke="#38e1d3"/>
-  <text x="580" y="165" text-anchor="middle" class="t">hostil?</text>
+  <text x="580" y="165" text-anchor="middle" class="t">hostile?</text>
 
   <!-- não → exit 0 -->
   <path class="edge" d="M617 130 C660 96 690 80 731 80" stroke="#5fd38a" marker-end="url(#arrOk)"/>
-  <text x="676" y="66" text-anchor="middle" class="s m" fill="#5fd38a">não</text>
+  <text x="676" y="66" text-anchor="middle" class="s m" fill="#5fd38a">no</text>
   <rect x="735" y="44" width="225" height="72" rx="10" fill="#0e2a1a" stroke="#5fd38a"/>
   <text x="847" y="74" text-anchor="middle" class="t m" fill="#d7ffe6">exit 0</text>
-  <text x="847" y="96" text-anchor="middle" class="s" fill="#9fd8b4">a IDE permite a ação</text>
+  <text x="847" y="96" text-anchor="middle" class="s" fill="#9fd8b4">IDE allows the action</text>
 
   <!-- sim → exit 2 -->
   <path class="edge" d="M617 190 C660 224 690 240 731 240" stroke="#ff6b6b" marker-end="url(#arrBad)"/>
-  <text x="676" y="260" text-anchor="middle" class="s m" fill="#ff6b6b">sim</text>
+  <text x="676" y="260" text-anchor="middle" class="s m" fill="#ff6b6b">yes</text>
   <rect x="735" y="204" width="225" height="72" rx="10" fill="#2a1014" stroke="#ff6b6b"/>
   <text x="847" y="234" text-anchor="middle" class="t m" fill="#ffd7d7">exit 2</text>
-  <text x="847" y="256" text-anchor="middle" class="s" fill="#e8a0a0">a IDE cancela a ação</text>
+  <text x="847" y="256" text-anchor="middle" class="s" fill="#e8a0a0">IDE cancels the action</text>
 
   <!-- nota -->
   <path d="M735 258 C700 276 690 282 671 284" fill="none" stroke="#21a99e" stroke-width="1.2" stroke-dasharray="4 3"/>
   <rect x="245" y="260" width="420" height="54" rx="8" fill="#0c1019" stroke="#21a99e" stroke-dasharray="4 3"/>
-  <text x="455" y="282" text-anchor="middle" class="s" fill="#b8c4d6">O código de saída é entregue pelo kernel ao processo pai:</text>
-  <text x="455" y="300" text-anchor="middle" class="s" fill="#b8c4d6">determinístico: o agente não tem como discutir.</text>
+  <text x="455" y="282" text-anchor="middle" class="s" fill="#b8c4d6">The exit code is delivered by the kernel to the parent process:</text>
+  <text x="455" y="300" text-anchor="middle" class="s" fill="#b8c4d6">deterministic: the agent cannot argue.</text>
 </svg>

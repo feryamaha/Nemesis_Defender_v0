@@ -7,35 +7,56 @@
 <link rel="stylesheet" href="../assets/estilo.css">
 </head>
 <body>
-<a class="skip-link" href="#main">Pular para o conteúdo</a>
+<a class="skip-link" href="#main" data-pt="Pular para o conteúdo" data-en="Skip to content">Pular para o conteúdo</a>
 <header class="topbar">
   <span class="brand">NEMESIS · <b>material de estudo</b></span>
   <span class="spacer"></span>
+  <div class="lang" role="group" aria-label="Language / Idioma">
+    <button class="flag active" id="lang-pt" title="Português" aria-label="Português">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#009B3A" />
+        <path d="M14 2.4 25.2 10 14 17.6 2.8 10z" fill="#FEDF00" />
+        <circle cx="14" cy="10" r="3.9" fill="#002776" />
+        <path d="M10.4 8.9a4 4 0 0 1 7.2 1c-2.3-.8-4.9-.9-7.2-.1z" fill="#fff" />
+      </svg>
+    </button>
+    <button class="flag" id="lang-en" title="English" aria-label="English">
+      <svg viewBox="0 0 28 20" width="25" height="17">
+        <rect width="28" height="20" rx="2" fill="#B22234" />
+        <g fill="#fff">
+          <rect y="1.5" width="28" height="1.5" /><rect y="4.6" width="28" height="1.5" />
+          <rect y="7.7" width="28" height="1.5" /><rect y="10.8" width="28" height="1.5" />
+          <rect y="13.9" width="28" height="1.5" /><rect y="17" width="28" height="1.5" />
+        </g>
+        <rect width="12" height="10.8" fill="#3C3B6E" />
+      </svg>
+    </button>
+  </div>
   <nav aria-label="Navegação principal">
-    <a href="../index.html">Início</a>
-    <a href="../jornada.html">Jornada</a>
-    <a href="../diagrama-arquitetura.html">Arquitetura</a>
-    <a href="../competencias.html">Competências</a>
-    <a href="../COBERTURA.html">Cobertura</a>
+    <a href="../index.html" data-pt="Início" data-en="Home">Início</a>
+    <a href="../jornada.html" data-pt="Jornada" data-en="Journey">Jornada</a>
+    <a href="../diagrama-arquitetura.html" data-pt="Arquitetura" data-en="Architecture">Arquitetura</a>
+    <a href="../competencias.html" data-pt="Competências" data-en="Skills">Competências</a>
+    <a href="../COBERTURA.html" data-pt="Cobertura" data-en="Coverage">Cobertura</a>
   </nav>
 </header>
 
 <div class="wrap">
 <div class="layout with-toc">
 <main id="main">
-  <p class="crumb"><a href="../index.html">Início</a><span class="sep">/</span>Visão geral</p>
+  <p class="crumb"><a href="../index.html" data-pt="Início" data-en="Home">Início</a><span class="sep">/</span><span data-pt="Visão geral" data-en="Overview">Visão geral</span></p>
 
-  <span class="deftag">síntese · o sistema convergindo</span>
-  <h1>Visão geral: o sistema inteiro convergindo</h1>
-  <p class="lede">Aqui eu fecho a jornada juntando tudo num quadro só: as camadas que construí, o pipeline que escreve o veredito e o caminho que um comando percorre do agente até o <code>exit 2</code>, antes de executar.</p>
+  <span class="deftag" data-pt="síntese · o sistema convergindo" data-en="synthesis · the system converging">síntese · o sistema convergindo</span>
+  <h1 data-pt="Visão geral: o sistema inteiro convergindo" data-en="Overview: the whole system converging">Visão geral: o sistema inteiro convergindo</h1>
+  <p class="lede" data-pt="A visão geral fecha a jornada juntando tudo num quadro só: as camadas, o pipeline que escreve o veredito e o caminho que um comando percorre do agente até o <code>exit 2</code>, antes de executar." data-en="The overview closes the journey by putting it all in one picture: the layers, the pipeline that writes the verdict and the path a command travels from the agent to <code>exit 2</code>, before executing.">A visão geral fecha a jornada juntando tudo num quadro só: as camadas, o pipeline que escreve o veredito e o caminho que um comando percorre do agente até o <code>exit 2</code>, antes de executar.</p>
 
   <div class="sec30">
-    <span class="t">Em 30 segundos</span>
-    <p>Eu não confio numa instrução educada no prompt para conter um agente de IA. Eu intercepto a ação <strong>antes</strong> dela acontecer (hook <em>pretool</em>, write-time), escaneio o conteúdo e o comando, e nego com <code>exit 2</code> se for hostil. Em paralelo, um <strong>daemon</strong> observa o filesystem e move malware confirmado para a quarentena. No Linux, uma camada <strong>eBPF</strong> no kernel segura exec e rede como backstop. A proteção não é um número de detectores: é a <strong>soma das camadas</strong>, o que eu chamo de coeficiente.</p>
+    <span class="t" data-pt="Em 30 segundos" data-en="In 30 seconds">Em 30 segundos</span>
+    <p data-pt="Instrução educada no prompt não contém um agente de IA. O Nemesis intercepta a ação <strong>antes</strong> dela acontecer (hook <em>pretool</em>, write-time), escaneia o conteúdo e o comando, e nega com <code>exit 2</code> se for hostil. Em paralelo, um <strong>daemon</strong> observa o filesystem e move malware confirmado para a quarentena. No Linux, uma camada <strong>eBPF</strong> no kernel segura exec e rede como backstop. A proteção não é um número de detectores: é a <strong>soma das camadas</strong>, o chamado coeficiente." data-en="A polite prompt instruction does not contain an AI agent. Nemesis intercepts the action <strong>before</strong> it happens (pretool hook, write-time), scans the content and the command, and denies with <code>exit 2</code> if hostile. In parallel, a <strong>daemon</strong> watches the filesystem and moves confirmed malware to quarantine. On Linux, an <strong>eBPF</strong> kernel layer holds exec and network as a backstop. Protection is not a count of detectors: it is the <strong>sum of layers</strong>, the so-called coefficient.">Instrução educada no prompt não contém um agente de IA. O Nemesis intercepta a ação <strong>antes</strong> dela acontecer (hook <em>pretool</em>, write-time), escaneia o conteúdo e o comando, e nega com <code>exit 2</code> se for hostil. Em paralelo, um <strong>daemon</strong> observa o filesystem e move malware confirmado para a quarentena. No Linux, uma camada <strong>eBPF</strong> no kernel segura exec e rede como backstop. A proteção não é um número de detectores: é a <strong>soma das camadas</strong>, o chamado coeficiente.</p>
   </div>
 
-  <h2>As três camadas que eu construí</h2>
-  <p>Defesa em profundidade, para mim, significa camadas independentes: se uma falha ou está em manutenção, a próxima ainda contém. Eu montei três.</p>
+  <h2 data-pt="As três camadas" data-en="The three layers">As três camadas</h2>
+  <p data-pt="Defesa em profundidade significa camadas independentes: se uma falha ou está em manutenção, a próxima ainda contém. São três." data-en="Defense in depth means independent layers: if one fails or is under maintenance, the next still contains. There are three.">Defesa em profundidade significa camadas independentes: se uma falha ou está em manutenção, a próxima ainda contém. São três.</p>
 
   <figure class="diagram">
   <svg viewBox="0 0 760 300" role="img" aria-labelledby="arch-title">
@@ -44,24 +65,24 @@
       <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#38e1d3"/></marker>
     </defs>
     <rect x="20" y="120" width="120" height="58" rx="8" fill="#121826" stroke="#243043"/>
-    <text x="80" y="145" fill="#e8edf6" font-size="13" text-anchor="middle" font-family="monospace">Agente IA</text>
+    <text x="80" y="145" fill="#e8edf6" font-size="13" text-anchor="middle" font-family="monospace">AI Agent</text>
     <text x="80" y="163" fill="#8595ab" font-size="11" text-anchor="middle">(Claude, Cursor…)</text>
     <rect x="200" y="40" width="160" height="64" rx="8" fill="#0d1424" stroke="#21a99e"/>
     <text x="280" y="64" fill="#38e1d3" font-size="13" text-anchor="middle" font-weight="bold">1 · Pretool hook</text>
     <text x="280" y="82" fill="#b8c4d6" font-size="11" text-anchor="middle">write-time · exit 2</text>
-    <text x="280" y="96" fill="#8595ab" font-size="10" text-anchor="middle">síncrono, fail-closed</text>
+    <text x="280" y="96" fill="#8595ab" font-size="10" text-anchor="middle">synchronous, fail-closed</text>
     <rect x="200" y="120" width="160" height="64" rx="8" fill="#0d1424" stroke="#21a99e"/>
     <text x="280" y="144" fill="#38e1d3" font-size="13" text-anchor="middle" font-weight="bold">2 · Daemon</text>
     <text x="280" y="162" fill="#b8c4d6" font-size="11" text-anchor="middle">filesystem watcher</text>
-    <text x="280" y="176" fill="#8595ab" font-size="10" text-anchor="middle">assíncrono → quarentena</text>
+    <text x="280" y="176" fill="#8595ab" font-size="10" text-anchor="middle">async → quarantine</text>
     <rect x="200" y="200" width="160" height="64" rx="8" fill="#0d1424" stroke="#21a99e"/>
     <text x="280" y="224" fill="#38e1d3" font-size="13" text-anchor="middle" font-weight="bold">3 · eBPF (Linux)</text>
-    <text x="280" y="242" fill="#b8c4d6" font-size="11" text-anchor="middle">BPF-LSM no kernel</text>
+    <text x="280" y="242" fill="#b8c4d6" font-size="11" text-anchor="middle">BPF-LSM in kernel</text>
     <text x="280" y="256" fill="#8595ab" font-size="10" text-anchor="middle">exec + egress · -EPERM</text>
     <rect x="440" y="80" width="170" height="140" rx="8" fill="#121826" stroke="#243043"/>
     <text x="525" y="104" fill="#e8edf6" font-size="13" text-anchor="middle" font-weight="bold">scan_content()</text>
-    <text x="525" y="124" fill="#8595ab" font-size="10" text-anchor="middle">byte · entropia</text>
-    <text x="525" y="138" fill="#8595ab" font-size="10" text-anchor="middle">regex · manifesto</text>
+    <text x="525" y="124" fill="#8595ab" font-size="10" text-anchor="middle">byte · entropy</text>
+    <text x="525" y="138" fill="#8595ab" font-size="10" text-anchor="middle">regex · manifest</text>
     <text x="525" y="152" fill="#8595ab" font-size="10" text-anchor="middle">ide · exfil · AST</text>
     <text x="525" y="166" fill="#8595ab" font-size="10" text-anchor="middle">decoder recursivo</text>
     <text x="525" y="192" fill="#38e1d3" font-size="11" text-anchor="middle">compute_severity</text>
@@ -75,27 +96,27 @@
     <line x1="360" y1="120" x2="436" y2="140" stroke="#38e1d3" stroke-width="1.5" marker-end="url(#ah)"/>
     <line x1="610" y1="150" x2="646" y2="150" stroke="#38e1d3" stroke-width="1.5" marker-end="url(#ah)"/>
   </svg>
-  <figcaption>As camadas 1 e 2 compartilham o motor <code>scan_content</code>; a camada 3 (eBPF) é um backstop independente no kernel.</figcaption>
+  <figcaption data-pt="As camadas 1 e 2 compartilham o motor <code>scan_content</code>; a camada 3 (eBPF) é um backstop independente no kernel." data-en="Layers 1 and 2 share the <code>scan_content</code> engine; layer 3 (eBPF) is an independent kernel backstop.">As camadas 1 e 2 compartilham o motor <code>scan_content</code>; a camada 3 (eBPF) é um backstop independente no kernel.</figcaption>
   </figure>
 
-  <h2>Por que importa</h2>
-  <p>As camadas 1 e 2 usam o <strong>mesmo motor de conteúdo</strong>, então o veredito de segurança é idêntico para bytes idênticos, seja na hora da escrita (pretool) ou no filesystem (daemon). Eu deixei isso declarado e verificado no próprio código: a fonte única de regras de conteúdo é a <code>denylist-defender.json</code> embutida, aplicada pela camada de regex e compartilhada pelas duas camadas.</p>
+  <h2 data-pt="Por que importa" data-en="Why it matters">Por que importa</h2>
+  <p data-pt="As camadas 1 e 2 usam o <strong>mesmo motor de conteúdo</strong>, então o veredito de segurança é idêntico para bytes idênticos, seja na hora da escrita (pretool) ou no filesystem (daemon). Isso está declarado e verificado no próprio código: a fonte única de regras de conteúdo é a <code>denylist-defender.json</code> embutida, aplicada pela camada de regex e compartilhada pelas duas camadas." data-en="Layers 1 and 2 use the <strong>same content engine</strong>, so the security verdict is identical for identical bytes, whether at write time (pretool) or on the filesystem (daemon). This is declared and verified in the code itself: the single source of content rules is the embedded <code>denylist-defender.json</code>, applied by the regex layer and shared by both layers.">As camadas 1 e 2 usam o <strong>mesmo motor de conteúdo</strong>, então o veredito de segurança é idêntico para bytes idênticos, seja na hora da escrita (pretool) ou no filesystem (daemon). Isso está declarado e verificado no próprio código: a fonte única de regras de conteúdo é a <code>denylist-defender.json</code> embutida, aplicada pela camada de regex e compartilhada pelas duas camadas.</p>
 
-  <h2>Como se correlaciona: o caminho do comando</h2>
-  <p>O fluxo que amarra os dez grupos é este. O agente pede uma ação. O pretool a traduz (o nome da ferramenta vira uma intenção, <code>pre_run_command</code> / <code>pre_write_code</code>), passa o conteúdo pelo motor, e o motor devolve uma severidade. Se for bloqueio, o processo sai com <code>exit 2</code>, e a IDE entende isso como "negado". Se um arquivo hostil escapou para o disco, o daemon o encontra e o move para a quarentena. No Linux, se alguém tentar <em>executar</em> um binário destrutivo, o eBPF nega no kernel com <code>-EPERM</code>, mesmo que o pretool esteja desconectado.</p>
+  <h2 data-pt="Como se correlaciona: o caminho do comando" data-en="How it correlates: the command path">Como se correlaciona: o caminho do comando</h2>
+  <p data-pt="O fluxo que amarra os dez grupos é este. O agente pede uma ação. O pretool a traduz (o nome da ferramenta vira uma intenção, <code>pre_run_command</code> / <code>pre_write_code</code>), passa o conteúdo pelo motor, e o motor devolve uma severidade. Se for bloqueio, o processo sai com <code>exit 2</code>, e a IDE entende isso como &quot;negado&quot;. Se um arquivo hostil escapou para o disco, o daemon o encontra e o move para a quarentena. No Linux, se alguém tentar <em>executar</em> um binário destrutivo, o eBPF nega no kernel com <code>-EPERM</code>, mesmo que o pretool esteja desconectado." data-en="The flow that ties the ten groups together is this. The agent requests an action. The pretool translates it (the tool name becomes an intent, <code>pre_run_command</code> / <code>pre_write_code</code>), passes the content through the engine, and the engine returns a severity. If it is a block, the process exits with <code>exit 2</code>, and the IDE reads that as &quot;denied&quot;. If a hostile file escaped to disk, the daemon finds it and moves it to quarantine. On Linux, if someone tries to <em>execute</em> a destructive binary, eBPF denies it in the kernel with <code>-EPERM</code>, even if the pretool is disconnected.">O fluxo que amarra os dez grupos é este. O agente pede uma ação. O pretool a traduz (o nome da ferramenta vira uma intenção, <code>pre_run_command</code> / <code>pre_write_code</code>), passa o conteúdo pelo motor, e o motor devolve uma severidade. Se for bloqueio, o processo sai com <code>exit 2</code>, e a IDE entende isso como "negado". Se um arquivo hostil escapou para o disco, o daemon o encontra e o move para a quarentena. No Linux, se alguém tentar <em>executar</em> um binário destrutivo, o eBPF nega no kernel com <code>-EPERM</code>, mesmo que o pretool esteja desconectado.</p>
 
   <figure class="diagram">
-    <img src="../diagramas/fluxo.svg" alt="Fluxo completo do Nemesis: o agente de IA tenta uma ação; a camada 1 (pretool) intercepta antes de executar e bloqueia o hostil com exit 2; a camada 2 (daemon) isola em quarentena o que escapou para o disco; a camada 3 (eBPF, no kernel) é a rede de segurança; tudo é registrado localmente.">
-    <figcaption>O caminho completo do comando: da ação do agente ao veredito, com as três camadas e o log 100% local.</figcaption>
+    <img src="../diagramas/fluxo.svg" alt="Fluxo completo do Nemesis: o agente de IA tenta uma ação; a camada 1 (pretool) intercepta antes de executar e bloqueia o hostil com exit 2; a camada 2 (daemon) isola em quarentena o que escapou para o disco; a camada 3 (eBPF, no kernel) é a rede de segurança; tudo é registrado localmente." data-alt-en="Nemesis flow: the agent attempts an action; layer 1 (pretool) blocks the hostile one with exit 2; layer 2 (daemon) quarantines what escaped; layer 3 (eBPF, kernel) is the safety net; everything is logged locally.">
+    <figcaption data-pt="O caminho completo do comando: da ação do agente ao veredito, com as três camadas e o log 100% local." data-en="The full command path: from the agent action to the verdict, with the three layers and the 100% local log.">O caminho completo do comando: da ação do agente ao veredito, com as três camadas e o log 100% local.</figcaption>
   </figure>
 
   <figure class="diagram">
-    <img src="../diagramas/tres-camadas.svg" alt="Comparação das três camadas lado a lado: quando agem, onde rodam, o que fazem e o que pegam. Camadas independentes; a proteção é a soma delas.">
-    <figcaption>As três camadas lado a lado: quando, onde, o que fazem e o que pegam.</figcaption>
+    <img src="../diagramas/tres-camadas.svg" alt="Comparação das três camadas lado a lado: quando agem, onde rodam, o que fazem e o que pegam. Camadas independentes; a proteção é a soma delas." data-alt-en="The three layers side by side: when they act, where, what they do and what they catch. Independent layers; protection is their sum.">
+    <figcaption data-pt="As três camadas lado a lado: quando, onde, o que fazem e o que pegam." data-en="The three layers side by side: when, where, what they do and what they catch.">As três camadas lado a lado: quando, onde, o que fazem e o que pegam.</figcaption>
   </figure>
 
-  <h2>Como o Nemesis aplica</h2>
-  <p>O orquestrador é a função <code>scan_content</code>. Eu a escrevi para rodar os estágios em ordem e delegar a decisão final a <code>compute_severity</code>.</p>
+  <h2 data-pt="Como o Nemesis aplica" data-en="How Nemesis applies it">Como o Nemesis aplica</h2>
+  <p data-pt="O orquestrador é a função <code>scan_content</code>. Ela roda os estágios em ordem e delega a decisão final a <code>compute_severity</code>." data-en="The orchestrator is the <code>scan_content</code> function. It runs the stages in order and delegates the final decision to <code>compute_severity</code>.">O orquestrador é a função <code>scan_content</code>. Ela roda os estágios em ordem e delega a decisão final a <code>compute_severity</code>.</p>
   <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:226-298</b> · orquestração do pipeline</span>
   <pre><code class="rust">pub fn scan_content(path: &Path, content: &[u8]) -> DefenderResult {
     if is_path_excluded(path) { /* early return Clean */ }
@@ -110,41 +131,42 @@
     let severity = compute_severity(&all_violations);
     DefenderResult { severity, violations: all_violations, scan_depth, path, language }
 }</code></pre>
-  <p>A arquitetura de crates é um workspace Rust com quatro membros: <code>nemesis-defender</code> (motor + daemon + CLI), <code>ebpf-kernel</code> (Linux), <code>nemesis-doctor</code> (diagnóstico) e <code>ast-linters</code>. O pacote raiz <code>nemesis</code> está na versão 8.2.0 e produz os binários de hook.</p>
+  <p data-pt="A arquitetura de crates é um workspace Rust com quatro membros: <code>nemesis-defender</code> (motor + daemon + CLI), <code>ebpf-kernel</code> (Linux), <code>nemesis-doctor</code> (diagnóstico) e <code>ast-linters</code>. O pacote raiz <code>nemesis</code> está na versão 8.2.0 e produz os binários de hook." data-en="The crate architecture is a Rust workspace with four members: <code>nemesis-defender</code> (engine + daemon + CLI), <code>ebpf-kernel</code> (Linux), <code>nemesis-doctor</code> (diagnostics) and <code>ast-linters</code>. The root package <code>nemesis</code> is at version 8.2.0 and produces the hook binaries.">A arquitetura de crates é um workspace Rust com quatro membros: <code>nemesis-defender</code> (motor + daemon + CLI), <code>ebpf-kernel</code> (Linux), <code>nemesis-doctor</code> (diagnóstico) e <code>ast-linters</code>. O pacote raiz <code>nemesis</code> está na versão 8.2.0 e produz os binários de hook.</p>
   <span class="src-ref">📄 <b>.nemesis/Cargo.toml:1-15</b> · workspace + pacote <code>nemesis</code> v8.2.0</span>
 
-  <h2>Decisões e limites</h2>
-  <p>A ordem comentada em <code>scanner/mod.rs</code> (seis camadas) difere da execução real em <code>lib.rs</code>: na prática o byte tem quatro sub-scans e ainda entram <code>ide_config</code> e <code>exfil_chain</code> antes da AST. Eu sigo o código e explico a diferença no <a href="5-leitura-codigo-ast-pipeline.html">grupo 5</a>. O daemon eu fiz <strong>security-only</strong>: qualidade eu resolvo bloqueando a escrita (reversível), jamais deletando (irreversível), detalhe no <a href="9-defesa-profundidade-decisao.html">grupo 9</a>.</p>
-  <p>E no macOS não há camada de kernel: com o pretool desligado, nada contém; no Linux, o eBPF cobre. Eu nunca assumo proteção que não existe.</p>
+  <h2 data-pt="Decisões e limites" data-en="Decisions and limits">Decisões e limites</h2>
+  <p data-pt="A ordem comentada em <code>scanner/mod.rs</code> (seis camadas) difere da execução real em <code>lib.rs</code>: na prática o byte tem quatro sub-scans e ainda entram <code>ide_config</code> e <code>exfil_chain</code> antes da AST. O código manda, e a diferença está explicada no <a href=&quot;5-leitura-codigo-ast-pipeline.html&quot;>grupo 5</a>. O daemon é <strong>security-only</strong>: qualidade se resolve bloqueando a escrita (reversível), jamais deletando (irreversível), detalhe no <a href=&quot;9-defesa-profundidade-decisao.html&quot;>grupo 9</a>." data-en="The order commented in <code>scanner/mod.rs</code> (six layers) differs from the real execution in <code>lib.rs</code>: in practice the byte layer has four sub-scans and <code>ide_config</code> and <code>exfil_chain</code> also come in before the AST. The code is followed and the difference is explained in <a href=&quot;5-leitura-codigo-ast-pipeline.html&quot;>group 5</a>. The daemon is made <strong>security-only</strong>: quality is solved by blocking the write (reversible), never by deleting (irreversible), detail in <a href=&quot;9-defesa-profundidade-decisao.html&quot;>group 9</a>.">A ordem comentada em <code>scanner/mod.rs</code> (seis camadas) difere da execução real em <code>lib.rs</code>: na prática o byte tem quatro sub-scans e ainda entram <code>ide_config</code> e <code>exfil_chain</code> antes da AST. O código manda, e a diferença está explicada no <a href="5-leitura-codigo-ast-pipeline.html">grupo 5</a>. O daemon é <strong>security-only</strong>: qualidade se resolve bloqueando a escrita (reversível), jamais deletando (irreversível), detalhe no <a href="9-defesa-profundidade-decisao.html">grupo 9</a>.</p>
+  <p data-pt="E no macOS não há camada de kernel: com o pretool desligado, nada contém; no Linux, o eBPF cobre. Nenhuma proteção é assumida onde não existe." data-en="And on macOS there is no kernel layer: with the pretool off, nothing contains; on Linux, eBPF covers it. No protection is assumed where it does not exist.">E no macOS não há camada de kernel: com o pretool desligado, nada contém; no Linux, o eBPF cobre. Nenhuma proteção é assumida onde não existe.</p>
 
-  <h2>Auto-checagem</h2>
-  <details><summary>As camadas pretool e daemon podem divergir no veredito de segurança?</summary>
-  <p>Não para o mesmo conteúdo: ambas chamam <code>scan_content</code>, cuja fonte de regras de segurança é única (<code>denylist-defender.json</code> via camada de regex). A única divergência legítima é a camada de qualidade, exclusiva do pretool no write-time.</p></details>
-  <details><summary>O que é o "coeficiente de proteção" e por que não é a contagem de visitors?</summary>
-  <p>É a soma das camadas independentes (pretool, daemon, eBPF) e das taxonomias de cada uma (denylist embutida, heurísticas de scanner, visitors AST, denylists de comando, allowlist de egress). Visitor é só um método de detecção; contar visitors subconta a proteção real em ordem de grandeza.</p></details>
-  <details><summary>Se eu desligar o pretool no Linux, fico sem nada?</summary>
-  <p>Não. O eBPF segue como backstop no kernel: nega exec de comando destrutivo e conexão fora da allowlist com <code>-EPERM</code>, independente do hook da IDE. No macOS, porém, não há esse backstop.</p></details>
+  <h2 data-pt="Auto-checagem" data-en="Self-check">Auto-checagem</h2>
+  <details><summary data-pt="As camadas pretool e daemon podem divergir no veredito de segurança?" data-en="Can the pretool and daemon layers diverge on the security verdict?">As camadas pretool e daemon podem divergir no veredito de segurança?</summary>
+  <p data-pt="Não para o mesmo conteúdo: ambas chamam <code>scan_content</code>, cuja fonte de regras de segurança é única (<code>denylist-defender.json</code> via camada de regex). A única divergência legítima é a camada de qualidade, exclusiva do pretool no write-time." data-en="Not for the same content: both call <code>scan_content</code>, whose security rule source is single (<code>denylist-defender.json</code> via the regex layer). The only legitimate divergence is the quality layer, exclusive to the pretool at write time.">Não para o mesmo conteúdo: ambas chamam <code>scan_content</code>, cuja fonte de regras de segurança é única (<code>denylist-defender.json</code> via camada de regex). A única divergência legítima é a camada de qualidade, exclusiva do pretool no write-time.</p></details>
+  <details><summary data-pt="O que é o &quot;coeficiente de proteção&quot; e por que não é a contagem de visitors?" data-en="What is the &quot;protection coefficient&quot; and why is it not the count of visitors?">O que é o "coeficiente de proteção" e por que não é a contagem de visitors?</summary>
+  <p data-pt="É a soma das camadas independentes (pretool, daemon, eBPF) e das taxonomias de cada uma (denylist embutida, heurísticas de scanner, visitors AST, denylists de comando, allowlist de egress). Visitor é só um método de detecção; contar visitors subconta a proteção real em ordem de grandeza." data-en="It is the sum of the independent layers (pretool, daemon, eBPF) and each one's taxonomies (embedded denylist, scanner heuristics, AST visitors, command denylists, egress allowlist). A visitor is just a detection method; counting visitors undercounts the real protection by an order of magnitude.">É a soma das camadas independentes (pretool, daemon, eBPF) e das taxonomias de cada uma (denylist embutida, heurísticas de scanner, visitors AST, denylists de comando, allowlist de egress). Visitor é só um método de detecção; contar visitors subconta a proteção real em ordem de grandeza.</p></details>
+  <details><summary data-pt="Desligando o pretool no Linux, sobra alguma proteção?" data-en="With the pretool off on Linux, is there any protection left?">Desligando o pretool no Linux, sobra alguma proteção?</summary>
+  <p data-pt="Não. O eBPF segue como backstop no kernel: nega exec de comando destrutivo e conexão fora da allowlist com <code>-EPERM</code>, independente do hook da IDE. No macOS, porém, não há esse backstop." data-en="Not quite: eBPF remains as a kernel backstop, denying exec of a destructive command and connections outside the egress allowlist with <code>-EPERM</code>, regardless of the IDE hook. On macOS, however, there is no such backstop.">Não. O eBPF segue como backstop no kernel: nega exec de comando destrutivo e conexão fora da allowlist com <code>-EPERM</code>, independente do hook da IDE. No macOS, porém, não há esse backstop.</p></details>
 
-  <h2>Para ir além</h2>
+  <h2 data-pt="Para ir além" data-en="Further reading">Para ir além</h2>
   <ul>
-    <li><a href="https://owasp.org/www-project-proactive-controls/">OWASP Proactive Controls</a> sobre defesa em camadas.</li>
-    <li><a href="https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html">The Rust Book, Cargo Workspaces</a>.</li>
-    <li><a href="https://ebpf.io/what-is-ebpf/">ebpf.io, o que é eBPF</a>.</li>
+    <li><a href="https://owasp.org/www-project-proactive-controls/" data-pt="OWASP Proactive Controls" data-en="<a href=&quot;https://owasp.org/www-project-proactive-controls/&quot;>OWASP Proactive Controls</a> on layered defense.">OWASP Proactive Controls</a> sobre defesa em camadas.</li>
+    <li><a href="https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html" data-pt="The Rust Book, Cargo Workspaces" data-en="<a href=&quot;https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html&quot;>The Rust Book, Cargo Workspaces</a>.">The Rust Book, Cargo Workspaces</a>.</li>
+    <li><a href="https://ebpf.io/what-is-ebpf/" data-pt="ebpf.io, o que é eBPF" data-en="<a href=&quot;https://ebpf.io/what-is-ebpf/&quot;>ebpf.io, what is eBPF</a>.">ebpf.io, o que é eBPF</a>.</li>
   </ul>
 
   <nav class="pager" aria-label="Navegação entre páginas">
-    <a class="prev" href="10-processo-honestidade.html"><span class="lbl">Anterior</span><span class="ttl">Processo e honestidade</span></a>
-    <a class="next" href="../competencias.html"><span class="lbl">Próximo</span><span class="ttl">Competências de engenharia</span></a>
+    <a class="prev" href="10-processo-honestidade.html"><span class="lbl" data-pt="Anterior" data-en="Previous">Anterior</span><span class="ttl" data-pt="Processo e honestidade" data-en="Process and honesty">Processo e honestidade</span></a>
+    <a class="next" href="../competencias.html"><span class="lbl" data-pt="Próximo" data-en="Next">Próximo</span><span class="ttl" data-pt="Competências de engenharia" data-en="Engineering skills">Competências de engenharia</span></a>
   </nav>
-  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p><span data-pt="Citações verificadas contra o repositório." data-en="Citations verified against the repository.">Citações verificadas contra o repositório.</span> <a href="../index.html" data-pt="Voltar ao índice" data-en="Back to the index">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">
-  <div class="t">Nesta página</div>
+  <div class="t" data-pt="Nesta página" data-en="On this page">Nesta página</div>
   <nav id="toc-list"></nav>
 </aside>
 </div>
 </div>
 <script src="../assets/nav.js"></script>
+<script src="../assets/lang.js"></script>
 </body>
 </html>

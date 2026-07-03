@@ -77,6 +77,7 @@ permite?
   está certo" sem prova, "exatamente" sem evidência, "é definitivamente a causa" sem suporte direto.
 
 Regra canônica completa: `.devin/rules/nemesis-epistemic-safety.md`.
+Regra canônica de estilo de documentação: `.devin/rules/nemesis-documentation-style.md`.
 
 ---
 

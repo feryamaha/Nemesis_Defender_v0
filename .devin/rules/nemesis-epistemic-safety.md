@@ -128,8 +128,8 @@ violá-la:
 
 ## Formato de texto
 
-Não usar travessão (em dash) em nenhum texto, em qualquer idioma. Usar vírgula, dois-pontos ou
-parênteses no lugar.
+Regras de estilo de documentação (travessão, primeira pessoa, proporção texto/imagem):
+`.devin/rules/nemesis-documentation-style.md`.
 
 Aplique junto com: as **invariantes de segurança** do `AGENTS.md`, o **SDD pipeline**
 (`.devin/workflows/nemesis-sdd-pipeline.md`) e a disciplina "sintomas-observáveis-primeiro" nas

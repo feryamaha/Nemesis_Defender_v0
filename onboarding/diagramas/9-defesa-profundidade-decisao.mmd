@@ -1,15 +1,15 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart TB
-IND["3 camadas independentes: pretool · daemon · eBPF<br/>se uma falha, a próxima segura"]
+IND["3 independent layers: pretool · daemon · eBPF<br/>if one fails, the next holds"]
 IND ==> DEC
-subgraph DEC["decisão por corroboração"]
+subgraph DEC["decision by corroboration"]
   direction TB
-  TA["sinal confirmatório (Tier A)<br/>deny-list curada, decode → exec, reverse shell,<br/>bypass do Nemesis, exfil chain"] ==>|"1 basta"| MAL["Malicious"]
-  TB2["sinal heurístico (Tier B)<br/>entropia alta, padrão suspeito isolado"] ==>|"só 1 tipo"| SUS["Suspicious<br/>registra e mantém, não move"]
-  TB2 ==>|"2+ tipos concordando"| MAL
+  TA["confirmatory signal (Tier A)<br/>curated deny-list, decode → exec, reverse shell,<br/>Nemesis bypass, exfil chain"] ==>|"1 suffices"| MAL["Malicious"]
+  TB2["heuristic signal (Tier B)<br/>high entropy, isolated suspicious pattern"] ==>|"only 1 type"| SUS["Suspicious<br/>logs and keeps, does not move"]
+  TB2 ==>|"2+ types agreeing"| MAL
 end
-MAL ==> QR["quarentena reversível<br/>move (não deleta) · o humano decide"]
-QR -.-> COEF["Proteção = soma das camadas (o coeficiente),<br/>não a contagem de uma feature."]
+MAL ==> QR["reversible quarantine<br/>moves (does not delete) · the human decides"]
+QR -.-> COEF["Protection = sum of layers (the coefficient),<br/>not the count of a feature."]
 
 classDef ind fill:#1e1830,stroke:#b794f6,color:#efe6ff;
 classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;

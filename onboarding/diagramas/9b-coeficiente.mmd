@@ -1,9 +1,9 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart LR
-L1["CAMADA 1 · pretool<br/>deny-list + motor de scan"] ==>|"+"| L2["CAMADA 2 · daemon<br/>quarentena no filesystem"]
-L2 ==>|"+"| L3["CAMADA 3 · eBPF (kernel)<br/>backstop · Linux · opt-in"]
-L3 ==>|"="| P["PROTEÇÃO<br/>o coeficiente: soma de camadas independentes"]
-P -.-> N["≠ contagem de visitors ou de categorias.<br/>Visitor é método de detecção (feature), não unidade de cobertura.<br/>A prova empírica é a suite de pentest contra o motor real (doctor G7)."]
+L1["LAYER 1 · pretool<br/>deny-list + scan engine"] ==>|"+"| L2["LAYER 2 · daemon<br/>quarantine on the filesystem"]
+L2 ==>|"+"| L3["LAYER 3 · eBPF (kernel)<br/>backstop · Linux · opt-in"]
+L3 ==>|"="| P["PROTEÇÃO<br/>the coefficient: sum of independent layers"]
+P -.-> N["≠ count of visitors or categories.<br/>A visitor is a detection method (feature), not a unit of coverage.<br/>The empirical proof is the pentest suite against the real engine (doctor G7)."]
 
 classDef l1 fill:#0d1f1d,stroke:#38e1d3,color:#e8edf6;
 classDef l2 fill:#0e2a1a,stroke:#5fd38a,color:#e8edf6;

@@ -1,11 +1,11 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart LR
-SRC["fonte C do programa eBPF"] ==> CL["clang<br/>→ bytecode BPF"]
-CL ==> V["VERIFIER do kernel<br/>prova que o programa termina e não acessa<br/>memória inválida; o que não prova, rejeita"]
-V ==> J["JIT<br/>código nativo"]
-J ==> L["ancorado no hook LSM"]
-US["nemesis (userspace)<br/>escreve as regras nos mapas<br/>allowlist-ebpf.toml"] -.-> M["mapas BPF<br/>blocklist de exec · allowlist de egress (CIDR:porta)"]
-M -.->|"o hook consulta a cada exec"| L
+SRC["C source of the eBPF program"] ==> CL["clang<br/>→ BPF bytecode"]
+CL ==> V["kernel VERIFIER<br/>proves the program terminates and touches no<br/>invalid memory; what it cannot prove, it rejects"]
+V ==> J["JIT<br/>native code"]
+J ==> L["anchored at the LSM hook"]
+US["nemesis (userspace)<br/>writes the rules into the maps<br/>allowlist-ebpf.toml"] -.-> M["BPF maps<br/>exec blocklist · egress allowlist (CIDR:port)"]
+M -.->|"the hook checks on every exec"| L
 
 classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;
 classDef kern fill:#1e1830,stroke:#b794f6,color:#efe6ff;

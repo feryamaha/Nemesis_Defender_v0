@@ -1,4 +1,4 @@
-<svg viewBox="0 0 980 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Texto hostil entra pelo próprio pedido (injeção direta) ou por conteúdo que o agente lê (injeção indireta); o IDE poisoning mira arquivos de config tratados como regra do projeto; o Nemesis escaneia a config como conteúdo não-confiável e bloqueia.">
+<svg viewBox="0 0 980 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hostile text enters through the request itself (direct injection) or through content the agent reads (indirect injection); IDE poisoning targets config files treated as project rules; Nemesis scans config as untrusted content and blocks.">
   <defs>
     <marker id="arr7" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#56708f"/></marker>
     <marker id="arr7Bad" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#ff6b6b"/></marker>
@@ -14,46 +14,46 @@
 
   <!-- ataque -->
   <rect x="320" y="24" width="340" height="76" rx="10" fill="#2a1014" stroke="#ff6b6b"/>
-  <text x="490" y="54" text-anchor="middle" class="t" fill="#ffd7d7">texto hostil escondido em conteúdo</text>
-  <text x="490" y="78" text-anchor="middle" class="s" fill="#e8a0a0">para um LLM, todo contexto é texto</text>
+  <text x="490" y="54" text-anchor="middle" class="t" fill="#ffd7d7">hostile text hidden in content</text>
+  <text x="490" y="78" text-anchor="middle" class="s" fill="#e8a0a0">for an LLM, all context is text</text>
 
   <path class="edge" d="M490 100 V126" marker-end="url(#arr7)"/>
 
   <!-- decisão -->
   <polygon points="490,128 620,182 490,236 360,182" fill="#121826" stroke="#38e1d3"/>
-  <text x="490" y="188" text-anchor="middle" class="t">porta de entrada?</text>
+  <text x="490" y="188" text-anchor="middle" class="t">entry point?</text>
 
   <!-- direta -->
   <path class="edge" d="M400 216 C320 250 260 268 216 280" marker-end="url(#arr7)"/>
   <rect x="60" y="284" width="270" height="80" rx="10" fill="#121826" stroke="#38e1d3"/>
-  <text x="195" y="314" text-anchor="middle" class="t">injeção direta</text>
-  <text x="195" y="336" text-anchor="middle" class="s">a instrução hostil vem no próprio</text>
-  <text x="195" y="352" text-anchor="middle" class="s">pedido do usuário</text>
+  <text x="195" y="314" text-anchor="middle" class="t">direct injection</text>
+  <text x="195" y="336" text-anchor="middle" class="s">the hostile instruction comes in</text>
+  <text x="195" y="352" text-anchor="middle" class="s">the user request itself</text>
 
   <!-- indireta -->
   <path class="edge" d="M580 216 C660 250 720 268 764 280" marker-end="url(#arr7)"/>
   <rect x="650" y="284" width="300" height="80" rx="10" fill="#121826" stroke="#38e1d3"/>
-  <text x="800" y="314" text-anchor="middle" class="t">injeção indireta</text>
-  <text x="800" y="336" text-anchor="middle" class="s">escondida em conteúdo que o agente lê:</text>
-  <text x="800" y="352" text-anchor="middle" class="s">README, código, issue, dependência</text>
+  <text x="800" y="314" text-anchor="middle" class="t">indirect injection</text>
+  <text x="800" y="336" text-anchor="middle" class="s">hidden in content the agent reads:</text>
+  <text x="800" y="352" text-anchor="middle" class="s">README, code, issue, dependency</text>
 
   <!-- IDE poisoning -->
   <path class="edge" d="M800 364 V392" stroke="#ff6b6b" marker-end="url(#arr7Bad)"/>
   <rect x="620" y="396" width="340" height="92" rx="10" fill="#2a1014" stroke="#ff6b6b"/>
   <text x="790" y="426" text-anchor="middle" class="t" fill="#ffd7d7">IDE POISONING</text>
-  <text x="790" y="448" text-anchor="middle" class="s" fill="#e8a0a0">config de IDE tratada como "regra do projeto":</text>
-  <text x="790" y="466" text-anchor="middle" class="s" fill="#e8a0a0">autoridade falsa · resultado de scan falso</text>
+  <text x="790" y="448" text-anchor="middle" class="s" fill="#e8a0a0">IDE config treated as "project rule":</text>
+  <text x="790" y="466" text-anchor="middle" class="s" fill="#e8a0a0">fake authority · fake scan result</text>
 
   <!-- Nemesis -->
   <path class="edge" d="M195 364 C210 420 250 448 296 462" stroke="#38e1d3" marker-end="url(#arr7C)"/>
   <path class="edge" d="M616 452 C560 460 520 462 484 464" stroke="#38e1d3" marker-end="url(#arr7C)"/>
   <rect x="300" y="420" width="180" height="88" rx="10" fill="#0d1f1d" stroke="#38e1d3" stroke-width="1.6"/>
   <text x="390" y="450" text-anchor="middle" class="t">Nemesis</text>
-  <text x="390" y="472" text-anchor="middle" class="s">escaneia config como conteúdo</text>
-  <text x="390" y="490" text-anchor="middle" class="s">não-confiável · nunca isenta</text>
+  <text x="390" y="472" text-anchor="middle" class="s">scans config as untrusted</text>
+  <text x="390" y="490" text-anchor="middle" class="s">content · never exempt</text>
 
   <!-- veredito -->
   <path class="edge" d="M390 508 V528" stroke="#ff6b6b" marker-end="url(#arr7Bad)"/>
   <rect x="290" y="530" width="200" height="0" fill="none"/>
-  <text x="390" y="548" text-anchor="middle" class="t m" fill="#ff6b6b">sinaliza + bloqueia (exit 2)</text>
+  <text x="390" y="548" text-anchor="middle" class="t m" fill="#ff6b6b">flags + blocks (exit 2)</text>
 </svg>
