@@ -49,5 +49,5 @@
   <rect x="190" y="300" width="600" height="96" rx="8" fill="#0c1019" stroke="#21a99e" stroke-dasharray="4 3"/>
   <text x="490" y="330" text-anchor="middle" class="t" fill="#b8c4d6" font-size="13">A decisão é o número, nunca o texto impresso.</text>
   <text x="490" y="354" text-anchor="middle" class="s" fill="#b8c4d6">0 = sucesso · ≠0 = falha (convenção POSIX) · 2 = "bloqueie" (contrato com as IDEs de agente).</text>
-  <text x="490" y="376" text-anchor="middle" class="s" fill="#b8c4d6">O kernel sempre entrega o status ao pai — é um fato do SO, não uma sugestão ao modelo.</text>
+  <text x="490" y="376" text-anchor="middle" class="s" fill="#b8c4d6">O kernel sempre entrega o status ao pai: é um fato do SO, não uma sugestão ao modelo.</text>
 </svg>

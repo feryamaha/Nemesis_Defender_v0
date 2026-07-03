@@ -57,5 +57,5 @@
 
   <rect x="290" y="398" width="400" height="68" rx="10" fill="#0e2a1a" stroke="#5fd38a" stroke-width="1.6"/>
   <text x="490" y="428" text-anchor="middle" class="t" fill="#d7ffe6">FAIL-CLOSED</text>
-  <text x="490" y="450" text-anchor="middle" class="s" fill="#9fd8b4">na dúvida, nega — o erro nunca vira porta aberta</text>
+  <text x="490" y="450" text-anchor="middle" class="s" fill="#9fd8b4">na dúvida, nega: o erro nunca vira porta aberta</text>
 </svg>

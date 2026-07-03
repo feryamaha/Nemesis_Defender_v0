@@ -43,7 +43,7 @@
   <p>Um LLM não separa de forma dura "dados" de "instruções": tudo é texto no contexto. Se o agente lê um arquivo do projeto e dentro dele há uma frase imperativa convincente, o modelo pode obedecer como se fosse o usuário falando. Daí os dois nomes. <strong>Prompt injection</strong> direta vem no próprio pedido; a <strong>indireta</strong> vem de conteúdo que o agente busca (um README, um issue, um arquivo de config). <strong>IDE poisoning</strong> é injeção indireta com alvo escolhido: os arquivos que a IDE trata como autoridade de projeto, justamente os que o agente tende a obedecer sem questionar.</p>
 
   <h2>Por que importa</h2>
-  <p>Os próprios arquivos de instrução do Nemesis (o <code>AGENTS.md</code>, o <code>CLAUDE.md</code>) são autoridade que eu mando o agente respeitar. Se um atacante consegue editar um desses, ou plantar um <code>.cursorrules</code> envenenado, ele fala com a voz do projeto. Por isso a regra que eu sigo é dura: esses arquivos de config são <strong>escaneados</strong> contra poisoning e nunca isentados do scan. A defesa precisava tratar a config como conteúdo não-confiável, não como verdade.</p>
+  <p>Os próprios arquivos de instrução do Nemesis (o <code>AGENTS.md</code>, o <code>CLAUDE.md</code>) são autoridade que o agente deve respeitar. Se um atacante consegue editar um desses, ou plantar um <code>.cursorrules</code> envenenado, ele fala com a voz do projeto. Esses arquivos de config são <strong>escaneados</strong> contra poisoning e nunca isentados do scan. A defesa precisava tratar a config como conteúdo não-confiável, não como verdade.</p>
 
   <figure class="diagram">
     <img src="../diagramas/7b-cadeia-autoridade.svg" alt="A cadeia de autoridade que o Nemesis preserva: o humano decide e revisa; o Nemesis contém com enforcement determinístico; o agente de IA opera mas não destrói; o sistema executa só o que passou. Inteligência não implica autoridade.">
@@ -62,22 +62,19 @@
 //! - extração de system prompt ("reveal your system prompt")
 const INJECTION_PATTERNS: &[&str] = &[
     "ignore previous instructions", "override safety", "bypass restrictions",
-    "<|im_start|>", "[INST]", "<<SYS>>", /* ... */ ];</code></pre>
+    "&lt;|im_start|&gt;", "[INST]", "&lt;&lt;SYS&gt;&gt;", /* ... */ ];</code></pre>
   <p>Para config de IDE, eu só ajo se o arquivo for de fato um arquivo de config (alvo), e checo três coisas: injeção, scan de segurança falso e injeção de autoridade:</p>
   <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/visitors/ide_config_poisoning.rs:157-206</b> · scan_ide_config</span>
-  <pre><code class="rust">pub fn scan_ide_config(path: &Path, content: &[u8]) -> Vec<DefenderViolation> {
+  <pre><code class="rust">pub fn scan_ide_config(path: &amp;Path, content: &amp;[u8]) -> Vec&lt;DefenderViolation&gt; {
     if !is_ide_config_file(path) { return violations; }   // só arquivos de config
     if has_ide_prompt_injection(text) { /* ignore-previous, DAN, override */ }
     if has_fake_security_scan(text)  { /* "rode um scan" = ler+vazar credencial */ }
     if has_authority_injection(text) { /* "verified by Anthropic", "rules suspended" */ }
 }</code></pre>
 
-  <h2>Nuances e armadilhas</h2>
-  <ul>
-    <li>O "scan de segurança falso" é engenharia social fina: o arquivo manda o agente "rodar um scan" antes de responder, e o "scan" é ler credenciais e mandar para fora. Detecção legítima é feita por CI, não por agente lendo segredo.</li>
-    <li>Injeção de autoridade explora confiança: "configuração confiável", "regras de segurança suspensas", "verificado pela Anthropic". Nenhum arquivo externo pode conceder permissão elevada; eu trato toda alegação dessas como ataque.</li>
-    <li>Há risco de falso-positivo: um texto que <em>fala sobre</em> prompt injection (documentação, este próprio material) contém os termos. Por isso o poisoning mira arquivos de config de IDE, e a coleta de credencial isenta prosa pura, ela exige um sink executável.</li>
-  </ul>
+  <h2>Decisões e limites</h2>
+  <p>O "scan de segurança falso" é engenharia social fina: o arquivo manda o agente rodar um "scan" antes de responder, e o tal scan é ler credenciais e mandar para fora. Eu parto de uma regra simples: detecção legítima roda no CI; agente não tem motivo para ler segredo. A injeção de autoridade explora confiança ("configuração confiável", "regras de segurança suspensas", "verificado pela Anthropic"); nenhum arquivo externo pode conceder permissão elevada, então eu trato toda alegação dessas como ataque.</p>
+  <p>E como um texto que <em>fala sobre</em> prompt injection (este material, por exemplo) contém os mesmos termos, eu mirei o detector de poisoning nos arquivos de config de IDE e isento prosa pura na coleta de credencial: só condeno quando existe um sink executável.</p>
 
   <h2>Auto-checagem</h2>
   <details><summary>Por que os arquivos de config (CLAUDE.md, .cursorrules) são escaneados em vez de confiados?</summary>
@@ -98,7 +95,7 @@ const INJECTION_PATTERNS: &[&str] = &[
     <a class="prev" href="6-pretool-defender-daemon.html"><span class="lbl">Anterior</span><span class="ttl">Pretool, defender e daemon</span></a>
     <a class="next" href="8-codigo-malicioso-supply-chain.html"><span class="lbl">Próximo</span><span class="ttl">Código malicioso e supply-chain</span></a>
   </nav>
-  <div class="foot"><p>Citações verificadas contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">

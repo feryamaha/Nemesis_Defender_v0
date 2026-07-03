@@ -49,5 +49,5 @@
   <path d="M735 258 C700 276 690 282 671 284" fill="none" stroke="#21a99e" stroke-width="1.2" stroke-dasharray="4 3"/>
   <rect x="245" y="260" width="420" height="54" rx="8" fill="#0c1019" stroke="#21a99e" stroke-dasharray="4 3"/>
   <text x="455" y="282" text-anchor="middle" class="s" fill="#b8c4d6">O código de saída é entregue pelo kernel ao processo pai:</text>
-  <text x="455" y="300" text-anchor="middle" class="s" fill="#b8c4d6">determinístico — o agente não tem como discutir.</text>
+  <text x="455" y="300" text-anchor="middle" class="s" fill="#b8c4d6">determinístico: o agente não tem como discutir.</text>
 </svg>

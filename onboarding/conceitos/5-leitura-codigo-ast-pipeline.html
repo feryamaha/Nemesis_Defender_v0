@@ -47,7 +47,7 @@
 
   <figure class="diagram">
     <img src="../diagramas/5b-ast-visitor.svg" alt="O código-fonte é parseado pelo tree-sitter em uma árvore sintática; um visitor percorre os nós e reconhece o padrão semântico decode seguido de eval, mesmo com variáveis renomeadas; o resultado vira sinal para compute_severity.">
-    <figcaption>Regex vê texto; o visitor vê estrutura. Renomear a variável não muda a árvore — o padrão <em>decode → exec</em> continua lá.</figcaption>
+    <figcaption>Regex vê texto; o visitor vê estrutura. Renomear a variável não muda a árvore: o padrão <em>decode → exec</em> continua lá.</figcaption>
   </figure>
 
   <h2>Como se correlaciona</h2>
@@ -65,7 +65,7 @@ violations.extend(visitors::unicode_steg::visit_js_node(node, source));
 violations.extend(visitors::prompt_injection::visit_js_node(node, source));
 // ...recursão nos filhos</code></pre>
   <p>O pipeline real é orquestrado em <code>scan_content</code>, na ordem efetiva (byte com quatro sub-scans, depois entropia, regex, manifesto, ide, exfil, AST e decoder):</p>
-  <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:248-298</b> · execução real do pipeline</span>
+  <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:242-288</b> · execução real do pipeline</span>
   <pre><code class="rust">let byte_violations = scanner::byte_scanner::scan_bidi(content);      // + pua, homoglyph, zero_width
 let entropy_violations = scanner::entropy::scan_high_entropy(content);
 let regex_violations = scanner::regex_layer::scan(content, &language);
@@ -83,13 +83,6 @@ const MAX_STRING_LEN: usize = 500;</code></pre>
   <pre><code class="rust">// Pass 1: coletar fontes contaminadas
 // Pass 2: propagar taint por atribuições
 // Pass 3: detectar var contaminada alcançando EXEC_SINK / NETWORK_SINK</code></pre>
-
-  <h2>Nuances e armadilhas</h2>
-  <ul>
-    <li>O comentário no cabeçalho de <code>scanner/mod.rs</code> descreve <strong>seis</strong> camadas, mas a execução em <code>lib.rs</code> tem mais chamadas: o byte sozinho são quatro sub-scans e ainda entram <code>ide_config</code> e <code>exfil_chain</code>. Onde a doc e o código divergem, o código manda; eu sigo o código.</li>
-    <li>A AST só roda em linguagens suportadas (JS, TS, Bash, Python). Arquivo de tipo desconhecido recebe só byte, entropia, regex e os scans de conteúdo, ainda assim cobre muita coisa.</li>
-    <li>Entropia é heurística (corroborante), não confirma sozinha: CSS de utilitário fica perto do limiar. Por isso o limiar é 5.5 e o tamanho é limitado, para não marcar o que é legítimo.</li>
-  </ul>
 
   <h2>Auto-checagem</h2>
   <details><summary>Por que ler a AST em vez de só procurar substrings?</summary>
@@ -110,7 +103,7 @@ const MAX_STRING_LEN: usize = 500;</code></pre>
     <a class="prev" href="4-rust-defesa.html"><span class="lbl">Anterior</span><span class="ttl">Rust como linguagem de defesa</span></a>
     <a class="next" href="6-pretool-defender-daemon.html"><span class="lbl">Próximo</span><span class="ttl">Pretool, defender e daemon</span></a>
   </nav>
-  <div class="foot"><p>Citações verificadas contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">

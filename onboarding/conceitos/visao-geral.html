@@ -96,7 +96,7 @@
 
   <h2>Como o Nemesis aplica</h2>
   <p>O orquestrador é a função <code>scan_content</code>. Eu a escrevi para rodar os estágios em ordem e delegar a decisão final a <code>compute_severity</code>.</p>
-  <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:233-298</b> · orquestração do pipeline</span>
+  <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:226-298</b> · orquestração do pipeline</span>
   <pre><code class="rust">pub fn scan_content(path: &Path, content: &[u8]) -> DefenderResult {
     if is_path_excluded(path) { /* early return Clean */ }
     let language = detect_language(path);
@@ -113,12 +113,9 @@
   <p>A arquitetura de crates é um workspace Rust com quatro membros: <code>nemesis-defender</code> (motor + daemon + CLI), <code>ebpf-kernel</code> (Linux), <code>nemesis-doctor</code> (diagnóstico) e <code>ast-linters</code>. O pacote raiz <code>nemesis</code> está na versão 8.2.0 e produz os binários de hook.</p>
   <span class="src-ref">📄 <b>.nemesis/Cargo.toml:1-15</b> · workspace + pacote <code>nemesis</code> v8.2.0</span>
 
-  <h2>Nuances e armadilhas</h2>
-  <ul>
-    <li>A ordem comentada em <code>scanner/mod.rs</code> (seis camadas) difere da execução real em <code>lib.rs</code>: na prática o byte tem quatro sub-scans e ainda entram <code>ide_config</code> e <code>exfil_chain</code> antes da AST. O código é a fonte da verdade; eu explico a diferença no <a href="5-leitura-codigo-ast-pipeline.html">grupo 5</a>.</li>
-    <li>O daemon é <strong>security-only</strong>: regra de qualidade nunca chega nele, porque qualidade implica bloquear escrita (reversível), jamais deletar (irreversível). Detalhe no <a href="9-defesa-profundidade-decisao.html">grupo 9</a>.</li>
-    <li>No macOS não há camada de kernel: com o pretool desligado, nada contém. No Linux, o eBPF cobre. Eu nunca assumo proteção que não existe.</li>
-  </ul>
+  <h2>Decisões e limites</h2>
+  <p>A ordem comentada em <code>scanner/mod.rs</code> (seis camadas) difere da execução real em <code>lib.rs</code>: na prática o byte tem quatro sub-scans e ainda entram <code>ide_config</code> e <code>exfil_chain</code> antes da AST. Eu sigo o código e explico a diferença no <a href="5-leitura-codigo-ast-pipeline.html">grupo 5</a>. O daemon eu fiz <strong>security-only</strong>: qualidade eu resolvo bloqueando a escrita (reversível), jamais deletando (irreversível), detalhe no <a href="9-defesa-profundidade-decisao.html">grupo 9</a>.</p>
+  <p>E no macOS não há camada de kernel: com o pretool desligado, nada contém; no Linux, o eBPF cobre. Eu nunca assumo proteção que não existe.</p>
 
   <h2>Auto-checagem</h2>
   <details><summary>As camadas pretool e daemon podem divergir no veredito de segurança?</summary>
@@ -139,7 +136,7 @@
     <a class="prev" href="10-processo-honestidade.html"><span class="lbl">Anterior</span><span class="ttl">Processo e honestidade</span></a>
     <a class="next" href="../competencias.html"><span class="lbl">Próximo</span><span class="ttl">Competências de engenharia</span></a>
   </nav>
-  <div class="foot"><p>Citações verificadas contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">

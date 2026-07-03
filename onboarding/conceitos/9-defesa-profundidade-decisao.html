@@ -55,7 +55,7 @@
 
   <h2>Como o Nemesis aplica</h2>
   <p>A decisão é em dois tiers. Tier A (confirmatório) age sozinho; Tier B (corroborante) conta tipos distintos:</p>
-  <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:382-443</b> · Tier A/B e compute_severity</span>
+  <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:377-437</b> · Tier A/B e compute_severity</span>
   <pre><code class="rust">const CONFIRMATORY_VISITORS: &[&str] = &[  // Tier A: 1 hit confirma
     "decode_exec", "reverse_shell", "exfil_chain", "taint_tracker",
     "unicode_bidi", "ide_config_poisoning", "nemesis_bypass", /* ... */ ];
@@ -73,12 +73,9 @@ const CORROBORATING_VISITORS: &[&str] = &[ // Tier B: heurístico, sujeito a FP
   <p>No Linux, o eBPF é a terceira camada, independente do hook: o pretool só o garante no ar, mas a decisão de kernel não depende do pretool estar conectado.</p>
   <span class="src-ref">📄 <b>.nemesis/hooks/nemesis-pretool-check-unix.rs:945-981</b> · eBPF como backstop</span>
 
-  <h2>Nuances e armadilhas</h2>
-  <ul>
-    <li>Contar <strong>tipos distintos</strong> (não hits) é deliberado: várias ocorrências da mesma causa num arquivo não devem escalar para Malicious. Métodos independentes concordando é que confirma.</li>
-    <li>"Independente" é o ponto: se as três camadas dependessem da mesma condição, não seriam profundidade, seriam a mesma barreira repintada. eBPF no kernel não depende do hook; o daemon não depende da IDE chamar nada.</li>
-    <li>Suspicious não é "deixa passar": é logado e mantido para revisão. A reversibilidade vale também aqui, eu prefiro registrar e observar a deletar na dúvida.</li>
-  </ul>
+  <h2>Decisões e limites</h2>
+  <p>Eu conto <strong>tipos distintos</strong> de sinal, não hits, de propósito: várias ocorrências da mesma causa num arquivo não devem escalar para Malicious; o que confirma é métodos independentes concordando. "Independente" é o ponto da arquitetura: se as três camadas dependessem da mesma condição, seriam a mesma barreira repintada. Desenhei para que o eBPF no kernel não dependa do hook e o daemon não dependa de a IDE chamar nada.</p>
+  <p>E Suspicious não é deixar passar: é registrado e mantido para revisão. A reversibilidade vale também aqui; eu prefiro observar a deletar na dúvida.</p>
 
   <h2>Auto-checagem</h2>
   <details><summary>Por que dois sinais distintos para confirmar (em vez de um heurístico só)?</summary>
@@ -99,7 +96,7 @@ const CORROBORATING_VISITORS: &[&str] = &[ // Tier B: heurístico, sujeito a FP
     <a class="prev" href="8-codigo-malicioso-supply-chain.html"><span class="lbl">Anterior</span><span class="ttl">Código malicioso e supply-chain</span></a>
     <a class="next" href="10-processo-honestidade.html"><span class="lbl">Próximo</span><span class="ttl">Processo e honestidade</span></a>
   </nav>
-  <div class="foot"><p>Citações verificadas contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">

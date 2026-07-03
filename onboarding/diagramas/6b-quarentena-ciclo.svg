@@ -25,7 +25,7 @@
   <text x="387" y="78" text-anchor="middle" class="t" fill="#ffeccb">move para quarentena</text>
   <text x="387" y="100" text-anchor="middle" class="s m" fill="#d9c08a">.nemesis/quarantine/&lt;id&gt;/</text>
   <text x="387" y="122" text-anchor="middle" class="s m" fill="#d9c08a">+ meta.json (o motivo)</text>
-  <text x="387" y="146" text-anchor="middle" class="s" fill="#d9c08a">move — não deleta</text>
+  <text x="387" y="146" text-anchor="middle" class="s" fill="#d9c08a">move: não deleta</text>
 
   <path class="edge" d="M505 108 H536" marker-end="url(#arr6b)"/>
 

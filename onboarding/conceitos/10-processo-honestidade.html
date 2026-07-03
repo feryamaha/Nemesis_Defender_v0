@@ -74,13 +74,9 @@ bash .nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh</code></pr
 pub mod pentest;  pub mod scaffold;  pub mod unit_tests;
 // --quick: pula grupos pesados (G1 compile, G2 testes, G7 pentest)</code></pre>
 
-  <h2>Nuances e armadilhas</h2>
-  <ul>
-    <li><strong>Números de pentest divergem entre fontes:</strong> o cabeçalho do <code>run-pentest.sh</code> diz "184 testes, 26 módulos (v2.0)", enquanto o <code>self-audit.yml</code> e o <code>AGENTS.md</code> citam "194/194". O script auto-detecta e falha se houver gap ou falso-positivo, então o número é dinâmico; eu não fixo um valor que possa defasar e aponto a divergência em vez de escolher um lado.</li>
-    <li><strong>Doctor:</strong> o código nomeia explicitamente G1 (compile), G2 (testes) e G7 (pentest) no texto de ajuda; os demais grupos mapeiam para os módulos de checagem. Eu descrevo por módulo para não inventar rótulos.</li>
-    <li><strong>O self-audit não faz self-scan do fonte:</strong> o código do scanner contém legitimamente as próprias assinaturas de ataque; auto-escanear daria quase 100% de falso-positivo. O self-scan de conteúdo vale só para conteúdo externo.</li>
-    <li>CODEOWNERS, draft e environment só têm efeito com a branch protection configurada no GitHub (domínio do Fernando). Sem isso, são intenção declarada, e eu digo isso.</li>
-  </ul>
+  <h2>Decisões e limites</h2>
+  <p>Os números do pentest divergem entre as fontes do repo: o cabeçalho do <code>run-pentest.sh</code> diz "184 testes, 26 módulos", enquanto o <code>self-audit.yml</code> e o <code>AGENTS.md</code> citam "194/194". O script auto-detecta e falha se houver gap ou falso-positivo, então o número é dinâmico; eu não fixo um valor que possa defasar e aponto a divergência. No doctor, o código nomeia G1 (compile), G2 (testes) e G7 (pentest); os demais grupos eu descrevo pelos módulos de <code>checks/</code> para não inventar rótulo.</p>
+  <p>O self-audit não faz self-scan do fonte: o código do scanner contém, legitimamente, as próprias assinaturas de ataque, e auto-escanear daria quase 100% de falso-positivo. O self-scan de conteúdo vale só para conteúdo externo. E CODEOWNERS, draft e environment só têm efeito com a branch protection ligada no GitHub; sem isso são intenção declarada, e eu digo isso.</p>
 
   <h2>Auto-checagem</h2>
   <details><summary>O que é o problema do trusting-trust e como ele limita o self-audit?</summary>
@@ -101,7 +97,7 @@ pub mod pentest;  pub mod scaffold;  pub mod unit_tests;
     <a class="prev" href="9-defesa-profundidade-decisao.html"><span class="lbl">Anterior</span><span class="ttl">Defesa em profundidade e decisão</span></a>
     <a class="next" href="visao-geral.html"><span class="lbl">Próximo</span><span class="ttl">Visão geral: o sistema convergindo</span></a>
   </nav>
-  <div class="foot"><p>Citações verificadas contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">

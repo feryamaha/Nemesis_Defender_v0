@@ -1,0 +1,17 @@
+%%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
+flowchart LR
+L1["CAMADA 1 · pretool<br/>deny-list + motor de scan"] ==>|"+"| L2["CAMADA 2 · daemon<br/>quarentena no filesystem"]
+L2 ==>|"+"| L3["CAMADA 3 · eBPF (kernel)<br/>backstop · Linux · opt-in"]
+L3 ==>|"="| P["PROTEÇÃO<br/>o coeficiente: soma de camadas independentes"]
+P -.-> N["≠ contagem de visitors ou de categorias.<br/>Visitor é método de detecção (feature), não unidade de cobertura.<br/>A prova empírica é a suite de pentest contra o motor real (doctor G7)."]
+
+classDef l1 fill:#0d1f1d,stroke:#38e1d3,color:#e8edf6;
+classDef l2 fill:#0e2a1a,stroke:#5fd38a,color:#e8edf6;
+classDef l3 fill:#1e1830,stroke:#b794f6,color:#efe6ff;
+classDef ok fill:#0e2a1a,stroke:#5fd38a,color:#d7ffe6;
+classDef note fill:#0c1019,stroke:#21a99e,color:#b8c4d6;
+class L1 l1;
+class L2 l2;
+class L3 l3;
+class P ok;
+class N note;

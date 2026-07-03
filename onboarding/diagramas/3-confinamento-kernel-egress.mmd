@@ -1,12 +1,13 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart TB
-CG["Agent cgroup<br/>scopes enforcement to the agent"]
-CG ==> EX["exec block<br/>agent processes only"]
-CG ==> EG["egress control<br/>agent processes only"]
-EG ==> AL{"dest in allowlist?"}
-AL ==>|"yes"| PASS["connection allowed"]
-AL ==>|"no"| DENY["-EPERM<br/>blocks exfil / C2"]
-LL["Landlock: runs without root<br/>least privilege"] -.-> CG
+LL["Landlock: roda sem root<br/>privilégio mínimo"] -.-> CG
+CG["cgroup do agente<br/>delimita o enforcement só ao agente:<br/>IDE, terminal e sistema ficam de fora"]
+CG ==> EX["bloqueio de exec<br/>só para processos do agente"]
+CG ==> EG["controle de egress<br/>toda conexão de saída do agente"]
+EG ==> AL{"destino na allowlist?<br/>CIDR:porta"}
+AL ==>|"sim"| PASS["conexão permitida<br/>destino aprovado por humano"]
+AL ==>|"não"| DENY["-EPERM<br/>nega por padrão: bloqueia exfiltração e C2"]
+NOTE["allowlist própria e separada (allowlist-ebpf.toml),<br/>editável só por humano"] -.-> AL
 
 classDef ok fill:#0e2a1a,stroke:#5fd38a,color:#d7ffe6;
 classDef blk fill:#2a1014,stroke:#ff6b6b,color:#ffd7d7;
@@ -15,4 +16,4 @@ classDef note fill:#0c1019,stroke:#21a99e,color:#b8c4d6;
 class CG,EX,EG,AL step;
 class PASS ok;
 class DENY blk;
-class LL note;
+class LL,NOTE note;

@@ -82,12 +82,9 @@ const BIDI_WEAK: &[(u32, &str)] = &[ (0x200E, "LRM"), (0xFE0F, "Variation Select
 let (sink_evidence, _)   = match sink_match   { Some(p) => p, None => return Vec::new() };
 // fonte + sink presentes → exfil chain confirmado (visitor "exfil_chain")</code></pre>
 
-  <h2>Nuances e armadilhas</h2>
-  <ul>
-    <li>O <code>decoder.rs</code> (scanner que <em>executa</em> a decodificação) é distinto do <code>visitors/decode_exec.rs</code> (que detecta o <em>padrão</em> decode→exec na AST). Dois ângulos do mesmo vetor, propositalmente separados.</li>
-    <li>A allowlist de env público (<code>NEXT_PUBLIC_*</code>, <code>CLIENT_ID</code>) existe porque sem ela todo route handler que usa um token público mais <code>fetch</code> virava Malicious, causa real de perda de dado no projeto. Segredo de verdade não é env público.</li>
-    <li>Os controles Unicode fracos aparecem em texto legítimo (árabe, hebraico, emoji). Marcá-los sozinhos geraria falso-positivo; por isso eles são corroborantes, não confirmatórios.</li>
-  </ul>
+  <h2>Decisões e limites</h2>
+  <p>O <code>decoder.rs</code> (que <em>executa</em> a decodificação) é distinto do <code>visitors/decode_exec.rs</code> (que detecta o <em>padrão</em> decode→exec na AST): dois ângulos do mesmo vetor, que eu separei de propósito. A allowlist de env público (<code>NEXT_PUBLIC_*</code>, <code>CLIENT_ID</code>) eu criei depois de dor real: sem ela, todo route handler com token público mais <code>fetch</code> virava Malicious. Segredo de verdade não é env público.</p>
+  <p>Os controles Unicode fracos aparecem em texto legítimo (árabe, hebraico, emoji); marcá-los sozinhos geraria falso-positivo, então eu os classifiquei como corroborantes, não confirmatórios.</p>
 
   <h2>Auto-checagem</h2>
   <details><summary>Por que decode sozinho não basta, mas decode → exec sim?</summary>
@@ -108,7 +105,7 @@ let (sink_evidence, _)   = match sink_match   { Some(p) => p, None => return Vec
     <a class="prev" href="7-prompt-injection-ide-poisoning.html"><span class="lbl">Anterior</span><span class="ttl">Prompt injection e IDE poisoning</span></a>
     <a class="next" href="9-defesa-profundidade-decisao.html"><span class="lbl">Próximo</span><span class="ttl">Defesa em profundidade e decisão</span></a>
   </nav>
-  <div class="foot"><p>Citações verificadas contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">

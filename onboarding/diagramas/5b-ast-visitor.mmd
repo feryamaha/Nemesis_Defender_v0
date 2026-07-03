@@ -1,0 +1,13 @@
+%%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
+flowchart LR
+SRC["código-fonte (JS)<br/>const x = atob(p); eval(x);"] ==>|"parse"| TS["tree-sitter<br/>parser real da linguagem"]
+TS ==> AST["árvore sintática (AST)<br/>program → call_expression<br/>callee: eval · args: x ← atob(p)"]
+AST ==>|"o visitor percorre os nós"| SIG["sinal: decode → exec<br/>alimenta compute_severity"]
+SIG -.-> N["Regex vê texto; o visitor vê estrutura.<br/>Renomear variável não engana: a árvore continua a mesma."]
+
+classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;
+classDef out fill:#2a2410,stroke:#f5b54a,color:#ffeccb;
+classDef note fill:#0c1019,stroke:#21a99e,color:#b8c4d6;
+class SRC,TS,AST step;
+class SIG out;
+class N note;

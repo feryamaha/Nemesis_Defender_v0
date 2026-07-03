@@ -1,0 +1,15 @@
+%%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
+flowchart LR
+IDE["IDE / agente<br/>processo pai, orquestra a ação"] ==>|"fork + exec"| H["hook pretool<br/>processo filho, vida curta<br/>stdin ← pedido (JSON)<br/>stdout/stderr → diagnóstico (não decide)"]
+H ==>|"exit(0 | 2)"| K["KERNEL<br/>guarda o status do processo que terminou"]
+K -.->|"wait(): o pai lê o código de saída"| IDE
+K -.-> N["A decisão é o número, nunca o texto impresso.<br/>0 = sucesso · ≠0 = falha (POSIX) · 2 = bloqueie (contrato das IDEs de agente)."]
+
+classDef ag fill:#0d1424,stroke:#5aa9ff,color:#e8edf6;
+classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;
+classDef kern fill:#1e1830,stroke:#b794f6,color:#efe6ff;
+classDef note fill:#0c1019,stroke:#21a99e,color:#b8c4d6;
+class IDE ag;
+class H step;
+class K kern;
+class N note;

@@ -22,7 +22,7 @@
   <rect x="272" y="60" width="215" height="140" rx="12" fill="#0d1f1d" stroke="#38e1d3" stroke-width="1.8"/>
   <text x="379" y="100" text-anchor="middle" class="h" fill="#38e1d3">NEMESIS</text>
   <text x="379" y="130" text-anchor="middle" class="s" fill="#b8c4d6">contém: enforcement</text>
-  <text x="379" y="150" text-anchor="middle" class="s" fill="#b8c4d6">determinístico, categórico —</text>
+  <text x="379" y="150" text-anchor="middle" class="s" fill="#b8c4d6">determinístico, categórico:</text>
   <text x="379" y="170" text-anchor="middle" class="s m" fill="#38e1d3">exit 2 não se negocia</text>
 
   <path d="M487 130 H515" fill="none" stroke="#56708f" stroke-width="1.8" marker-end="url(#arr7b)"/>
@@ -44,5 +44,5 @@
 
   <!-- lema -->
   <text x="490" y="260" text-anchor="middle" fill="#e8edf6" font-size="17" font-style="italic" font-weight="600">"Inteligência não implica autoridade."</text>
-  <text x="490" y="288" text-anchor="middle" class="s">A hipótese Ultron: um agente capaz não precisa ser hostil para causar dano — basta estar confiante e errado.</text>
+  <text x="490" y="288" text-anchor="middle" class="s">A hipótese Ultron: um agente capaz não precisa ser hostil para causar dano: basta estar confiante e errado.</text>
 </svg>

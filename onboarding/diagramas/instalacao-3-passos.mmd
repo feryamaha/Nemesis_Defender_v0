@@ -1,0 +1,12 @@
+%%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
+flowchart LR
+P1["1 · rodar o script<br/>nemesis-install.sh<br/>detecta a IDE, baixa a release, verifica o checksum"] ==> P2["2 · scaffold automático<br/>escreve o hook no formato da sua IDE (schema próprio)<br/>binários em .nemesis/bin/"]
+P2 ==> P3["3 · validar (manual)<br/>reinicie a IDE e rode nemesis-doctor + pentest<br/>veredito esperado: SAUDÁVEL"]
+P3 -.-> N["O install não sobe o daemon nem valida sozinho: por desenho.<br/>Subir o daemon no meio do install faria ele quarentenar o próprio instalador."]
+
+classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;
+classDef ok fill:#0e2a1a,stroke:#5fd38a,color:#d7ffe6;
+classDef note fill:#0c1019,stroke:#21a99e,color:#b8c4d6;
+class P1,P2 step;
+class P3 ok;
+class N note;

@@ -54,8 +54,8 @@
   <!-- red-team -->
   <rect x="310" y="486" width="360" height="84" rx="10" fill="#0e2a1a" stroke="#5fd38a" stroke-width="1.6"/>
   <text x="490" y="516" text-anchor="middle" class="t" fill="#d7ffe6">red-team</text>
-  <text x="490" y="538" text-anchor="middle" class="s" fill="#9fd8b4">prova empírica: 184 casos de ataque contra</text>
-  <text x="490" y="556" text-anchor="middle" class="s" fill="#9fd8b4">o motor real — o pentest é a evidência, não a promessa</text>
+  <text x="490" y="538" text-anchor="middle" class="s" fill="#9fd8b4">prova empírica: a suite de pentest contra o motor real</text>
+  <text x="490" y="556" text-anchor="middle" class="s" fill="#9fd8b4">(o script auto-detecta os casos): evidência, não promessa</text>
 
   <!-- nota lateral -->
   <rect x="40" y="380" width="230" height="120" rx="8" fill="#0c1019" stroke="#21a99e" stroke-dasharray="4 3"/>

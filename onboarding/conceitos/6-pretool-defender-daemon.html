@@ -47,7 +47,7 @@
 
   <figure class="diagram">
     <img src="../diagramas/6b-quarentena-ciclo.svg" alt="Ciclo da quarentena: hostilidade confirmada por corroboração; o arquivo é movido para .nemesis/quarantine com meta.json do motivo; a sessão é barrada com exit 2; o humano revisa com list e show e decide entre restore e purge. Nada é deletado sem decisão humana.">
-    <figcaption>O ciclo de vida da quarentena: mover, registrar o motivo, barrar a sessão e devolver a decisão ao humano — <code>restore</code> ou <code>purge</code>.</figcaption>
+    <figcaption>O ciclo de vida da quarentena: mover, registrar o motivo, barrar a sessão e devolver a decisão ao humano: <code>restore</code> ou <code>purge</code>.</figcaption>
   </figure>
 
   <h2>Como se correlaciona</h2>
@@ -65,7 +65,7 @@
     _ => "pre_write_code",
 };</code></pre>
   <p>O cérebro é a função pura de severidade: instrução probabilística não contém; enforcement determinístico contém. Um sinal confirmatório basta para Malicious; senão, conta-se quantos tipos distintos de sinal corroborante apareceram:</p>
-  <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:420-443</b> · compute_severity (função pura)</span>
+  <span class="src-ref">📄 <b>.nemesis/nemesis-defender/src/lib.rs:413-437</b> · compute_severity (função pura)</span>
   <pre><code class="rust">fn compute_severity(violations: &[DefenderViolation]) -> Severity {
     if violations.iter().any(|v| CONFIRMATORY_VISITORS.contains(&v.visitor.as_str())) {
         return Severity::Malicious;
@@ -78,7 +78,7 @@
     }
 }</code></pre>
   <p>O pretool sobe o daemon eBPF como fire-and-forget quando o kernel suporta BPF-LSM, sem esperar:</p>
-  <span class="src-ref">📄 <b>.nemesis/hooks/nemesis-pretool-check-unix.rs:945-981</b> · backstop eBPF (Linux)</span>
+  <span class="src-ref">📄 <b>.nemesis/hooks/nemesis-pretool-check-unix.rs:1107-1141</b> · backstop eBPF (Linux)</span>
   <pre><code class="rust">let lsm_ok = std::fs::read_to_string("/sys/kernel/security/lsm")
     .map(|s| s.contains("bpf")).unwrap_or(false);
 if lsm_ok { /* spawn nemesis-ebpf-daemon --ensure-daemon (não espera) */ }</code></pre>
@@ -89,12 +89,9 @@ if lsm_ok { /* spawn nemesis-ebpf-daemon --ensure-daemon (não espera) */ }</cod
 //!   - o arquivo original (preservado, inerte) + meta.json (por quê)
 //! enquanto houver itens pendentes, o pretool bloqueia a sessão (exit 2).</code></pre>
 
-  <h2>Nuances e armadilhas</h2>
-  <ul>
-    <li>O daemon é <strong>security-only</strong>: regra de qualidade nunca chega nele. Qualidade implica bloquear escrita (reversível); deletar é irreversível. Por isso a única divergência legítima entre pretool e daemon é a camada de qualidade, que só o pretool tem no write-time.</li>
-    <li>Subir o daemon é fire-and-forget para não travar a IDE; mas durante o install isso é proibido, porque o daemon recém-subido moveria o próprio instalador para a quarentena. Lá se usa a varredura pontual (<code>--scan</code>).</li>
-    <li><code>compute_severity</code> conta <strong>tipos distintos</strong> de sinal corroborante, não hits. Vários matches da mesma causa num arquivo não escalam indevidamente para Malicious.</li>
-  </ul>
+  <h2>Decisões e limites</h2>
+  <p>Eu fiz o daemon <strong>security-only</strong>: regra de qualidade nunca chega nele. Qualidade eu resolvo bloqueando a escrita, que é reversível; deletar arquivo é irreversível, e eu não deixo o daemon fazer isso por regra de estilo. A única divergência que eu aceito entre pretool e daemon é essa camada de qualidade, exclusiva do pretool no write-time.</p>
+  <p>O daemon eu subo como fire-and-forget para não travar a IDE, mas no install eu proíbo isso de propósito: o daemon recém-subido quarentenaria o próprio instalador. O install faz só o essencial, e a validação (doctor + pentest) é um passo manual que eu deixo para depois, documentado no <code>info-install.txt</code>. Por fim, escrevi <code>compute_severity</code> para contar <strong>tipos distintos</strong> de sinal, não hits: vários matches da mesma causa num arquivo não escalam indevidamente para Malicious.</p>
 
   <h2>Auto-checagem</h2>
   <details><summary>Por que o pretool barra escrita mas o daemon move para quarentena?</summary>
@@ -115,7 +112,7 @@ if lsm_ok { /* spawn nemesis-ebpf-daemon --ensure-daemon (não espera) */ }</cod
     <a class="prev" href="5-leitura-codigo-ast-pipeline.html"><span class="lbl">Anterior</span><span class="ttl">Como o Nemesis lê código</span></a>
     <a class="next" href="7-prompt-injection-ide-poisoning.html"><span class="lbl">Próximo</span><span class="ttl">Prompt injection e IDE poisoning</span></a>
   </nav>
-  <div class="foot"><p>Citações verificadas contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">

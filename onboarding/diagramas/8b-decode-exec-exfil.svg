@@ -1,4 +1,4 @@
-<svg viewBox="0 0 980 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Duas cadeias de detecção: decode-then-exec (payload codificado que decodifica e executa) é confirmatório e bloqueia sozinho; a cadeia de exfiltração exige fonte sensível mais sink de rede juntos — cada um sozinho é inocente, os dois combinados condenam.">
+<svg viewBox="0 0 980 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Duas cadeias de detecção: decode-then-exec (payload codificado que decodifica e executa) é confirmatório e bloqueia sozinho; a cadeia de exfiltração exige fonte sensível mais sink de rede juntos: cada um sozinho é inocente, os dois combinados condenam.">
   <defs>
     <marker id="arr8b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#56708f"/></marker>
     <marker id="arr8bBad" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#ff6b6b"/></marker>
@@ -14,7 +14,7 @@
 
   <!-- cadeia A -->
   <rect x="20" y="20" width="940" height="170" rx="12" fill="#0c1019" stroke="#243043"/>
-  <text x="40" y="48" class="lbl m" fill="#ff6b6b">CADEIA A · DECODE-THEN-EXEC — CONFIRMATÓRIA (1 basta)</text>
+  <text x="40" y="48" class="lbl m" fill="#ff6b6b">CADEIA A · DECODE-THEN-EXEC: CONFIRMATÓRIA (1 basta)</text>
 
   <rect x="40" y="70" width="250" height="88" rx="10" fill="#121826" stroke="#38e1d3"/>
   <text x="165" y="100" text-anchor="middle" class="t">payload codificado</text>
@@ -43,7 +43,7 @@
 
   <!-- cadeia B -->
   <rect x="20" y="210" width="940" height="170" rx="12" fill="#0c1019" stroke="#243043"/>
-  <text x="40" y="238" class="lbl m" fill="#f5b54a">CADEIA B · EXFILTRAÇÃO — FONTE + SINK (a soma condena)</text>
+  <text x="40" y="238" class="lbl m" fill="#f5b54a">CADEIA B · EXFILTRAÇÃO: FONTE + SINK (a soma condena)</text>
 
   <rect x="40" y="260" width="300" height="88" rx="10" fill="#121826" stroke="#38e1d3"/>
   <text x="190" y="290" text-anchor="middle" class="t">fonte sensível</text>

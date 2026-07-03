@@ -1,10 +1,10 @@
 %%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
 flowchart LR
-A["Agent requests action"] ==> H["Pretool hook<br/>reads request via stdin (JSON)"]
-H ==> D{"hostile?"}
-D ==>|"no"| Z["exit 0<br/>IDE ALLOWS"]
-D ==>|"yes"| T["exit 2<br/>IDE CANCELS"]
-T -.-> N["Exit code delivered by the kernel.<br/>Deterministic: the agent cannot argue."]
+A["Agente de IA<br/>pede uma ação"] ==> H["Hook pretool<br/>lê o pedido via stdin (JSON)"]
+H ==> D{"hostil?"}
+D ==>|"não"| Z["exit 0<br/>a IDE permite a ação"]
+D ==>|"sim"| T["exit 2<br/>a IDE cancela a ação"]
+T -.-> N["O código de saída é entregue pelo kernel ao processo pai:<br/>determinístico, o agente não tem como discutir."]
 
 classDef ok fill:#0e2a1a,stroke:#5fd38a,color:#d7ffe6;
 classDef blk fill:#2a1014,stroke:#ff6b6b,color:#ffd7d7;

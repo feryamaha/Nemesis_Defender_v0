@@ -48,14 +48,14 @@
   <rect x="720" y="120" width="230" height="84" rx="10" fill="#2a1014" stroke="#ff6b6b"/>
   <text x="835" y="152" text-anchor="middle" class="t m" fill="#ffd7d7">exit 2</text>
   <text x="835" y="174" text-anchor="middle" class="s" fill="#e8a0a0">barra a escrita antes de tocar</text>
-  <text x="835" y="192" text-anchor="middle" class="s" fill="#e8a0a0">o disco — nada a limpar</text>
+  <text x="835" y="192" text-anchor="middle" class="s" fill="#e8a0a0">o disco: nada a limpar</text>
 
   <!-- saída: quarentena -->
   <path class="edge" d="M645 316 C690 330 710 336 736 342" stroke="#f5b54a" marker-end="url(#arr6Qz)"/>
   <text x="700" y="360" text-anchor="middle" class="s m" fill="#f5b54a">malicioso no disco</text>
   <rect x="720" y="300" width="230" height="76" rx="10" fill="#2a2410" stroke="#f5b54a"/>
   <text x="835" y="330" text-anchor="middle" class="t" fill="#ffeccb">quarentena</text>
-  <text x="835" y="352" text-anchor="middle" class="s" fill="#d9c08a">move, não deleta — reversível</text>
+  <text x="835" y="352" text-anchor="middle" class="s" fill="#d9c08a">move, não deleta: reversível</text>
 
   <path class="edge" d="M835 376 V428" stroke="#b794f6" marker-end="url(#arr6V)"/>
 

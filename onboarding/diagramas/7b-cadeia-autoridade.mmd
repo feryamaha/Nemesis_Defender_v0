@@ -1,0 +1,17 @@
+%%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
+flowchart LR
+H["HUMANO<br/>decide, revisa a quarentena;<br/>único que edita a allowlist e usa o git"] ==> N["NEMESIS<br/>contém: enforcement determinístico,<br/>exit 2 não se negocia"]
+N ==> A["AGENTE DE IA<br/>opera com autonomia, mas não destrói:<br/>probabilístico sob contenção determinística"]
+A ==> S["SISTEMA<br/>executa somente o que passou pelas camadas"]
+S -.-> M["Inteligência não implica autoridade."]
+
+classDef ok fill:#0e2a1a,stroke:#5fd38a,color:#d7ffe6;
+classDef nem fill:#0d1f1d,stroke:#38e1d3,color:#e8edf6;
+classDef ag fill:#0d1424,stroke:#5aa9ff,color:#e8edf6;
+classDef sys fill:#1e1830,stroke:#b794f6,color:#efe6ff;
+classDef note fill:#0c1019,stroke:#21a99e,color:#b8c4d6;
+class H ok;
+class N nem;
+class A ag;
+class S sys;
+class M note;

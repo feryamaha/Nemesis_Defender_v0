@@ -53,7 +53,7 @@
   <!-- Suspicious -->
   <rect x="660" y="316" width="230" height="68" rx="10" fill="#2a2410" stroke="#f5b54a"/>
   <text x="775" y="344" text-anchor="middle" class="t" fill="#ffeccb">Suspicious</text>
-  <text x="775" y="366" text-anchor="middle" class="s" fill="#d9c08a">registra e mantém — não move</text>
+  <text x="775" y="366" text-anchor="middle" class="s" fill="#d9c08a">registra e mantém: não move</text>
 
   <!-- quarentena -->
   <path class="edge" d="M410 402 V434" stroke="#5fd38a" marker-end="url(#arr9Ok)"/>

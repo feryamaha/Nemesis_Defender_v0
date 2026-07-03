@@ -1,0 +1,45 @@
+<svg viewBox="0 0 980 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Três incidentes reais e públicos com agentes de IA: o agente do Replit apagou um banco de produção durante um code freeze; o Gemini CLI apagou arquivos ao interpretar mal um comando; o Claude Code disparou um terraform destroy acidental. Nenhum exigiu malícia: só autoridade delegada e nada entre o palpite e o filesystem.">
+  <style>
+    text{font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif}
+    .t{fill:#ffd7d7;font-size:15px;font-weight:700}
+    .s{fill:#e8a0a0;font-size:12.5px}
+    .m{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace}
+    .n{fill:#b8c4d6;font-size:12.5px}
+  </style>
+
+  <text x="30" y="40" class="m" fill="#ff6b6b" font-size="12" font-weight="700" letter-spacing=".14em">INCIDENTES REAIS, PÚBLICOS E DOCUMENTADOS</text>
+
+  <!-- Replit -->
+  <rect x="30" y="64" width="295" height="210" rx="12" fill="#2a1014" stroke="#ff6b6b" stroke-width="1.6"/>
+  <text x="177" y="100" text-anchor="middle" class="t">Replit Agent</text>
+  <text x="177" y="130" text-anchor="middle" class="s">apagou um banco de produção</text>
+  <text x="177" y="150" text-anchor="middle" class="s">durante um code freeze,</text>
+  <text x="177" y="170" text-anchor="middle" class="s">apesar de instruções repetidas</text>
+  <text x="177" y="204" text-anchor="middle" class="s m" fill="#ff9b9b">AI Incident Database #1152</text>
+  <text x="177" y="236" text-anchor="middle" class="s" font-style="italic">"nada tecnicamente</text>
+  <text x="177" y="254" text-anchor="middle" class="s" font-style="italic">impedia a ação"</text>
+
+  <!-- Gemini CLI -->
+  <rect x="343" y="64" width="295" height="210" rx="12" fill="#2a1014" stroke="#ff6b6b" stroke-width="1.6"/>
+  <text x="490" y="100" text-anchor="middle" class="t">Gemini CLI</text>
+  <text x="490" y="130" text-anchor="middle" class="s">apagou arquivos do usuário</text>
+  <text x="490" y="150" text-anchor="middle" class="s">ao interpretar mal</text>
+  <text x="490" y="170" text-anchor="middle" class="s">um comando</text>
+  <text x="490" y="222" text-anchor="middle" class="s" font-style="italic">interpretação errada,</text>
+  <text x="490" y="240" text-anchor="middle" class="s" font-style="italic">dano real</text>
+
+  <!-- Claude Code -->
+  <rect x="656" y="64" width="295" height="210" rx="12" fill="#2a1014" stroke="#ff6b6b" stroke-width="1.6"/>
+  <text x="803" y="100" text-anchor="middle" class="t">Claude Code</text>
+  <text x="803" y="130" text-anchor="middle" class="s">disparou um</text>
+  <text x="803" y="152" text-anchor="middle" class="s m" fill="#ff9b9b">terraform destroy</text>
+  <text x="803" y="174" text-anchor="middle" class="s">acidental</text>
+  <text x="803" y="222" text-anchor="middle" class="s" font-style="italic">excesso de zelo,</text>
+  <text x="803" y="240" text-anchor="middle" class="s" font-style="italic">infraestrutura abaixo</text>
+
+  <!-- síntese -->
+  <rect x="120" y="306" width="740" height="84" rx="10" fill="#0c1019" stroke="#21a99e" stroke-dasharray="4 3"/>
+  <text x="490" y="338" text-anchor="middle" class="n" font-size="14" font-weight="600" fill="#e8edf6">Nenhum caso exigiu malícia ou jailbreak.</text>
+  <text x="490" y="364" text-anchor="middle" class="n">Bastou um agente com autoridade delegada, confiante e errado,</text>
+  <text x="490" y="382" text-anchor="middle" class="n">e nada entre o palpite e o filesystem.</text>
+</svg>

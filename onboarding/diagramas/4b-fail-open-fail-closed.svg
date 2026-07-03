@@ -42,11 +42,11 @@
   <path class="edge" d="M730 236 V256" stroke="#5fd38a" marker-end="url(#arr4bOk)"/>
   <rect x="580" y="258" width="300" height="52" rx="8" fill="#121826" stroke="#56708f"/>
   <text x="730" y="284" text-anchor="middle" class="s" fill="#b8c4d6">a sessão termina com veredito</text>
-  <text x="730" y="302" text-anchor="middle" class="s m" fill="#38e1d3">exit 2 — nada executa</text>
+  <text x="730" y="302" text-anchor="middle" class="s m" fill="#38e1d3">exit 2: nada executa</text>
   <path class="edge" d="M730 310 V330" stroke="#5fd38a" marker-end="url(#arr4bOk)"/>
   <text x="730" y="356" text-anchor="middle" class="t" fill="#5fd38a">✓ o erro nunca abre a porta</text>
 
   <!-- nota -->
   <rect x="240" y="392" width="500" height="36" rx="8" fill="#0c1019" stroke="#21a99e" stroke-dasharray="4 3"/>
-  <text x="490" y="415" text-anchor="middle" class="s" fill="#b8c4d6">Na dúvida, um sistema de segurança nega — nunca deixa passar por engano.</text>
+  <text x="490" y="415" text-anchor="middle" class="s" fill="#b8c4d6">Na dúvida, um sistema de segurança nega: nunca deixa passar por engano.</text>
 </svg>

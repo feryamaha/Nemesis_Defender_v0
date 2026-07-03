@@ -1,0 +1,19 @@
+%%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 45, "rankSpacing": 55}}}%%
+flowchart LR
+subgraph A["cadeia A · decode-then-exec, confirmatória (1 basta)"]
+  direction LR
+  P1["payload codificado<br/>base64 · hex · aninhado"] ==> P2["decodificação<br/>atob · Buffer.from · base64 -d"]
+  P2 ==> P3["execução<br/>eval · exec · child_process"]
+  P3 ==> B1["BLOQUEIA · exit 2"]
+end
+subgraph B["cadeia B · exfiltração, fonte + sink (a soma condena)"]
+  direction LR
+  F["fonte sensível<br/>.env · chaves SSH · tokens<br/>sozinha pode ser legítima"] ==> J["+"]
+  S["sink de rede<br/>fetch · curl · webhook externo<br/>sozinho pode ser legítimo"] ==> J
+  J ==>|"juntos"| B2["cadeia de exfil<br/>o taint liga a fonte ao destino externo<br/>BLOQUEIA"]
+end
+
+classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;
+classDef blk fill:#2a1014,stroke:#ff6b6b,color:#ffd7d7;
+class P1,P2,P3,F,S,J step;
+class B1,B2 blk;

@@ -70,12 +70,9 @@ std::process::exit(2);</code></pre>
     .stderr(std::process::Stdio::null())
     .spawn()</code></pre>
 
-  <h2>Nuances e armadilhas</h2>
-  <ul>
-    <li>O significado de "2 = bloqueado" é uma <strong>convenção das IDEs de agente</strong>, não uma lei do POSIX. O POSIX só garante "0 = ok, ≠0 = erro". Eu dependo de a IDE honrar o 2 como cancelamento; por isso valido isso no pentest com o hook conectado.</li>
-    <li>O que o hook imprime em stdout/stderr é diagnóstico para o humano; a decisão é só o código de saída. Misturar os dois é erro comum.</li>
-    <li>Um processo que trava (não termina) não devolve código nenhum. Por isso o hook é síncrono e rápido, e tem o desenho fail-closed para nunca ficar pendurado sem veredito.</li>
-  </ul>
+  <h2>Decisões e limites</h2>
+  <p>O "2 = bloqueado" não é lei do POSIX, é convenção das IDEs de agente: o POSIX só garante 0 = sucesso e ≠0 = falha. Eu dependo de a IDE honrar o 2 como cancelamento, e é exatamente por isso que eu valido esse comportamento no pentest, com o hook conectado de verdade. Também separei o papel de cada canal: o que o hook imprime em stdout/stderr é diagnóstico para quem lê; a decisão é só o código de saída.</p>
+  <p>Um processo que trava não devolve código nenhum. Fiz o hook síncrono e rápido, com desenho fail-closed, justamente para ele nunca ficar pendurado sem veredito.</p>
 
   <h2>Auto-checagem</h2>
   <details><summary>Por que o código de saída é mais confiável que uma instrução no prompt?</summary>
@@ -96,7 +93,7 @@ std::process::exit(2);</code></pre>
     <a class="prev" href="../jornada.html"><span class="lbl">Anterior</span><span class="ttl">A jornada</span></a>
     <a class="next" href="2-kernel-ebpf-lsm.html"><span class="lbl">Próximo</span><span class="ttl">Kernel, eBPF e LSM</span></a>
   </nav>
-  <div class="foot"><p>Citações verificadas contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">

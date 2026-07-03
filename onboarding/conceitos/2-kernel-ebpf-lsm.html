@@ -50,7 +50,7 @@
 
   <figure class="diagram">
     <img src="../diagramas/2b-verifier-mapas.svg" alt="O caminho do programa eBPF: fonte C compilada pelo clang em bytecode BPF, aprovada pelo verifier do kernel, convertida por JIT e ancorada no hook LSM; os mapas BPF são a ponte entre o userspace, que escreve as regras, e o kernel, que as consulta.">
-    <figcaption>O caminho do programa eBPF até o kernel — e os mapas como ponte userspace ↔ kernel para atualizar regras sem recarregar nada.</figcaption>
+    <figcaption>O caminho do programa eBPF até o kernel, e os mapas como ponte userspace ↔ kernel para atualizar regras sem recarregar nada.</figcaption>
   </figure>
 
   <h2>Como o Nemesis aplica</h2>
@@ -81,12 +81,9 @@ int BPF_PROG(nemesis_check_exec, struct linux_binprm *bprm, int ret)
     return -EPERM;               // nega o exec no kernel
 }</code></pre>
 
-  <h2>Nuances e armadilhas</h2>
-  <ul>
-    <li>Eu <strong>nunca sobreponho</strong> uma negação anterior da cadeia LSM: se <code>ret != 0</code>, devolvo o próprio <code>ret</code>. Sobrepor isso seria abrir um buraco em outra política de segurança do sistema.</li>
-    <li>Isto é Linux. No macOS não há eBPF (o análogo seria o Endpoint Security Framework, que eu ainda não construí). Lá, sem o pretool, não há backstop de kernel.</li>
-    <li>O BPF-LSM precisa estar habilitado no kernel (<code>bpf</code> em <code>/sys/kernel/security/lsm</code>). O pretool só tenta subir o daemon eBPF quando confirma esse suporte.</li>
-  </ul>
+  <h2>Decisões e limites</h2>
+  <p>Eu nunca sobreponho uma negação anterior da cadeia LSM: se <code>ret != 0</code>, devolvo o próprio <code>ret</code>. Sobrepor isso abriria um buraco em outra política de segurança do sistema. E deixo o alcance claro: isto é Linux. No macOS não há eBPF (o análogo seria o Endpoint Security Framework, que eu ainda não construí); lá, sem o pretool, não há backstop de kernel.</p>
+  <p>O BPF-LSM também precisa estar habilitado no kernel (<code>bpf</code> em <code>/sys/kernel/security/lsm</code>), e eu só tento subir o daemon eBPF quando o pretool confirma esse suporte.</p>
 
   <h2>Auto-checagem</h2>
   <details><summary>Por que o controle no kernel cobre casos que o hook do userspace não cobre?</summary>
@@ -107,7 +104,7 @@ int BPF_PROG(nemesis_check_exec, struct linux_binprm *bprm, int ret)
     <a class="prev" href="1-contrato-posix-exit2.html"><span class="lbl">Anterior</span><span class="ttl">Contrato POSIX e o exit 2</span></a>
     <a class="next" href="3-confinamento-kernel-egress.html"><span class="lbl">Próximo</span><span class="ttl">Confinamento do kernel e egress</span></a>
   </nav>
-  <div class="foot"><p>Citações verificadas contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">

@@ -69,7 +69,7 @@ members = [ "ast-linters", "ebpf-kernel", "nemesis-defender", "nemesis-doctor" ]
     }
 };</code></pre>
   <p>E o fail-closed da fronteira: o <code>main</code> do pretool roda dentro de um <code>catch_unwind</code>; qualquer pânico vira <code>exit 2</code>.</p>
-  <span class="src-ref">📄 <b>.nemesis/hooks/nemesis-pretool-check-unix.rs:861-879</b> · catch_unwind → exit 2</span>
+  <span class="src-ref">📄 <b>.nemesis/hooks/nemesis-pretool-check-unix.rs:1023-1041</b> · catch_unwind → exit 2</span>
   <pre><code class="rust">fn main() {
     match std::panic::catch_unwind(|| { run_pretool() }) {
         Ok(()) => {}
@@ -85,12 +85,9 @@ members = [ "ast-linters", "ebpf-kernel", "nemesis-defender", "nemesis-doctor" ]
 const MIN_DECODED_LEN: usize = 8;
 const MAX_CANDIDATE_LEN: usize = 4096; // não escaneia blobs gigantes</code></pre>
 
-  <h2>Nuances e armadilhas</h2>
-  <ul>
-    <li>No caminho que processa input não-confiável eu evito <code>unwrap()</code>/<code>expect()</code>: uso <code>unwrap_or_else</code>, <code>.ok()?</code> ou <code>let _ =</code> para best-effort. Um <code>unwrap</code> ali seria um pânico controlável pelo atacante.</li>
-    <li>O fail-closed é por construção: <code>exit 2</code> em pânico está certo no pretool, onde "na dúvida, bloqueie" é o desejado. É diferente do daemon, que nunca deleta na dúvida (ver <a href="9-defesa-profundidade-decisao.html">grupo 9</a>).</li>
-    <li>ReDoS vem de motores com backtracking e lookahead; o crate <code>regex</code> que uso é de tempo linear garantido, então um padrão hostil não trava o scanner. Os padrões de <code>exfil_chain</code> e da denylist correm nesse motor.</li>
-  </ul>
+  <h2>Decisões e limites</h2>
+  <p>No caminho que processa input não-confiável eu evito <code>unwrap()</code> e <code>expect()</code>: uso <code>unwrap_or_else</code>, <code>.ok()?</code> ou <code>let _ =</code> para best-effort, porque um <code>unwrap</code> ali seria um pânico controlável pelo atacante. O fail-closed eu apliquei por construção: <code>exit 2</code> em pânico está certo no pretool, onde na dúvida eu quero bloquear; no daemon a regra que eu escolhi é outra, ele nunca deleta na dúvida (ver <a href="9-defesa-profundidade-decisao.html">grupo 9</a>).</p>
+  <p>E ReDoS não me alcança: o crate <code>regex</code> que eu uso é de tempo linear garantido, sem backtracking, então um padrão hostil não trava o scanner. Os padrões de <code>exfil_chain</code> e da denylist correm nesse motor.</p>
 
   <h2>Auto-checagem</h2>
   <details><summary>Por que um pânico precisa virar exit 2 em vez de só crashar?</summary>
@@ -111,7 +108,7 @@ const MAX_CANDIDATE_LEN: usize = 4096; // não escaneia blobs gigantes</code></p
     <a class="prev" href="3-confinamento-kernel-egress.html"><span class="lbl">Anterior</span><span class="ttl">Confinamento do kernel e egress</span></a>
     <a class="next" href="5-leitura-codigo-ast-pipeline.html"><span class="lbl">Próximo</span><span class="ttl">Como o Nemesis lê código</span></a>
   </nav>
-  <div class="foot"><p>Citações verificadas contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">

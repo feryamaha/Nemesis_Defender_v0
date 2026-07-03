@@ -1,0 +1,17 @@
+%%{init: {"theme":"dark", "flowchart": {"htmlLabels": true, "curve": "basis", "padding": 18, "nodeSpacing": 50, "rankSpacing": 58}}}%%
+flowchart LR
+SRC["fonte C do programa eBPF"] ==> CL["clang<br/>→ bytecode BPF"]
+CL ==> V["VERIFIER do kernel<br/>prova que o programa termina e não acessa<br/>memória inválida; o que não prova, rejeita"]
+V ==> J["JIT<br/>código nativo"]
+J ==> L["ancorado no hook LSM"]
+US["nemesis (userspace)<br/>escreve as regras nos mapas<br/>allowlist-ebpf.toml"] -.-> M["mapas BPF<br/>blocklist de exec · allowlist de egress (CIDR:porta)"]
+M -.->|"o hook consulta a cada exec"| L
+
+classDef step fill:#121826,stroke:#38e1d3,color:#e8edf6;
+classDef kern fill:#1e1830,stroke:#b794f6,color:#efe6ff;
+classDef ag fill:#0d1424,stroke:#5aa9ff,color:#e8edf6;
+classDef mot fill:#0d1f1d,stroke:#38e1d3,color:#e8edf6;
+class SRC,CL,J step;
+class V,L kern;
+class US ag;
+class M mot;

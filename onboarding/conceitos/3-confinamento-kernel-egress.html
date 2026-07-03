@@ -74,12 +74,9 @@ if (val && (val->port == 0 || val->port == dport))
 egress_emit("ipv4");
 return -EPERM;                      // fora da allowlist, nega</code></pre>
 
-  <h2>Nuances e armadilhas</h2>
-  <ul>
-    <li>O egress tem um interruptor de <strong>enforce</strong>: desligado, ele só observa e loga (modo rollout). Esse default seguro evita quebrar a máquina do usuário antes de a allowlist estar afinada.</li>
-    <li>Famílias de socket que não são rede (como <code>AF_UNIX</code>) não são egress; eu as permito, porque bloqueá-las quebraria comunicação local legítima.</li>
-    <li>Capabilities aqui são mais princípio do que uma chamada explícita no código: a postura é não exigir root e usar <code>no_new_privs</code> para que nem os filhos ganhem privilégio. É <em>least privilege</em> aplicado, não uma feature isolada.</li>
-  </ul>
+  <h2>Decisões e limites</h2>
+  <p>Eu dei ao egress um interruptor de <strong>enforce</strong>: desligado, ele só observa e loga (modo rollout). Escolhi esse default para não quebrar a máquina de ninguém antes de a allowlist estar afinada. Famílias de socket que não são rede (como <code>AF_UNIX</code>) eu permito, porque bloqueá-las quebraria comunicação local legítima.</p>
+  <p>Capabilities, aqui, são mais postura do que chamada explícita no código: eu não exijo root e uso <code>no_new_privs</code> para que nem os processos filhos ganhem privilégio. É <em>least privilege</em> aplicado de ponta a ponta.</p>
 
   <h2>Auto-checagem</h2>
   <details><summary>Por que o bloqueio é restrito ao cgroup do agente?</summary>
@@ -100,7 +97,7 @@ return -EPERM;                      // fora da allowlist, nega</code></pre>
     <a class="prev" href="2-kernel-ebpf-lsm.html"><span class="lbl">Anterior</span><span class="ttl">Kernel, eBPF e LSM</span></a>
     <a class="next" href="4-rust-defesa.html"><span class="lbl">Próximo</span><span class="ttl">Rust como linguagem de defesa</span></a>
   </nav>
-  <div class="foot"><p>Citações verificadas contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
+  <div class="foot"><p>Citações que eu verifiquei contra o repositório. <a href="../index.html">Voltar ao índice</a>.</p></div>
 </main>
 
 <aside class="toc" aria-label="Sumário da página">
