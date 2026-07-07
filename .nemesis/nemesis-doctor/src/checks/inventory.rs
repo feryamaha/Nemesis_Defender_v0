@@ -31,46 +31,73 @@ const DISTRO_BINARIES: &[&str] = &[
 ];
 
 pub fn run() -> CheckResult {
-    let mut res = CheckResult::new("G3 - Inventario de binarios");
+    let mut res = CheckResult::new("G3 - Inventario de binarios", "G3 - Binary inventory");
 
     // Layout resolvido pela fonte única `binaries_dir()` (distro `.nemesis/bin/` tem precedência).
     let dir = match binaries_dir() {
         Some(d) => d,
         None => {
-            res.push("Nenhum layout de binarios encontrado (.nemesis/bin/ nem target/release/).");
-            res.push("Acao: instale via install.sh, OU 'cd .nemesis && cargo build --release --workspace'.");
+            res.push(
+                "Nenhum layout de binarios encontrado (.nemesis/bin/ nem target/release/).",
+                "No binary layout found (.nemesis/bin/ nor target/release/).",
+            );
+            res.push(
+                "Acao: instale via install.sh, OU 'cd .nemesis && cargo build --release --workspace'.",
+                "Action: install via install.sh, OR 'cd .nemesis && cargo build --release --workspace'.",
+            );
             return res.status(CheckStatus::Fail);
         }
     };
     let is_distro = dir.file_name().map(|n| n == "bin").unwrap_or(false);
-    let (expected, layout) = if is_distro {
-        (DISTRO_BINARIES, "distribuicao (.nemesis/bin/)")
+    let (expected, layout_pt, layout_en) = if is_distro {
+        (
+            DISTRO_BINARIES,
+            "distribuicao (.nemesis/bin/)",
+            "distribution (.nemesis/bin/)",
+        )
     } else {
-        (SOURCE_BINARIES, "build da fonte (target/release/)")
+        (
+            SOURCE_BINARIES,
+            "build da fonte (target/release/)",
+            "source build (target/release/)",
+        )
     };
 
-    res.push(format!("Layout detectado: {}", layout));
+    res.push(
+        format!("Layout detectado: {}", layout_pt),
+        format!("Detected layout: {}", layout_en),
+    );
 
     let mut missing = Vec::new();
     for b in expected {
         let exists = dir.join(b).exists() || dir.join(format!("{}.exe", b)).exists();
         if exists {
-            res.push(format!("OK    {}", b));
+            res.push(format!("OK    {}", b), format!("OK    {}", b));
         } else {
-            res.push(format!("FALTA {}", b));
+            res.push(format!("FALTA {}", b), format!("MISS  {}", b));
             missing.push(*b);
         }
     }
 
     if missing.is_empty() {
-        res.push("Todos os binarios esperados presentes.");
+        res.push(
+            "Todos os binarios esperados presentes.",
+            "All expected binaries present.",
+        );
         res.status(CheckStatus::Ok)
     } else {
-        res.push(format!(
-            "Faltando {} binario(s) no layout '{}'.",
-            missing.len(),
-            layout
-        ));
+        res.push(
+            format!(
+                "Faltando {} binario(s) no layout '{}'.",
+                missing.len(),
+                layout_pt
+            ),
+            format!(
+                "Missing {} binary(ies) in '{}' layout.",
+                missing.len(),
+                layout_en
+            ),
+        );
         res.status(CheckStatus::Fail)
     }
 }

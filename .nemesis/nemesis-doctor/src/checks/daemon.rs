@@ -2,11 +2,15 @@ use crate::checks::{binary_action_path, nemesis_dir};
 use crate::report::{CheckResult, CheckStatus};
 
 pub fn run() -> CheckResult {
-    let mut res = CheckResult::new("G6 - Daemon nemesis-defender");
+    let mut res = CheckResult::new(
+        "G6 - Daemon nemesis-defender",
+        "G6 - Nemesis-defender daemon",
+    );
     let pid_file = nemesis_dir().join("runtime").join("defender.pid");
     // Ação resolvida para o layout ativo (distro `.nemesis/bin/` ou fonte `target/release/`).
     // O caminho fixo `target/release` quebrava no Mac: o comando colado dava "no such file".
-    let action = format!("Acao: {} --ensure-daemon", binary_action_path("nemesis-defender"));
+    let action_pt = format!("Acao: {} --ensure-daemon", binary_action_path("nemesis-defender"));
+    let action_en = format!("Action: {} --ensure-daemon", binary_action_path("nemesis-defender"));
 
     let pid = std::fs::read_to_string(&pid_file)
         .ok()
@@ -15,8 +19,11 @@ pub fn run() -> CheckResult {
     let pid = match pid {
         Some(p) => p,
         None => {
-            res.push("PID file ausente - daemon nao esta rodando.");
-            res.push(action);
+            res.push(
+                "PID file ausente - daemon nao esta rodando.",
+                "PID file missing - daemon is not running.",
+            );
+            res.push(action_pt, action_en);
             return res.status(CheckStatus::Fail);
         }
     };
@@ -25,14 +32,23 @@ pub fn run() -> CheckResult {
     {
         let comm = std::fs::read_to_string(format!("/proc/{}/comm", pid)).unwrap_or_default();
         if !comm.trim().starts_with("nemesis-defende") {
-            res.push(format!(
-                "PID {} no PID file, mas processo nao esta vivo (stale).",
-                pid
-            ));
-            res.push(action);
+            res.push(
+                format!(
+                    "PID {} no PID file, mas processo nao esta vivo (stale).",
+                    pid
+                ),
+                format!(
+                    "PID {} in PID file, but process is not alive (stale).",
+                    pid
+                ),
+            );
+            res.push(action_pt, action_en);
             return res.status(CheckStatus::Fail);
         }
-        res.push(format!("OK    daemon vivo (PID {}).", pid));
+        res.push(
+            format!("OK    daemon vivo (PID {}).", pid),
+            format!("OK    daemon alive (PID {}).", pid),
+        );
 
         let mut inotify = 0;
         if let Ok(entries) = std::fs::read_dir(format!("/proc/{}/fd", pid)) {
@@ -45,13 +61,22 @@ pub fn run() -> CheckResult {
             }
         }
         if inotify > 0 {
-            res.push(format!(
-                "OK    {} descritor(es) inotify aberto(s) - watcher ativo.",
-                inotify
-            ));
+            res.push(
+                format!(
+                    "OK    {} descritor(es) inotify aberto(s) - watcher ativo.",
+                    inotify
+                ),
+                format!(
+                    "OK    {} inotify descriptor(s) open - watcher active.",
+                    inotify
+                ),
+            );
             return res.status(CheckStatus::Ok);
         }
-        res.push("ATENCAO nenhum fd inotify - watcher pode estar inativo (fs.inotify.max_user_watches?).");
+        res.push(
+            "ATENCAO nenhum fd inotify - watcher pode estar inativo (fs.inotify.max_user_watches?).",
+            "WARNING no inotify fd - watcher may be inactive (fs.inotify.max_user_watches?).",
+        );
         return res.status(CheckStatus::Warn);
     }
 
@@ -74,17 +99,29 @@ pub fn run() -> CheckResult {
             .unwrap_or(false);
 
         if alive {
-            res.push(format!(
-                "OK    daemon vivo (PID {}). Inspecao de fd/watcher so no Linux.",
-                pid
-            ));
+            res.push(
+                format!(
+                    "OK    daemon vivo (PID {}). Inspecao de fd/watcher so no Linux.",
+                    pid
+                ),
+                format!(
+                    "OK    daemon alive (PID {}). fd/watcher inspection only on Linux.",
+                    pid
+                ),
+            );
             return res.status(CheckStatus::Ok);
         }
-        res.push(format!(
-            "PID {} no PID file, mas processo nao esta vivo (stale).",
-            pid
-        ));
-        res.push(action);
+        res.push(
+            format!(
+                "PID {} no PID file, mas processo nao esta vivo (stale).",
+                pid
+            ),
+            format!(
+                "PID {} in PID file, but process is not alive (stale).",
+                pid
+            ),
+        );
+        res.push(action_pt, action_en);
         return res.status(CheckStatus::Fail);
     }
 }

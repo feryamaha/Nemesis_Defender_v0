@@ -5,6 +5,7 @@ members = [
     "ebpf-kernel",
     "nemesis-defender",
     "nemesis-doctor",
+    "nemesis-publisher",
 ]
 
 [package]

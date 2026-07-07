@@ -34,6 +34,7 @@
       "/dev/null",
       ".nemesis/",
       ".nemesis/denylist-customers/allowlist-customers.jsonc",
+      ".nemesis/telemetry/identity.json",
       "install.sh",
       "nemesis-install.sh"
     ],
@@ -81,7 +82,8 @@
       "install.sh",
       "nemesis-install.sh",
       ".nemesis/forensics/",
-      ".claude/settings.local.json"
+      ".claude/settings.local.json",
+      "nemesis-publisher"
     ]
   }
 }

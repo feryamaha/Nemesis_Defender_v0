@@ -183,6 +183,21 @@ else
   say "Allowlist eBPF preservada (.nemesis/denylist-customers/allowlist-ebpf.toml já existe)."
 fi
 
+# ── 5.4 Telemetria opt-in: criar diretorio SEM opt-in (zero dado de maquina) ─
+# O publisher e um binario Rust do workspace. --init sem --opt-in apenas cria
+# o diretorio .nemesis/telemetry/ — nao gera identidade nem tokens. O usuario
+# opt-in manualmente apos install: nemesis-publisher --opt-in && --register.
+if [ -f ".nemesis/bin/nemesis-publisher" ]; then
+  if [ ! -s ".nemesis/telemetry/identity.json" ]; then
+    .nemesis/bin/nemesis-publisher --init 2>/dev/null || warn "Publisher init pulado (nao critico)."
+    say "Telemetria: diretorio criado (opt-in e manual, veja --help do publisher)."
+  else
+    say "Telemetria: identidade preservada (re-install)."
+  fi
+else
+  warn "Binario nemesis-publisher nao encontrado no tarball (instalacao antiga). Telemetria pulada."
+fi
+
 ABS_PRETOOL="$(pwd)/.nemesis/bin/nemesis-pretool-check-unix"
 ABS_POSTTOOL="$(pwd)/.nemesis/bin/nemesis-posttool-check-unix"
 

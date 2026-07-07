@@ -89,14 +89,14 @@ pub fn run_all(quick: bool) -> Vec<CheckResult> {
         results.push(unit_tests::run());
     } else {
         results.push(
-            CheckResult::new("G1 - Compilacao")
+            CheckResult::new("G1 - Compilacao", "G1 - Compilation")
                 .status(CheckStatus::Skip)
-                .line("Pulado (--quick)."),
+                .line("Pulado (--quick).", "Skipped (--quick)."),
         );
         results.push(
-            CheckResult::new("G2 - Testes unitarios")
+            CheckResult::new("G2 - Testes unitarios", "G2 - Unit tests")
                 .status(CheckStatus::Skip)
-                .line("Pulado (--quick)."),
+                .line("Pulado (--quick).", "Skipped (--quick)."),
         );
     }
 
@@ -109,9 +109,9 @@ pub fn run_all(quick: bool) -> Vec<CheckResult> {
         results.push(pentest::run());
     } else {
         results.push(
-            CheckResult::new("G7 - Pentest Red-Team")
+            CheckResult::new("G7 - Pentest Red-Team", "G7 - Red-Team Pentest")
                 .status(CheckStatus::Skip)
-                .line("Pulado (--quick)."),
+                .line("Pulado (--quick).", "Skipped (--quick)."),
         );
     }
 

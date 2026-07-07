@@ -2,10 +2,16 @@ use crate::checks::{command_exists, nemesis_dir};
 use crate::report::{CheckResult, CheckStatus};
 
 pub fn run() -> CheckResult {
-    let mut res = CheckResult::new("G2 - Testes unitarios (cargo test --release --workspace)");
+    let mut res = CheckResult::new(
+        "G2 - Testes unitarios (cargo test --release --workspace)",
+        "G2 - Unit tests (cargo test --release --workspace)",
+    );
 
     if !command_exists("cargo") {
-        res.push("cargo nao encontrado no PATH - pulando testes.");
+        res.push(
+            "cargo nao encontrado no PATH - pulando testes.",
+            "cargo not found in PATH - skipping tests.",
+        );
         return res.status(CheckStatus::Skip);
     }
 
@@ -20,7 +26,10 @@ pub fn run() -> CheckResult {
     let output = match output {
         Ok(o) => o,
         Err(e) => {
-            res.push(format!("Falha ao executar cargo test: {}", e));
+            res.push(
+                format!("Falha ao executar cargo test: {}", e),
+                format!("Failed to run cargo test: {}", e),
+            );
             return res.status(CheckStatus::Fail);
         }
     };
@@ -51,14 +60,26 @@ pub fn run() -> CheckResult {
         }
     }
 
-    res.push(format!("Passed: {} | Failed: {}", passed, failed));
-    res.push("Como ler: 'test result: ok' por suite = verde. Qualquer 'failed' > 0 = regressao.");
+    res.push(
+        format!("Passed: {} | Failed: {}", passed, failed),
+        format!("Passed: {} | Failed: {}", passed, failed),
+    );
+    res.push(
+        "Como ler: 'test result: ok' por suite = verde. Qualquer 'failed' > 0 = regressao.",
+        "How to read: 'test result: ok' per suite = green. Any 'failed' > 0 = regression.",
+    );
 
     if !output.status.success() || failed > 0 {
-        res.push("Acao: 'cd .nemesis && cargo test --release --workspace' e investigue os FAILED.");
+        res.push(
+            "Acao: 'cd .nemesis && cargo test --release --workspace' e investigue os FAILED.",
+            "Action: 'cd .nemesis && cargo test --release --workspace' and investigate the FAILED.",
+        );
         res.status(CheckStatus::Fail)
     } else if passed == 0 {
-        res.push("Nenhum teste unitario encontrado no workspace.");
+        res.push(
+            "Nenhum teste unitario encontrado no workspace.",
+            "No unit tests found in the workspace.",
+        );
         res.status(CheckStatus::Warn)
     } else {
         res.status(CheckStatus::Ok)
