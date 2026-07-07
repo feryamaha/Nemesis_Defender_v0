@@ -73,6 +73,9 @@ pub fn build_summary(
         let mut seen: HashSet<String> = HashSet::new();
         let mut sorted: Vec<String> = violations
             .iter()
+            // malformed usa data fallback "1970-01-01" (nao e dia real) — excluir da serie,
+            // alinhando com o SQL da Vercel (pg-db: WHERE layer != 'malformed').
+            .filter(|v| v.layer != "malformed")
             .map(|v| v.date.clone())
             .filter(|d| !d.is_empty() && seen.insert(d.clone()))
             .collect();
