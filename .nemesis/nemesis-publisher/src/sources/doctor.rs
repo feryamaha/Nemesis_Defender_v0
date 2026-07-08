@@ -179,22 +179,11 @@ fn parse_doctor_output(output: &str, exit_code: i32) -> DoctorRun {
             && !trimmed.starts_with("VEREDITO")
             && !trimmed.starts_with("[EN]")
         {
-            if line.contains("ATENCAO")
-                || line.contains("WARN")
-                || line.contains("aviso")
-                || line.contains("JSON INVALIDO")
-            {
-                if verdict == "SAUDAVEL" {
-                    verdict = "ATENCAO".to_string();
-                }
-                if current_status == "pass" {
-                    current_status = "warn".to_string();
-                }
-            }
-            if line.contains("CRITICO") || line.contains("FAIL") || line.contains("ERRO") {
-                verdict = "CRITICO".to_string();
-                current_status = "fail".to_string();
-            }
+            // O status/veredito vem SOMENTE do prefixo do titulo do grupo
+            // ([ OK ] / [ WARN ] / [FAIL] / [SKIP]), tratado acima. NAO inferir status a
+            // partir do texto explicativo: prosa como "...otherwise FAILED..." (criterio do G7)
+            // ou "'warning' does not block" contem as substrings FAIL/WARN e marcava o check
+            // como falho por engano, forcando veredito CRITICO com o pentest APROVADO.
 
             // Linha em ingles: comeca com "EN: " apos a indentacao
             if trimmed.starts_with("EN: ") && expect_en_line {
@@ -228,5 +217,48 @@ fn parse_doctor_output(output: &str, exit_code: i32) -> DoctorRun {
         },
         quick: false,
         checks,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::parse_doctor_output;
+
+    // Regressao: a prosa explicativa do G7 contem "FAILED"/"warning"; o parser NAO pode
+    // inferir falha a partir do texto, so do prefixo do titulo. Antes deste fix o veredito
+    // virava CRITICO com o pentest APROVADO ([ OK ]).
+    #[test]
+    fn prosa_com_failed_nao_reprova_check_ok() {
+        let out = "\
+[ OK ] G7 - Pentest Red-Team (run-pentest.sh)
+[EN] G7 - Red-Team Pentest (run-pentest.sh)
+        Total: 413 | Corretos: 413 | Taxa: 100.0%
+        EN: Verdict: APPROVED if ZERO gaps; otherwise FAILED. No acceptable band.
+        APROVADO
+[ OK ] G8 - Telemetria e dashboard
+[EN] G8 - Telemetry and dashboard
+        OK    dashboard hidratada (summary: 30132 violations)
+
+=============================================
+ VEREDITO GLOBAL: SAUDAVEL
+";
+        let run = parse_doctor_output(out, 0);
+        assert_eq!(run.verdict, "SAUDAVEL", "prosa com FAILED nao pode virar CRITICO");
+        assert_eq!(run.exit_code, 0);
+        let g7 = run.checks.iter().find(|c| c.title.starts_with("G7")).unwrap();
+        assert_eq!(g7.status, "pass", "G7 [ OK ] deve ser pass mesmo com 'FAILED' na prosa");
+    }
+
+    // [FAIL] real no titulo continua reprovando.
+    #[test]
+    fn fail_no_titulo_reprova() {
+        let out = "\
+[FAIL] G6 - Daemon nemesis-defender
+[EN] G6 - Nemesis-defender daemon
+        PID file ausente - daemon nao esta rodando.
+";
+        let run = parse_doctor_output(out, 1);
+        assert_eq!(run.verdict, "CRITICO");
+        assert_eq!(run.exit_code, 1);
     }
 }
