@@ -55,12 +55,17 @@ jobs:
           toolchain: stable
           targets: ${{ matrix.target }}
 
-      # CORE apenas (nemesis + nemesis-defender + nemesis-doctor). --locked trava na Cargo.lock.
+      # CORE + publisher de telemetria. --locked trava na Cargo.lock.
+      # NEMESIS_BOOTSTRAP_SECRET e embutido no publisher em build-time (option_env!) para o
+      # --register autenticar na dashboard. Se o secret nao estiver configurado no repo, o build
+      # segue e --register fica fail-closed (nao registra, nao quebra). Nunca hardcoded.
       - name: Build core
+        env:
+          NEMESIS_BOOTSTRAP_SECRET: ${{ secrets.NEMESIS_BOOTSTRAP_SECRET }}
         run: |
           cd .nemesis
           cargo build --release --locked --target ${{ matrix.target }} \
-            -p nemesis -p nemesis-defender -p nemesis-doctor
+            -p nemesis -p nemesis-defender -p nemesis-doctor -p nemesis-publisher
 
       - name: Package
         shell: bash
@@ -71,10 +76,10 @@ jobs:
           PENTEST_DST="$PKG/pentest-nemesis-control/nemesis-defender"
           mkdir -p "$PKG/bin" "$PENTEST_DST"
 
-          # Binários do core (sem windows, sem eBPF)
+          # Binários do core + publisher de telemetria (sem windows, sem eBPF)
           for b in nemesis-pretool-check nemesis-pretool-check-unix nemesis-pretool-hook \
                    nemesis-posttool-check-unix pre-edit-hook debug-hook-env nemesis-lsp \
-                   nemesis-defender nemesis-doctor; do
+                   nemesis-defender nemesis-doctor nemesis-publisher; do
             cp "$BIN/$b" "$PKG/bin/"
             strip "$PKG/bin/$b" 2>/dev/null || true
           done

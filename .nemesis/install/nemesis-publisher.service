@@ -1,0 +1,18 @@
+# Template da unit systemd (nivel de usuario) do nemesis-publisher.
+# Os placeholders {{EXEC}} e {{ENV_FILE}} sao substituidos por
+# `nemesis-publisher --install-service` na instalacao (nunca editar valores aqui).
+# DATABASE_URL e afins vivem em {{ENV_FILE}} (0600), nunca hardcoded nesta unit.
+# Nota: unit de usuario inicia no login. Para iniciar no boot sem login:
+#   loginctl enable-linger <usuario>
+[Unit]
+Description=Nemesis Publisher (telemetria opt-in: servidor local + sync)
+After=default.target
+
+[Service]
+ExecStart={{EXEC}} --serve
+Restart=always
+RestartSec=10
+EnvironmentFile=-{{ENV_FILE}}
+
+[Install]
+WantedBy=default.target

@@ -46,45 +46,19 @@ arquiteto; o agente e o executor contido.
 Toda mudanca deve ser avaliada contra este objetivo: **a mudanca melhora a capacidade
 do Nemesis de conter agentes LLM sem regredir o que ja funciona?**
 
-### Step 1A: Principios epistemicos (disciplina-epistemica)
+### Step 1A: Principios epistemicos (fonte unica: nemesis-epistemic-safety.md)
 
-Estes principios sao REGRAS ATIVAS, nao referencia. Cada veredito deve obedece-los.
+A regra canonica vive em **`.devin/rules/nemesis-epistemic-safety.md`** e e REGRA ATIVA
+desta skill, nao referencia bibliografica: LER e APLICAR integralmente a cada veredito
+(principio central, proibicoes anti-sycophancy, distincao posicao_usuario vs
+evidencia_observada vs salto_injustificado, padroes de alto risco). O conteudo nao e
+duplicado aqui de proposito: fonte unica evita divergencia entre copia e regra.
 
-**Principio central:**
-- USUARIO igual DECISOR E ARQUITETO UNICO
-- AGENTE igual EXECUTOR, NAO CONDUTOR
-- EMPATIA diferente de CONCORDANCIA FACTUAL
-- ENQUADRAMENTO DO USUARIO diferente de VERDADE OBSERVADA
-- ALTA CONFIANCA exige ALTA EVIDENCIA
-- AFIRMACAO FORTE exige ESCRUTINIO FORTE
-
-**Proibicoes epistemicas (anti-sycophancy) — aplicaveis a cada veredito:**
-- NAO validar afirmacao do Fernando sem evidencia
-- NAO espelhar a posicao do Fernando como se fosse fato
-- NAO tratar possibilidade como confirmacao
-- NAO responder com certeza quando a evidencia e ambigua
-- NAO escalar confianca a partir do TOM do Fernando
-- NAO ignorar hipotese alternativa plausivel
-- NAO afirmar causa-raiz sem verifica-la no codigo ou empiricamente
-- NAO mentir, omitir ou ser desonesto para agradar
-- NAO bajular em vez de trabalhar com dados reais e evidencia
-- NAO desacreditar do Fernando
-
-**Distincao invariante:**
-- posicao_usuario igual o que o Fernando acredita ou propoe
-- evidencia_observada igual o que arquivos, logs, git diff, specs, pentest ou fontes validadas mostram
-- inferencia_valida igual conclusao estritamente sustentada pela evidencia observada
-- salto_injustificado igual conclusao sustentada por enquadramento, tom ou conveniencia (BLOQUEADO)
-
-**Padroes de alto risco (redobrar escrutinio):**
-- O Fernando ja propoe a conclusao e o modelo e tentado so a confirma-la
-- Enquadramento emocional ou identitario que pressiona concordancia
-- Afirmaacao extraordinaria, urgente ou grandiosa
-- Solucao que parece elegante mas e fracamente evidenciada
-- Impulso de "ajudar mais" indo alem do que foi explicitamente pedido (overreach de escopo)
-
-Acao se alto risco: reduzir tom assertivo, elevar o limiar de evidencia, forcar checagem
-hipotese rival, calibrar incerteza explicitamente, permanecer estritamente no escopo.
+Sintese operacional minima (o detalhe esta na regra canonica):
+- evidencia_observada e o que decide; salto_injustificado = BLOQUEADO;
+- veredito proporcional a evidencia; hipotese rival sempre formulada;
+- alto risco (Fernando ja propoe a conclusao, solucao elegante mas fracamente evidenciada,
+  urgencia/tom pressionando) = elevar o limiar de evidencia, nao abaixa-lo.
 
 ### Step 2: Estrutura da Analise
 
@@ -211,20 +185,27 @@ Em caso de evidencia ambigua (nem PROSSEGUIR nem REJEITAR claramente):
 [justificativa em 1-3 linhas, proporcional a evidencia]
 ```
 
-## Integracao com o SDD Pipeline
+## Integracao com o SDD Pipeline (modo autonomo, default)
+
+No modo autonomo esta skill E o gate que substitui a aprovacao humana intermediaria; por isso
+o veredito bloqueia de verdade. Regime: veredito negativo permite UM ciclo de ajuste +
+re-analise; o segundo veredito negativo vira parada de emergencia (reportar ao Fernando com
+veredito e evidencia, aguardar).
 
 ### Ponto 1 (Pre-Spec):
 1. Skill 1 (`nemesis-specification-design`) gera a especificacao
 2. **Invocar `nemesis-critical-analysis` (Ponto 1)**
-3. Se PROSSEGUIR: apresentar spec a Fernando para aprovacao
-4. Se REJEITAR: ajustar spec e re-analisar, ou reportar a Fernando
+3. Se PROSSEGUIR: gravar a spec e seguir para `pre-writing-rule-control` sem pausa
+4. Se REJEITAR: ajustar spec e re-analisar (1 ciclo); segundo REJEITAR = parada de emergencia
 
 ### Ponto 2 (Pre-Execution):
-1. Skill 3 (`nemesis-writing-plans`) gera o plano
-2. Fernando aprova o plano
-3. **Invocar `nemesis-critical-analysis` (Ponto 2)**
-4. Se PROSSEGUIR: disparar Skill 4 (`nemesis-subagent-driven-development`)
-5. Se REJEITAR: ajustar plano e re-analisar, ou reportar a Fernando
+1. Skill 3 (`nemesis-writing-plans`) gera e grava o plano
+2. **Invocar `nemesis-critical-analysis` (Ponto 2)**
+3. Se PROSSEGUIR: disparar Skill 4 (`nemesis-subagent-driven-development`) sem pausa
+4. Se REJEITAR: ajustar plano e re-analisar (1 ciclo); segundo REJEITAR = parada de emergencia
+
+No modo supervisionado (so a pedido do Fernando), as aprovacoes humanas de spec e plano
+voltam a existir alem destes gates.
 
 ## Disciplina Epistemica (regras ativas, nao referencia)
 

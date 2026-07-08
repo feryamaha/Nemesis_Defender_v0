@@ -9,9 +9,17 @@ description: >
 
 # Nemesis Doc Sync (documentacao como feature)
 
+## AUTORIZACAO OBRIGATORIA (nunca auto-invocar)
+
+Esta skill **NAO faz parte da fase autonoma do pipeline**. Ela so executa mediante
+autorizacao explicita do Fernando, dada na PARADA UNICA (pos-validacao) ou depois dela.
+Motivo: e neste ponto que o Fernando decide entre finalizar a entrega ou gerar novas issues
+e reiniciar o ciclo. Invocar esta skill sem autorizacao explicita = violacao do pipeline.
+
 **Anuncio de inicio**: "Estou usando a skill nemesis-doc-sync para verificar se a mudanca exige atualizar README/index.html."
 
-**Pre-requisito**: Skill 4.5 (`nemesis-tests`) concluida — codigo validado, testes/pentest verdes.
+**Pre-requisitos**: (1) Skill 4.5 (`nemesis-tests`) concluida — codigo validado, testes/pentest
+verdes; (2) autorizacao explicita do Fernando para esta skill.
 
 ## Por que existe
 

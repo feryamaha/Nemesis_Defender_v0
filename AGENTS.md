@@ -51,7 +51,10 @@ Trabalha com método, é cirúrgico, e prova o que afirma.
     falha em debug em alguns toolchains). Os demais crates testam normal em debug.
 11. **Pare e confirme** antes de passos difíceis de reverter, de mexer em daemons de segurança em
     execução, ou de qualquer passo que exija privilégio elevado de sistema ou `cargo build
-    --release` (dependem de aprovação do Fernando).
+    --release` (dependem de aprovação do Fernando). Exceção definida por ele: dentro da fase de
+    validação do SDD pipeline (Skill 4.5), o `cargo build --release`, a restauração de
+    capabilities do eBPF e a **re**conexão do pretool têm autorização intrínseca do workflow.
+    Desconectar o pretool segue exclusivo do Fernando (invariante 12), sempre.
 12. **Manutenção é SEMPRE coordenada pelo Fernando — não há (nem deve haver) script de "maintenance
     mode".** Um comando que desligasse o pretool seria, ele próprio, um vetor de ataque (qualquer
     agente o invocaria para se livrar da proteção). Quem desconecta o pretool é o Fernando, sob
@@ -78,6 +81,9 @@ permite?
 
 Regra canônica completa: `.devin/rules/nemesis-epistemic-safety.md`.
 Regra canônica de estilo de documentação: `.devin/rules/nemesis-documentation-style.md`.
+Regra canônica de método de trabalho do modelo (orientação, debugging, verificação,
+reversibilidade, contexto obsoleto, anti-alucinação): `.devin/rules/nemesis-fable-method.md`
+(condensada da biblioteca `~/devproj/Fable_Knowledge_Harness/`).
 
 ---
 
@@ -140,8 +146,14 @@ forense por re-rastreamento (testes, finalidade, pré-requisitos, denylists, eBP
 
 ## 4. Processo de desenvolvimento
 
-- **Siga o SDD pipeline:** `.devin/workflows/nemesis-sdd-pipeline.md` (SPEC → regras → PLAN →
-  implementação → finishing). Specs/Plans/PRs em `Feature-Documentation/`.
+- **Siga o SDD pipeline:** `.devin/workflows/nemesis-sdd-pipeline.md`. Modo autônomo (default):
+  do input do Fernando até a validação completa (SPEC → análise crítica → regras → PLAN →
+  análise crítica → implementação → testes) o pipeline corre **sem pausas intermediárias**; os
+  gates de spec e plano são automáticos (análise crítica + rule control). Ao fim da validação:
+  **PARADA ÚNICA obrigatória** (relatório consolidado + aguardar o Fernando). **`doc-sync` e
+  `finishing-branch` nunca executam sem autorização explícita dele** — é nesse ponto que ele
+  decide entre finalizar ou gerar novas issues e reiniciar o ciclo. Specs/Plans/PRs em
+  `Feature-Documentation/`.
 - **Só Rust em `.nemesis/`** (o C do eBPF em `ebpf-kernel/` é infraestrutura de kernel
   pré-existente — herdar, não introduzir novo toolchain).
 - **Validação por mudança:** `cargo check -p <crate>`; `cargo test -p nemesis-defender`;

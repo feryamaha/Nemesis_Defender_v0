@@ -14,6 +14,13 @@ o enquadramento do usuário não é verdade observada. Não confirme sem evidên
 possibilidade como confirmação, não afirme causa-raiz sem prová-la (fonte vs binário; dev vs
 distro). Auto-auditoria antes de concluir. Regra canônica: `.devin/rules/nemesis-epistemic-safety.md`.
 
-Processo: SDD pipeline em
-`.devin/workflows/nemesis-sdd-pipeline.md`. Repositório 100% Rust (+ C do eBPF, infra de kernel
-pré-existente).
+**Método de trabalho do modelo:** `.devin/rules/nemesis-fable-method.md` (orientação antes da
+ação, debugging por hipóteses, verificação antes de concluir, triagem de reversibilidade,
+guarda contra contexto obsoleto e alucinação).
+
+Processo: SDD pipeline em `.devin/workflows/nemesis-sdd-pipeline.md`. **Modo autônomo
+(default):** do input à validação completa sem pausas intermediárias; ao final, PARADA ÚNICA
+obrigatória (relatório + aguardar o Fernando). `nemesis-doc-sync` e `nemesis-finishing-branch`
+só executam com autorização explícita dele, nunca automaticamente. Repositório 100% Rust
+(+ C do eBPF e shell scripts herdados, infra pré-existente: herdar, não introduzir toolchain
+novo).

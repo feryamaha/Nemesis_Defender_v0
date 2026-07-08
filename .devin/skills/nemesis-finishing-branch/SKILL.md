@@ -10,9 +10,17 @@ description: >
 Verificar conclusao, coletar evidencias de git diff real, gerar documentacao de PR estruturada,
 apresentar opcoes de disposicao da branch.
 
+## AUTORIZACAO OBRIGATORIA (nunca auto-invocar)
+
+Esta skill **NAO faz parte da fase autonoma do pipeline**. Ela so executa mediante
+autorizacao explicita do Fernando, dada na PARADA UNICA (pos-validacao) ou depois dela.
+Ficar "tudo verde" na validacao NAO autoriza o finishing. Invocar sem autorizacao explicita =
+violacao do pipeline.
+
 **Anuncio de inicio**: "Estou usando a skill nemesis-finishing-branch para finalizar o desenvolvimento."
 
-**Pre-requisito**: Todas as tarefas de implementacao completadas e verificadas.
+**Pre-requisitos**: (1) todas as tarefas de implementacao completadas e validadas (Skill 4.5);
+(2) autorizacao explicita do Fernando para esta skill.
 
 ## Processo
 

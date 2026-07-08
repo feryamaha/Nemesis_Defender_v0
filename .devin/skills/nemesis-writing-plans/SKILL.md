@@ -148,28 +148,28 @@ Cada tarefa deve ter:
 - Comando de verificacao **exato** (com expected output)
 - Assumpcoes **documentadas**
 
-### Step 7: Auto-Review e Aprovacao
+### Step 7: Auto-Review (checklist obrigatorio)
 
-**HARD-GATE**: Apresentar plano completo. BLOQUEAR todas as acoes ate resposta de Fernando.
-
-Checklist interno:
-- [ ] Todos os paths sao exatos? (.nemesis/crate/src/...)
+Checklist interno (reprovou em algum item = corrigir o plano antes de seguir):
+- [ ] Todos os paths sao exatos e confirmados no disco? (.nemesis/crate/src/...)
 - [ ] Codigo Rust completo em cada tarefa? (sem placeholders)
 - [ ] Cada tarefa tem cargo check/test para verificacao?
-- [ ] Ordem faz sentido? (tipos antes de funcoes, lib.rs antes de main.rs, testes por ultimo)
+- [ ] Ordem faz sentido? (tipos antes de funcoes, lib.rs antes de main.rs, testes por ultimo;
+      a suposicao mais arriscada do plano e verificada nas PRIMEIRAS tarefas, nao nas ultimas)
 - [ ] Nenhuma tarefa executa git write operations?
 - [ ] Verificacao final inclui cargo check --workspace + cargo test --workspace?
 
-Perguntar ao Fernando:
-```
-Plano de implementacao pronto. Revise acima. Para iniciar a execucao responda: 'sim' ou 'pode'.
-```
+**MODO AUTONOMO (default)**: nao ha aprovacao humana aqui. O gate do plano e a
+`nemesis-critical-analysis` (Ponto 2), invocada apos a gravacao (Step 8). Veredito
+PROSSEGUIR = disparar a execucao sem pausa; REJEITAR = ajustar e re-analisar (1 ciclo);
+segundo REJEITAR = parada de emergencia.
 
-Respostas validas: "sim", "pode", "aprovado", "ok", "prossiga", "execute"
+**MODO SUPERVISIONADO** (so quando o Fernando pedir): apresentar o plano e bloquear ate
+aprovacao explicita ("sim", "pode", "aprovado", "ok", "prossiga", "execute").
 
 ### Step 8: Salvar Plano
 
-Apos aprovacao, salvar em:
+Salvar em:
 ```
 Feature-Documentation/PLANS/PLAN_NNN_nome-descritivo.md
 Numero: auto-increment a partir de planos existentes (001, 002, ...)

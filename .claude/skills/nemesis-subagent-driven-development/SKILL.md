@@ -130,7 +130,7 @@ Verificacao Final:
   cargo check --workspace: PASS
   cargo test --workspace: PASS
 
-Resultado: PRONTO PARA nemesis-finishing-branch
+Resultado: PRONTO PARA nemesis-tests (Skill 4.5) — invocar sem pausa
 ```
 
 ## Red Flags (Parar Imediatamente)
@@ -152,5 +152,5 @@ Resultado: PRONTO PARA nemesis-finishing-branch
 
 ## Integracao
 
-**Skill anterior**: `nemesis-writing-plans`
-**Proxima skill apos conclusao**: `nemesis-finishing-branch`
+**Skill anterior**: `nemesis-writing-plans` (validado pela `nemesis-critical-analysis` Ponto 2)
+**Proxima skill apos conclusao**: `nemesis-tests` (Skill 4.5), invocada sem pausa

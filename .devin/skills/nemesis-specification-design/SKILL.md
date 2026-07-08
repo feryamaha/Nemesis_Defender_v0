@@ -2,7 +2,9 @@
 name: nemesis-specification-design
 description: >
   Converte request informal em especificacao tecnica estruturada para Nemesis Framework Rust.
-  Auto-ativa quando Fernando descreve uma necessidade. NUNCA escreva codigo antes do design ser aprovado.
+  Auto-ativa quando Fernando descreve uma necessidade. NUNCA escreva codigo antes do design ser
+  validado. No modo autonomo (default) o gate da spec e a analise critica (Skill 0, Ponto 1);
+  a spec e gravada sem aguardar aprovacao humana.
 ---
 
 # Nemesis Specification Design
@@ -11,12 +13,16 @@ Converter requests informais em especificacoes tecnicas estruturadas para o Neme
 
 **Anuncio de inicio**: "Estou usando a skill nemesis-specification-design para gerar uma especificacao tecnica."
 
-## HARD-GATE
+## GATE (por modo)
 
-NAO execute qualquer skill de implementacao, NAO escreva codigo Rust, NAO use Agent nemesis-implementer
-ate que o design seja APRESENTADO e **APROVADO** por Fernando explicitamente.
+NAO execute qualquer skill de implementacao e NAO escreva codigo Rust antes do design validado.
 
-Respostas validas de aprovacao: "sim", "pode", "aprovado", "ok", "prossiga", "continua"
+- **MODO AUTONOMO (default)**: o gate e AUTOMATICO. Apos gerar a spec, invocar
+  `nemesis-critical-analysis` (Ponto 1). Veredito PROSSEGUIR = gravar a spec e seguir o
+  pipeline sem pausa. Veredito REJEITAR = ajustar e re-analisar (1 ciclo); segundo REJEITAR =
+  parada de emergencia (reportar ao Fernando).
+- **MODO SUPERVISIONADO** (so quando o Fernando pedir): apresentar a spec e BLOQUEAR ate
+  aprovacao explicita ("sim", "pode", "aprovado", "ok", "prossiga", "continua").
 
 ## Processo
 
@@ -113,19 +119,25 @@ $ cd .nemesis && cargo check -p ast-linters
 $ cd .nemesis && cargo test -p ast-linters
 ```
 
-### Step 3: Apresentar e Obter Aprovacao
+### Step 2.5: Ler o codigo real dos pontos de contato (obrigatorio)
 
-**HARD-GATE**: Apresentar a especificacao completa. BLOQUEAR todas as acoes ate resposta de Fernando.
+Antes de fechar FILES INVOLVED, ler os arquivos que a spec cita (metodo Fable, secao 1:
+nenhum path citado sem confirmacao no disco; nenhuma assumpcao de assinatura sem grep).
+Assumpcoes que nao puderam ser verificadas ficam DECLARADAS na secao CONTEXT.
 
-Perguntar: "A especificacao reflete sua intencao? Quer ajustar algum ponto?"
+### Step 3: Validar (gate automatico no modo autonomo)
 
-**Se Fernando pedir ajustes**: Revisar especificacao e re-apresentar.
+Invocar `nemesis-critical-analysis` (Ponto 1) sobre a spec gerada.
 
-**Se Fernando aprovar** (sim, pode, ok, etc): Prosseguir para Step 4.
+- **PROSSEGUIR**: seguir para Step 4 (gravar) sem pausa.
+- **REJEITAR**: ajustar a spec conforme a justificativa e re-analisar (maximo 1 ciclo).
+  Segundo REJEITAR = parada de emergencia: reportar veredito + evidencia ao Fernando.
+
+No modo supervisionado: apresentar a spec ao Fernando e bloquear ate aprovacao.
 
 ### Step 4: Salvar Especificacao
 
-Apos aprovacao, salvar em arquivo:
+Apos veredito PROSSEGUIR (ou aprovacao, no modo supervisionado), salvar em arquivo:
 
 ```
 Path: Feature-Documentation/SPECS/SPEC_NNN_nome-descritivo.md
@@ -141,15 +153,16 @@ Arquivo markdown contendo a especificacao completa aprovada.
 
 ## Lembrar
 
-- NUNCA escrever codigo antes de design aprovado
+- NUNCA escrever codigo antes de design validado (analise critica no autonomo; Fernando no supervisionado)
+- Ler o codigo real dos pontos de contato ANTES de fechar a spec (nenhum path inventado)
 - Gerar especificacao completa SEM fazer perguntas
 - Somente sintomas observaveis, NUNCA hipoteses causais
-- Documentar assumpcoes quando fazer inferencias razoaveis
-- Nemesis enforcement (AST + eBPF + pretool) valida qualidade — foco em clareza de intencao
+- Documentar assumpcoes quando fizer inferencias razoaveis
+- Nemesis enforcement (AST + eBPF + pretool) valida qualidade: foco em clareza de intencao
 - Responder SEMPRE em PT-BR, escrever specs em PT-BR
 
-## Proxima Skill Apos Aprovacao
+## Proxima Skill
 
-**Apos especificacao aprovada por Fernando**:
+**Apos spec gravada** (modo autonomo, sem pausa):
 1. Invocar `pre-writing-rule-control` para validacao de regras
 2. Se validacao PASS: invocar `nemesis-writing-plans`

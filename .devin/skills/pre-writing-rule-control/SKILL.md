@@ -30,10 +30,14 @@ cat Feature-Documentation/SPECS/SPEC_*.md | tail -1
 
 Validar o plano proposto contra **6 regras fundamentais**:
 
-#### Regra 1: Somente Rust em .nemesis/
-- **Proibido**: .ts, .js, .py, .sh dentro de .nemesis/
-- **Obrigatorio**: Todos os arquivos modificados devem ser .rs
-- **Validacao**: Toda tarefa lista FILES INVOLVED — todos devem ter extensao .rs
+#### Regra 1: Rust como unica linguagem NOVA em .nemesis/
+- **Proibido**: introduzir codigo novo .ts, .js, .py, .sh dentro de .nemesis/
+- **Permitido (herdar, nao introduzir toolchain novo)**: EDITAR infra pre-existente nao-Rust
+  quando a mudanca a exigir: o C do eBPF (`ebpf-kernel/`), os shell scripts herdados de
+  `install/`, `scripts/` e `pentest-nemesis-control/`. Arquivos de configuracao e templates
+  (.json, .toml, .service, .plist) sao permitidos onde o design os preve.
+- **Validacao**: FILES INVOLVED contem apenas .rs, config/templates, ou edicao de infra
+  pre-existente listada acima. Arquivo nao-Rust NOVO fora dessas categorias = FAIL.
 
 #### Regra 2: Build via Cargo Workspace
 - **Obrigatorio**: Usar `cargo check -p <crate>` por tarefa
@@ -86,7 +90,10 @@ Verificacoes criticas:
 
 ### Step 4: Apresentar Decisao
 
-**HARD-GATE**: Apresentar decisao de validacao. BLOQUEAR todas as acoes até resposta de Fernando.
+**GATE AUTOMATICO** (modo autonomo, default): o veredito bloqueia ou libera sozinho, sem
+aguardar resposta humana. PASS = prosseguir imediatamente para `nemesis-writing-plans`.
+FAIL = ajustar a spec/plano proposto conforme a violacao e revalidar (maximo 1 ciclo);
+segundo FAIL = parada de emergencia (reportar violacao + evidencia ao Fernando e aguardar).
 
 **Se aprovado**:
 ```
@@ -108,10 +115,10 @@ Plano rejeitado. Violacao detectada:
 
 Ajustes necessarios: [lista de mudancas requeridas]
 
-Aguardando revisa...
+Aplicando ajuste e revalidando (ciclo 1 de 1)...
 ```
 
-Respostas validas de aprovacao: "sim", "pode", "aprovado", "ok", "prossiga"
+Se o segundo ciclo tambem falhar: parada de emergencia, reportar ao Fernando e aguardar.
 
 ## Lembrar
 

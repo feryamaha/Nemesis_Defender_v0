@@ -183,19 +183,45 @@ else
   say "Allowlist eBPF preservada (.nemesis/denylist-customers/allowlist-ebpf.toml já existe)."
 fi
 
-# ── 5.4 Telemetria opt-in: criar diretorio SEM opt-in (zero dado de maquina) ─
-# O publisher e um binario Rust do workspace. --init sem --opt-in apenas cria
-# o diretorio .nemesis/telemetry/ — nao gera identidade nem tokens. O usuario
-# opt-in manualmente apos install: nemesis-publisher --opt-in && --register.
+# ── 5.4 Telemetria: gerar o token de install + registrar na dashboard ─────────
+# O publisher e um binario Rust do workspace. No primeiro install, gera a identidade
+# (install_id UUID opaco + tokens + hashes SHA-256, arquivo 0600) e registra na dashboard
+# para contar este install como usuario. O payload de registro NAO leva dado de maquina
+# (so UUID + hashes). Registro e best-effort: falha de rede ou bootstrap secret ausente
+# nao quebra o install (fail-closed); o --serve tenta registrar de novo no boot.
 if [ -f ".nemesis/bin/nemesis-publisher" ]; then
   if [ ! -s ".nemesis/telemetry/identity.json" ]; then
-    .nemesis/bin/nemesis-publisher --init 2>/dev/null || warn "Publisher init pulado (nao critico)."
-    say "Telemetria: diretorio criado (opt-in e manual, veja --help do publisher)."
+    if .nemesis/bin/nemesis-publisher --init --opt-in; then
+      say "Telemetria: token de install gerado (.nemesis/telemetry/identity.json, 0600)."
+      if .nemesis/bin/nemesis-publisher --register; then
+        say "Telemetria: install registrado na dashboard."
+      else
+        warn "Registro na dashboard pulado (rede/secret). Sera tentado de novo pelo --serve."
+      fi
+    else
+      warn "Geracao do token de install pulada (nao critico)."
+    fi
   else
     say "Telemetria: identidade preservada (re-install)."
   fi
 else
   warn "Binario nemesis-publisher nao encontrado no tarball (instalacao antiga). Telemetria pulada."
+fi
+
+# ── 5.4b Service do publisher (systemd user/launchd) — SOMENTE com opt-in ativo ─
+# Primeiro install: opt-in ainda nao existe → nenhum service e criado (apos o opt-in,
+# o usuario roda: nemesis-publisher --install-service). Re-install com opt-in
+# preservado: recria/atualiza o service automaticamente. Best-effort: nunca falha o install.
+if [ -f ".nemesis/bin/nemesis-publisher" ]; then
+  if grep -q '"opt_in": true' .nemesis/telemetry/identity.json 2>/dev/null; then
+    if .nemesis/bin/nemesis-publisher --install-service; then
+      say "Telemetria: service do publisher instalado (opt-in ativo, auto-start habilitado)."
+    else
+      warn "Service do publisher nao instalado (nao critico). Manual: nemesis-publisher --install-service"
+    fi
+  else
+    say "Telemetria: sem opt-in, nenhum service criado (opt-in e manual)."
+  fi
 fi
 
 ABS_PRETOOL="$(pwd)/.nemesis/bin/nemesis-pretool-check-unix"

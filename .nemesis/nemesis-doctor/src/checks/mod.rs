@@ -6,6 +6,7 @@ pub mod ebpf;
 pub mod inventory;
 pub mod pentest;
 pub mod scaffold;
+pub mod telemetry;
 pub mod unit_tests;
 
 use crate::report::CheckResult;
@@ -114,6 +115,9 @@ pub fn run_all(quick: bool) -> Vec<CheckResult> {
                 .line("Pulado (--quick).", "Skipped (--quick)."),
         );
     }
+
+    // G8 roda tambem no --quick: todos os sub-checks sao baratos (stat, TCP local, GET local).
+    results.push(telemetry::run());
 
     results
 }

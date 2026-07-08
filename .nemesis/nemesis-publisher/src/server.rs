@@ -12,6 +12,7 @@
 //!   path, o pior request e o re-parse do ledger (~0,15s) em mudanca de mtime.
 
 use crate::config;
+use crate::identity;
 use crate::sources;
 use crate::sources::doctor::DoctorRun;
 use crate::sources::pentest::PentestRun;
@@ -41,9 +42,19 @@ pub fn run(port: u16, nemesis_path: &std::path::Path) -> anyhow::Result<()> {
 
     println!("[nemesis-publisher] Servindo em http://{}", addr);
 
+    // Registro best-effort no startup: se o install gerou o token mas nao conseguiu registrar
+    // (rede/dashboard fora do ar), tenta de novo aqui. O systemd/launchd roda --serve no boot,
+    // entao o install acaba contado assim que houver rede. Em thread para nao bloquear o serve.
+    std::thread::spawn(try_register_if_needed);
+
     // Doctor FULL em background: boot (se snapshot ausente) + intervalo configuravel.
     let np = nemesis_path.to_path_buf();
-    std::thread::spawn(move || background_doctor_full(np));
+    std::thread::spawn(move || background_doctor_full(np.clone()));
+
+    // Sync Neon em background: se DATABASE_URL estiver definida, sincroniza a cada
+    // NEMESIS_SYNC_INTERVAL (default 30min). Caso contrario, nao faz nada.
+    let np2 = nemesis_path.to_path_buf();
+    std::thread::spawn(move || background_neon_sync(np2));
 
     let cache: Mutex<ResourceCache> = Mutex::new(ResourceCache::default());
 
@@ -58,6 +69,19 @@ pub fn run(port: u16, nemesis_path: &std::path::Path) -> anyhow::Result<()> {
     );
 
     for request in server.incoming_requests() {
+        // Anti DNS-rebinding: o socket faz bind so em 127.0.0.1, mas um site hostil visitado
+        // pelo usuario pode religar seu dominio para 127.0.0.1 e emitir requests same-origin.
+        // A defesa canonica de servico localhost e validar o Host: so loopback e aceito.
+        let host = request
+            .headers()
+            .iter()
+            .find(|h| h.field.equiv("Host"))
+            .map(|h| h.value.as_str().to_string());
+        if !is_loopback_host(host.as_deref()) {
+            let _ = request.respond(Response::empty(403));
+            continue;
+        }
+
         let url = request.url().to_string();
         let method = request.method().clone();
 
@@ -120,6 +144,63 @@ fn background_doctor_full(nemesis_path: PathBuf) {
             break;
         }
         std::thread::sleep(Duration::from_secs(interval.min(30)));
+    }
+}
+
+/// Loop da thread de background: sincroniza com o Neon periodicamente.
+/// Se DATABASE_URL nao estiver definida, loga uma vez e encerra.
+/// Se NEMESIS_SYNC_INTERVAL for 0, nao sincroniza (modo manual apenas).
+fn background_neon_sync(nemesis_path: PathBuf) {
+    let interval = config::sync_interval();
+
+    if interval == 0 {
+        eprintln!("[nemesis-publisher] sync Neon desativado (NEMESIS_SYNC_INTERVAL=0). Use --sync manualmente.");
+        return;
+    }
+
+    if config::database_url().is_none() {
+        eprintln!("[nemesis-publisher] sync Neon: DATABASE_URL nao definida. Sync automatico pulado. Use --sync com DATABASE_URL.");
+        return;
+    }
+
+    eprintln!("[nemesis-publisher] sync Neon automatico ativo (intervalo: {}s)", interval);
+
+    loop {
+        let t0 = Instant::now();
+        match crate::neon::sync_all(&nemesis_path) {
+            Ok(()) => eprintln!(
+                "[nemesis-publisher] sync Neon concluido em {:.1}s",
+                t0.elapsed().as_secs_f32()
+            ),
+            Err(e) => eprintln!(
+                "[nemesis-publisher] sync Neon falhou: {:#}", e
+            ),
+        }
+        std::thread::sleep(Duration::from_secs(interval));
+    }
+}
+
+/// Registro best-effort: so age se ha identidade opt-in ainda nao registrada e o bootstrap
+/// secret foi embutido no build. Nunca propaga erro (o --serve nao pode falhar por isto).
+fn try_register_if_needed() {
+    let Ok(id) = identity::load() else {
+        return;
+    };
+    if !id.opt_in || id.registered_at.is_some() {
+        return;
+    }
+    let Some(secret) = config::bootstrap_secret() else {
+        return; // build sem NEMESIS_BOOTSTRAP_SECRET: registro desabilitado (fail-closed)
+    };
+    let url = config::dashboard_url();
+    match crate::publisher::register(&id, secret, &url) {
+        Ok(()) => {
+            let _ = identity::update(|i| {
+                i.registered_at = Some(chrono::Local::now().to_rfc3339());
+            });
+            eprintln!("[nemesis-publisher] registro concluido no startup do --serve.");
+        }
+        Err(e) => eprintln!("[nemesis-publisher] registro no startup pulado: {:#}", e),
     }
 }
 
@@ -282,4 +363,59 @@ fn parse_query(q: &str) -> HashMap<String, String> {
         }
     }
     map
+}
+
+/// Aceita apenas Host loopback (com ou sem porta), case-insensitive. Defesa anti
+/// DNS-rebinding: o bind so em 127.0.0.1 nao basta, porque um dominio hostil pode ser
+/// religado para o loopback; a validacao do Host no servidor e a defesa canonica.
+/// `None` (Host ausente) e qualquer host nao-loopback = rejeitado.
+fn is_loopback_host(host: Option<&str>) -> bool {
+    let Some(h) = host else { return false };
+    let h = h.trim().to_ascii_lowercase();
+    // Extrai o hostname descartando a porta. IPv6 vem entre colchetes: [::1]:8080.
+    let hostname = if let Some(rest) = h.strip_prefix('[') {
+        match rest.split_once(']') {
+            Some((inner, _)) => format!("[{}]", inner),
+            None => h.clone(),
+        }
+    } else {
+        h.split(':').next().unwrap_or("").to_string()
+    };
+    matches!(hostname.as_str(), "127.0.0.1" | "localhost" | "[::1]")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::is_loopback_host;
+
+    #[test]
+    fn aceita_loopback_com_e_sem_porta() {
+        for h in [
+            "127.0.0.1",
+            "127.0.0.1:8080",
+            "localhost",
+            "localhost:8080",
+            "LOCALHOST:8080",
+            "[::1]",
+            "[::1]:8080",
+        ] {
+            assert!(is_loopback_host(Some(h)), "deveria aceitar: {h}");
+        }
+    }
+
+    #[test]
+    fn rejeita_nao_loopback_e_ausencia() {
+        for h in [
+            "evil.com",
+            "evil.com:8080",
+            "attacker.example:8080",
+            "0.0.0.0:8080",
+            "10.0.0.5",
+            "nemesis.local",
+            "",
+        ] {
+            assert!(!is_loopback_host(Some(h)), "deveria rejeitar: {h}");
+        }
+        assert!(!is_loopback_host(None), "Host ausente deve ser rejeitado");
+    }
 }

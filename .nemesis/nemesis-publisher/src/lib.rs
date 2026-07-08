@@ -8,5 +8,6 @@ pub mod neon;
 pub mod publisher;
 pub mod sanitize;
 pub mod server;
+pub mod service;
 pub mod sources;
 pub mod sync_state;

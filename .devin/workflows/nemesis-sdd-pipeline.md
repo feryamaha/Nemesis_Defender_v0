@@ -2,245 +2,214 @@
 
 ## Overview
 
-O Nemesis SDD Pipeline e um workflow sequencial de 7 skills que governa o desenvolvimento
-do Nemesis Framework v2.0 Rust de forma deterministica e auditavel.
+O Nemesis SDD Pipeline governa o desenvolvimento do Nemesis Framework Rust de forma
+deterministica e auditavel. A partir de um input informal do Fernando, o pipeline corre em
+**modo autonomo** ate a implementacao validada, com **UMA parada obrigatoria** ao final da
+validacao. As fases de documentacao (doc-sync) e finishing **nunca executam sem autorizacao
+explicita do Fernando**, porque e nesse ponto que ele decide entre finalizar ou gerar novas
+issues e reiniciar o ciclo.
 
-Cada skill tem um proposito claro, um HARD-GATE de aprovacao, e integra-se ao proximo skill.
+Aplicar junto: `.devin/rules/nemesis-fable-method.md` (metodo de trabalho do modelo) e
+`.devin/rules/nemesis-epistemic-safety.md` (disciplina epistemica).
 
-## Workflow Sequencial
+## Os dois modos
+
+- **MODO AUTONOMO (default)**: Fernando da o input e o pipeline executa sem pausas
+  intermediarias ate a PARADA UNICA (pos-validacao). Specs e planos sao gravados sem aguardar
+  aprovacao; o gate de qualidade deles e a analise critica (Skill 0) + rule control (Skill 2),
+  ambos automaticos.
+- **MODO SUPERVISIONADO**: o fluxo classico com aprovacao humana de spec e de plano. So e
+  usado quando o Fernando pedir explicitamente ("modo supervisionado", "quero aprovar a spec").
+
+## Workflow (modo autonomo)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ USER REQUEST (Fernando descreve necessidade informal)       │
+│ INPUT (Fernando descreve necessidade ou aponta uma ISSUE)   │
 └────────────────────┬────────────────────────────────────────┘
-                     │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Skill 1: nemesis-specification-design                       │
-│ OUTPUT: Especificacao tecnica gerada (nao gravada ainda)    │
+│ Ler codigo real dos pontos de contato ANTES de especificar  │
+│ OUTPUT: especificacao tecnica gerada                        │
 └────────────────────┬────────────────────────────────────────┘
-                     │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Skill 0: nemesis-critical-analysis (PONTO 1: Pre-Spec)      │
-│ VALIDACAO: Analise critica da spec antes de gravar          │
-│ OUTPUT: PROSSEGUIR (gravar spec) ou REJEITAR (ajustar)      │
-│ HARD-GATE: Veredito PROSSEGUIR para gravar spec             │
+│ GATE AUTOMATICO: PROSSEGUIR → gravar SPEC_NNN e seguir      │
+│ REJEITAR → ajustar a spec e re-analisar (1 ciclo);          │
+│ segundo REJEITAR → PARADA DE EMERGENCIA (reportar)          │
 └────────────────────┬────────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│ Skill 1: nemesis-specification-design (gravacao)            │
-│ OUTPUT: SPEC aprovada em Feature-Documentation/SPECS/       │
-│ HARD-GATE: Fernando aprova especificacao                    │
-└────────────────────┬────────────────────────────────────────┘
-                     │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Skill 2: pre-writing-rule-control                           │
-│ VALIDACAO: Spec contra 6 regras Nemesis Rust               │
-│ OUTPUT: PASS (prosseguir) ou FAIL (ajustar)                 │
-│ HARD-GATE: Validacao passa ou propoe ajustes               │
+│ GATE AUTOMATICO: PASS → seguir; FAIL → ajustar e revalidar  │
+│ (1 ciclo); segundo FAIL → PARADA DE EMERGENCIA              │
 └────────────────────┬────────────────────────────────────────┘
-                     │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Skill 3: nemesis-writing-plans                              │
-│ INPUT: SPEC aprovada + validada                            │
-│ OUTPUT: PLAN com tarefas atomicas                           │
-│ HARD-GATE: Fernando aprova plano                            │
+│ Tarefas atomicas, paths reais, codigo completo, verificacao │
+│ OUTPUT: PLAN_NNN gravado (sem aguardar aprovacao)           │
 └────────────────────┬────────────────────────────────────────┘
-                     │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Skill 0: nemesis-critical-analysis (PONTO 2: Pre-Execution) │
-│ VALIDACAO: Analise critica do plano antes de executar       │
-│ OUTPUT: PROSSEGUIR (executar) ou REJEITAR (ajustar)         │
-│ HARD-GATE: Veredito PROSSEGUIR para executar plano          │
+│ GATE AUTOMATICO: mesmo regime do Ponto 1                    │
 └────────────────────┬────────────────────────────────────────┘
-                     │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Skill 4: nemesis-subagent-driven-development                │
-│ EXECUCAO: Tarefa por tarefa (Agent nemesis-implementer)     │
-│ VALIDACAO: Two-stage review (spec compliance + code quality)│
-│ OUTPUT: Todas as tarefas completadas                        │
-│ EXECUCAO CONTINUA: Sem pause entre tarefas                  │
+│ Execucao continua tarefa a tarefa, two-stage review         │
+│ Sem pausas; para somente em bloqueio irresoluvel            │
 └────────────────────┬────────────────────────────────────────┘
-                     │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ Skill 4.5: nemesis-tests                                    │
-│ VALIDACAO: cargo check + cargo test + run-pentest.sh        │
-│ SE PASS: cargo build --release + nemesis-doctor + pentest   │
-│ SE FAIL: investigar causa raiz, aprovar fix, retestar       │
-│ OUTPUT: Todos os testes PASS + binarios recompilados        │
-│ HARD-GATE: Fernando aprova cargo build --release            │
-│ HARD-GATE: Fernando aprova reconexao do pretool             │
+│ Skill 4.5: nemesis-tests (validacao completa)               │
+│ cargo check + cargo test + build release (autorizado        │
+│ intrinsecamente pelo pipeline) + pentest estatico + doctor  │
+│ Falha → investigacao de causa raiz + fix cirurgico          │
+│ autonomo (max 2 tentativas por falha); persistiu →          │
+│ PARADA DE EMERGENCIA                                        │
 └────────────────────┬────────────────────────────────────────┘
-                     │
                      ▼
+╔═════════════════════════════════════════════════════════════╗
+║ ⛔ PARADA UNICA OBRIGATORIA (HARD-GATE humano)               ║
+║ Apresentar: spec, plano, git diff real, tabela de           ║
+║ validacao, decisoes tomadas, achados fora de escopo.        ║
+║ AGUARDAR o Fernando. Opcoes dele:                           ║
+║  (a) autorizar doc-sync e/ou finishing                      ║
+║  (b) gerar issues a partir dos achados e reiniciar o ciclo  ║
+║  (c) pedir ajustes na implementacao                         ║
+║  (d) descartar                                              ║
+╚════════════════════╤════════════════════════════════════════╝
+                     ▼ (somente com autorizacao explicita)
 ┌─────────────────────────────────────────────────────────────┐
-│ Skill 4.6: nemesis-doc-sync (documentacao como feature)     │
-│ GATE: a mudanca afeta README.md / index.html?               │
-│ NAO PRECISA: segue. PRECISA: reconcilia (codigo=verdade,    │
-│   regra do coeficiente §3A, espelha README<->index)         │
-│ OUTPUT: doc sincronizada (ou veredito "nada a atualizar")   │
+│ Skill 4.6: nemesis-doc-sync — SO COM AUTORIZACAO DO FERNANDO│
 │ HARD-GATE: Fernando aprova as mudancas de doc               │
 └────────────────────┬────────────────────────────────────────┘
-                     │
-                     ▼
+                     ▼ (somente com autorizacao explicita)
 ┌─────────────────────────────────────────────────────────────┐
-│ Skill 5: nemesis-finishing-branch                           │
-│ VALIDACAO FINAL: cargo check --workspace + cargo test       │
-│ OUTPUT: PR documentada em Feature-Documentation/PR/         │
-│ HARD-GATE: Fernando aprova PR                               │
-│ DISPOSICAO: Fernando escolhe merge/keep/discard             │
+│ Skill 5: nemesis-finishing-branch — SO COM AUTORIZACAO      │
+│ HARD-GATE: Fernando aprova PR e escolhe disposicao          │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ## Regras Fundamentais
 
-1. **NUNCA escrever codigo antes do design ser aprovado**
-   - Skill 1 tem HARD-GATE — nao prosseguir sem aprovacao explícita
-   - Skill 0 (Ponto 1) valida a spec ANTES de gravar — veredito REJEITAR bloqueia gravacao
+1. **Autonomia ate a validacao, nunca alem dela.** Entre o input e o fim da Skill 4.5 nao ha
+   pausas para aprovacao. A PARADA UNICA e inegociavel: nenhuma skill pos-validacao (4.6, 5)
+   e invocada automaticamente, nem "por conveniencia", nem porque "ja estava tudo verde".
 
-2. **NUNCA executar antes do plano ser aprovado e validado**
-   - Skill 3 tem HARD-GATE — nao disparar Skill 4 sem aprovacao
-   - Skill 0 (Ponto 2) valida o plano APOS aprovacao e ANTES de executar — veredito REJEITAR bloqueia execucao
+2. **Gates automaticos nao sao decorativos.** A analise critica (Skill 0) e o rule control
+   (Skill 2) substituem a aprovacao humana intermediaria; por isso os vereditos deles BLOQUEIAM
+   de verdade. Veredito negativo permite UM ciclo de ajuste + re-analise; o segundo veredito
+   negativo vira PARADA DE EMERGENCIA (reportar ao Fernando com o veredito e a evidencia).
 
-3. **Execucao continua entre tarefas** (Skill 4)
-   - Nao pause para perguntar "posso continuar?"
-   - PARE somente se bloqueado
+3. **Paradas de emergencia** (alem da PARADA UNICA): bloqueio Nemesis persistente apos
+   correcao; mesma tarefa/falha apos 2 tentativas de fix; escopo real materialmente maior que
+   a spec; qualquer acao irreversivel ou externa nao prevista no plano (classe C do metodo
+   Fable); ambiguidade que genuinamente impede progresso. Nesses casos: STOP, reportar o
+   bloqueador exato com evidencia, aguardar o Fernando.
 
-4. **Usar git diff real para PRs** (Skill 5)
-   - NUNCA fabricar evidencias
-   - Sempre `git diff`, `git log`, dados reais
+4. **Autorizacao intrinseca da validacao.** Dentro da Skill 4.5, `cargo build --release`,
+   a restauracao de capabilities do eBPF e a reconexao do pretool (restaurar estado) estao
+   autorizados pelo proprio pipeline. DESCONECTAR o pretool permanece exclusivo do Fernando
+   (invariante 12 do AGENTS.md), sempre.
 
-5. **Validacao obrigatoria em cada fase**
-   - Skill 2: validacao contra 6 regras
-   - Skill 4: two-stage review apos cada tarefa
-   - Skill 4.5: cargo check + cargo test + run-pentest.sh + pentest full
-   - Skill 4.6: gate de doc-sync (README/index.html refletem a mudanca? atualiza se preciso)
-   - Skill 5: cargo check + cargo test final
+5. **Evidencia real sempre.** git diff/log reais nas PRs (nunca fabricar); numeros copiados
+   da saida literal dos comandos desta sessao; falha reportada com a mesma proeminencia que
+   sucesso (metodo Fable, secao 3).
 
-6. **Fernando governa decisoes humanas**
-   - HARD-GATEs requerem aprovacao de Fernando
-   - Skill 5 Final disposition: Fernando escolhe (merge/keep/discard)
+6. **Fernando governa as decisoes humanas.** A PARADA UNICA, o doc-sync, o finishing e a
+   disposicao da branch sao dele. Git de escrita e exclusivamente dele.
 
 ## Entradas e Saidas
 
-| Skill | Entrada | Saida | Aprovacao |
-|-------|---------|-------|-----------|
-| 0: nemesis-critical-analysis (Ponto 1) | Spec gerada + request | PROSSEGUIR/REJEITAR | (automatica) |
-| 1: nemesis-specification-design | Request informal + analise critica | SPEC_NNN.md | Fernando |
-| 2: pre-writing-rule-control | SPEC_NNN.md | PASS/FAIL + mensagem | (automatica) |
-| 3: nemesis-writing-plans | SPEC_NNN.md (validada) | PLAN_NNN.md | Fernando |
-| 0: nemesis-critical-analysis (Ponto 2) | SPEC + PLAN aprovados | PROSSEGUIR/REJEITAR | (automatica) |
-| 4: nemesis-subagent-driven-development | PLAN_NNN.md (validado) | Todas tarefas ✅ | (continuo) |
-| 4.5: nemesis-tests | Workspace atualizado | Testes PASS + binarios recompilados | Fernando |
-| 4.6: nemesis-doc-sync | git diff da mudanca | Veredito (PRECISA/NAO) + README/index sincronizados | Fernando |
-| 5: nemesis-finishing-branch | Workspace validado + doc sincronizada | PR_NNN.md | Fernando |
+| Fase | Entrada | Saida | Gate |
+|------|---------|-------|------|
+| 1: specification-design | Input informal / ISSUE | Spec gerada | automatico (Skill 0 P1) |
+| 0 (P1): critical-analysis | Request + spec | PROSSEGUIR/REJEITAR | automatico |
+| (gravacao) | Spec aprovada pela analise | SPEC_NNN.md | nenhum |
+| 2: pre-writing-rule-control | SPEC_NNN.md | PASS/FAIL | automatico |
+| 3: writing-plans | SPEC validada | PLAN_NNN.md gravado | automatico (Skill 0 P2) |
+| 0 (P2): critical-analysis | SPEC + PLAN | PROSSEGUIR/REJEITAR | automatico |
+| 4: subagent-driven-development | PLAN validado | Tarefas completas | continuo |
+| 4.5: nemesis-tests | Workspace atualizado | Validacao completa | automatico |
+| ⛔ PARADA UNICA | Tudo acima | Relatorio consolidado | **Fernando** |
+| 4.6: doc-sync | Autorizacao explicita | Doc sincronizada | **Fernando** |
+| 5: finishing-branch | Autorizacao explicita | PR_NNN.md | **Fernando** |
 
-## Como Usar
+## Relatorio da PARADA UNICA (formato obrigatorio)
 
-### Iniciar Pipeline
-
-Fernando descreve necessidade:
 ```
-"Preciso de um novo visitor tree-sitter para detectar unsafe blocks em eBPF hooks"
+PIPELINE CONCLUIDO ATE A VALIDACAO — aguardando Fernando
+
+Spec:  Feature-Documentation/SPECS/SPEC_NNN_nome.md
+Plano: Feature-Documentation/PLANS/PLAN_NNN_nome.md
+
+Diff real (git diff --stat):
+[saida literal]
+
+Validacao:
+| Comando | Resultado | Observacao |
+[tabela com saidas literais]
+
+Decisoes tecnicas tomadas (com justificativa em 1 linha cada):
+[lista]
+
+Achados fora de escopo (estacionamento — sem acao tomada):
+[lista com arquivo:linha, ou "nenhum"]
+
+Proximos passos possiveis:
+(a) autorizar doc-sync  (b) autorizar finishing  (c) gerar issues  (d) ajustar  (e) descartar
 ```
-
-Invocar: `/nemesis-specification-design`
-
-### Fluxo Tipico
-
-1. **Skill 1**: Fernando descreve → Gera especificacao tecnica
-2. **Skill 0 (Ponto 1)**: Analise critica da spec → PROSSEGUIR
-3. **Skill 1**: Grava SPEC → Fernando aprova
-4. **Skill 2**: Valida SPEC contra regras → PASS
-5. **Skill 3**: Cria PLAN com tarefas → Fernando aprova
-6. **Skill 0 (Ponto 2)**: Analise critica do plano → PROSSEGUIR
-7. **Skill 4**: Executa TODAS as tarefas (sem pause) → COMPLETA
-8. **Skill 4.5**: Testes (cargo check + cargo test + pentest) → PASS → cargo build --release → nemesis-doctor → reconectar pretool → pentest full
-9. **Skill 4.6 (doc-sync)**: gate — a mudanca afeta README/index.html? NAO → segue; SIM → reconcilia (codigo=verdade, regra do coeficiente) → Fernando aprova a doc
-10. **Skill 5**: Gera PR (ja com a doc sincronizada) → Fernando aprova → Choose disposition
-
-### Parar No Meio
-
-Se bloqueado em qualquer skill:
-- STOP a execucao
-- Reportar bloqueador exato a Fernando
-- Aguardar instrucoes antes de continuar
 
 ## Regras do Pipeline
 
-### Regra 1: Somente Rust (.rs files)
-Nenhum .ts, .js, .py, .sh em .nemesis/
+### Regra 1: Rust como unica linguagem NOVA em .nemesis/
+Nenhum codigo novo em .ts/.js/.py/.sh dentro de `.nemesis/`. Infra pre-existente nao-Rust
+(o C do eBPF em `ebpf-kernel/`, os shell scripts herdados de `install/`, `scripts/` e
+`pentest-nemesis-control/`) pode ser EDITADA quando a mudanca a exigir: herdar, nao introduzir
+toolchain novo. Arquivos de configuracao e templates (.json, .toml, .service, .plist) sao
+permitidos onde o design os preve.
 
 ### Regra 2: Build via Cargo Workspace
-Usar `cargo check -p <crate>` por tarefa. Nao rustc avulso.
+`cargo check -p <crate>` por tarefa; `cargo test -p <crate>` para validar. Nada de rustc avulso.
 
-### Regra 3: Maintenance Mode para Hooks
-Se modificar .nemesis/hooks/, ativar maintenance mode primeiro.
+### Regra 3: Hooks somente em manutencao coordenada
+Mexer em `.nemesis/hooks/` so com o pretool desconectado pelo Fernando (invariante 12).
 
 ### Regra 4: Scope da Spec
-Nao sair do scope de arquivos listados. Nao modificar files aleatorios.
+Nao sair dos arquivos listados na spec. Divergencia material = parada de emergencia.
 
-### Regra 5: Git Operations — Fernando Apenas
-IA NUNCA executa git add, commit, push. Fernando faz manualmente.
+### Regra 5: Git de escrita e exclusivo do Fernando
+IA nunca executa git add/commit/push. Evidencia so com git read-only real.
 
-### Regra 6: Sem Binarios Fora de .nemesis/target/
+### Regra 6: Sem binarios fora de .nemesis/target/
 Nao copiar binarios para outro lugar.
-
-## Comandos de Validacao
-
-```bash
-# Apos Skill 4 (Skill 4.5 executa estes)
-cd .nemesis && cargo check --workspace
-cd .nemesis && cargo test -p nemesis-defender
-bash .nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh
-
-# Apos Skill 4.5 passar (com aprovacao)
-cd .nemesis && cargo build --release --workspace
-.nemesis/target/release/nemesis-doctor
-# Reconectar pretool + executar pentest full
-
-# Apos Skill 5
-git diff --stat
-git log --oneline -5
-```
 
 ## Convencoes de Nomenclatura
 
-- **Specs**: SPEC_NNN_nome-descritivo.md (em Feature-Documentation/SPECS/)
-- **Plans**: PLAN_NNN_nome-descritivo.md (em Feature-Documentation/PLANS/)
-- **PRs**: PR_NNN_nome-descritivo.md (em Feature-Documentation/PR/)
-- **Numero**: auto-increment (001, 002, 003, ...)
+- **Specs**: `SPEC_NNN_nome-descritivo.md` em `Feature-Documentation/SPECS/`
+- **Plans**: `PLAN_NNN_nome-descritivo.md` em `Feature-Documentation/PLANS/`
+- **PRs**: `PR_NNN_nome-descritivo.md` em `Feature-Documentation/PR/`
+- **Numero**: auto-increment verificado com `ls` antes de gravar (nunca assumir).
 
-## Permissoes Claude Code
+## Como Usar
 
-- ✅ Read .nemesis/, Feature-Documentation/
-- ✅ Write .nemesis/<crates>/, Feature-Documentation/
-- ✅ Bash: cargo check, cargo test, grep, find, cat
-- ❌ Write .nemesis/hooks/, .nemesis/target/
-- ❌ git add, git commit, git push
-- ❌ cargo build --release (requer aprovacao Fernando)
+Fernando descreve a necessidade (ou aponta uma issue em `Feature-Documentation/ISSUE/`):
 
-## Enforcement Ativo
+```
+"Preciso de um novo visitor para detectar X" | "Analise a ISSUE 010 e execute"
+```
 
-Nemesis enforcement (AST + eBPF + pretool + deny-list) valida:
-- Nenhum arquivo nao-.rs em .nemesis/
-- Nenhum cargo build --release nao-autorizado
-- Nenhum unsafe block improprio em eBPF hooks
-- Nenhuma violacao de regras Nemesis
-
-Confie nele para qualidade de codigo. Foco em fluxo e metodo.
+O pipeline inicia em modo autonomo e so para na PARADA UNICA (ou numa parada de emergencia).
+Para o fluxo com aprovacoes intermediarias, pedir explicitamente o modo supervisionado.
 
 ## Suporte
 
-Se bloqueado ou com duvidas sobre o pipeline:
-1. Consultar CLAUDE.md (raiz do projeto)
-2. Consultar skill especifica (.claude/skills/<skill>/SKILL.md)
-3. Reportar bloqueador exato a Fernando
-4. Aguardar instrucoes
+Se bloqueado: (1) consultar `CLAUDE.md` / `AGENTS.md`; (2) consultar a skill especifica em
+`.devin/skills/` (espelho em `.claude/skills/`); (3) reportar o bloqueador exato ao Fernando
+e aguardar. Nemesis enforcement (AST + eBPF + pretool + denylists) valida a qualidade do
+codigo; o pipeline governa fluxo e metodo.

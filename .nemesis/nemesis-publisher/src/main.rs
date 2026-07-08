@@ -4,9 +4,14 @@ use nemesis_publisher::config;
 use nemesis_publisher::identity;
 use nemesis_publisher::ledger;
 use nemesis_publisher::publisher;
+use nemesis_publisher::service;
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
+    // Fallback de ambiente (publisher.env) antes de qualquer comando: cobre o service
+    // do sistema no macOS (launchd sem EnvironmentFile) e execucao manual sem env.
+    config::load_env_file();
+
     let args: Vec<String> = std::env::args().collect();
 
     let result = match args.get(1).map(|s| s.as_str()) {
@@ -20,6 +25,8 @@ fn main() -> ExitCode {
         Some("--publish") => cmd_publish(),
         Some("--serve") => cmd_serve(),
         Some("--sync") => cmd_sync(),
+        Some("--install-service") => service::install_service(),
+        Some("--uninstall-service") => service::uninstall_service(),
         Some("--status") => cmd_status(),
         Some("--help") | Some("-h") => {
             print_help();
@@ -191,6 +198,8 @@ fn print_help() {
     eprintln!("  nemesis-publisher --publish           Enviar contadores agregados para a dashboard");
     eprintln!("  nemesis-publisher --serve             Iniciar servidor HTTP local (dashboard local)");
     eprintln!("  nemesis-publisher --sync              Sincronizar dados com Neon Postgres");
+    eprintln!("  nemesis-publisher --install-service   Instalar service do sistema para --serve (requer opt-in)");
+    eprintln!("  nemesis-publisher --uninstall-service Remover service do sistema");
     eprintln!("  nemesis-publisher --status            Mostrar estado da telemetria");
     eprintln!("  nemesis-publisher --help              Ajuda");
     eprintln!();
