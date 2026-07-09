@@ -31,10 +31,10 @@ pub fn ledger_path() -> PathBuf {
 }
 
 /// URL base da dashboard. Lida de env var `NEMESIS_DASHBOARD_URL`.
-/// Default: `https://nemesis-defender.vercel.app`
+/// Default: `https://dashboard-nemesis-defender.vercel.app`
 pub fn dashboard_url() -> String {
     std::env::var("NEMESIS_DASHBOARD_URL")
-        .unwrap_or_else(|_| "https://nemesis-defender.vercel.app".to_string())
+        .unwrap_or_else(|_| "https://dashboard-nemesis-defender.vercel.app".to_string())
 }
 
 /// Bootstrap secret para registro. Compilado em build-time via `option_env!`.

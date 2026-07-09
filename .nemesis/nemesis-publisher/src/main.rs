@@ -204,7 +204,7 @@ fn print_help() {
     eprintln!("  nemesis-publisher --help              Ajuda");
     eprintln!();
     eprintln!("Environment variables:");
-    eprintln!("  NEMESIS_DASHBOARD_URL                 URL base da dashboard (default: https://nemesis-defender.vercel.app)");
+    eprintln!("  NEMESIS_DASHBOARD_URL                 URL base da dashboard (default: https://dashboard-nemesis-defender.vercel.app)");
     eprintln!("  NEMESIS_PUBLISHER_PORT                Porta do servidor --serve (default: 8080)");
     eprintln!("  NEMESIS_ENVIRONMENT                   Environment: official ou market (default: official)");
     eprintln!("  DATABASE_URL                          URL de conexao Neon Postgres para --sync");

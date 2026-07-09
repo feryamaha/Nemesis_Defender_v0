@@ -385,29 +385,20 @@ if [ -n "${NEMESIS_IDE:-}" ]; then
   done
   IFS="$OLD_IFS"
 else
-  # Autodetecção: pastas de IDE já presentes no projeto.
-  [ -d ".claude"     ] && { sc_claude_like .claude .claude/settings.json; detected=1; }
-  [ -d ".openclaude" ] && { sc_claude_like .openclaude .openclaude/settings.json; detected=1; }
-  [ -d ".codex"      ] && { sc_codex; detected=1; }
-  [ -d ".cursor"     ] && { sc_cursor; detected=1; }
-  [ -d ".devin"      ] && { sc_devin; detected=1; }
-  [ -d ".gemini"     ] && { sc_gemini_like .gemini; detected=1; }
-  [ -d ".agents"     ] && { sc_gemini_like .agents; detected=1; }
-  { [ -d ".github" ] || [ -d ".vscode" ]; } && { sc_github_vscode; detected=1; }
-fi
-
-if [ "$detected" -eq 0 ]; then
-  say "Nenhuma IDE detectada (pasta inexistente) e NEMESIS_IDE não informado."
+  # SEM autodetecção: o usuário SEMPRE informa a IDE (arquitetura: não inferir).
   if [ -t 0 ]; then
     printf '[nemesis-install] Para qual IDE configurar o hook? (%s): ' "$IDES"
     read -r choice || choice=""
     choice="$(printf '%s' "$choice" | tr 'A-Z' 'a-z' | tr -d '[:space:]')"
     if [ -n "$choice" ] && scaffold_ide "$choice"; then detected=1; fi
   fi
-  if [ "$detected" -eq 0 ]; then
-    say "Configure manualmente, OU rode escolhendo a IDE: NEMESIS_IDE=devin bash nemesis-install.sh"
-    say "Binário do hook (pre-tool): $PRE"
-  fi
+fi
+
+if [ "$detected" -eq 0 ]; then
+  printf '\033[0;31m[nemesis-install] ERRO:\033[0m Instalação cancelada: recusa de dados para configuração do enforcement (IDE não informada).\n' >&2
+  say "Informe a IDE ao reinstalar: NEMESIS_IDE=<ide> bash nemesis-install.sh"
+  say "IDEs suportadas: $IDES"
+  exit 1
 fi
 
 # ── 7. Próximos passos — o install NÃO valida nem sobe o daemon (validação é MANUAL) ──
