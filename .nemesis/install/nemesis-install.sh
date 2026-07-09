@@ -52,7 +52,7 @@ say "Plataforma detectada: $suffix"
 # ── 2. Resolver a tag de versão ──────────────────────────────────────────────
 if [ "$VERSION" = "latest" ]; then
   VERSION="$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" \
-    | grep -m1 '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')" \
+    | grep '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')" \
     || err "não consegui resolver a release 'latest' de $REPO"
   [ -n "$VERSION" ] || err "tag_name vazio na release latest"
 fi
