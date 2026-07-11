@@ -1,86 +1,64 @@
 ---
 name: pre-writing-rule-control
 description: >
-  Valida o plano de implementacao contra regras Nemesis Rust
-  antes da escrita formal. Recebe spec aprovada, analisa
-  se o plano proposto viola regras Nemesis, aprova ou rejeita.
+  Valida o plano de implementacao contra as regras de linguagem do perfil do repo
+  (.devin/rules/nemesis-repo-profile.md) antes da escrita formal. Recebe spec aprovada,
+  analisa se o plano proposto viola regras, aprova ou rejeita.
 ---
 
-# Pre-Writing Rule Control (Nemesis Rust)
+# Pre-Writing Rule Control
 
-Validar planos de implementacao contra regras Nemesis antes da escrita formal.
+Validar planos de implementacao contra as regras do repo antes da escrita formal.
 Recebe spec aprovada, analisa se o plano proposto viola regras, aprova ou rejeita.
 
-**Anuncio de inicio**: "Estou usando a skill pre-writing-rule-control para validar o plano contra regras Nemesis Rust."
+> **Texto unico espelhado nos dois repos.** As 6 regras de linguagem validadas por esta skill
+> vivem no perfil do repo (`.devin/rules/nemesis-repo-profile.md`, secao "Regras de
+> linguagem"): versao Rust no motor, versao TypeScript/Bun no dashboard. Esta skill define o
+> PROCESSO; o perfil define o CONTEUDO. Nunca duplicar as regras aqui.
 
-**Pre-requisito**: Uma especificacao aprovada existe em `Feature-Documentation/SPECS/`.
+**Anuncio de inicio**: "Estou usando a skill pre-writing-rule-control para validar o plano contra as regras do perfil do repo."
+
+**Pre-requisito**: Uma especificacao aprovada existe no path de specs do perfil.
 
 ## Processo
 
-### Step 1: Carregar e Revisar Spec
+### Step 1: Carregar Spec e Perfil
 
-Ler a especificacao aprovada. Identificar o que deve ser construido, qual(is) crate(s),
-quais arquivos sao afetados, que restricoes se aplicam.
+Ler a especificacao aprovada (path de specs do perfil) e o perfil do repo
+(`.devin/rules/nemesis-repo-profile.md`). Identificar o que deve ser construido, quais
+modulos/arquivos sao afetados, que restricoes se aplicam e quais sao as 6 regras vigentes.
 
-```bash
-cat Feature-Documentation/SPECS/SPEC_*.md | tail -1
-```
+### Step 2: Validar Contra as 6 Regras do Perfil
 
-### Step 2: Validar Contra Regras Nemesis Rust
+Validar o plano proposto contra as **6 regras de linguagem do perfil**, uma a uma:
 
-Validar o plano proposto contra **6 regras fundamentais**:
+1. **Regra 1 (linguagem do repo):** os arquivos novos respeitam a linguagem/stack unica do
+   perfil? Excecoes de infra pre-existente e config sao as declaradas no perfil, nenhuma outra.
+2. **Regra 2 (toolchain de build):** cada tarefa usa o comando de verificacao por tarefa do
+   perfil? Nenhum toolchain paralelo introduzido?
+3. **Regra 3 (areas sensiveis):** alguma tarefa toca area sensivel do perfil (motor:
+   `.nemesis/hooks/`; dashboard: proxy/auth/headers/sanitize)? Se sim, a flag exigida pelo
+   perfil esta presente no plano?
+4. **Regra 4 (escopo da spec):** todos os arquivos de todas as tarefas estao em FILES
+   INVOLVED da spec original?
+5. **Regra 5 (git):** nenhuma tarefa executa git de escrita?
+6. **Regra 6 (artefatos):** nenhuma tarefa cria artefato proibido pelo perfil (motor:
+   binario fora de `.nemesis/target/`; dashboard: build/segredo commitado)?
 
-#### Regra 1: Rust como unica linguagem NOVA em .nemesis/
-- **Proibido**: introduzir codigo novo .ts, .js, .py, .sh dentro de .nemesis/
-- **Permitido (herdar, nao introduzir toolchain novo)**: EDITAR infra pre-existente nao-Rust
-  quando a mudanca a exigir: o C do eBPF (`ebpf-kernel/`), os shell scripts herdados de
-  `install/`, `scripts/` e `pentest-nemesis-control/`. Arquivos de configuracao e templates
-  (.json, .toml, .service, .plist) sao permitidos onde o design os preve.
-- **Validacao**: FILES INVOLVED contem apenas .rs, config/templates, ou edicao de infra
-  pre-existente listada acima. Arquivo nao-Rust NOVO fora dessas categorias = FAIL.
-
-#### Regra 2: Build via Cargo Workspace
-- **Obrigatorio**: Usar `cargo check -p <crate>` por tarefa
-- **Obrigatorio**: Usar `cargo test -p <crate>` para validacao
-- **Proibido**: Compilacao direta com rustc, cargo build sem autorizacao
-- **Validacao**: Cada tarefa tem verificacao com cargo check
-
-#### Regra 3: Maintenance Mode para Hooks
-- **Alertar se**: Modificacoes em `.nemesis/hooks/`
-- **Requerido**: Ler `.nemesis/nemesis-install/check.sh` antes de modificar
-- **Validacao**: Se tarefa afeta .nemesis/hooks/, requer flag "maintenance_mode_required"
-
-#### Regra 4: Scope da Spec
-- **Obrigatorio**: Nao sair do escopo files listados em REQUIREMENTS/FILES INVOLVED
-- **Proibido**: Modificar arquivos nao listados na spec
-- **Validacao**: Cada tarefa FILE deve estar em list original da spec
-
-#### Regra 5: Git Operations — Fernando Apenas
-- **Proibido**: Plano nao deve requerer git add, git commit, git push
-- **Permitido**: Unica exception: relatorios em Feature-Documentation/ (sem git)
-- **Validacao**: Nenhuma tarefa executa git write operations
-
-#### Regra 6: Sem Binarios Fora de .nemesis/target/
-- **Proibido**: Copiar binarios para outro path
-- **Permitido**: Somente .nemesis/target/release/
-- **Validacao**: Nenhuma tarefa copia arquivo fora de .nemesis/
-
-### Step 3: Analisar Plano Contra Regras
-
-Verificacoes criticas:
+### Step 3: Checklist de Verificacao
 
 ```
-- [ ] REGRA 1: Todos os arquivos sao .rs? (ou .toml, .lock para Cargo.*)
-- [ ] REGRA 2: Cada tarefa usa cargo check -p <crate> para validacao?
-- [ ] REGRA 3: Alertar se .nemesis/hooks/ e afetado?
-- [ ] REGRA 4: Todos os FILES INVOLVED estao na spec original?
-- [ ] REGRA 5: Nenhuma tarefa executa git add/commit/push?
-- [ ] REGRA 6: Nenhuma copia de binarios fora de .nemesis/target/?
+- [ ] REGRA 1 (linguagem do perfil): PASS/FAIL
+- [ ] REGRA 2 (toolchain do perfil): PASS/FAIL
+- [ ] REGRA 3 (areas sensiveis + flag): PASS/ALERTAR/FAIL
+- [ ] REGRA 4 (escopo da spec): PASS/FAIL
+- [ ] REGRA 5 (git somente Fernando): PASS/FAIL
+- [ ] REGRA 6 (artefatos proibidos): PASS/FAIL
 ```
 
 **Se violacao detectada**:
 - Rejeitar o plano
-- Explicar qual regra foi violada
+- Explicar qual regra foi violada (citando a secao do perfil)
 - Sugerir ajustes
 - NAO prosseguir para nemesis-writing-plans
 
@@ -97,13 +75,15 @@ segundo FAIL = parada de emergencia (reportar violacao + evidencia ao Fernando e
 
 **Se aprovado**:
 ```
-Plano validado contra 6 regras Nemesis Rust:
-✅ REGRA 1 (somente Rust): PASS
-✅ REGRA 2 (cargo workspace): PASS
-✅ REGRA 3 (maintenance mode): [PASS | ALERTAR]
-✅ REGRA 4 (scope): PASS
+Plano validado contra as 6 regras do perfil do repo:
+✅ REGRA 1 (linguagem): PASS
+✅ REGRA 2 (toolchain): PASS
+✅ REGRA 3 (areas sensiveis): [PASS | ALERTAR]
+✅ REGRA 4 (escopo): PASS
 ✅ REGRA 5 (git): PASS
-✅ REGRA 6 (binarios): PASS
+✅ REGRA 6 (artefatos): PASS
+
+Registro para o Trust Ledger (F11): gate=rule-control · veredito=PASS · ref=[SPEC]
 
 Prosseguindo para nemesis-writing-plans.
 ```
@@ -111,7 +91,7 @@ Prosseguindo para nemesis-writing-plans.
 **Se rejeitado**:
 ```
 Plano rejeitado. Violacao detectada:
-❌ [REGRA_N]: [descricao exata da violacao]
+❌ [REGRA_N]: [descricao exata da violacao, com a secao do perfil]
 
 Ajustes necessarios: [lista de mudancas requeridas]
 
@@ -120,10 +100,15 @@ Aplicando ajuste e revalidando (ciclo 1 de 1)...
 
 Se o segundo ciclo tambem falhar: parada de emergencia, reportar ao Fernando e aguardar.
 
+## Veredito e artefato (Trust Ledger, lei F11)
+
+O veredito (PASS/FAIL, com a base em 1 linha) sera registrado no Trust Ledger na PARADA
+UNICA pela skill `nemesis-trust-ledger-update`. Anotar os campos no proprio veredito.
+
 ## Lembrar
 
 - Validacao ANTES de escrita, nao depois
-- 6 regras fundamentais — nao sao negociaveis
+- As 6 regras vivem no PERFIL e nao sao negociaveis; esta skill nao as duplica
 - Explicacao clara quando rejeitar
 - Sempre PT-BR
 - Nemesis enforcement valida codigo — skill valida planejamento

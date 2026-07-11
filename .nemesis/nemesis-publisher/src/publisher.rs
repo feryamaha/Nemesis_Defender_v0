@@ -1,7 +1,6 @@
-//! Cliente HTTP para a dashboard: registro e ingestao.
+//! Cliente HTTP para a dashboard: registro e desregistro (ping-only).
 
 use crate::identity::Identity;
-use crate::ledger::Aggregation;
 use anyhow::Result;
 
 /// Registra o install na dashboard.
@@ -47,25 +46,23 @@ pub fn register(identity: &Identity, bootstrap_secret: &str, dashboard_url: &str
     }
 }
 
-/// Envia contadores agregados para a dashboard.
-/// POST /api/ingest com header Authorization: Bearer <ingest_token>.
-pub fn publish(identity: &Identity, agg: &Aggregation, dashboard_url: &str) -> Result<()> {
-    let url = format!("{}/api/ingest", dashboard_url);
-    let body = agg.to_payload(&identity.install_id);
+/// Desregistra o install na dashboard (ping de uninstall).
+/// POST /api/installs/unregister com header x-install-bootstrap.
+pub fn unregister(identity: &Identity, bootstrap_secret: &str, dashboard_url: &str) -> Result<()> {
+    let url = format!("{}/api/installs/unregister", dashboard_url);
+    let body = serde_json::json!({
+        "installId": identity.install_id
+    });
 
     let resp = ureq::post(&url)
-        .set("Authorization", &format!("Bearer {}", identity.ingest_token))
+        .set("x-install-bootstrap", bootstrap_secret)
         .set("Content-Type", "application/json")
         .send_string(&body.to_string());
 
     match resp {
         Ok(response) => {
             let status = response.status();
-            if status == 202 {
-                println!(
-                    "[nemesis-publisher] Ingestao concluida: {} bloqueios enviados.",
-                    agg.total_blocks
-                );
+            if status == 200 {
                 Ok(())
             } else {
                 anyhow::bail!("Resposta inesperada: HTTP {}", status);
@@ -74,8 +71,9 @@ pub fn publish(identity: &Identity, agg: &Aggregation, dashboard_url: &str) -> R
         Err(ureq::Error::Status(code, response)) => {
             let body_text = response.into_string().unwrap_or_default();
             match code {
-                401 => anyhow::bail!("Nao autorizado: ingest_token invalido."),
-                400 => anyhow::bail!("Payload invalido: {}", body_text),
+                401 => anyhow::bail!("Nao autorizado: bootstrap secret invalido."),
+                404 => anyhow::bail!("Install nao encontrado na dashboard."),
+                503 => anyhow::bail!("Unregister nao configurado no servidor."),
                 _ => anyhow::bail!("HTTP {}: {}", code, body_text),
             }
         }
@@ -84,3 +82,4 @@ pub fn publish(identity: &Identity, agg: &Aggregation, dashboard_url: &str) -> R
         }
     }
 }
+

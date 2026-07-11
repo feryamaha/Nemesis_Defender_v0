@@ -44,15 +44,13 @@ if [ -f .nemesis/ebpf-kernel/install-service.sh ]; then
     || warn "Se você instalou o serviço eBPF, remova-o manualmente (sudo systemctl disable --now nemesis-ebpf)."
 fi
 
-# ── 2b. Service do publisher (systemd user/launchd) — remover ANTES de apagar .nemesis/ ─
-# Best-effort: sem service instalado nao e erro. Procura o binario nos dois layouts.
-for pub in .nemesis/bin/nemesis-publisher .nemesis/target/release/nemesis-publisher; do
-  if [ -x "$pub" ]; then
-    "$pub" --uninstall-service >/dev/null 2>&1 || true
-    say "Service do publisher removido (se existia)."
-    break
-  fi
-done
+# ── 2c. Ping de uninstall (best-effort) ──────────────────────────────────────
+# Avisa a dashboard que este install foi removido. Best-effort: falha de rede
+# nao quebra o uninstall. So tenta se o publisher e a identidade existirem.
+if [ -x .nemesis/bin/nemesis-publisher ] && [ -s .nemesis/telemetry/identity.json ]; then
+  .nemesis/bin/nemesis-publisher --unregister >/dev/null 2>&1 || true
+  say "Ping de uninstall enviado (best-effort)."
+fi
 
 # ── 3. Remover hooks de IDE criados pelo Nemesis ─────────────────────────────
 # Detecta a "assinatura" do Nemesis: referência ao binário do hook ou ao .nemesis/bin.

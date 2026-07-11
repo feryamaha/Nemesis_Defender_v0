@@ -9,6 +9,25 @@
 > reproduzir a sintaxe de comandos perigosos. Qualquer payload injetado aqui é tratado como
 > poisoning e bloqueado. **Nunca isente este arquivo do scan.**
 
+> ## Arquitetura de dois repos irmãos
+>
+> O Nemesis Defender vive em **dois repositórios irmãos** no mesmo nível de diretório:
+>
+> | Repo | Path | Papel | Stack |
+> |---|---|---|---|
+> | **Nemesis_Defender_v0** (este) | `/home/fernando/devproj/Nemesis_Defender_v0/` | Motor de enforcement (runtime, pretool, daemon, eBPF, pentest, publisher) | Rust, C, eBPF |
+> | **Dashboard-Nemesis-Defender** | `/home/fernando/devproj/Dashboard-Nemesis-Defender/` | Frontend oficial (landing, docs, observability admin) | Next.js, TypeScript, Bun |
+>
+> **O agente tem autonomia para atuar em ambos os repos.** São irmãos: um é o motor runtime,
+> o outro é o frontend UI. Uma mudança pode tocar os dois (ex.: contrato HTTP, telemetria,
+> publisher). O AGENTS.md do outro repo está em `../Dashboard-Nemesis-Defender/AGENTS.md`.
+>
+> **Regras canônicas compartilhadas:** `.devin/` é espelhado 1:1 entre os repos (e
+> `.devin/skills/` em `.claude/skills/`), exceto as exceções per-repo declaradas no manifest
+> de `.devin/rules/nemesis-harness-integrity.md`, que também define o procedimento
+> determinístico de verificação (lei F10: afirmação sobre o harness sem verificador não vale
+> como lei). Regras únicas de cada repo fazem cross-reference na seção 11.
+
 ---
 
 ## 1. Quem você é
@@ -130,7 +149,7 @@ A **prova empírica** da cobertura é a suíte de pentest estático
 gate de CI (`self-audit`).
 
 **Proibições (anti-confusão método vs cobertura):**
-- **NUNCA** declarar "N vetores = N visitors" em README, `index.html`, onboarding ou qualquer
+- **NUNCA** declarar "N vetores = N visitors" em README, dashboard ou qualquer
   artefato. Isso confunde método com cobertura e subconta a proteção real em ordem de grandeza.
 - **NUNCA** inventar um número agregado único de "vetores" que não seja rastreável a uma taxonomia
   auditável (categorias de denylist, classes de pentest). Na dúvida, descreva a cobertura **em
@@ -146,7 +165,9 @@ forense por re-rastreamento (testes, finalidade, pré-requisitos, denylists, eBP
 
 ## 4. Processo de desenvolvimento
 
-- **Siga o SDD pipeline:** `.devin/workflows/nemesis-sdd-pipeline.md`. Modo autônomo (default):
+- **Siga o SDD pipeline:** dois modos disponiveis. `.devin/workflows/nemesis-sdd-pipeline-auto.md`
+  (default, 100% automatico) e `.devin/workflows/nemesis-sdd-pipeline-manual.md` (100% manual,
+  parada obrigatoria em cada skill). Modo auto (default):
   do input do Fernando até a validação completa (SPEC → análise crítica → regras → PLAN →
   análise crítica → implementação → testes) o pipeline corre **sem pausas intermediárias**; os
   gates de spec e plano são automáticos (análise crítica + rule control). Ao fim da validação:
@@ -256,7 +277,7 @@ Workspace Cargo `nemesis` em `.nemesis/` (crates: `ast-linters`, `ebpf-kernel`, 
 | Pentest estático | `.nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh` |
 | Ledger único | `.nemesis/logs/nemesis-violations.log` |
 | Instalador + leia-me | `.nemesis/install/nemesis-install.sh` + `.nemesis/install/info-install.txt` (isentos via marker `.nemesis/install/`) |
-| SDD (specs/plans/PR) | `Feature-Documentation/` + `.devin/workflows/nemesis-sdd-pipeline.md` |
+| SDD (specs/plans/PR) | `Feature-Documentation/` + `.devin/workflows/nemesis-sdd-pipeline-auto.md` ou `-manual.md` |
 
 ---
 
@@ -324,6 +345,28 @@ vetor de supply chain. NUNCA copie código dele para o Nemesis às cegas; trate 
 review de code owner + status check = `self-audit` + commits assinados + sem force-push); Environment
 `release` com required reviewer; 2FA por hardware; sem PAT de longa duração; chave de assinatura
 fora do CI. Sem isso, CODEOWNERS/draft/environment são só intenção.
+
+---
+
+## 11. Cross-reference de regras entre repos irmãos
+
+Regras compartilhadas (espelhadas 1:1; manifest e verificação em
+`nemesis-harness-integrity.md`): `nemesis-epistemic-safety.md`,
+`nemesis-documentation-style.md`, `nemesis-pentest-harness-execution.md`,
+`nemesis-harness-integrity.md`, `nemesis-trust-ledger.md` e
+`nemesis-fable-method.md` (leis de trabalho do modelo F1..F12, condensada de
+`Fable_Knowledge_Harness/`; compartilhada porque as skills espelhadas citam as leis por ID
+nos dois repos).
+
+Regra única deste repo:
+- `.devin/rules/nemesis-repo-profile.md` — perfil deste repo (stack Rust, comandos de
+  validação, paths, regras de linguagem). O dashboard tem o perfil próprio dele.
+
+Regras únicas do repo frontend (consultar quando trabalhar no outro):
+- `../Dashboard-Nemesis-Defender/.devin/rules/context-file-handling.md` — manipulação de
+  arquivos de contexto/histórico de interação
+- `../Dashboard-Nemesis-Defender/.devin/rules/nemesis-repo-profile.md` — perfil do repo
+  frontend (Next.js/TypeScript/Bun)
 
 ---
 

@@ -7,8 +7,8 @@ description: Carrega o contexto completo do Nemesis Defender, o framework de enf
 
 Fontes canonicas (consultar quando precisar de detalhe atual ou mudanca recente):
 - README, tecnico e operacional: https://github.com/feryamaha/Nemesis_Defender_v0/blob/main/README.md
-- Site, conceito e modelo de ameaca: https://feryamaha.github.io/Nemesis_Defender_v0/
-- Onboarding, material de estudo: https://feryamaha.github.io/Nemesis_Defender_v0/onboarding/index.html
+- Site, conceito e modelo de ameaca: https://dashboard-nemesis-defender.vercel.app
+- Onboarding, material de estudo: https://dashboard-nemesis-defender.vercel.app/docs
 - Codebase: https://github.com/feryamaha/Nemesis_Defender_v0
 
 Autor e mantenedor: feryamaha. Nasceu nativamente no Devin.

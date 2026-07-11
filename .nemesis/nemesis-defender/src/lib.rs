@@ -114,6 +114,17 @@ const EXCLUDED_NEMESIS_DIRS: &[&str] = &[
     ".nemesis/nemesis-defender/config/", // denylist-defender.json (fonte; contém assinaturas)
 ];
 
+/// Diretórios de build output — artefatos gerados por tooling (Next.js, Vite, etc.),
+/// não código-fonte. Escaneá-los gera falso-positivo (chunks minificados contêm
+/// eval/Function/dynamic-import). O pretool (write-time) e o eBPF (execução) seguem
+/// ativos sobre estes paths.
+const EXCLUDED_BUILD_OUTPUT_DIRS: &[&str] = &[
+    ".next/",   // Next.js / Turbopack
+    "dist/",    // Vite, Rollup, webpack, etc.
+    "build/",   // CRA, tsc --outDir, etc.
+    "out/",     // Next.js export / static export
+];
+
 /// Documentação canônica do projeto, mantida exclusivamente por humanos.
 /// Estes nomes só são isentados quando o arquivo está na RAIZ do projeto —
 /// NUNCA em subpastas (ex.: `docs/CONTRIBUTING.md`, `src/docs/SECURITY.md`),
@@ -179,6 +190,14 @@ pub fn is_path_excluded(path: &Path) -> bool {
     // 1. Pastas de infraestrutura do Nemesis — isentas APENAS sob `.nemesis/` (não em
     //    homônimos na raiz do projeto; mesmo princípio de CANONICAL_ROOT_DOCS). Fecha ISSUE 005.
     for dir in EXCLUDED_NEMESIS_DIRS {
+        if path_str.contains(dir) {
+            return true;
+        }
+    }
+
+    // 1b. Diretórios de build output — isentos. Artefatos gerados por tooling, não
+    //     código-fonte. O pretool (write-time) e o eBPF (execução) seguem ativos.
+    for dir in EXCLUDED_BUILD_OUTPUT_DIRS {
         if path_str.contains(dir) {
             return true;
         }

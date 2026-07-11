@@ -169,7 +169,10 @@ pub fn cli_list() {
             e.violations.len()
         );
     }
-    println!("\nRevise e decida:  --quarantine show <id> | restore <id> | purge <id>");
+    println!("\nUse o ID da coluna [ID] acima (sem os colchetes):");
+    println!("  nemesis-defender --quarantine show <ID>   (inspecionar)");
+    println!("  nemesis-defender --quarantine restore <ID> (falso-positivo, volta ao lugar)");
+    println!("  nemesis-defender --quarantine purge <ID>   (expurgar definitivamente)");
 }
 
 pub fn cli_show(id: &str) {

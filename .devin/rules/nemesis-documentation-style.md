@@ -8,7 +8,7 @@ last_updated: 2026-07-03
 # Nemesis: Estilo de Documentacao
 
 > Regra canonica e transversal para todo conteudo textual de documentacao do Nemesis
-> (index.html, onboarding/, README.md, qualquer artefato HTML ou MD voltado ao leitor).
+> (README.md, dashboard JSONs em src/data/docs/, qualquer artefato HTML ou MD voltado ao leitor).
 
 ## Regra 1: Sem travessao
 

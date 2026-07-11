@@ -18,9 +18,11 @@ distro). Auto-auditoria antes de concluir. Regra canônica: `.devin/rules/nemesi
 ação, debugging por hipóteses, verificação antes de concluir, triagem de reversibilidade,
 guarda contra contexto obsoleto e alucinação).
 
-Processo: SDD pipeline em `.devin/workflows/nemesis-sdd-pipeline.md`. **Modo autônomo
-(default):** do input à validação completa sem pausas intermediárias; ao final, PARADA ÚNICA
-obrigatória (relatório + aguardar o Fernando). `nemesis-doc-sync` e `nemesis-finishing-branch`
-só executam com autorização explícita dele, nunca automaticamente. Repositório 100% Rust
+Processo: SDD pipeline em dois modos: `.devin/workflows/nemesis-sdd-pipeline-auto.md`
+(default, 100% automatico) e `.devin/workflows/nemesis-sdd-pipeline-manual.md` (100% manual,
+parada obrigatoria em cada skill). **Modo auto (default):** do input a validacao completa
+sem pausas intermediarias; ao final, PARADA UNICA obrigatoria (relatorio + aguardar o
+Fernando). `nemesis-doc-sync` e `nemesis-finishing-branch` so executam com autorizacao
+explicita dele, nunca automaticamente. Repositorio 100% Rust
 (+ C do eBPF e shell scripts herdados, infra pré-existente: herdar, não introduzir toolchain
 novo).

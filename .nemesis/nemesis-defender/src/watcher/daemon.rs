@@ -715,7 +715,7 @@ fn scan_file(path: &Path, cwd: &Path) {
                                 );
                                 eprintln!("  ⚠️  PARE. Arquivo malicioso retido para revisão humana.");
                                 eprintln!("  ⚠️  Revise:  nemesis-defender --quarantine show {}", id);
-                                eprintln!("  ⚠️  Decida:  --quarantine restore <id> (falso-positivo) | purge <id> (expurgar)");
+                                eprintln!("  ⚠️  Decida:  nemesis-defender --quarantine restore {} (falso-positivo) | purge {} (expurgar)", id, id);
                                 (true, "")
                             }
                             Err(e) => {

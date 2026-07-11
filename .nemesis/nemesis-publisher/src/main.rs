@@ -2,9 +2,7 @@
 
 use nemesis_publisher::config;
 use nemesis_publisher::identity;
-use nemesis_publisher::ledger;
 use nemesis_publisher::publisher;
-use nemesis_publisher::service;
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
@@ -22,11 +20,7 @@ fn main() -> ExitCode {
         Some("--opt-in") => cmd_opt_in(),
         Some("--opt-out") => cmd_opt_out(),
         Some("--register") => cmd_register(),
-        Some("--publish") => cmd_publish(),
-        Some("--serve") => cmd_serve(),
-        Some("--sync") => cmd_sync(),
-        Some("--install-service") => service::install_service(),
-        Some("--uninstall-service") => service::uninstall_service(),
+        Some("--unregister") => cmd_unregister(),
         Some("--status") => cmd_status(),
         Some("--help") | Some("-h") => {
             print_help();
@@ -114,39 +108,14 @@ fn cmd_register() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn cmd_publish() -> anyhow::Result<()> {
+fn cmd_unregister() -> anyhow::Result<()> {
     let id = identity::load()?;
-    if !id.opt_in {
-        println!("[nemesis-publisher] Opt-in nao ativado. Nada enviado.");
-        return Ok(());
-    }
-    if id.registered_at.is_none() {
-        anyhow::bail!("Nao registrado. Use --register primeiro.");
-    }
-    let ledger_path = config::ledger_path();
-    if !ledger_path.exists() {
-        println!("[nemesis-publisher] Nenhum bloqueio registrado.");
-        return Ok(());
-    }
-    let agg = ledger::aggregate(&ledger_path);
-    if agg.total_blocks == 0 {
-        println!("[nemesis-publisher] Nenhum bloqueio registrado.");
-        return Ok(());
-    }
+    let secret = config::bootstrap_secret()
+        .ok_or_else(|| anyhow::anyhow!("Bootstrap secret nao configurado no build. Nao pode unregister."))?;
     let url = config::dashboard_url();
-    publisher::publish(&id, &agg, &url)?;
+    publisher::unregister(&id, secret, &url)?;
+    println!("[nemesis-publisher] Unregister concluido (install marcado como desinstalado).");
     Ok(())
-}
-
-fn cmd_serve() -> anyhow::Result<()> {
-    let port = config::publisher_port();
-    let nemesis_path = config::nemesis_repo_root();
-    nemesis_publisher::server::run(port, &nemesis_path)
-}
-
-fn cmd_sync() -> anyhow::Result<()> {
-    let nemesis_path = config::nemesis_repo_root();
-    nemesis_publisher::neon::sync_all(&nemesis_path)
 }
 
 fn cmd_status() -> anyhow::Result<()> {
@@ -168,19 +137,7 @@ fn cmd_status() -> anyhow::Result<()> {
     }
     println!();
     if id.opt_in {
-        let ledger_path = config::ledger_path();
-        let agg = ledger::aggregate(&ledger_path);
-        println!("Total de bloqueios: {}", agg.total_blocks);
-        println!();
-        println!("-- Por CAMADA --");
-        for (layer, count) in &agg.by_layer {
-            println!("  {:<18} {:>7}", layer.as_str(), count);
-        }
-        println!();
-        println!("-- Por NATUREZA --");
-        for (nature, count) in &agg.by_nature {
-            println!("  {:<18} {:>7}", nature.as_str(), count);
-        }
+        println!("Telemetria: ping-only (install/uninstall).");
     } else {
         println!("Telemetria desativada (opt_in: false).");
     }
@@ -195,17 +152,13 @@ fn print_help() {
     eprintln!("  nemesis-publisher --opt-in            Ativar opt-in (gera identidade se necessario)");
     eprintln!("  nemesis-publisher --opt-out           Desativar opt-in");
     eprintln!("  nemesis-publisher --register          Registrar install na dashboard");
-    eprintln!("  nemesis-publisher --publish           Enviar contadores agregados para a dashboard");
-    eprintln!("  nemesis-publisher --serve             Iniciar servidor HTTP local (dashboard local)");
-    eprintln!("  nemesis-publisher --sync              Sincronizar dados com Neon Postgres");
-    eprintln!("  nemesis-publisher --install-service   Instalar service do sistema para --serve (requer opt-in)");
-    eprintln!("  nemesis-publisher --uninstall-service Remover service do sistema");
+    eprintln!("  nemesis-publisher --unregister        Desregistra install (ping de uninstall)");
     eprintln!("  nemesis-publisher --status            Mostrar estado da telemetria");
     eprintln!("  nemesis-publisher --help              Ajuda");
     eprintln!();
     eprintln!("Environment variables:");
     eprintln!("  NEMESIS_DASHBOARD_URL                 URL base da dashboard (default: https://dashboard-nemesis-defender.vercel.app)");
     eprintln!("  NEMESIS_PUBLISHER_PORT                Porta do servidor --serve (default: 8080)");
-    eprintln!("  NEMESIS_ENVIRONMENT                   Environment: official ou market (default: official)");
+    eprintln!("  NEMESIS_ENVIRONMENT                   Environment: official ou market (default: market)");
     eprintln!("  DATABASE_URL                          URL de conexao Neon Postgres para --sync");
 }

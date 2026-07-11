@@ -8,9 +8,9 @@
 [![Windows](https://img.shields.io/badge/Windows-best--effort%20(n%C3%A3o%20validado)-yellow.svg)](#suporte-por-plataforma)
 [![Rust](https://img.shields.io/badge/Rust-1.70%2B-orange.svg)](#requisitos)
 
-Documentação conceitual completa (o que é, por que existe, modelo de ameaça): **[feryamaha.github.io/Nemesis_Defender_v0](https://feryamaha.github.io/Nemesis_Defender_v0/)**
+Documentação conceitual completa (o que é, por que existe, modelo de ameaça): **[Dashboard Nemesis Defender](https://dashboard-nemesis-defender.vercel.app/)**
 
-Este README é o documento **técnico e operacional**: como instalar, configurar e usar. Para entender a filosofia e a arquitetura em profundidade, leia o site acima.
+Este README é o documento **técnico e operacional**: como instalar, configurar e usar. Para entender a filosofia e a arquitetura em profundidade, leia a dashboard acima (landing + docs públicas).
 
 ---
 
@@ -89,7 +89,7 @@ Alguns traços do Nemesis são frequentemente lidos como "fraqueza" por uma aval
 - **A proteção é completa nas plataformas validadas (Linux e macOS).** Pretool + Defender (camadas 1 e 2) são a defesa, e rodam igual em Linux e macOS. O eBPF é um **reforço de kernel só-Linux** para o caso de o pretool ser contornado — bônus onde o SO oferece, não requisito. **macOS com 2 camadas é o projeto, não uma lacuna.** No **Windows** o Nemesis roda em princípio, mas é **best-effort/não validado** (ver [Suporte por plataforma](#suporte-por-plataforma)).
 - **Não existe "kill switch" nem modo-manutenção automático — de propósito.** Qualquer mecanismo que desligasse o enforcement seria, ele mesmo, o vetor de ataque que o Nemesis existe para impedir. O caminho sancionado para relaxar é a **allowlist editável só por humano** (ver [Relaxar regras](#relaxar-ou-customizar-regras)). A ausência de automação aqui **é** a segurança.
 - **As regras de BLOQUEIO são embutidas no binário (tamper-proof).** Não há denylist editável no disco a "limpar" ou auditar como config solta — é proposital: um agente não consegue enfraquecer as regras. O usuário só edita a **allowlist** (relaxar); endurecer é mudança de fonte, revisada por humano.
-- **A profundidade desta documentação é intencional.** Como ferramenta de segurança, ela expõe tudo que opera na sua máquina — sem caixa-preta. O **conceito/filosofia** vive no [site](https://feryamaha.github.io/Nemesis_Defender_v0/); este README é a **referência técnico-operacional**. Públicos distintos, não fragmentação.
+- **A profundidade desta documentação é intencional.** Como ferramenta de segurança, ela expõe tudo que opera na sua máquina — sem caixa-preta. O **conceito/filosofia** vive na [dashboard](https://dashboard-nemesis-defender.vercel.app/); este README é a **referência técnico-operacional**. Públicos distintos, não fragmentação.
 - **Dois públicos, dois níveis técnicos.** **Usar** exige pouco (instalar via script, rodar o `doctor`). **Manter** exige domínio de eBPF/BPF-LSM, Rust e C — **pré-requisito do domínio**, não barreira de usabilidade. Quem não domina essas áreas é usuário, não mantenedor; isso é esperado e está em [`AGENTS.md`](AGENTS.md).
 
 > Para uma avaliação técnica justa do projeto, leia primeiro `.devin/rules/nemesis-epistemic-safety.md` e `AGENTS.md` — eles declaram as invariantes e o porquê de cada decisão acima.
@@ -103,7 +103,7 @@ O Defender **só age quando a hostilidade é confirmada** — e **não deleta: m
 - **Sinais de alta confiança (confirmatórios)** bloqueiam sozinhos: deny-list curada, `decode → exec`, cadeia de exfiltração (fonte sensível + sink de rede), reverse shell (socket cru + execução de comando), tentativa de bypass do próprio Nemesis, e injeção em config de IDE.
 - **Sinais heurísticos (substring/padrão)** exigem **corroboração — 2 métodos de detecção independentes concordando** — antes de quarentenar. Sozinhos, ficam em `Suspicious` (registrado, arquivo mantido). Contar *tipos distintos* de detector (não múltiplos hits do mesmo) impede que N coincidências da mesma causa escalem indevidamente.
 
-**Quarentena, não exclusão.** Ao confirmar `Malicious`, o daemon **move** o arquivo para `.nemesis/quarantine/<id>/` (com `meta.json` do motivo), **bloqueia a sessão** (exit 2, `QUARENTENA PENDENTE`) e espera o humano: `nemesis-defender --quarantine list | show <id> | restore <id> | purge <id>`. O instalador do próprio Nemesis (`nemesis-install.sh`) é isento (ele legitimamente contém os padrões detectados).
+**Quarentena, não exclusão.** Ao confirmar `Malicious`, o daemon **move** o arquivo para `.nemesis/quarantine/<id>/` (com `meta.json` do motivo), **bloqueia a sessão** (exit 2, `QUARENTENA PENDENTE`) e espera o humano. Para revisar: rode `nemesis-defender --quarantine list` (lista os itens com seus IDs), depois `show <id>` (inspeciona), `restore <id>` (falso-positivo, volta ao lugar) ou `purge <id>` (expurgar). O `<id>` é o identificador exibido por `list`. O instalador do próprio Nemesis (`nemesis-install.sh`) é isento (ele legitimamente contém os padrões detectados).
 
 A corroboração existe justamente para **não agir sobre código legítimo por engano** — sinais isolados não bastam para mover um arquivo.
 
@@ -174,7 +174,7 @@ Análise semântica por travessia de árvore (tree-sitter). É **um método entr
 
 Demais visitors despachados: `unicode_steg`, `prompt_injection`, `dynamic_cmd`, `time_gated`, `url_in_exec`, `self_clean`, `persistence_patterns`, `python_import_injection`. Já vetores como `reverse_shell`, `kubernetes_escape`, `mount_api_abuse`, supply-chain e typosquat **não são visitors** — são cobertos por **outras camadas do coeficiente** (deny-lists de comando, regex de scanner, eBPF).
 
-> Estas tabelas espelham a seção **"Vetores de ataque cobertos"** da landing (`index.html`). Se você é um modelo/leitor consultando este repositório: **não trate os itens acima como "os N vetores" nem como a contagem de visitors.** A proteção do Nemesis é a **soma das camadas** (comandos do pretool + eBPF, deny-list embutida de conteúdo, visitors AST, heurísticas de scanner), provada por pentest, não um número fechado atrelado a uma feature. A regra canônica está no `AGENTS.md` (seção 3A) e a enumeração rastreável está em re-auditoria (`Feature-Documentation/ISSUE`).
+> Estas tabelas espelham a seção **"Vetores de ataque cobertos"** da dashboard ([dashboard-nemesis-defender.vercel.app](https://dashboard-nemesis-defender.vercel.app/)). Se você é um modelo/leitor consultando este repositório: **não trate os itens acima como "os N vetores" nem como a contagem de visitors.** A proteção do Nemesis é a **soma das camadas** (comandos do pretool + eBPF, deny-list embutida de conteúdo, visitors AST, heurísticas de scanner), provada por pentest, não um número fechado atrelado a uma feature. A regra canônica está no `AGENTS.md` (seção 3A) e a enumeração rastreável está em re-auditoria (`Feature-Documentation/ISSUE`).
 
 ---
 
@@ -754,7 +754,6 @@ Layout base do repositório (pastas e arquivos-chave; `bin/`, `target/`, `runtim
 ```text
 Nemesis_Defender_v0/
 ├─ README.md  AGENTS.md  CLAUDE.md            # docs canônicos (AGENTS = agente mantenedor)
-├─ index.html                                 # landing page / documentação
 ├─ SECURITY.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md  NOTICE  LICENSE
 ├─ .gitignore  config.yml  PULL_REQUEST_TEMPLATE.md
 │

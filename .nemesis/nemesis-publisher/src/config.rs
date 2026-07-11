@@ -51,9 +51,9 @@ pub fn publisher_port() -> u16 {
         .unwrap_or(8080)
 }
 
-/// Environment: "official" ou "market". Default: "official".
+/// Environment: "official" ou "market". Default: "market".
 pub fn environment() -> String {
-    std::env::var("NEMESIS_ENVIRONMENT").unwrap_or_else(|_| "official".to_string())
+    std::env::var("NEMESIS_ENVIRONMENT").unwrap_or_else(|_| "market".to_string())
 }
 
 /// URL de conexao com o Neon Postgres (modo --sync).

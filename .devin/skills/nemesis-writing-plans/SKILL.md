@@ -1,18 +1,22 @@
 ---
 name: nemesis-writing-plans
 description: >
-  Converte especificacao aprovada em plano de implementacao
-  com tarefas atomicas (2-5 min cada). Cada tarefa tem paths exatos,
-  codigo Rust completo, comandos de verificacao cargo.
+  Converte especificacao aprovada em plano de implementacao com tarefas atomicas
+  (2-5 min cada). Cada tarefa tem paths exatos, codigo completo na stack do perfil do repo
+  e comando de verificacao do perfil.
 ---
 
-# Nemesis Writing Plans (Rust)
+# Nemesis Writing Plans
 
 Converter especificacao aprovada em plano de implementacao abrangente com tarefas atomicas.
 
+> **Texto unico espelhado nos dois repos.** O comando de verificacao por tarefa e os paths
+> vem do perfil do repo (`.devin/rules/nemesis-repo-profile.md`): motor = `cargo check -p
+> <crate>`; dashboard = `bunx tsc --noEmit`.
+
 **Anuncio de inicio**: "Estou usando a skill nemesis-writing-plans para gerar o plano de implementacao."
 
-**Pre-requisito**: Uma especificacao aprovada existe em `Feature-Documentation/SPECS/`.
+**Pre-requisito**: Uma especificacao aprovada existe no path de specs do perfil.
 
 ## Processo
 
@@ -20,39 +24,24 @@ Converter especificacao aprovada em plano de implementacao abrangente com tarefa
 
 Ler a especificacao aprovada. Identificar:
 - O que deve ser construido (REQUEST/REQUIREMENTS)
-- Qual(is) crate(s) serao afetado(s) (FILES INVOLVED)
+- Quais modulos serao afetados (FILES INVOLVED)
 - Quais restricoes se aplicam (RESTRICTIONS)
 - Quais sao os criterios de aceitacao (EXPECTED DELIVERY)
 
-```bash
-cat Feature-Documentation/SPECS/SPEC_*.md | tail -1
-```
-
-### Step 2: Ler Codigo Fonte Obrigatorio
+### Step 2: Ler Codigo Fonte Obrigatorio (lei F1)
 
 **OBRIGATORIO**: Ler TODOS os arquivos listados na secao FILES INVOLVED da spec.
-Nao gerar plano sem ter lido o codigo real.
-
-```bash
-# Ler Cargo.toml do(s) crate(s)
-cat .nemesis/<crate>/Cargo.toml
-
-# Ler lib.rs/main.rs
-cat .nemesis/<crate>/src/lib.rs
-cat .nemesis/<crate>/src/main.rs
-
-# Ler arquivos existentes a serem modificados
-cat .nemesis/<crate>/src/path/to/existing/file.rs
-```
+Nao gerar plano sem ter lido o codigo real (manifests do modulo, entrypoints, arquivos a
+modificar).
 
 ### Step 3: Mapear Estrutura de Arquivos
 
 Antes de definir tarefas, confirmar quais arquivos serao criados ou modificados:
 
 ```
-CREATE: .nemesis/crate/src/path/to/new_file.rs
-MODIFY: .nemesis/crate/src/path/to/existing.rs
-TEST:   .nemesis/crate/tests/path/to/test.rs
+CREATE: <path exato do arquivo novo>
+MODIFY: <path exato do arquivo existente>
+TEST:   <path exato do teste>
 ```
 
 Cada arquivo tem uma responsabilidade clara. Arquivos que mudam juntos vivem juntos.
@@ -64,10 +53,10 @@ Cada arquivo tem uma responsabilidade clara. Arquivos que mudam juntos vivem jun
 Granularidade:
 - Ler arquivo existente = um passo
 - Analisar linha de mudanca = um passo
-- Implementar mudanca em .rs = um passo
-- Executar `cargo check -p <crate>` = um passo
+- Implementar mudanca = um passo
+- Executar o comando de verificacao por tarefa do perfil = um passo
 
-**Exemplo bom**:
+**Exemplo bom (perfil motor; no dashboard, mesmo formato com `bunx tsc --noEmit`):**
 ```
 TASK 1: Adicionar nova funcao validar_unsafe_block
   FILE: .nemesis/ast-linters/src/visitors/ebpf_checker.rs (MODIFY)
@@ -84,7 +73,7 @@ TASK 3: Escrever testes
 
 **Exemplo ruim**:
 ```
-TASK 1: "Implementar tudo no novo visitor"  ← Muito grande
+TASK 1: "Implementar tudo no novo modulo"   ← Muito grande
 TASK 2: "TBD — adicionar testes depois"     ← Placeholder
 TASK 3: "Similar a TASK 1"                  ← Referencia indireta
 ```
@@ -100,13 +89,13 @@ TASK 3: "Similar a TASK 1"                  ← Referencia indireta
 
 **Objetivo**: [Uma sentenca clara]
 
-**Spec**: Feature-Documentation/SPECS/SPEC_NNN_nome.md
+**Spec**: [path exato da spec, no path de specs do perfil]
 
-**Crates Afetadas**: ast-linters, workflow-enforcement, (lista)
+**Modulos Afetados**: [crates ou diretorios, conforme o perfil]
 
 **Arquitetura**: [2-3 sentencas sobre abordagem tecnica]
 
-**Tech Stack Rust**: tree-sitter, serde, regex, (dependencias relevantes)
+**Tech Stack**: [dependencias relevantes do perfil]
 
 ---
 ```
@@ -116,23 +105,21 @@ TASK 3: "Similar a TASK 1"                  ← Referencia indireta
 ```markdown
 ## TASK N: [Descricao curta]
 
-**Crate**: ast-linters
+**Modulo**: [crate ou diretorio]
 
 **Arquivos**:
-- CREATE: `.nemesis/ast-linters/src/visitors/novo_visitor.rs`
-- MODIFY: `.nemesis/ast-linters/src/lib.rs` (linhas XXX-YYY)
-- TEST:   `.nemesis/ast-linters/tests/novo_visitor_test.rs`
+- CREATE: `<path exato>`
+- MODIFY: `<path exato>` (linhas XXX-YYY)
+- TEST:   `<path exato>`
 
 **Verificacao**:
-```bash
-cd .nemesis && cargo check -p ast-linters
-```
+[comando de verificacao por tarefa do perfil]
 
 **Descricao Detalhada**:
-[O que fazer, contexto tecnico, padroes Rust a seguir]
+[O que fazer, contexto tecnico, padroes do perfil a seguir]
 
 **Implementacao**:
-[Codigo Rust completo a ser escrito — NAO deixar placeholders]
+[Codigo completo a ser escrito — NAO deixar placeholders]
 ```
 
 ### Step 6: Sem Placeholders
@@ -144,20 +131,22 @@ NUNCA escrever:
 - "Similar a TASK N" — repetir o codigo, tarefas podem ser lidas fora de ordem
 
 Cada tarefa deve ter:
-- Codigo Rust **completo** e **exato**
+- Codigo **completo** e **exato** na stack do perfil
 - Comando de verificacao **exato** (com expected output)
 - Assumpcoes **documentadas**
 
 ### Step 7: Auto-Review (checklist obrigatorio)
 
 Checklist interno (reprovou em algum item = corrigir o plano antes de seguir):
-- [ ] Todos os paths sao exatos e confirmados no disco? (.nemesis/crate/src/...)
-- [ ] Codigo Rust completo em cada tarefa? (sem placeholders)
-- [ ] Cada tarefa tem cargo check/test para verificacao?
-- [ ] Ordem faz sentido? (tipos antes de funcoes, lib.rs antes de main.rs, testes por ultimo;
-      a suposicao mais arriscada do plano e verificada nas PRIMEIRAS tarefas, nao nas ultimas)
+- [ ] Todos os paths sao exatos e confirmados no disco?
+- [ ] Codigo completo em cada tarefa? (sem placeholders)
+- [ ] Cada tarefa tem o comando de verificacao do perfil?
+- [ ] Ordem faz sentido? (tipos antes de funcoes, entrypoints antes de integracoes, testes
+      por ultimo; a suposicao mais arriscada do plano e verificada nas PRIMEIRAS tarefas,
+      nao nas ultimas)
 - [ ] Nenhuma tarefa executa git write operations?
-- [ ] Verificacao final inclui cargo check --workspace + cargo test --workspace?
+- [ ] Verificacao final inclui a suite completa do perfil? (motor: check + test do
+      workspace; dashboard: lint + tsc + build)
 
 **MODO AUTONOMO (default)**: nao ha aprovacao humana aqui. O gate do plano e a
 `nemesis-critical-analysis` (Ponto 2), invocada apos a gravacao (Step 8). Veredito
@@ -169,20 +158,17 @@ aprovacao explicita ("sim", "pode", "aprovado", "ok", "prossiga", "execute").
 
 ### Step 8: Salvar Plano
 
-Salvar em:
-```
-Feature-Documentation/PLANS/PLAN_NNN_nome-descritivo.md
-Numero: auto-increment a partir de planos existentes (001, 002, ...)
-```
+Salvar no path de plans do perfil (motor: `Feature-Documentation/PLANS/`; dashboard:
+`.devin/plans/`), nome `PLAN_NNN_nome-descritivo.md`, numero auto-increment verificado
+com `ls` antes de gravar.
 
 ## Lembrar
 
 - Ler codigo ANTES de gerar plano — obrigatorio
-- Paths exatos SEMPRE (.nemesis/crate/src/file.rs)
-- Codigo Rust completo em cada passo
+- Paths exatos SEMPRE
+- Codigo completo em cada passo
 - Comandos exatos com output esperado
 - Tarefas atomicas, sequenciais, verificaveis
-- Nemesis enforcement valida qualidade — foco em completude
 - Responder SEMPRE em PT-BR
 
 ## Integracao

@@ -12,6 +12,9 @@ Validacao critica de spec e plano antes da escrita e antes da execucao.
 > o plano e antes de executar. Garante que toda mudanca melhora o Nemesis sem
 > regredir o que ja funciona.
 >
+> **Texto unico espelhado nos dois repos.** Parametros de stack (comandos, paths, regras de
+> linguagem) vem do perfil do repo: `.devin/rules/nemesis-repo-profile.md`.
+>
 > **Invoca explicitamente:** `disciplina-epistemica` (anti-sycophancy e autoridade
 > humana). Os conceitos abaixo nao sao referencia bibliografica: sao regras ativas
 > que moldam cada veredito.
@@ -41,10 +44,11 @@ ajuste ou instrucao.
 O Nemesis Defender governa **autonomia de agentes LLM**, nao humanos. Ele previne que
 um modelo, sem ajuda humana, escreva codigo malicioso, execute comandos destrutivos,
 exfiltre dados ou neutralize suas proprias defesas (auto-privilegio). O humano e o
-arquiteto; o agente e o executor contido.
+arquiteto; o agente e o executor contido. No repo dashboard o mesmo objetivo se traduz em:
+nenhuma mudanca pode expor dado real, segredo ou enfraquecer o controle de acesso.
 
-Toda mudanca deve ser avaliada contra este objetivo: **a mudanca melhora a capacidade
-do Nemesis de conter agentes LLM sem regredir o que ja funciona?**
+Toda mudanca deve ser avaliada contra este objetivo: **a mudanca melhora o Nemesis (motor ou
+superficie publica) sem regredir o que ja funciona?**
 
 ### Step 1A: Principios epistemicos (fonte unica: nemesis-epistemic-safety.md)
 
@@ -73,10 +77,13 @@ Cada resposta deve distinguir **evidencia_observada** de **inferencia_valida** d
 - Estou tratando possibilidade como confirmacao? (proibido)
 
 #### 2.2 Qual o efeito colateral no que ja funciona?
-- A mudanca modifica logica existente que bloqueia corretamente?
-- A mudanca adiciona restricoes que podem gerar falso-positivo?
-- A mudanca interage com outras camadas (pretool, daemon, eBPF, denylists)?
-- Ha risco de regressao em testes existentes (M1-M28, pentest, cargo test)?
+- A mudanca modifica logica existente que funciona corretamente?
+- A mudanca adiciona restricoes que podem gerar falso-positivo (motor) ou quebrar fluxo
+  legitimo de usuario (dashboard)?
+- A mudanca interage com outras camadas? (motor: pretool, daemon, eBPF, denylists;
+  dashboard: proxy/auth, schemas Zod, contrato HTTP com o motor)
+- Ha risco de regressao na suite de validacao do perfil? (motor: cargo test + pentest
+  M1..Mn; dashboard: lint + tsc + build)
 - Verifiquei no codigo ou e inferencia? (nao afirmar causa-raiz sem verificar)
 
 #### 2.3 Qual o efeito negativo?
@@ -86,11 +93,12 @@ Cada resposta deve distinguir **evidencia_observada** de **inferencia_valida** d
 - A mudanca e cirurgica (minima) ou amplifica escopo?
 - Estou ampliando escopo por conta propria? (overreach, proibido)
 
-#### 2.4 Alinhamento com o objetivo do Nemesis
+#### 2.4 Alinhamento com o objetivo do Nemesis (invariantes por ID)
 - A mudanca fecha um vetor de auto-privilegio?
-- A mudanca preserva a arquitetura de 4 camadas (pretool, daemon, eBPF, fail-closed)?
-- A mudanca mantem o principio de que o humano e o decisor e o agente e o executor?
-- A mudanca e aditiva (nova deteccao) ou subtrativa (remove protecao existente)?
+- A mudanca viola alguma invariante do `AGENTS.md` secao 2 (motor, invariantes 1 a 12) ou
+  secao 4 (dashboard, invariantes 1 a 5)? Citar por numero a invariante em risco, se houver.
+- A mudanca preserva a arquitetura de camadas e o principio de que o humano e o decisor?
+- A mudanca e aditiva (nova protecao/feature) ou subtrativa (remove protecao existente)?
 
 #### 2.5 Interacao entre mudancas (se multiplas)
 - As mudancas sao independentes ou complementares?
@@ -147,6 +155,15 @@ Em caso de evidencia ambigua (nem PROSSEGUIR nem REJEITAR claramente):
 - Separar fato observado de inferencia
 - Pedir a observacao que falta quando a lacuna e material
 
+### Step 5: Veredito e artefato (Trust Ledger, lei F11)
+
+O veredito emitido NAO e mensagem efemera: ele sera registrado no Trust Ledger do repo
+(`.devin/ledger/trust-ledger.md`) na PARADA UNICA, pela skill `nemesis-trust-ledger-update`,
+com ponto (P1/P2), veredito, base de evidencia em 1 linha e referencia a spec/plano. Anotar
+desde ja esses 4 campos no proprio veredito, para a coleta ser copia e nao reconstrucao.
+Na reconciliacao posterior: se a validacao (Skill 4.5) reprovar algo que este gate aprovou,
+a entrada de reconciliacao apontara para este veredito (sinal de calibracao, nao culpa).
+
 ## Formato de Saida
 
 ```
@@ -165,7 +182,7 @@ Em caso de evidencia ambigua (nem PROSSEGUIR nem REJEITAR claramente):
 [workflow legitimo afetado, divida tecnica]
 
 ### 2.4 Alinhamento com objetivo do Nemesis
-[fecha auto-privilegio? preserva arquitetura?]
+[fecha auto-privilegio? invariante em risco citada por numero? preserva arquitetura?]
 
 ### 2.5 Interacao entre mudancas
 [se aplicavel]
@@ -183,6 +200,9 @@ Em caso de evidencia ambigua (nem PROSSEGUIR nem REJEITAR claramente):
 
 ### Veredito: [PROSSEGUIR | REJEITAR | EVIDENCIA AMBIGUA]
 [justificativa em 1-3 linhas, proporcional a evidencia]
+
+### Registro para o Trust Ledger (F11)
+ponto=[P1|P2] · veredito=[...] · base=[1 linha] · ref=[SPEC/PLAN]
 ```
 
 ## Integracao com o SDD Pipeline (modo autonomo, default)

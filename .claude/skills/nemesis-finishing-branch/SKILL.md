@@ -1,14 +1,18 @@
 ---
 name: nemesis-finishing-branch
 description: >
-  Finaliza o desenvolvimento: verifica testes, coleta git diff real, gera PR estruturada,
-  apresenta opcoes de merge/PR/descarte. HARD-GATE de revisao humana antes de salvar a PR.
+  Finaliza o desenvolvimento: verifica testes do perfil, gate de integridade do harness,
+  coleta git diff real, gera PR estruturada, apresenta opcoes de merge/PR/descarte.
+  HARD-GATE de revisao humana antes de salvar a PR.
 ---
 
-# Nemesis Finishing Branch (Rust)
+# Nemesis Finishing Branch
 
-Verificar conclusao, coletar evidencias de git diff real, gerar documentacao de PR estruturada,
-apresentar opcoes de disposicao da branch.
+Verificar conclusao, coletar evidencias de git diff real, gerar documentacao de PR
+estruturada, apresentar opcoes de disposicao da branch.
+
+> **Texto unico espelhado nos dois repos.** Comandos de verificacao e path da PR vem do
+> perfil do repo (`.devin/rules/nemesis-repo-profile.md`).
 
 ## AUTORIZACAO OBRIGATORIA (nunca auto-invocar)
 
@@ -24,37 +28,43 @@ violacao do pipeline.
 
 ## Processo
 
-### Step 1: Verificar Conclusao
+### Step 1: Verificar Conclusao (suite do perfil)
 
 ```bash
+# Motor:
 cd .nemesis && cargo check --workspace
 cd .nemesis && cargo test --workspace
+
+# Dashboard:
+bun run lint
+bunx tsc --noEmit
+bun run build
 ```
 
-Ambos devem sair com exit code 0. Se qualquer um falhar:
+Todos devem sair com exit code 0. Se qualquer um falhar:
 - Retornar para `nemesis-subagent-driven-development`
 - Reportar qual comando falhou e por que
 - NAO prosseguir
+
+### Step 1.5: GATE de integridade do harness (lei F10)
+
+Se o `git diff` da entrega toca qualquer arquivo de harness (`.devin/`, `.claude/skills/`,
+`AGENTS.md`, `CLAUDE.md`): executar o procedimento de espelhamento de
+`.devin/rules/nemesis-harness-integrity.md` (os 3 comandos diff). Resultado precisa ser
+**ESPELHOS INTEGROS** antes de gerar a PR. Deriva detectada = reconciliar via
+`nemesis-harness-sync` (com o HARD-GATE dela) antes de continuar. Se o diff nao toca
+harness, declarar "gate F10: nao se aplica" e seguir.
 
 ### Step 2: Coletar Evidencias Reais
 
 **IMPORTANTE**: Usar APENAS evidencias reais de git diff. NUNCA fabricar.
 
 ```bash
-# Branch atual
 git branch --show-current
-
-# Mudancas por arquivo
 git diff --stat
-
-# Lista exata de arquivos modificados
 git diff HEAD --name-only
-
-# Log recente
 git log --oneline -5
-
-# Diff de conteudo (se necessario detalhe)
-git diff HEAD
+git diff HEAD   # se necessario detalhe
 ```
 
 ### Step 3: Gerar Conteudo da PR
@@ -69,23 +79,22 @@ abaixo, na ordem exata, incluindo a **CLI Table** com comandos, resultados e obs
 [1-4 linhas: o que foi feito e por que. Referencia a spec/plano.]
 
 ## Arquivos Afetados
-- `.nemesis/crate/src/path/to/file.rs` [new|modified]
-- `.nemesis/crate/src/another/file.rs` [modified]
+- `<path>` [new|modified]
 
 (Usar output EXATO de `git diff --stat`)
 
 ## Implementacoes Realizadas
 
-### Arquivo: `.nemesis/crate/src/path/to/file.rs` (new|modified)
-[O que foi criado/modificado em detalhe. Decisao tecnica. Padrão Rust seguido.]
+### Arquivo: `<path>` (new|modified)
+[O que foi criado/modificado em detalhe. Decisao tecnica. Padrao do perfil seguido.]
 
 [Repetir para cada arquivo significativo]
 
 ## Criterios de Aceitacao
-- [x] cargo check --workspace: PASS
-- [x] cargo test --workspace: PASS
+- [x] suite do perfil: PASS (listar cada comando)
 - [x] Sem violacoes Nemesis
-- [x] Codigo Rust idiomatico
+- [x] Gate F10 (harness): [INTEGROS | nao se aplica]
+- [x] Codigo idiomatico na stack do perfil
 
 ## Beneficios
 [Reuso, desacoplamento, seguranca, performance, enforcebilidade]
@@ -95,60 +104,28 @@ abaixo, na ordem exata, incluindo a **CLI Table** com comandos, resultados e obs
 
 ## CLI Table
 
-> **IMPORTANTE**: A CLI Table contem APENAS comandos de VALIDACAO do projeto (cargo check,
-> cargo test, pentest, build, etc). NUNCA inclua comandos de analise como `git diff`,
-> `git log`, `git status` ou similares. Esses sao ferramentas internas para coletar evidencias,
-> nao validacoes do projeto.
+> **IMPORTANTE**: A CLI Table contem APENAS comandos de VALIDACAO do projeto. NUNCA inclua
+> comandos de analise como `git diff`, `git log`, `git status` ou similares. Esses sao
+> ferramentas internas para coletar evidencias, nao validacoes do projeto.
 
 | Command | Result (OK/FAIL) | Observations |
 |---------|------------------|--------------|
-| `cargo check --workspace` | OK | Compilacao Rust valida |
-| `cargo test --workspace` | OK | Testes passam |
-| Pentest estatico | OK | 224/224 PASS (100%) |
-| Pentest full live | OK | 74/74, 0 gaps, AUTOSSUFICIENTE |
+| [comando 1 do perfil] | OK | [observacao] |
+| [comando 2 do perfil] | OK | [observacao] |
+| Pentest estatico (só-motor) | OK | [placar literal] |
+| Pentest full live (só-motor) | OK | [placar literal] |
 ```
 
-### Exemplo de PR Preenchida (stub de referencia)
-
-```markdown
-# Adicao do pacote widget-accessibility
-
-## Objetivo
-Corrigir erro de modulo nao encontrado no componente AccessibilityWidget adicionando a dependencia widget-accessibility que quebrou o deploy apos a ultima PR 105.
-
-## Arquivos Afetados
-- `package.json` [modificado]
-- `bun.lock` [modificado]
-- `next-env.d.ts` [modificado]
-
-## Melhorias Implementadas
-### Dependencias
-- `package.json`: Adicionado widget-accessibility@^2.0.1 as dependencias do projeto
-- `bun.lock`: Atualizado lockfile com a nova dependencia
-- `next-env.d.ts`: Regenerado apos build
-
-## Beneficios
-- **Correcao de bug**: Resolve o erro "Module not found: Can't resolve 'widget-accessibility'" que impedia o build
-- **Funcionalidade**: O componente AccessibilityWidget agora pode carregar o modulo de acessibilidade corretamente
-
-## CLI Table
-
-| Command | Result (OK/FAIL) | Observations |
-|---------|------------------|--------------|
-| bun build | OK | Build success |
-| Pentest estatico | OK | 224/224 PASS (100%) |
-| Pentest full live | OK | 74/74, 0 gaps, AUTOSSUFICIENTE |
-```
-
-> **IMPORTANTE**: O stub acima e um EXEMPLO de como a PR deve ficar preenchida. Substitua todos
-> os valores pelos dados reais do seu git diff. NAO copie o stub literalmente. Siga a estrutura:
-> titulo com colon, secoes na ordem exata, um `### Arquivo:` por arquivo significativo, output
-> exato de `git diff --stat` em bloco de codigo, criterios de aceitacao com checkboxes marcados,
-> e **sempre** inclua a **CLI Table** com comandos, resultados (OK/FAIL) e observacoes.
+> **IMPORTANTE**: O modelo acima e a ESTRUTURA. Substitua todos os valores pelos dados
+> reais do seu git diff e das saidas literais desta sessao. Titulo com colon, secoes na
+> ordem exata, um `### Arquivo:` por arquivo significativo, output exato de
+> `git diff --stat` em bloco de codigo, criterios com checkboxes marcados, e **sempre**
+> a **CLI Table** com comandos, resultados (OK/FAIL) e observacoes.
 
 ### Step 4: Apresentar PR para Review
 
-**HARD-GATE**: Apresentar PR completa (incluindo CLI Table). BLOQUEAR ate resposta de Fernando.
+**HARD-GATE**: Apresentar PR completa (incluindo CLI Table). BLOQUEAR ate resposta de
+Fernando.
 
 Perguntar:
 ```
@@ -159,22 +136,11 @@ Respostas validas: "sim", "pode", "aprovado", "ok", "prossiga"
 
 ### Step 5: Salvar PR
 
-Apos aprovacao, salvar em:
-```
-Feature-Documentation/PR/PR_NNN_nome-descritivo.md
-```
+Apos aprovacao, salvar no path de PRs do perfil (motor: `Feature-Documentation/PR/`;
+dashboard: `.devin/plans/`), nome `PR_NNN_nome-descritivo.md`.
 
-**Antes de gravar**: listar o conteudo de `Feature-Documentation/PR/` para determinar o
-proximo numero sequencial. NUNCA assumir um numero sem verificar. NUNCA criar numero
-repetido ou errado. O numero deve ser exatamente o proximo na sequencia das PRs existentes.
-
-Exemplo:
-```bash
-ls Feature-Documentation/PR/
-```
-Se existem PR_001 e PR_002, a proxima sera PR_003. Se a pasta esta vazia, a primeira sera PR_001.
-
-Arquivo markdown contendo PR completa aprovada.
+**Antes de gravar**: listar o conteudo do diretorio de PRs para determinar o proximo numero
+sequencial. NUNCA assumir um numero sem verificar. NUNCA criar numero repetido ou errado.
 
 ### Step 6: Apresentar Opcoes de Disposicao
 
@@ -188,7 +154,7 @@ OPCOES DE DISPOSICAO:
 
 2. MANTER BRANCH PARA PR REVIEW EXTERNO
    Branch fica aberta para pull request externo
-   
+
 3. DESCARTAR BRANCH
    Fernando executa: git branch -D <branch-name>
 
@@ -197,21 +163,21 @@ Aguardando decisao de Fernando...
 
 ## Red Flags
 
-- `cargo check --workspace` NAO PASS
-- `cargo test --workspace` NAO PASS
+- Qualquer comando da suite do perfil NAO PASS
+- Gate F10 com deriva nao reconciliada
 - Arquivos modificados fora do scope original
-- Violacoes de regras Nemesis detectadas
+- Violacoes de regras do perfil detectadas
 - git diff contem arquivos secretos (.env, credentials, etc)
 
 ## Lembrar
 
 - NUNCA fabricar git diff — usar dados reais SOMENTE
 - NUNCA pular pipeline de validacao
-- PR segue conVencoes deste projeto (PT-BR, paths exatos, evidencias reais)
-- Nemesis enforcement ja validou qualidade de codigo
+- Mudanca em harness exige espelhos integros ANTES da PR (F10)
+- PR segue convencoes deste projeto (PT-BR, paths exatos, evidencias reais)
 - Fernando faz commit/push manualmente — skill NAO faz git write
 
 ## Integracao
 
-**Skill anterior**: `nemesis-subagent-driven-development`
+**Skill anterior**: `nemesis-doc-sync` (4.6) ou diretamente a PARADA UNICA
 **Final skill no pipeline Nemesis SDD**

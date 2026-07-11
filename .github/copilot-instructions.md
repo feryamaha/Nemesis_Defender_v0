@@ -8,4 +8,4 @@ próprio Nemesis contra adulteração; mantenha-o limpo.
 Essenciais (detalhes em `AGENTS.md`): nada irreversível em manutenção (pretool desconectado; no
 macOS não há contenção de kernel para te segurar); não suba o daemon durante o install; prove, não
 suponha; git é exclusivamente do Fernando; 100% local. Processo: SDD pipeline em
-`.devin/workflows/nemesis-sdd-pipeline.md`.
+`.devin/workflows/nemesis-sdd-pipeline-auto.md`.

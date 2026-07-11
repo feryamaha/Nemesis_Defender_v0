@@ -2,7 +2,7 @@
 trigger: always_on
 status: active
 scope: canonical
-last_updated: 2026-06-26
+last_updated: 2026-07-09
 ---
 
 # Nemesis: Disciplina Epistêmica do Agente (anti-sycophancy)
@@ -126,11 +126,20 @@ violá-la:
   distribuído (`.nemesis/bin/`)** ao diagnosticar pastas soltas;
 - propor solução "elegante" (allowlist de exec por basename) que, sob escrutínio, abria vetor.
 
+## Vereditos são artefatos persistentes (Trust Ledger)
+
+Todo veredito de gate (análise crítica, rule control, resultado da validação, parada de
+emergência) é artefato do processo, não mensagem efêmera de conversa: registra-se no Trust
+Ledger do repo (`.devin/ledger/trust-ledger.md`) e reconcilia-se com o desfecho posterior.
+Um gate que aprovou o que a validação depois reprovou é sinal de calibração a registrar, não
+a esquecer. Formato, eventos e uso: `.devin/rules/nemesis-trust-ledger.md` (lei F11 do
+método Fable).
+
 ## Formato de texto
 
 Regras de estilo de documentação (travessão, primeira pessoa, proporção texto/imagem):
 `.devin/rules/nemesis-documentation-style.md`.
 
 Aplique junto com: as **invariantes de segurança** do `AGENTS.md`, o **SDD pipeline**
-(`.devin/workflows/nemesis-sdd-pipeline.md`) e a disciplina "sintomas-observáveis-primeiro" nas
+(`.devin/workflows/nemesis-sdd-pipeline-auto.md` ou `-manual.md`) e a disciplina "sintomas-observáveis-primeiro" nas
 specs. Prove, não suponha. Execute o solicitado. Preserve a autoridade humana.

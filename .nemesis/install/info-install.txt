@@ -134,6 +134,34 @@ SUA allowlist e logs). Git e seu: nada e commitado/removido do versionamento.
 Reinicie a IDE depois.
 
 -------------------------------------------------------------------------------
+ PASSO 6 — ARQUIVO QUARENTENADO?
+-------------------------------------------------------------------------------
+Se o Nemesis mover um arquivo para quarentena (exit 2, "QUARENTENA PENDENTE"),
+ele nao deleta: preserva para revisao humana. Para recuperar:
+
+1. Liste os itens quarentenados:
+
+     .nemesis/bin/nemesis-defender --quarantine list
+
+   Voce vera uma tabela com colunas ID, Origem, Severidade e Violacoes.
+
+2. Inspecione o item pelo ID (use o ID da listagem, sem os colchetes):
+
+     .nemesis/bin/nemesis-defender --quarantine show <ID>
+
+3. Decida:
+   - Falso-positivo (volta ao lugar original):
+
+       .nemesis/bin/nemesis-defender --quarantine restore <ID>
+
+   - Confirmado malicioso (expurgar definitivamente):
+
+       .nemesis/bin/nemesis-defender --quarantine purge <ID>
+
+Enquanto houver itens pendentes, o pretool bloqueia a sessao (exit 2).
+Resolva todos os itens pendentes para liberar a sessao.
+
+-------------------------------------------------------------------------------
  ENCONTROU UM PROBLEMA OU UM GAP?
 -------------------------------------------------------------------------------
 Se algo que DEVERIA ser bloqueado passou, isso e um achado valioso. Por favor:

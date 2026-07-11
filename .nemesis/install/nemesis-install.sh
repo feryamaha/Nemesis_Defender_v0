@@ -208,22 +208,6 @@ else
   warn "Binario nemesis-publisher nao encontrado no tarball (instalacao antiga). Telemetria pulada."
 fi
 
-# ── 5.4b Service do publisher (systemd user/launchd) — SOMENTE com opt-in ativo ─
-# Primeiro install: opt-in ainda nao existe → nenhum service e criado (apos o opt-in,
-# o usuario roda: nemesis-publisher --install-service). Re-install com opt-in
-# preservado: recria/atualiza o service automaticamente. Best-effort: nunca falha o install.
-if [ -f ".nemesis/bin/nemesis-publisher" ]; then
-  if grep -q '"opt_in": true' .nemesis/telemetry/identity.json 2>/dev/null; then
-    if .nemesis/bin/nemesis-publisher --install-service; then
-      say "Telemetria: service do publisher instalado (opt-in ativo, auto-start habilitado)."
-    else
-      warn "Service do publisher nao instalado (nao critico). Manual: nemesis-publisher --install-service"
-    fi
-  else
-    say "Telemetria: sem opt-in, nenhum service criado (opt-in e manual)."
-  fi
-fi
-
 ABS_PRETOOL="$(pwd)/.nemesis/bin/nemesis-pretool-check-unix"
 ABS_POSTTOOL="$(pwd)/.nemesis/bin/nemesis-posttool-check-unix"
 
