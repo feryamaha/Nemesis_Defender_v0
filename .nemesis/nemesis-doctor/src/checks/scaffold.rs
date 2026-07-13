@@ -7,6 +7,7 @@ const SCAFFOLD_CONFIGS: &[&str] = &[
     ".cursor/hooks.json",
     ".codex/hooks.json",
     ".github/hooks.json",
+    ".grok/hooks/nemesis-pretool-hook.json",
 ];
 
 pub fn run() -> CheckResult {

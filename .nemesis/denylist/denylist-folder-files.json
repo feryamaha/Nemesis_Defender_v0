@@ -20,6 +20,8 @@
       ".cursor/settings.json",
       ".github/settings.json",
       ".github/hooks/nemesis-pretool-hook.json",
+      ".grok/hooks/nemesis-pretool-hook.json",
+      ".grok/config.toml",
       ".vscode/settings.json",
       ".bashrc",
       ".zshrc",

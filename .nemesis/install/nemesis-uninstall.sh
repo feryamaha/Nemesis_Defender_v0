@@ -60,13 +60,16 @@ NEM_REF='nemesis-pretool\|nemesis-posttool\|\.nemesis/bin\|chat.hookFilesLocatio
 # 3a. Arquivos de hook que o install cria 100% para o Nemesis → remove direto.
 for f in .codex/hooks.json .cursor/hooks.json .devin/hooks.json \
          .gemini/hooks.json .agents/hooks.json \
-         .github/hooks/nemesis-pretool-hook.json; do
+         .github/hooks/nemesis-pretool-hook.json \
+         .grok/hooks/nemesis-pretool-hook.json; do
   if [ -f "$f" ] && grep -q "$NEM_REF" "$f" 2>/dev/null; then
     rm -f "$f" && say "Hook removido: $f"
   fi
 done
 # Remove a pasta .github/hooks se ficou vazia (era só do Nemesis).
 rmdir .github/hooks 2>/dev/null || true
+# Remove a pasta .grok/hooks se ficou vazia (era só do Nemesis).
+rmdir .grok/hooks 2>/dev/null || true
 
 # 3b. settings COMPARTILHADOS (podem conter SUA config): NÃO apaga automaticamente.
 # Apagar config sua seria pior que avisar — então listamos para você remover à mão.
@@ -98,7 +101,7 @@ fi
 cat <<'EOF'
   [1] Procurar QUALQUER resquício de hook do Nemesis (o ideal é não retornar nada):
         grep -rIl 'nemesis-pretool\|nemesis-posttool\|\.nemesis/bin\|chat.hookFilesLocations' \
-          .claude .openclaude .codex .cursor .devin .gemini .agents .github .vscode 2>/dev/null
+          .claude .openclaude .codex .cursor .devin .gemini .agents .github .vscode .grok 2>/dev/null
       Se listar algum arquivo, edite/remova a entrada do Nemesis nele (manualmente).
 
   [2] Confirmar que o daemon NÃO está mais rodando:

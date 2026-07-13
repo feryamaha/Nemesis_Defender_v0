@@ -227,6 +227,7 @@ O instalador detecta SO/arch, baixa o tarball da release, **confere o SHA256 ant
 | **Devin** | `.devin/hooks.json` | eventos `pre_write_code`/`pre_run_command`/`pre_read_code`/`pre_mcp_tool_use` (+ `post_*`) |
 | **Gemini / Agents** | `.gemini/hooks.json` · `.agents/hooks.json` | objetos `nemesis-pretool-hook`/`nemesis-posttool-hook` com `enabled` |
 | **VS Code / GitHub Copilot** | `.github/hooks/nemesis-pretool-hook.json` (+ `.vscode/settings.json` aponta para ele) | caminho relativo `./.nemesis/bin/...` |
+| **Grok Build** (x.ai) | `.grok/hooks/nemesis-pretool-hook.json` | `PreToolUse`/`PostToolUse` + `matcher: ".*"` + `timeout` (schema Claude) |
 
 Caminho absoluto para os binários (relativo no caso do GitHub/VS Code). Versão fixa: `NEMESIS_VERSION=v0.1.0 bash nemesis-install.sh`.
 
@@ -385,6 +386,7 @@ A biblioteca Rust (`nemesis-defender`) é agnóstica de IDE. O que muda entre ID
 | **GitHub Copilot** | `preToolUse` | `.github/hooks/` |
 | **VS Code** (agent, preview) | eventos de hook | `.github/hooks/` |
 | **Devin / Devin** (Cognition) | `pre_write_code`, `pre_run_command`, `pre_read_code`, `pre_mcp_tool_use` (+ `post_*`) | `.devin/hooks.json` |
+| **Grok Build** (x.ai) | `PreToolUse` / `PostToolUse` | `.grok/hooks/*.json` (projeto) ou `~/.grok/hooks/*.json` (global) |
 
 > **Regra de ouro do enforcement:** o bloqueio só acontece com **exit code 2**. Exit code 1 é tratado como erro não-bloqueante e a ação prossegue. Todo hook de segurança precisa terminar em exit 2 para barrar de fato.
 

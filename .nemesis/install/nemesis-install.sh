@@ -260,6 +260,24 @@ EOF
   say "Hook (Codex) escrito em .codex/hooks.json"
 }
 
+# B2 — Grok Build / x.ai (.grok/hooks/*.json; schema Claude, matcher .* + timeout; exit 2 = deny)
+sc_grok() {
+  guard ".grok/hooks/nemesis-pretool-hook.json" || return 0; mkdir -p .grok/hooks
+  cat > .grok/hooks/nemesis-pretool-hook.json <<EOF
+{
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": ".*", "hooks": [ { "type": "command", "command": "$PRE", "timeout": 30 } ] }
+    ],
+    "PostToolUse": [
+      { "matcher": ".*", "hooks": [ { "type": "command", "command": "$POST", "timeout": 30 } ] }
+    ]
+  }
+}
+EOF
+  say "Hook (Grok Build) escrito em .grok/hooks/nemesis-pretool-hook.json"
+}
+
 # C — Cursor (hooks.json; version 1, preToolUse camelCase, command direto, failClosed)
 sc_cursor() {
   guard ".cursor/hooks.json" || return 0; mkdir -p .cursor
@@ -352,11 +370,12 @@ scaffold_ide() {  # $1 = nome
     gemini)        sc_gemini_like .gemini ;;
     agents)        sc_gemini_like .agents ;;
     github|vscode) sc_github_vscode ;;
-    *) say "IDE desconhecida: '$1' (use: claude|openclaude|codex|cursor|devin|gemini|agents|github)"; return 1 ;;
+    grok)          sc_grok ;;
+    *) say "IDE desconhecida: '$1' (use: claude|openclaude|codex|cursor|devin|gemini|agents|github|grok)"; return 1 ;;
   esac
 }
 
-IDES="claude|openclaude|codex|cursor|devin|gemini|agents|github"
+IDES="claude|openclaude|codex|cursor|devin|gemini|agents|github|grok"
 detected=0
 
 if [ -n "${NEMESIS_IDE:-}" ]; then

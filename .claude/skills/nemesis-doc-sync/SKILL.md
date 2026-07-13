@@ -2,16 +2,18 @@
 name: nemesis-doc-sync
 description: >
   Trata documentacao como FEATURE. APOS a validacao (Skill 4.5) e ANTES do finishing (Skill 5),
-  analisa o git diff da mudanca e decide se a superficie de doc do perfil (motor: README.md;
-  dashboard: src/data/docs/*.json) precisa ser atualizada. Se nao, segue o fluxo. Se sim,
-  reconcilia (codigo = verdade, regra do coeficiente, sem inserir por inserir), com HARD-GATE
-  de revisao humana. Garante que a PR sempre contenha a documentacao sincronizada.
+  analisa o git diff da mudanca e decide se a superficie de doc do perfil (motor: README.md e
+  release notes em Feature-Documentation/release-note/; dashboard: src/data/docs/*.json) precisa
+  ser atualizada. Se nao, segue o fluxo. Se sim, reconcilia (codigo = verdade, regra do
+  coeficiente, sem inserir por inserir), com HARD-GATE de revisao humana. Garante que a PR
+  sempre contenha a documentacao sincronizada.
 ---
 
 # Nemesis Doc Sync (documentacao como feature)
 
 > **Texto unico espelhado nos dois repos.** A superficie de doc vem do perfil:
-> **motor** = `README.md`; **dashboard** = JSONs de docs em `src/data/docs/`.
+> **motor** = `README.md` + release notes em `Feature-Documentation/release-note/`;
+> **dashboard** = JSONs de docs em `src/data/docs/`.
 
 ## AUTORIZACAO OBRIGATORIA (nunca auto-invocar)
 
@@ -54,6 +56,12 @@ documentados que podem ser afetados:
 - **Feature nova ou comportamento mudado** que o usuario percebe.
 - **Enquadramento do pentest** (numeros, gate, modulos).
 - **Passos de instalacao / requisitos.**
+- **Release note (motor):** a mudanca adiciona feature, fecha bypass, altera config de
+  enforcement, muda empacotamento/build ou comportamento user-facing? Se sim, verificar se
+  uma nova release note e necessaria ou se uma existente em
+  `Feature-Documentation/release-note/` precisa ser atualizada. Release notes sao por-versao;
+  mudanca que sera publicada em release nova = nova release note. Bugfix interno sem impacto
+  user-facing geralmente NAO exige release note.
 - **Harness (F10):** a mudanca tocou arquivos do harness (`.devin/`, `.claude/skills/`,
   `AGENTS.md`, `CLAUDE.md`)? Se sim, rodar o procedimento de espelhamento de
   `nemesis-harness-integrity.md` e reportar o resultado; deriva = pendencia a resolver
@@ -86,6 +94,11 @@ Atualize a superficie de doc do perfil com disciplina:
   proprio repo; se a mudanca afeta a superficie do repo irmao, reporte ao Fernando (nao
   edite o outro repo a partir deste fluxo).
 
+- **Release note (motor):** se a mudanca exige release note, crie ou atualize o arquivo em
+  `Feature-Documentation/release-note/` seguindo o padrao das notas existentes (natureza da
+  versao, o que mudou, o que nao mudou, validacao, limites). O numero da versao e decisao do
+  Fernando.
+
 Apresente o diff das mudancas de doc.
 
 ### Fase 4: HARD-GATE — revisao humana
@@ -94,7 +107,8 @@ nao siga para a Skill 5. Respostas validas: "sim", "pode", "aprovado", "ok", "pr
 
 ## Saida
 
-- Veredito (PRECISA / NAO PRECISA) e, se PRECISA, as mudancas de doc aplicadas e aprovadas.
+- Veredito (PRECISA / NAO PRECISA) e, se PRECISA, as mudancas de doc aplicadas e aprovadas
+  (incluindo release note, se aplicavel).
 - Resultado do check de espelhamento do harness, quando aplicavel.
 - Alimenta a Skill 5 (`nemesis-finishing-branch`): a PR ja contem a doc sincronizada no
   git diff.
@@ -112,5 +126,6 @@ nao siga para a Skill 5. Respostas validas: "sim", "pode", "aprovado", "ok", "pr
 - Codigo = verdade; regra do coeficiente; doc do perfil sincronizada.
 - Cross-repo: cada doc-sync cuida da superficie do proprio repo.
 - Mudanca em harness = rodar o procedimento de espelhamento (F10).
+- Release note (motor): mudanca publicavel = verificar se exige nova release note.
 - Git e exclusivo do Fernando. HARD-GATE de revisao humana.
 - Sempre PT-BR.

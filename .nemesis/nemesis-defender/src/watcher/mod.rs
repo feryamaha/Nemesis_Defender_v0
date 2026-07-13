@@ -20,6 +20,7 @@ pub const WATCH_PATHS: &[&str] = &[
     ".devin",
     ".vscode",
     ".cursor",
+    ".grok",
     // Project source
     "src",
     // Package installs
