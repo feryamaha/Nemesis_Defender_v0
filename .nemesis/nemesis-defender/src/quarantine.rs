@@ -147,6 +147,88 @@ pub fn has_pending() -> bool {
     !load_pending().is_empty()
 }
 
+// ── RESTORED-ALLOWLIST (decisão humana de restore, lida pelo daemon) ──────────────────────────
+//
+// Quando o humano faz `restore <id>` (falso-positivo), a decisão é persistida aqui como
+// (original_path, sha256). O daemon consulta antes de quarentenar: se o par casar, NÃO
+// re-quarentena (respeita o restore). Só a camada daemon é relaxada; pretool e eBPF seguem
+// bloqueando. Arquivo em .nemesis/quarantine/ (absolute_block; o daemon pula essa subárvore).
+// Match por path E hash (conservador): conteúdo alterado no mesmo path volta a ser escaneado.
+
+const RESTORED_ALLOWLIST_FILE: &str = "restored-allowlist.json";
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RestoredEntry {
+    pub original_path: String,
+    pub sha256: String,
+    pub restored_at: String,
+}
+
+fn restored_allowlist_path() -> PathBuf {
+    quarantine_dir().join(RESTORED_ALLOWLIST_FILE)
+}
+
+/// SHA-256 hex de um buffer (mesmo esquema do checksum do install).
+pub fn sha256_hex(bytes: &[u8]) -> String {
+    use sha2::{Digest, Sha256};
+    let mut hasher = Sha256::new();
+    hasher.update(bytes);
+    hasher
+        .finalize()
+        .iter()
+        .map(|b| format!("{:02x}", b))
+        .collect()
+}
+
+/// Lê a restored-allowlist. Fail-safe: qualquer erro (ausente/vazia/inválida) => vazia.
+pub fn load_restored_allowlist() -> Vec<RestoredEntry> {
+    fs::read_to_string(restored_allowlist_path())
+        .ok()
+        .and_then(|s| serde_json::from_str(&s).ok())
+        .unwrap_or_default()
+}
+
+fn save_restored_allowlist(entries: &[RestoredEntry]) -> std::io::Result<()> {
+    fs::create_dir_all(quarantine_dir())?;
+    let j = serde_json::to_string_pretty(entries)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+    fs::write(restored_allowlist_path(), j)
+}
+
+/// Registra a decisão humana de restore (append idempotente por (original_path, sha256)).
+/// Retorna Err se não conseguiu persistir; o chamador (cli_restore) apenas reporta, o restore
+/// em si não é desfeito.
+pub fn record_restored(original_path: &str, sha256: &str) -> std::io::Result<()> {
+    let mut entries = load_restored_allowlist();
+    if entries
+        .iter()
+        .any(|e| e.original_path == original_path && e.sha256 == sha256)
+    {
+        return Ok(()); // já registrado
+    }
+    entries.push(RestoredEntry {
+        original_path: original_path.to_string(),
+        sha256: sha256.to_string(),
+        restored_at: chrono::Local::now().to_rfc3339(),
+    });
+    save_restored_allowlist(&entries)
+}
+
+/// Lógica pura de match (testável sem disco): o par (path, conteúdo) está na lista?
+pub fn entry_matches(entries: &[RestoredEntry], original_path: &Path, content: &[u8]) -> bool {
+    let path_str = original_path.display().to_string();
+    let hash = sha256_hex(content);
+    entries
+        .iter()
+        .any(|e| e.original_path == path_str && e.sha256 == hash)
+}
+
+/// true se este (path, conteúdo) foi restaurado como falso-positivo por decisão humana.
+/// Fail-safe: lista vazia => false (nenhuma isenção). Usada pelo daemon.
+pub fn is_restored_fp(original_path: &Path, content: &[u8]) -> bool {
+    entry_matches(&load_restored_allowlist(), original_path, content)
+}
+
 // ── CLI ──────────────────────────────────────────────────────────────────────
 
 pub fn cli_list() {
@@ -203,6 +285,29 @@ pub fn cli_restore(id: &str) {
     let entry = pending[pos].clone();
     let held = held_file_path(&entry);
     let orig = PathBuf::from(&entry.original_path);
+
+    // Persistir a decisão humana de FP ANTES de mover o arquivo de volta: quando o daemon
+    // receber o evento inotify de criação em `orig`, a restored-allowlist já terá
+    // (original_path, sha256) e is_restored_fp isenta a re-quarentena (fecha a corrida
+    // restore-vs-daemon). Falha aqui NÃO impede o restore, apenas alerta.
+    match fs::read(&held) {
+        Ok(bytes) => {
+            let hash = sha256_hex(&bytes);
+            if let Err(e) = record_restored(&entry.original_path, &hash) {
+                eprintln!(
+                    "  ⚠️  Falha ao registrar a decisão na restored-allowlist ({}). O daemon pode re-quarentenar.",
+                    e
+                );
+            }
+        }
+        Err(e) => {
+            eprintln!(
+                "  ⚠️  Não consegui ler o arquivo retido para registrar o hash ({}). O daemon pode re-quarentenar.",
+                e
+            );
+        }
+    }
+
     if let Some(parent) = orig.parent() {
         let _ = fs::create_dir_all(parent);
     }

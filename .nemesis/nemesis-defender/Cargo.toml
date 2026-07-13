@@ -32,6 +32,10 @@ serde_json = "1.0"
 # Timestamps for o ledger unificado de bloqueios (violations_log)
 chrono = { version = "0.4" }
 
+# Content hashing da restored-allowlist (decisao humana de restore lida pelo daemon).
+# SHA-256, mesmo esquema do checksum do install; versao casada com nemesis-publisher (reusa o lock).
+sha2 = "0.10"
+
 # Unicode normalization (homoglyph detection)
 unicode-normalization = "0.1"
 

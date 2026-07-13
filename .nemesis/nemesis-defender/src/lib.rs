@@ -116,13 +116,13 @@ const EXCLUDED_NEMESIS_DIRS: &[&str] = &[
 
 /// Diretórios de build output — artefatos gerados por tooling (Next.js, Vite, etc.),
 /// não código-fonte. Escaneá-los gera falso-positivo (chunks minificados contêm
-/// eval/Function/dynamic-import). O pretool (write-time) e o eBPF (execução) seguem
-/// ativos sobre estes paths.
+/// eval/Function/dynamic-import). Casados por COMPONENTE de path (não substring). O pretool
+/// (write-time) e o eBPF (execução) seguem ativos sobre estes paths.
 const EXCLUDED_BUILD_OUTPUT_DIRS: &[&str] = &[
-    ".next/",   // Next.js / Turbopack
-    "dist/",    // Vite, Rollup, webpack, etc.
-    "build/",   // CRA, tsc --outDir, etc.
-    "out/",     // Next.js export / static export
+    ".next", // Next.js / Turbopack
+    "dist",  // Vite, Rollup, webpack, etc.
+    "build", // CRA, tsc --outDir, etc.
+    "out",   // Next.js export / static export
 ];
 
 /// Documentação canônica do projeto, mantida exclusivamente por humanos.
@@ -195,11 +195,17 @@ pub fn is_path_excluded(path: &Path) -> bool {
         }
     }
 
-    // 1b. Diretórios de build output — isentos. Artefatos gerados por tooling, não
-    //     código-fonte. O pretool (write-time) e o eBPF (execução) seguem ativos.
-    for dir in EXCLUDED_BUILD_OUTPUT_DIRS {
-        if path_str.contains(dir) {
-            return true;
+    // 1b. Diretórios de build output — isentos por COMPONENTE de path (não substring):
+    //     robusto a ausência de barra final e a canonicalização, e não casa por engano nomes
+    //     como `myapp.next/`. Artefatos gerados por tooling, não código-fonte. O pretool
+    //     (write-time) e o eBPF (execução) seguem ativos.
+    for comp in path.components() {
+        if let std::path::Component::Normal(os) = comp {
+            if let Some(name) = os.to_str() {
+                if EXCLUDED_BUILD_OUTPUT_DIRS.contains(&name) {
+                    return true;
+                }
+            }
         }
     }
 

@@ -667,6 +667,17 @@ fn scan_file(path: &Path, cwd: &Path) {
                 );
                 return;
             }
+
+            // Decisão humana de restore: se este (path, conteúdo) foi restaurado como
+            // falso-positivo, o daemon NÃO re-quarentena (respeita o restore). Só a camada
+            // daemon é relaxada; pretool (write-time) e eBPF (exec) seguem bloqueando o padrão.
+            if crate::quarantine::is_restored_fp(path, &content) {
+                eprintln!(
+                    "[nemesis-defender] (isento: decisão humana de restore, falso-positivo): {}",
+                    path.display()
+                );
+                return;
+            }
             let _ = reporter::log_result(&result);
             // Ledger unificado de bloqueios (vocabulário padrão das 6 mensagens).
             crate::violations_log::append(
