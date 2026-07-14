@@ -1016,6 +1016,53 @@ fn check_folder_file_access(
     None
 }
 
+/// SPEC_024 (REQ-2): arquivos sempre-sensiveis FORA da raiz do projeto (home do usuario e
+/// sistema). A protecao projeto-relativa (absolute_block via normalize_to_relative) nao os
+/// cobre quando referenciados por caminho ABSOLUTO. Conjunto curado + ancorado em caminho
+/// absoluto -> sem falso-positivo em arquivo legitimo de projeto homonimo.
+fn check_sensitive_absolute_path(path: &str) -> Option<(String, String)> {
+    let mut p = path.replace('\\', "/");
+    // Expandir '~/' para o HOME do usuario.
+    if let Some(rest) = p.strip_prefix("~/") {
+        if let Some(home) = std::env::var_os("HOME") {
+            p = format!("{}/{}", home.to_string_lossy().trim_end_matches('/'), rest);
+        }
+    }
+
+    // Sistema (Linux + macOS, incluindo o prefixo /private do macOS).
+    const SYSTEM_SENSITIVE: &[&str] = &[
+        "/etc/passwd", "/etc/shadow", "/etc/sudoers", "/etc/master.passwd",
+        "/private/etc/passwd", "/private/etc/master.passwd", "/private/etc/sudoers",
+    ];
+    if SYSTEM_SENSITIVE.contains(&p.as_str()) {
+        return Some((
+            format!("NEMESIS SEC - LEITURA NEGADA - ARQUIVO PROTEGIDO · {}", p),
+            "Arquivos sensiveis do sistema nao sao acessiveis ao agente.".into(),
+        ));
+    }
+
+    // Home do usuario: sufixos sensiveis ancorados em $HOME (caminho absoluto).
+    if let Some(home) = std::env::var_os("HOME") {
+        let home = home.to_string_lossy().replace('\\', "/");
+        let home = home.trim_end_matches('/');
+        const HOME_SENSITIVE: &[&str] = &[
+            ".ssh/id_rsa", ".ssh/id_dsa", ".ssh/id_ecdsa", ".ssh/id_ed25519",
+            ".ssh/authorized_keys", ".zshrc", ".bashrc", ".bash_profile", ".profile",
+            ".aws/credentials", ".netrc",
+        ];
+        for suffix in HOME_SENSITIVE {
+            if p == format!("{}/{}", home, suffix) {
+                return Some((
+                    format!("NEMESIS SEC - LEITURA NEGADA - ARQUIVO PROTEGIDO · {}", suffix),
+                    "Arquivos sensiveis do home do usuario nao sao acessiveis ao agente.".into(),
+                ));
+            }
+        }
+    }
+
+    None
+}
+
 // ============================================================
 // MAIN
 // ============================================================
@@ -1236,6 +1283,8 @@ fn run_pretool() {
             "Edit" | "edit" | "edit_file" | "str_replace" |
             "MultiEdit" | "str_replace_based_edit_tool" | "apply_patch" |
             "str_replace_editor" | "StrReplace" | "TabWrite" |
+            // Grok Build (x.ai) — tool de edicao (ISSUE_008 / SPEC_024)
+            "search_replace" |
             // Antigravity
             "write_to_file" | "replace_file_content" | "multi_replace_file_content"
         );
@@ -1421,6 +1470,7 @@ fn run_pretool() {
                         "Write" | "Edit" | "MultiEdit" | "create_file" | "str_replace_editor"
                         | "write_file" | "edit_file" | "str_replace" | "apply_patch"
                         | "str_replace_based_edit_tool" | "StrReplace" | "TabWrite"
+                        | "search_replace"
                     );
                     // Bash com redirect tambem conta como write
                     let is_bash_write = (effective_tool == "Bash" || effective_tool == "bash")
@@ -1557,12 +1607,18 @@ fn run_pretool() {
                             "Write" | "Edit" | "MultiEdit" | "create_file" | "str_replace_editor"
                             | "write_file" | "edit_file" | "str_replace" | "apply_patch"
                             | "str_replace_based_edit_tool" | "StrReplace" | "TabWrite"
+                            | "search_replace"
                         );
                         let is_bash_write = (effective_tool == "Bash" || effective_tool == "bash")
                             && (bash_path.contains('>') || combined_path.contains('>'));
                         let is_write_op = is_write || is_bash_write;
 
                         for p in &all_paths {
+                            // SPEC_024 (REQ-2): arquivo sensivel por caminho absoluto fora do
+                            // projeto (home/sistema) — o absolute_block projeto-relativo nao cobre.
+                            if let Some((message, suggestion)) = check_sensitive_absolute_path(p) {
+                                nemesis_block(&message, Some(&suggestion));
+                            }
                             // Path canônico + denylist (fecha traversal src/../.cursor/...)
                             if let Some((message, suggestion)) =
                                 check_folder_file_access(dl, p, is_write_op)

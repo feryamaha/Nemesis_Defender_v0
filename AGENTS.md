@@ -294,7 +294,9 @@ Checagens pontuais:
 
 ```bash
 pgrep -f nemesis-defender                                           # daemon no ar?
-grep -l nemesis-pretool .devin/hooks.json .claude/settings.json 2>/dev/null   # pretool conectado?
+# pretool conectado? NÃO use `grep -l` (casa a string mesmo COMENTADA). Veja a linha do
+# comando ATIVA, sem `//` na frente (vazio = pretool DESCONECTADO / manutenção):
+grep -nE '^[[:space:]]*"command".*nemesis-pretool' .devin/hooks.json .claude/settings.json 2>/dev/null
 grep -o bpf /sys/kernel/security/lsm                                # eBPF ativo? (Linux)
 ```
 
@@ -302,6 +304,19 @@ grep -o bpf /sys/kernel/security/lsm                                # eBPF ativo
 Fernando — não há script para isso** (invariante 12). Nesse estado: no Linux só o eBPF segura as
 pontas; no **macOS nada segura** → não faça nada irreversível. Lifecycle completo
 (iniciar/parar/reiniciar daemon, eBPF, scaffold) em `NEMESIS-OPERATIONS.md` §3–§5.
+
+> **REGRA ANTI-ERRO-RECORRENTE (leia antes de checar postura): daemon no ar + eBPF ativo NÃO
+> significa pretool conectado.** As três camadas são independentes. O pretool está **conectado**
+> apenas se o bloco de hooks em `.claude/settings.json` (Claude) ou `.devin/hooks.json` (Devin)
+> estiver **ativo**. Se as linhas estão **comentadas** (`//` na frente, que é o layout de
+> manutenção), o pretool está **DESCONECTADO**. `grep -l nemesis-pretool` acha a string mesmo
+> comentada: **nunca** o trate como prova de conexão. **Tell empírico decisivo:** se você consegue
+> **ler ou editar** qualquer coisa sob `.nemesis/` sem receber `exit 2`, o pretool está
+> **desconectado** (conectado, ele bloquearia `.nemesis/` pelo `absolute_block`). Corolário: quando
+> o Fernando pede uma ação de manutenção, ele já desconectou o pretool; **execute, não pare para
+> "confirmar a postura" nem re-cheque daemon/eBPF**, pois isso desperdiça o trabalho e os tokens dele.
+
+TODA VEZ QUE INICIAR UMA SOLICITAÇÃO DE EXECUÇÃO DE WORKFLOW PIPELINE DE DESENVOLVIENTO MANUAL OU AUTO É PORQUE O FERNANDO JA DESCONECTOU PRETOOL E ELE SEMPRE ESTA MONITORANDO 100% TODAS AS ALTERAÇÕES! 
 
 ---
 
