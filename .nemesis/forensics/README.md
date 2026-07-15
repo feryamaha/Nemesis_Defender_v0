@@ -1,48 +1,48 @@
-# Auditoria forense de conteúdo externo (issue / PR)
+# Forensic audit of external content (issue / PR)
 
-Antes de **analisar e mergear** uma issue ou PR de terceiros, passe o conteúdo pelo próprio
-motor do Nemesis. É a "alfândega" do projeto: reduz o risco de **payload oculto**,
-**prompt-injection** e **poisoning** de arquivos de configuração de agente entrarem na fonte.
+Before **analyzing and merging** a third-party issue or PR, run the content through the
+Nemesis engine itself. It is the project's "customs": it reduces the risk of **hidden payload**,
+**prompt-injection** and **poisoning** of agent configuration files entering the source.
 
-## Como usar
+## How to use
 
-1. Cole o conteúdo não-confiável (corpo da issue, arquivos/diff da PR) dentro de:
+1. Paste the untrusted content (issue body, PR files/diff) into:
 
    ```
    .nemesis/forensics/incoming/
    ```
 
-2. Rode o scan manual (a partir da raiz do projeto):
+2. Run the manual scan (from the project root):
 
    ```bash
    bash .nemesis/forensics/scan-incoming.sh
    ```
 
-3. Leia o veredito no terminal e em `.nemesis/forensics/forensics-report.md`:
-   - **APROVADO** — nenhum sinal hostil conhecido. *Ainda assim leia o conteúdo* (o scan não
-     entende lógica de negócio).
-   - **REPROVADO** — um ou mais arquivos com sinal hostil. **Não mergeie** sem entender cada achado.
+3. Read the verdict in the terminal and in `.nemesis/forensics/forensics-report.md`:
+   - **APPROVED** — no known hostile signal. *Still read the content* (the scan does not
+     understand business logic).
+   - **REJECTED** — one or more files with a hostile signal. **Do not merge** without understanding each finding.
 
-4. Limpe a drop zone quando terminar (o conteúdo é descartável e **não** é versionado):
+4. Clean the drop zone when done (the content is disposable and is **not** versioned):
 
    ```bash
    rm -rf .nemesis/forensics/incoming/*
    ```
 
-## Por que isto é seguro (e o que NÃO é)
+## Why this is safe (and what it is NOT)
 
-- A pasta `.nemesis/forensics/` é **isenta da quarentena do daemon**
-  (`denylist-folder-files.json` → `daemon_quarantine_exempt`): o daemon ainda **escaneia e
-  loga**, mas **não move** os arquivos nem trava a sessão durante a triagem. O veredito
-  autoritativo é o **scan manual** acima.
-- A drop zone (`incoming/`) e o relatório **não são commitados** (`.gitignore`): conteúdo
-  hostil nunca entra no histórico.
-- **Limite honesto:** isto é uma camada de triagem, **não** uma garantia. Um atacante pode
-  escrever um payload que o scanner ainda não conhece. A defesa real continua sendo
-  **revisão humana** + `CODEOWNERS` + branch protection nos arquivos trust-critical.
+- The `.nemesis/forensics/` folder is **exempt from daemon quarantine**
+  (`denylist-folder-files.json` → `daemon_quarantine_exempt`): the daemon still **scans and
+  logs**, but does **not move** the files nor lock the session during triage. The
+  authoritative verdict is the **manual scan** above.
+- The drop zone (`incoming/`) and the report are **not committed** (`.gitignore`): hostile
+  content never enters the history.
+- **Honest limit:** this is a triage layer, **not** a guarantee. An attacker can
+  write a payload the scanner does not yet know. The real defense remains
+  **human review** + `CODEOWNERS` + branch protection on trust-critical files.
 
-## Por que NÃO se chama `src/`
+## Why it is NOT called `src/`
 
-Esta é uma zona de **conteúdo não-confiável**, não código-fonte. Nomeá-la `src/` confundiria
-com a fonte do projeto e poderia fazê-la ser tratada como código a compilar/distribuir.
-`forensics/incoming/` deixa o propósito explícito.
+This is an **untrusted content** zone, not source code. Naming it `src/` would confuse it
+with the project source and could cause it to be treated as code to compile/distribute.
+`forensics/incoming/` makes the purpose explicit.

@@ -1,31 +1,31 @@
 ---
-name: Sugestão de Feature
-about: Proponha uma melhoria ou nova capacidade para o Nemesis
+name: Feature Request
+about: Propose an improvement or new capability for Nemesis
 title: "[FEATURE] "
 labels: enhancement
 assignees: ''
 ---
 
-## O problema
-Qual problema ou limitação você está enfrentando? Ex: "Ao usar o Nemesis com [X], não consigo [Y]..."
+## The problem
+What problem or limitation are you facing? E.g.: "When using Nemesis with [X], I can't [Y]..."
 
-## Solução proposta
-Descreva claramente o que você gostaria que o Nemesis fizesse.
+## Proposed solution
+Clearly describe what you would like Nemesis to do.
 
-## Camada afetada
-Qual parte do Nemesis essa proposta toca?
-- [ ] Camada 1 — Pretool Hook (deny-list / escopo)
-- [ ] Camada 2 — Defender (scanner de conteúdo / visitors)
-- [ ] Camada 3 — eBPF (kernel Linux)
-- [ ] Workflow / governança (rules, skills)
-- [ ] Instalação / multi-IDE
-- [ ] Outro: ___________
+## Affected layer
+Which part of Nemesis does this proposal touch?
+- [ ] Layer 1 — Pretool Hook (deny-list / scope)
+- [ ] Layer 2 — Defender (content scanner / visitors)
+- [ ] Layer 3 — eBPF (Linux kernel)
+- [ ] Workflow / governance (rules, skills)
+- [ ] Installation / multi-IDE
+- [ ] Other: ___________
 
-## Impacto em segurança
-Essa mudança afeta a postura de segurança do framework? Como?
+## Security impact
+Does this change affect the framework's security posture? How?
 
-## Alternativas consideradas
-Outras abordagens que você pensou e por que a proposta acima é melhor.
+## Alternatives considered
+Other approaches you thought about and why the proposal above is better.
 
-## Contexto adicional
-Qualquer informação extra, referências ou exemplos.
+## Additional context
+Any extra information, references, or examples.

@@ -35,7 +35,7 @@ O Defender so age quando a hostilidade e confirmada, e nao deleta: move para qua
 - Propriedades: fail-closed (qualquer panic vira exit 2); regex de tempo linear, sem ReDoS. Cobertura de execucao multi-runtime (JS, Python, Bash, Ruby, PHP, Go, Perl, Java, Lua). Protecao de paths endurecida contra ofuscacao (glob, cd/pushd, indirecao por variavel).
 
 ## Cobertura como coeficiente (regra canonica)
-A protecao e a SOMA de camadas independentes, nao a contagem de uma feature isolada. Um visitor e um metodo de deteccao (analise semantica AST), nao a unidade de cobertura: visitor e feature, nao produto. Nao tratar "18 visitors" nem "36 categorias" como "os N vetores". A deny-list embutida do Defender tem 36 categorias e centenas de patterns; os visitors AST sao cerca de 18 exemplos. A prova empirica e a suite de pentest. Vetores fora do que foi antecipado podem nao ser detectados, e isso e declarado abertamente.
+A protecao e a SOMA de camadas independentes, nao a contagem de uma feature isolada. Um visitor e um metodo de deteccao (analise semantica AST), nao a unidade de cobertura: visitor e feature, nao produto. Nao tratar "18 visitors" nem "37 categorias" como "os N vetores". A deny-list embutida do Defender tem 37 categorias e centenas de patterns; os visitors AST sao cerca de 18 exemplos. A prova empirica e a suite de pentest. Vetores fora do que foi antecipado podem nao ser detectados, e isso e declarado abertamente.
 
 ## Invariantes
 - Regras de bloqueio embutidas no binario (tamper-proof): o agente nao as enfraquece editando arquivos.

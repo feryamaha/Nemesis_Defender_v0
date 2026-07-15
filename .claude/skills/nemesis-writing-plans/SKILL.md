@@ -60,16 +60,25 @@ Granularidade:
 ```
 TASK 1: Adicionar nova funcao validar_unsafe_block
   FILE: .nemesis/ast-linters/src/visitors/ebpf_checker.rs (MODIFY)
+  DEPENDE_DE: nenhuma
   VERIFICACAO: cargo check -p ast-linters
 
 TASK 2: Integrar visitor novo em lib.rs
   FILE: .nemesis/ast-linters/src/lib.rs (MODIFY)
+  DEPENDE_DE: TASK 1
   VERIFICACAO: cargo check -p ast-linters
 
 TASK 3: Escrever testes
   FILE: .nemesis/ast-linters/tests/ebpf_checker_test.rs (CREATE)
+  DEPENDE_DE: TASK 2
   VERIFICACAO: cargo test -p ast-linters
 ```
+
+**DEPENDE_DE (obrigatorio em toda tarefa):** lista das TASKs pre-requisito, ou `nenhuma`.
+E dele que a `nemesis-subagent-driven-development` deriva as waves de execucao paralela:
+tarefas sem dependencia entre si E com arquivos disjuntos executam em paralelo. Declarar a
+dependencia REAL (dado/tipo/funcao consumida), nao a ordem de escrita do plano; dependencia
+inflada mata o paralelismo, dependencia omitida quebra a wave.
 
 **Exemplo ruim**:
 ```
@@ -112,6 +121,8 @@ TASK 3: "Similar a TASK 1"                  ← Referencia indireta
 - MODIFY: `<path exato>` (linhas XXX-YYY)
 - TEST:   `<path exato>`
 
+**Depende de**: [TASK N, TASK M | nenhuma]
+
 **Verificacao**:
 [comando de verificacao por tarefa do perfil]
 
@@ -144,6 +155,8 @@ Checklist interno (reprovou em algum item = corrigir o plano antes de seguir):
 - [ ] Ordem faz sentido? (tipos antes de funcoes, entrypoints antes de integracoes, testes
       por ultimo; a suposicao mais arriscada do plano e verificada nas PRIMEIRAS tarefas,
       nao nas ultimas)
+- [ ] Toda tarefa declara DEPENDE_DE (real, nao inflado)? Tarefas paralelizaveis (mesma
+      wave potencial) tem arquivos disjuntos?
 - [ ] Nenhuma tarefa executa git write operations?
 - [ ] Verificacao final inclui a suite completa do perfil? (motor: check + test do
       workspace; dashboard: lint + tsc + build)

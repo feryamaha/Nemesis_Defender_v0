@@ -1,23 +1,23 @@
-# nemesis-ebpf-kernel — Instruções de Operação
+# nemesis-ebpf-kernel — Operating Instructions
 
-## Pré-requisitos
+## Prerequisites
 
-| Requisito | Verificação |
+| Requirement | Verification |
 |---|---|
 | Linux kernel ≥ 5.7 | `uname -r` |
-| BPF LSM ativo no boot | `cat /sys/kernel/security/lsm` deve conter `bpf` |
-| clang instalado | `which clang` |
-| bpftool instalado | `which bpftool` |
-| Binário compilado | `cargo build --release -p nemesis-ebpf-kernel` |
+| BPF LSM active at boot | `cat /sys/kernel/security/lsm` must contain `bpf` |
+| clang installed | `which clang` |
+| bpftool installed | `which bpftool` |
+| Compiled binary | `cargo build --release -p nemesis-ebpf-kernel` |
 
 ---
 
-## 1. Ativar BPF LSM no boot (uma vez, requer reboot)
+## 1. Enable BPF LSM at boot (one time, requires reboot)
 
-> **Atalho (recomendado):** `sudo bash .nemesis/ebpf-kernel/install-service.sh` agora faz isto
-> automaticamente (edita o GRUB com backup, de forma idempotente) + setcap + cgroup + systemd —
-> **um único sudo**. A edição manual abaixo só é necessária se você tiver um `lsm=` customizado
-> (o script não mexe nesse caso, por segurança) ou preferir fazer à mão.
+> **Shortcut (recommended):** `sudo bash .nemesis/ebpf-kernel/install-service.sh` now does this
+> automatically (edits GRUB with backup, idempotently) + setcap + cgroup + systemd —
+> **a single sudo**. The manual edit below is only necessary if you have a custom `lsm=`
+> (the script does not touch it in that case, for safety) or prefer to do it by hand.
 
 ```bash
 sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 lsm=lockdown,capability,landlock,yama,apparmor,bpf"/' /etc/default/grub
@@ -25,89 +25,89 @@ sudo update-grub
 sudo reboot
 ```
 
-Verificar após reboot:
+Verify after reboot:
 ```bash
 cat /sys/kernel/security/lsm
-# esperado: lockdown,capability,landlock,yama,apparmor,bpf
+# expected: lockdown,capability,landlock,yama,apparmor,bpf
 ```
 
 ---
 
-## 2. Compilar o projeto
+## 2. Compile the project
 
 ```bash
-# A partir da raiz do projeto
+# From the project root
 cargo build --release -p nemesis-ebpf-kernel
 ```
 
-**IMPORTANTE - Bloqueio de build pelo BPF LSM:**
+**IMPORTANT - Build block by the BPF LSM:**
 
-Se o BPF LSM estiver ativo e bloqueando o build (erro "Operation not permitted" no `rm` do make durante a compilação do libbpf-sys), siga estes passos:
+If the BPF LSM is active and blocking the build ("Operation not permitted" error on make's `rm` during the libbpf-sys compilation), follow these steps:
 
 ```bash
-# 1. Verificar se o daemon está rodando
+# 1. Check if the daemon is running
 ps aux | grep nemesis-ebpf-daemon
 
-# 2. Parar o daemon
-sudo systemctl stop nemesis-ebpf  # se estiver como serviço
-# ou mate o processo manualmente
+# 2. Stop the daemon
+sudo systemctl stop nemesis-ebpf  # if running as a service
+# or kill the process manually
 kill <PID_DO_DAEMON>
 
-# 3. Tentar compilar novamente
+# 3. Try compiling again
 cargo build --release -p nemesis-ebpf-kernel
 ```
 
-Se mesmo após parar o daemon o build falhar, o programa BPF LSM pode estar carregado no kernel. Programas BPF não podem ser removidos dinamicamente. Nesse caso:
+If the build still fails even after stopping the daemon, the BPF LSM program may be loaded in the kernel. BPF programs cannot be removed dynamically. In that case:
 
 ```bash
-# Reinicie o sistema para descarregar o programa BPF LSM
+# Reboot the system to unload the BPF LSM program
 sudo reboot
 ```
 
-Após o reinício, compile antes de iniciar o daemon novamente.
+After the reboot, compile before starting the daemon again.
 
-O objeto BPF (`.bpf.o`) é compilado automaticamente pelo daemon na primeira execução via `make`.
+The BPF object (`.bpf.o`) is compiled automatically by the daemon on first run via `make`.
 
 ---
 
-## 3. Ativar o enforcement eBPF (procedimento completo)
+## 3. Enable eBPF enforcement (complete procedure)
 
-Todos os passos abaixo devem ser executados a partir da raiz do projeto.
+All steps below must be run from the project root.
 
-### 3.1 Criar o cgroup do agente (uma vez por boot, requer sudo)
+### 3.1 Create the agent cgroup (once per boot, requires sudo)
 
 ```bash
 sudo mkdir -p /sys/fs/cgroup/nemesis-agent
 ```
 
-Verificar:
+Verify:
 ```bash
 stat -c "%i" /sys/fs/cgroup/nemesis-agent
-# deve retornar um número (ex: 14014) — esse é o cgroup_id
+# must return a number (e.g., 14014) — this is the cgroup_id
 ```
 
-### 3.2 Delegar capabilities ao binário (uma vez por build)
+### 3.2 Delegate capabilities to the binary (once per build)
 
-Necessário após cada `cargo build` que recriar o binário:
+Required after every `cargo build` that recreates the binary:
 
 ```bash
 sudo setcap cap_bpf,cap_perfmon,cap_sys_resource+eip \
   .nemesis/target/release/nemesis-ebpf-daemon
 ```
 
-Verificar:
+Verify:
 ```bash
 getcap .nemesis/target/release/nemesis-ebpf-daemon
-# esperado: cap_sys_resource,cap_perfmon,cap_bpf=eip
+# expected: cap_sys_resource,cap_perfmon,cap_bpf=eip
 ```
 
-### 3.3 Iniciar o daemon BPF LSM
+### 3.3 Start the BPF LSM daemon
 
 ```bash
 .nemesis/target/release/nemesis-ebpf-daemon --start
 ```
 
-Saída esperada:
+Expected output:
 ```
 [nemesis] loading BPF LSM program into kernel...
 make: Nada a ser feito para 'all'.
@@ -115,84 +115,84 @@ make: Nada a ser feito para 'all'.
 [nemesis] BPF LSM attached — enforcement active. Ctrl-C to stop.
 ```
 
-A linha `Agent cgroup_id ... registered in BPF` confirma que o filtro por cgroup está ativo.
-Se essa linha não aparecer, o cgroup não foi criado corretamente (volte ao passo 3.1).
+The line `Agent cgroup_id ... registered in BPF` confirms that the per-cgroup filter is active.
+If this line does not appear, the cgroup was not created correctly (go back to step 3.1).
 
-O daemon fica em **modo epoll** — consome ~0% CPU e ~10MB RAM em idle. Acorda apenas quando um execve é interceptado.
+The daemon stays in **epoll mode** — consumes ~0% CPU and ~10MB RAM at idle. It wakes only when an execve is intercepted.
 
-### 3.4 Mover processos do agente para o cgroup
+### 3.4 Move the agent processes into the cgroup
 
-Para que o BPF bloqueie comandos, o processo do agente LLM deve estar dentro do cgroup:
+For the BPF to block commands, the LLM agent process must be inside the cgroup:
 
 ```bash
 echo <PID_DO_AGENTE> | sudo tee /sys/fs/cgroup/nemesis-agent/cgroup.procs
 ```
 
-Verificar:
+Verify:
 ```bash
 cat /proc/<PID>/cgroup
-# esperado: 0::/nemesis-agent
+# expected: 0::/nemesis-agent
 ```
 
-Todos os processos filhos herdam o cgroup automaticamente.
+All child processes inherit the cgroup automatically.
 
-### Ativação automática via systemd (recomendado)
+### Automatic activation via systemd (recommended)
 
-Instalar o service uma vez:
+Install the service once:
 
 ```bash
 sudo bash .nemesis/ebpf-kernel/install-service.sh
 ```
 
-Após a instalação, o daemon inicia automaticamente no boot. Comandos:
+After installation, the daemon starts automatically at boot. Commands:
 
 ```bash
-systemctl status nemesis-ebpf       # ver estado
-journalctl -u nemesis-ebpf -f       # ver logs em tempo real
-sudo systemctl stop nemesis-ebpf    # parar
-sudo systemctl restart nemesis-ebpf # reiniciar
+systemctl status nemesis-ebpf       # view state
+journalctl -u nemesis-ebpf -f       # view logs in real time
+sudo systemctl stop nemesis-ebpf    # stop
+sudo systemctl restart nemesis-ebpf # restart
 ```
 
-O systemd cuida de: criar o cgroup, delegar capabilities e iniciar o daemon.
-O daemon se move automaticamente para o cgroup ao iniciar — subprocessos herdam.
+systemd takes care of: creating the cgroup, delegating capabilities and starting the daemon.
+The daemon moves itself into the cgroup automatically on start — subprocesses inherit it.
 
-### Ativação manual (alternativa)
+### Manual activation (alternative)
 
 ```bash
-# 1. Criar cgroup (uma vez por boot)
+# 1. Create cgroup (once per boot)
 sudo mkdir -p /sys/fs/cgroup/nemesis-agent
 
-# 2. Capabilities (uma vez por build)
+# 2. Capabilities (once per build)
 sudo setcap cap_bpf,cap_perfmon,cap_sys_resource+eip .nemesis/target/release/nemesis-ebpf-daemon
 
-# 3. Iniciar daemon (terminal dedicado)
+# 3. Start daemon (dedicated terminal)
 .nemesis/target/release/nemesis-ebpf-daemon --start
 ```
 
-O daemon se move automaticamente para o cgroup — não é necessário mover PIDs manualmente.
+The daemon moves itself into the cgroup automatically — there is no need to move PIDs manually.
 
 ---
 
-## 4. Verificar estado sem iniciar
+## 4. Check state without starting
 
 ```bash
-# Diagnóstico completo
+# Full diagnostics
 .nemesis/target/release/nemesis-ebpf-daemon --doctor
 
-# Status rápido
+# Quick status
 .nemesis/target/release/nemesis-ebpf-daemon --print-status
 ```
 
-Campos importantes no `--doctor`:
-- `bpf_lsm_active`: true = BPF LSM ativo no kernel
-- `enforcement_level`: `"bpf_lsm"` = enforcement ativo | `"landlock"` = sem root/CAP_BPF
-- `can_load_bpf`: true = capabilities suficientes
+Important fields in `--doctor`:
+- `bpf_lsm_active`: true = BPF LSM active in the kernel
+- `enforcement_level`: `"bpf_lsm"` = enforcement active | `"landlock"` = no root/CAP_BPF
+- `can_load_bpf`: true = sufficient capabilities
 
 ---
 
-## 5. Modo sandbox sem root (Landlock + seccomp)
+## 5. Rootless sandbox mode (Landlock + seccomp)
 
-Protege apenas a process tree do processo filho, sem necessidade de root:
+Protects only the child process's process tree, with no need for root:
 
 ```bash
 .nemesis/target/release/nemesis-ebpf-daemon --sandbox
@@ -200,153 +200,153 @@ Protege apenas a process tree do processo filho, sem necessidade de root:
 
 ---
 
-## 6. Arquitetura do filtro por cgroup
+## 6. Per-cgroup filter architecture
 
-O programa BPF LSM filtra execuções por cgroup. Apenas processos dentro do cgroup `/sys/fs/cgroup/nemesis-agent` são verificados contra a deny-list. Processos do IDE, terminal e sistema passam sem verificação.
+The BPF LSM program filters executions by cgroup. Only processes inside the cgroup `/sys/fs/cgroup/nemesis-agent` are checked against the deny-list. IDE, terminal and system processes pass without verification.
 
-Fluxo interno:
-1. O daemon lê o inode do diretório `/sys/fs/cgroup/nemesis-agent` (cgroup_id)
-2. O cgroup_id é registrado no mapa BPF `agent_cgroup_map`
-3. A cada execve, o programa BPF compara `bpf_get_current_cgroup_id()` com o cgroup registrado
-4. Processos fora do cgroup: `return 0` (permitido)
-5. Processos dentro do cgroup: verificados contra `blocked_commands`
-6. Se o comando está na deny-list: `return -EPERM` (bloqueado) + evento no ringbuf
+Internal flow:
+1. The daemon reads the inode of the `/sys/fs/cgroup/nemesis-agent` directory (cgroup_id)
+2. The cgroup_id is registered in the BPF map `agent_cgroup_map`
+3. On each execve, the BPF program compares `bpf_get_current_cgroup_id()` with the registered cgroup
+4. Processes outside the cgroup: `return 0` (allowed)
+5. Processes inside the cgroup: checked against `blocked_commands`
+6. If the command is on the deny-list: `return -EPERM` (blocked) + event in the ringbuf
 
 ---
 
-## 7. Deny-lists configuráveis
+## 7. Configurable deny-lists
 
-| Arquivo | Conteúdo |
+| File | Content |
 |---|---|
-| `denylist-ebpf/commands.toml` | Binários bloqueados por basename |
-| `denylist-ebpf/paths.toml` | Paths de escrita bloqueados |
-| `denylist-ebpf/landlock-allowed-exec.toml` | Exec permitidos no modo sandbox |
-| `denylist-ebpf/egress.toml` | **Egress allowlist** (CIDR:porta) + flag `enforce` |
+| `denylist-ebpf/commands.toml` | Binaries blocked by basename |
+| `denylist-ebpf/paths.toml` | Blocked write paths |
+| `denylist-ebpf/landlock-allowed-exec.toml` | Exec allowed in sandbox mode |
+| `denylist-ebpf/egress.toml` | **Egress allowlist** (CIDR:port) + `enforce` flag |
 
-Editar e reiniciar o daemon para aplicar. Não requer recompilação.
+Edit and restart the daemon to apply. Does not require recompilation.
 
 ### 7.1 Egress allowlist (lsm/socket_connect)
 
-Além do bloqueio de `execve`, o daemon intercepta **conexões de saída** (`lsm/socket_connect`)
-dos processos no cgroup do agente e **nega por padrão** destinos fora da allowlist — neutraliza
-exfiltração/C2 mesmo se um payload conseguir rodar. Config em `denylist-ebpf/egress.toml`:
+Beyond blocking `execve`, the daemon intercepts **outbound connections** (`lsm/socket_connect`)
+from processes in the agent cgroup and **denies by default** destinations outside the allowlist —
+neutralizing exfiltration/C2 even if a payload manages to run. Config in `denylist-ebpf/egress.toml`:
 
 ```toml
-enforce = true                         # false (default) = só observa/loga; true = impõe deny-by-default
-allowlist = ["140.82.112.0/20:443"]    # "CIDR:porta"  (porta 0 = qualquer)
+enforce = true                         # false (default) = only observes/logs; true = enforces deny-by-default
+allowlist = ["140.82.112.0/20:443"]    # "CIDR:port"  (port 0 = any)
 ```
 
-- Match por **LPM trie** (longest-prefix em CIDR), IPv4 e IPv6. Porta validada por igualdade
-  (0 = qualquer). Allowlist vazia + `enforce=true` ⇒ nega tudo (fail-closed).
-- Famílias não-IP (AF_UNIX, etc.) não são bloqueadas. Bloqueio registra
-  `NEMESIS SEC - CONEXAO NAO PERMITIDA` no ledger.
-- Aplicar mudanças: `sudo systemctl restart nemesis-ebpf` (ou SIGHUP). v1 é por IP/CIDR;
-  domínio/DNS fica para v2.
+- Match via **LPM trie** (longest-prefix on CIDR), IPv4 and IPv6. Port validated by equality
+  (0 = any). Empty allowlist + `enforce=true` ⇒ denies everything (fail-closed).
+- Non-IP families (AF_UNIX, etc.) are not blocked. A block records
+  `NEMESIS SEC - CONEXAO NAO PERMITIDA` in the ledger.
+- Apply changes: `sudo systemctl restart nemesis-ebpf` (or SIGHUP). v1 is per IP/CIDR;
+  domain/DNS is left for v2.
 
-> **Nota de design (exec allowlist por basename — descartado):** uma allowlist de exec por
-> basename no eBPF foi avaliada e **descartada**. O hook de exec só vê o basename (`git`), não a
-> command-line, então não consegue distinguir `git diff` (ok) de `git checkout`/`git reset`
-> (hostil) — essa granularidade pertence ao **pretool** (regex sobre a linha inteira), que já a
-> faz. Além disso, allowlistar interpretadores (`bash`, `python3`) tornaria o enforce uma falsa
-> sensação de segurança. Política por command-line de exec fica no pretool; o eBPF mantém a
-> denylist por basename + o egress.
+> **Design note (per-basename exec allowlist — discarded):** an exec allowlist by
+> basename in eBPF was evaluated and **discarded**. The exec hook only sees the basename (`git`), not the
+> command-line, so it cannot distinguish `git diff` (ok) from `git checkout`/`git reset`
+> (hostile) — that granularity belongs to the **pretool** (regex over the whole line), which already
+> does it. Furthermore, allowlisting interpreters (`bash`, `python3`) would turn the enforcement into a false
+> sense of security. Per-command-line exec policy stays in the pretool; eBPF keeps the
+> per-basename denylist + the egress.
 
-### Lista completa de comandos bloqueados no kernel (39 comandos)
+### Full list of commands blocked in the kernel (39 commands)
 
-| Categoria | Comandos |
+| Category | Commands |
 |---|---|
-| Destruição de dados | rm, shred, truncate, dd, mkfifo, split, csplit |
-| Permissões | chmod, chown |
-| Sistema de arquivos | mount, umount, mkfs, fdisk |
-| Bancos de dados | dropdb, mysql, psql |
-| Infraestrutura/cloud | terraform, docker, aws, kubectl |
-| Linguagens de script | python, python3, ruby, perl, lua |
-| Editores | nano, vim, vi, emacs, micro |
-| Exfiltração | curl, wget, ftp, sftp, rsync, scp, nc, netcat, socat |
-| Controle de processos | kill, killall, nohup |
-| Injeção via texto | sed, awk, gawk, mawk, ed, ex |
-| Outros | ln, pax, tar, zip, unzip |
+| Data destruction | rm, shred, truncate, dd, mkfifo, split, csplit |
+| Permissions | chmod, chown |
+| Filesystem | mount, umount, mkfs, fdisk |
+| Databases | dropdb, mysql, psql |
+| Infrastructure/cloud | terraform, docker, aws, kubectl |
+| Scripting languages | python, python3, ruby, perl, lua |
+| Editors | nano, vim, vi, emacs, micro |
+| Exfiltration | curl, wget, ftp, sftp, rsync, scp, nc, netcat, socat |
+| Process control | kill, killall, nohup |
+| Text-based injection | sed, awk, gawk, mawk, ed, ex |
+| Others | ln, pax, tar, zip, unzip |
 
 ---
 
-## 8. Executar testes de validação
+## 8. Run validation tests
 
-Com o daemon rodando em outro terminal:
+With the daemon running in another terminal:
 
 ```bash
-# Level 1 — comandos básicos
+# Level 1 — basic commands
 bash test-violations/pentest-ebpf-kernel/level-1-bpf-lsm.sh
 
-# Level 2 — evasão via subprocessos e paths absolutos
+# Level 2 — evasion via subprocesses and absolute paths
 bash test-violations/pentest-ebpf-kernel/level-2-resource-exhaustion.sh
 
-# Level 3 — bypass via symlinks e wrappers
+# Level 3 — bypass via symlinks and wrappers
 bash test-violations/pentest-ebpf-kernel/level-3-kernel-bypass-attempts.sh
 ```
 
 ---
 
-## 9. Logs de violações
+## 9. Violation logs
 
-Ledger unificado único (o antigo `violations.log` foi removido da arquitetura):
+Single unified ledger (the old `violations.log` was removed from the architecture):
 
 ```bash
 grep '"layer":"ebpf-kernel"' .nemesis/logs/nemesis-violations.log
 ```
 
-Schema por linha: `{ts, date, time, layer, message}`. Egress bloqueado aparece como
+Per-line schema: `{ts, date, time, layer, message}`. A blocked egress appears as
 `NEMESIS SEC - CONEXAO NAO PERMITIDA · ...`.
 
 ---
 
-## Resumo de enforcement por nível
+## Enforcement summary by level
 
-| Condição | Nível ativo | Escopo |
+| Condition | Active level | Scope |
 |---|---|---|
-| Sem root, sem CAP_BPF, BPF LSM ativo | `landlock` | process tree apenas |
-| Com CAP_BPF + CAP_PERFMON + CAP_SYS_RESOURCE, BPF LSM ativo | `bpf_lsm` | cgroup do agente (via `agent_cgroup_map`) |
-| BPF LSM inativo no boot | `pretool` | apenas hooks do IDE/Cascade |
+| No root, no CAP_BPF, BPF LSM active | `landlock` | process tree only |
+| With CAP_BPF + CAP_PERFMON + CAP_SYS_RESOURCE, BPF LSM active | `bpf_lsm` | agent cgroup (via `agent_cgroup_map`) |
+| BPF LSM inactive at boot | `pretool` | IDE/Cascade hooks only |
 
 ---
 
-## Separação de responsabilidades: pretool vs eBPF
+## Separation of responsibilities: pretool vs eBPF
 
-| Camada | Responsabilidade |
+| Layer | Responsibility |
 |---|---|
-| **pretool** (deny-list.json) | Regras de padrão de código (TypeScript, React, hooks, naming). Intercepta tool calls do agente LLM dentro do IDE |
-| **eBPF kernel** (commands.toml) | Bloqueio de execuções destrutivas via `execve`. Atua no nível do kernel, apenas para processos no cgroup do agente |
+| **pretool** (deny-list.json) | Code-pattern rules (TypeScript, React, hooks, naming). Intercepts the LLM agent's tool calls inside the IDE |
+| **eBPF kernel** (commands.toml) | Blocking of destructive executions via `execve`. Acts at the kernel level, only for processes in the agent cgroup |
 
 ---
 
-## 10. Verificar se eBPF está ativo
+## 10. Check whether eBPF is active
 
-Use os seguintes comandos para diagnosticar o estado do eBPF-kernel:
+Use the following commands to diagnose the eBPF-kernel state:
 
 ```bash
-# Verificar se BPF LSM está ativo no kernel
+# Check whether BPF LSM is active in the kernel
 cat /sys/kernel/security/lsm
-# Esperado: lockdown,capability,landlock,yama,apparmor,bpf
+# Expected: lockdown,capability,landlock,yama,apparmor,bpf
 
-# Verificar se o daemon está rodando
+# Check whether the daemon is running
 systemctl status nemesis-ebpf
-# Esperado: Active: active (running)
+# Expected: Active: active (running)
 
-# Reiniciar o daemon (após modificar deny-list)
+# Restart the daemon (after modifying the deny-list)
 sudo systemctl restart nemesis-ebpf
-# Finalidade: Recarrega a deny-list (commands.toml) para aplicar mudanças
+# Purpose: Reloads the deny-list (commands.toml) to apply changes
 
-# Verificar status do enforcement (se o binário estiver disponível)
+# Check enforcement status (if the binary is available)
 .nemesis/target/release/nemesis-ebpf-daemon --doctor
-# Campos importantes: bpf_lsm_active, enforcement_level, can_load_bpf
+# Important fields: bpf_lsm_active, enforcement_level, can_load_bpf
 
-# Verificar logs em tempo real
+# Check logs in real time
 journalctl -u nemesis-ebpf -f
-# Procure por: [nemesis] BLOCKED ou [VIOLATION] PermissionDenied
+# Look for: [nemesis] BLOCKED or [VIOLATION] PermissionDenied
 ```
 
-Pronto. Comandos uteis:
-  systemctl status nemesis-ebpf         # ver estado do daemon eBPF
-  systemctl status nemesis-cgroup-watcher # ver estado do watcher
-  journalctl -u nemesis-ebpf -f         # ver logs em tempo real
-  sudo systemctl stop nemesis-ebpf      # parar
-  sudo systemctl restart nemesis-ebpf   # reiniciar
+Done. Useful commands:
+  systemctl status nemesis-ebpf         # view the eBPF daemon state
+  systemctl status nemesis-cgroup-watcher # view the watcher state
+  journalctl -u nemesis-ebpf -f         # view logs in real time
+  sudo systemctl stop nemesis-ebpf      # stop
+  sudo systemctl restart nemesis-ebpf   # restart

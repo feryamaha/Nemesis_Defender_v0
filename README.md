@@ -1,398 +1,390 @@
-# Nemesis Defender
+[![Nemesis Defender — deterministic enforcement against supply-chain malware and LLM agent abuse](assets/img-nemesis-EN.jpg)](https://dashboard-nemesis-defender.vercel.app/docs)
 
-> Enforcement determinístico contra comandos destrutivos e malware de supply-chain em fluxos de desenvolvimento assistido por agentes LLM. Escrito em Rust.
+Full conceptual documentation, diagrams, and threat model (what it is, why it exists, how it works): **[Nemesis Defender Docs](https://dashboard-nemesis-defender.vercel.app/docs)** · [landing](https://dashboard-nemesis-defender.vercel.app/)
 
-[![Licença: AGPL-3.0](https://img.shields.io/badge/Licen%C3%A7a-AGPL--3.0-blue.svg)](LICENSE)
-[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.x-00B4D8.svg)](#)
-[![Testado](https://img.shields.io/badge/testado-Linux%20%C2%B7%20macOS-success.svg)](#suporte-por-plataforma)
-[![Windows](https://img.shields.io/badge/Windows-best--effort%20(n%C3%A3o%20validado)-yellow.svg)](#suporte-por-plataforma)
-[![Rust](https://img.shields.io/badge/Rust-1.70%2B-orange.svg)](#requisitos)
-
-Documentação conceitual completa (o que é, por que existe, modelo de ameaça): **[Dashboard Nemesis Defender](https://dashboard-nemesis-defender.vercel.app/)**
-
-Este README é o documento **técnico e operacional**: como instalar, configurar e usar. Para entender a filosofia e a arquitetura em profundidade, leia a dashboard acima (landing + docs públicas).
+This README is the **technical and operational** document: how to install, configure, and use it. Wherever it stays intentionally shallow on the *why* and the *architecture*, the depth (with diagrams) lives in the **[dashboard docs](https://dashboard-nemesis-defender.vercel.app/docs)**.
 
 ---
 
-## ⚠️ Leia antes de instalar
+## ⚠️ Read before installing
 
-O Nemesis existe para conter a **autonomia do agente de IA** — o alvo é o modelo LLM, não você. Ele intercepta, **no momento em que tentam executar**, as operações que o agente dispara (escrever arquivos, rodar comandos) e barra as destrutivas ou maliciosas. O comando em si não é o inimigo; a invocação **autônoma** pelo modelo é.
+Nemesis exists to contain the **AI agent's autonomy** — the target is the LLM model, not you. It intercepts, **at the moment they try to execute**, the operations the agent fires (writing files, running commands) and blocks the destructive or malicious ones. The command itself is not the enemy; the **autonomous** invocation by the model is.
 
-A **instalação é automática**: detecta a sua IDE e configura os hooks sozinha. A partir daí o enforcement fica ativo no runtime: o pretool barra a escrita/execução hostil e o daemon (Iron Dome) vigia o filesystem. Ao **confirmar** hostilidade (por corroboração de sinais independentes, para não mover código legítimo por engano) ele **move para quarentena** (não deleta) e segura a sessão até a sua revisão; é **reversível** via `restore` ou `purge`. No Linux há ainda a camada **eBPF** opcional (opt-in) como rede no kernel caso o pretool seja contornado.
+**Installation is automatic**: it detects your IDE and configures the hooks on its own. From there enforcement stays active at runtime: the pretool blocks hostile writes/executions and the daemon (Iron Dome) watches the filesystem. When it **confirms** hostility (by corroborating independent signals, so it does not move legitimate code by mistake) it **moves it to quarantine** (does not delete) and holds the session until your review; it is **reversible** via `restore` or `purge`. On Linux there is also the optional (opt-in) **eBPF** layer as a kernel net in case the pretool is bypassed.
 
-As regras de **bloqueio são embutidas no binário** (tamper-proof): o agente não consegue enfraquecê-las editando arquivos. A **única** superfície que você (humano) edita é a **allowlist** (`.nemesis/denylist-customers/allowlist-customers.jsonc`): um override absoluto, **por sua conta e risco**, para liberar o que a sua stack precisa. O Nemesis é calibrado para frontend (Next/React/TS), então **backend e DevSecOps** tendem a relaxar mais por ali. E tudo é removível: a desinstalação é um comando (`nemesis-uninstall.sh`).
+The **blocking rules are embedded in the binary** (tamper-proof): the agent cannot weaken them by editing files. The **only** surface you (the human) edit is the **allowlist** (`.nemesis/denylist-customers/allowlist-customers.jsonc`): an absolute override, **at your own risk**, to release what your stack needs. Nemesis is calibrated for frontend (Next/React/TS), so **backend and DevSecOps** tend to relax more through there. And everything is removable: uninstalling is a single command (`nemesis-uninstall.sh`).
 
 ---
 
-## Índice
+## Index
 
-- [O que o Nemesis faz](#o-que-o-nemesis-faz)
-- [Arquitetura em camadas](#arquitetura-em-camadas)
-- [Suporte por plataforma](#suporte-por-plataforma)
-- [Decisões de design (e não-objetivos)](#decisões-de-design-e-não-objetivos)
-- [Modelo de detecção e severidade](#modelo-de-detecção-e-severidade)
-- [Vetores de ataque cobertos](#vetores-de-ataque-cobertos)
-- [Requisitos](#requisitos)
-- [Instalação](#instalação)
-- [Desinstalação](#desinstalação)
+- [What Nemesis does](#what-nemesis-does)
+- [Layered architecture](#layered-architecture)
+- [Platform support](#platform-support)
+- [Design decisions (and non-goals)](#design-decisions-and-non-goals)
+- [Detection and severity model](#detection-and-severity-model)
+- [Covered attack vectors](#covered-attack-vectors)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Uninstallation](#uninstallation)
 - [Nemesis Doctor](#nemesis-doctor)
-- [Configuração do Pretool por IDE](#configuração-do-pretool-por-ide)
-- [Configuração da camada eBPF (Linux)](#configuração-da-camada-ebpf-linux)
-- [Controle de paths](#controle-de-paths)
-- [Uso no dia a dia](#uso-no-dia-a-dia)
-- [Verificação e diagnóstico](#verificação-e-diagnóstico)
-- [Relaxar ou customizar regras](#relaxar-ou-customizar-regras)
-- [Solução de problemas](#solução-de-problemas)
-- [Estrutura do projeto](#estrutura-do-projeto)
-- [Contribuição](#contribuição)
-- [Segurança e disclosure](#segurança-e-disclosure)
-- [Licença](#licença)
+- [Pretool configuration per IDE](#pretool-configuration-per-ide)
+- [eBPF layer configuration (Linux)](#ebpf-layer-configuration-linux)
+- [Path control](#path-control)
+- [Day-to-day use](#day-to-day-use)
+- [Verification and diagnostics](#verification-and-diagnostics)
+- [Relaxing or customizing rules](#relaxing-or-customizing-rules)
+- [Troubleshooting](#troubleshooting)
+- [Project structure](#project-structure)
+- [Contributing](#contributing)
+- [Security and disclosure](#security-and-disclosure)
+- [License](#license)
 
 ---
 
-## O que o Nemesis faz
+## What Nemesis does
 
-O Nemesis intercepta e bloqueia, **antes da execução**, comandos destrutivos e padrões de malware de supply-chain em ambientes onde um agente LLM opera sobre o código. Ele se acopla aos **hooks de pre-tool** que as IDEs/agentes modernos já expõem, e adiciona, no Linux, uma camada de kernel (eBPF) como rede de contenção independente.
+Nemesis intercepts and blocks, **before execution**, destructive commands and supply-chain malware patterns in environments where an LLM agent operates over the code. It attaches to the **pre-tool hooks** that modern IDEs/agents already expose, and adds, on Linux, a kernel layer (eBPF) as an independent containment net.
 
-Não é um linter genérico nem substitui ESLint, Biome, SAST ou CI/CD. É uma **barreira de bloqueio em tempo de execução** complementar a essas ferramentas, focada no caso de uso específico: impedir que um agente, por engano ou por manipulação, rode um `rm -rf` no lugar errado ou execute um pacote malicioso.
+It is not a generic linter and does not replace ESLint, Biome, SAST, or CI/CD. It is a **runtime blocking barrier** complementary to those tools, focused on the specific use case: preventing an agent, by mistake or by manipulation, from running an `rm -rf` in the wrong place or executing a malicious package.
 
-A premissa técnica: instrução em texto (`"não rode comandos destrutivos"`) é probabilística e o modelo pode ignorá-la; **enforcement determinístico via exit code é categórico** - não importa se o modelo foi enganado ou apenas errou, a camada bloqueia.
+The technical premise: a text instruction (`"do not run destructive commands"`) is probabilistic and the model may ignore it; **deterministic enforcement via exit code is categorical** - it does not matter whether the model was tricked or simply made a mistake, the layer blocks.
 
 ---
 
-## Arquitetura em camadas
+## Layered architecture
 
-| Camada | Onde atua | Mecanismo | SO |
+| Layer | Where it acts | Mechanism | OS |
 |--------|-----------|-----------|-----|
-| **Pretool / Posttool Hook** | Antes do `Bash.run()` / file-write | Deny-list JSON + exit code 2 | Linux · macOS · Windows\* |
-| **Nemesis Defender** (scanner) | Em file-write e em comandos | 6 layers: AST, byte, regex, denylist, entropia, decoder | Linux · macOS · Windows\* |
-| **eBPF Kernel LSM** | Syscalls no kernel | BPF LSM: `bprm_check_security` (exec) + `socket_connect` (egress allowlist), retorna `-EPERM` | **Linux apenas** |
+| **Pretool / Posttool Hook** | Before `Bash.run()` / file-write | Deny-list JSON + exit code 2 | Linux · macOS · Windows\* |
+| **Nemesis Defender** (scanner) | On file-write and on commands | 6 layers: AST, byte, regex, denylist, entropy, decoder | Linux · macOS · Windows\* |
+| **eBPF Kernel LSM** | Kernel syscalls | BPF LSM: `bprm_check_security` (exec) + `socket_connect` (egress allowlist), returns `-EPERM` | **Linux only** |
 
-**A defesa principal são as camadas 1 e 2 (Pretool + Defender) — completas e idênticas em Linux e macOS (as plataformas validadas).** O Pretool intercepta a ação do agente antes da execução; o Defender escaneia o conteúdo. Em Windows elas rodam em princípio, mas **sem validação** — veja [Suporte por plataforma](#suporte-por-plataforma).
+**The main defense is layers 1 and 2 (Pretool + Defender) — complete and identical on Linux and macOS (the validated platforms).** The Pretool intercepts the agent's action before execution; the Defender scans the content. On Windows they run in principle, but **without validation** — see [Platform support](#platform-support).
 
-A camada **eBPF (camada 3) é um reforço de kernel EXCLUSIVO do Linux** — não é a defesa principal nem um requisito para o Nemesis funcionar. Ela cobre **um cenário específico**: se o Pretool for desligado ou contornado, o kernel ainda segura comandos destrutivos. Por isso o eBPF é o *backstop* — ele existe **justamente para o caso de o pretool falhar**, não o contrário.
+The **eBPF layer (layer 3) is a Linux-EXCLUSIVE kernel reinforcement** — it is neither the main defense nor a requirement for Nemesis to work. It covers **one specific scenario**: if the Pretool is turned off or bypassed, the kernel still holds destructive commands. That is why eBPF is the *backstop* — it exists **precisely for the case where the pretool fails**, not the other way around.
 
-> **Rodar em macOS/Windows com 2 camadas é o design, não uma lacuna.** O eBPF é um bônus de profundidade **onde o SO o oferece** (Linux); não é algo que "falta" onde não existe. A proteção proposta não depende dele.
+> **Running on macOS/Windows with 2 layers is the design, not a gap.** eBPF is a depth bonus **where the OS offers it** (Linux); it is not something that is "missing" where it does not exist. The proposed protection does not depend on it.
 >
-> Além do bloqueio de exec, o eBPF inclui **egress allowlist** (`lsm/socket_connect`): nega conexões de saída para destinos fora de uma allowlist CIDR:porta (cgroup-scoped, `enforce` opt-in, fail-closed) — neutraliza exfiltração/C2 mesmo se um payload conseguir rodar. Config em `denylist-ebpf/egress.toml`; ver `.nemesis/ebpf-kernel/info.md`. Expansão futura (escrita não-execve, rename/symlink, egress por domínio/DNS) segue aberta à comunidade.
+> Beyond exec blocking, eBPF includes an **egress allowlist** (`lsm/socket_connect`): it denies outbound connections to destinations outside a CIDR:port allowlist (cgroup-scoped, `enforce` opt-in, fail-closed) — neutralizing exfiltration/C2 even if a payload manages to run. Config in `denylist-ebpf/egress.toml`; see `.nemesis/ebpf-kernel/info.md`. Future expansion (non-execve write, rename/symlink, egress by domain/DNS) remains open to the community.
 
-### Suporte por plataforma
+### Platform support
 
-\* O Nemesis é **desenvolvido, testado e usado em Linux (Ubuntu) e macOS** — essas são as plataformas validadas, onde a suíte de testes, o pentest e a usabilidade foram exercidos. O código tem caminhos para **Windows** e, em princípio, ele roda lá; porém **não há validação em Windows**. Particularidades do sistema operacional — separador de caminho e barra invertida, comandos no estilo `bash` que os hooks assumem, e outras características intrínsecas do Windows — provavelmente exigem adaptação. Por isso, **o suporte a Windows é best-effort e uma frente de melhoria aberta à comunidade**, não uma plataforma garantida. Contribuições de portabilidade são bem-vindas (ver [Contribuição](#contribuição)).
-
----
-
-## Decisões de design (e não-objetivos)
-
-Alguns traços do Nemesis são frequentemente lidos como "fraqueza" por uma avaliação apressada. São **decisões deliberadas** — documentadas aqui para que sejam julgadas pelo que são, não por heurísticas automáticas. Discordar de uma decisão é legítimo; tratá-la como defeito acidental, não.
-
-- **A proteção é completa nas plataformas validadas (Linux e macOS).** Pretool + Defender (camadas 1 e 2) são a defesa, e rodam igual em Linux e macOS. O eBPF é um **reforço de kernel só-Linux** para o caso de o pretool ser contornado — bônus onde o SO oferece, não requisito. **macOS com 2 camadas é o projeto, não uma lacuna.** No **Windows** o Nemesis roda em princípio, mas é **best-effort/não validado** (ver [Suporte por plataforma](#suporte-por-plataforma)).
-- **Não existe "kill switch" nem modo-manutenção automático — de propósito.** Qualquer mecanismo que desligasse o enforcement seria, ele mesmo, o vetor de ataque que o Nemesis existe para impedir. O caminho sancionado para relaxar é a **allowlist editável só por humano** (ver [Relaxar regras](#relaxar-ou-customizar-regras)). A ausência de automação aqui **é** a segurança.
-- **As regras de BLOQUEIO são embutidas no binário (tamper-proof).** Não há denylist editável no disco a "limpar" ou auditar como config solta — é proposital: um agente não consegue enfraquecer as regras. O usuário só edita a **allowlist** (relaxar); endurecer é mudança de fonte, revisada por humano.
-- **A profundidade desta documentação é intencional.** Como ferramenta de segurança, ela expõe tudo que opera na sua máquina — sem caixa-preta. O **conceito/filosofia** vive na [dashboard](https://dashboard-nemesis-defender.vercel.app/); este README é a **referência técnico-operacional**. Públicos distintos, não fragmentação.
-- **Dois públicos, dois níveis técnicos.** **Usar** exige pouco (instalar via script, rodar o `doctor`). **Manter** exige domínio de eBPF/BPF-LSM, Rust e C — **pré-requisito do domínio**, não barreira de usabilidade. Quem não domina essas áreas é usuário, não mantenedor; isso é esperado e está em [`AGENTS.md`](AGENTS.md).
-
-> Para uma avaliação técnica justa do projeto, leia primeiro `.devin/rules/nemesis-epistemic-safety.md` e `AGENTS.md` — eles declaram as invariantes e o porquê de cada decisão acima.
+\* Nemesis is **developed, tested, and used on Linux (Ubuntu) and macOS** — these are the validated platforms, where the test suite, the pentest, and usability were exercised. The code has paths for **Windows** and, in principle, it runs there; however **there is no validation on Windows**. Operating-system particularities — path separator and backslash, `bash`-style commands the hooks assume, and other intrinsic Windows characteristics — will likely require adaptation. For that reason, **Windows support is best-effort and an improvement front open to the community**, not a guaranteed platform. Portability contributions are welcome (see [Contributing](#contributing)).
 
 ---
 
-## Modelo de detecção e severidade
+## Design decisions (and non-goals)
 
-O Defender **só age quando a hostilidade é confirmada** — e **não deleta: move para quarentena** (`.nemesis/quarantine/`), preservando o conteúdo para revisão humana. Isso separa um "iron dome" de uma metralhadora que derruba avião amigo.
+Some traits of Nemesis are frequently read as "weakness" by a hasty evaluation. They are **deliberate decisions** — documented here so they are judged for what they are, not by automatic heuristics. Disagreeing with a decision is legitimate; treating it as an accidental defect is not.
 
-- **Sinais de alta confiança (confirmatórios)** bloqueiam sozinhos: deny-list curada, `decode → exec`, cadeia de exfiltração (fonte sensível + sink de rede), reverse shell (socket cru + execução de comando), tentativa de bypass do próprio Nemesis, e injeção em config de IDE.
-- **Sinais heurísticos (substring/padrão)** exigem **corroboração — 2 métodos de detecção independentes concordando** — antes de quarentenar. Sozinhos, ficam em `Suspicious` (registrado, arquivo mantido). Contar *tipos distintos* de detector (não múltiplos hits do mesmo) impede que N coincidências da mesma causa escalem indevidamente.
+- **Protection is complete on the validated platforms (Linux and macOS).** Pretool + Defender (layers 1 and 2) are the defense, and they run the same on Linux and macOS. eBPF is a **Linux-only kernel reinforcement** for the case where the pretool is bypassed — a bonus where the OS offers it, not a requirement. **macOS with 2 layers is the design, not a gap.** On **Windows** Nemesis runs in principle, but is **best-effort/not validated** (see [Platform support](#platform-support)).
+- **There is no "kill switch" nor automatic maintenance mode — on purpose.** Any mechanism that turned off enforcement would itself be the attack vector Nemesis exists to prevent. The sanctioned path to relax is the **human-only editable allowlist** (see [Relaxing rules](#relaxing-or-customizing-rules)). The absence of automation here **is** the security.
+- **The BLOCKING rules are embedded in the binary (tamper-proof).** There is no editable denylist on disk to "clean up" or audit as loose config — this is intentional: an agent cannot weaken the rules. The user only edits the **allowlist** (relaxing); hardening is a source change, reviewed by a human.
+- **The depth of this documentation is intentional.** As a security tool, it exposes everything that operates on your machine — no black box. The **concept/philosophy** lives in the [dashboard](https://dashboard-nemesis-defender.vercel.app/); this README is the **technical-operational reference**. Distinct audiences, not fragmentation.
+- **Two audiences, two technical levels.** **Using** requires little (install via script, run the `doctor`). **Maintaining** requires command of eBPF/BPF-LSM, Rust, and C — a **prerequisite of the domain**, not a usability barrier. Whoever does not master these areas is a user, not a maintainer; that is expected and is stated in [`AGENTS.md`](AGENTS.md).
 
-**Quarentena, não exclusão.** Ao confirmar `Malicious`, o daemon **move** o arquivo para `.nemesis/quarantine/<id>/` (com `meta.json` do motivo), **bloqueia a sessão** (exit 2, `QUARENTENA PENDENTE`) e espera o humano. Para revisar: rode `nemesis-defender --quarantine list` (lista os itens com seus IDs), depois `show <id>` (inspeciona), `restore <id>` (falso-positivo, volta ao lugar) ou `purge <id>` (expurgar). O `<id>` é o identificador exibido por `list`. O instalador do próprio Nemesis (`nemesis-install.sh`) é isento (ele legitimamente contém os padrões detectados).
-
-A corroboração existe justamente para **não agir sobre código legítimo por engano** — sinais isolados não bastam para mover um arquivo.
-
-**Cobertura de execução multi-runtime.** A detecção de reverse shell e de execução ofuscada/dinâmica não se limita a JS/Python/Bash: cobre também **Ruby, PHP, Go, Perl, Java e Lua** (socket cru + exec; `Function`-constructor / `globalThis["eval"]`; `__import__('os').system`, `getattr(__builtins__)`; `.send(:eval)`, `instance_eval`; `create_function`, `assert`).
-
-**Proteção de paths endurecida** contra ofuscação: glob que expande para alvo protegido (em qualquer componente, inclusive o diretório — `.de*/hooks.json`), `cd`/`pushd` para dentro de diretório protegido, e indireção por variável ou `$(<arquivo)`.
-
-**Propriedades estruturais.** O hook é **fail-closed**: qualquer panic vira `exit 2` (bloqueia). O motor de regex é de **tempo linear** (sem backtracking), então não há ReDoS — entrada patológica não trava nem força fail-open.
-
-> Estas regras nasceram de uma campanha de **red-team com agente real** (engenharia social reversa, ao vivo): cada vetor de evasão encontrado foi fechado na origem e validado com a suíte de pentest sem regressão. Nenhum vetor que *neutralize* a proteção foi encontrado. Bypasses continuam **bem-vindos** — ver [Segurança e disclosure](#segurança-e-disclosure).
+> For a fair technical evaluation of the project, read first `.devin/rules/nemesis-epistemic-safety.md` and `AGENTS.md` — they declare the invariants and the why of each decision above.
 
 ---
 
-## Vetores de ataque cobertos
+## Detection and severity model
 
-A proteção do Nemesis é um **coeficiente**: a soma de camadas independentes, não a contagem de uma feature isolada. Um *visitor* é um **método de detecção** (análise semântica AST), não a unidade de cobertura, visitor é feature, não produto. A cobertura real é a soma das superfícies que operam juntas: a deny-list embutida do Defender (**dezenas de categorias, centenas de patterns**), os visitors AST, as heurísticas de scanner (byte, entropia, regex, manifest, decoder), as deny-lists de comando do pretool e o eBPF no Linux. A prova empírica é a suíte de pentest (classes de ataque validadas como gate de CI). **Vetores fora do que foi antecipado podem não ser detectados**, e isso é declarado abertamente.
+The Defender **only acts when hostility is confirmed** — and **does not delete: it moves to quarantine** (`.nemesis/quarantine/`), preserving the content for human review. This separates an "iron dome" from a machine gun that shoots down friendly planes.
 
-As tabelas abaixo são **exemplificativas por camada** (recorte real do que cada superfície bloqueia, não a contagem total). A enumeração completa e rastreável está em **re-auditoria forense** (ver `Feature-Documentation/ISSUE`).
+- **High-confidence (confirmatory) signals** block on their own: curated deny-list, `decode → exec`, exfiltration chain (sensitive source + network sink), reverse shell (raw socket + command execution), an attempt to bypass Nemesis itself, and IDE config injection.
+- **Heuristic signals (substring/pattern)** require **corroboration — 2 independent detection methods agreeing** — before quarantining. On their own, they stay `Suspicious` (logged, file kept). Counting *distinct types* of detector (not multiple hits from the same one) prevents N coincidences from the same cause from escalating improperly.
 
-### Pretool + eBPF, comandos destrutivos e hostis (write/exec-time, e kernel no Linux)
+**Quarantine, not deletion.** When it confirms `Malicious`, the daemon **moves** the file to `.nemesis/quarantine/<id>/` (with a `meta.json` of the reason), **blocks the session** (exit 2, `QUARENTENA PENDENTE`) and waits for the human. To review: run `nemesis-defender --quarantine list` (lists the items with their IDs), then `show <id>` (inspect), `restore <id>` (false positive, back to its place) or `purge <id>` (expunge). The `<id>` is the identifier shown by `list`. Nemesis's own installer (`nemesis-install.sh`) is exempt (it legitimately contains the detected patterns).
 
-| Classe | Exemplos de comando bloqueado |
+Corroboration exists precisely to **not act on legitimate code by mistake** — isolated signals are not enough to move a file.
+
+**Multi-runtime execution coverage.** Reverse shell and obfuscated/dynamic execution detection is not limited to JS/Python/Bash: it also covers **Ruby, PHP, Go, Perl, Java, and Lua** (raw socket + exec; `Function`-constructor / `globalThis["eval"]`; `__import__('os').system`, `getattr(__builtins__)`; `.send(:eval)`, `instance_eval`; `create_function`, `assert`).
+
+**Hardened path protection** against obfuscation: a glob that expands to a protected target (in any component, including the directory — `.de*/hooks.json`), `cd`/`pushd` into a protected directory, and indirection via a variable or `$(<file)`.
+
+**Structural properties.** The hook is **fail-closed**: any panic becomes `exit 2` (blocks). The regex engine is **linear-time** (no backtracking), so there is no ReDoS — a pathological input neither hangs nor forces fail-open.
+
+> These rules were born from a **red-team campaign with a real agent** (reverse social engineering, live): each evasion vector found was closed at the source and validated with the pentest suite with no regression. No vector that *neutralizes* the protection was found. Bypasses remain **welcome** — see [Security and disclosure](#security-and-disclosure).
+
+---
+
+## Covered attack vectors
+
+Nemesis's protection is a **coefficient**: the sum of independent layers, not the count of an isolated feature. A *visitor* is a **detection method** (AST semantic analysis), not the unit of coverage; a visitor is a feature, not a product. Real coverage is the sum of the surfaces that operate together: the Defender's embedded deny-list (**dozens of categories, hundreds of patterns**), the AST visitors, the scanner heuristics (byte, entropy, regex, manifest, decoder), the pretool command deny-lists, and eBPF on Linux. The empirical proof is the pentest suite (attack classes validated as a CI gate). **Vectors outside what was anticipated may not be detected**, and this is stated openly.
+
+The tables below are **illustrative per layer** (a real slice of what each surface blocks, not the total count). The complete and traceable enumeration is in **forensic re-audit** (see `Feature-Documentation/ISSUE`).
+
+### Pretool + eBPF, destructive and hostile commands (write/exec-time, and kernel on Linux)
+
+| Class | Examples of blocked command |
 |--------|-------------------------------|
-| Destruição de arquivos/dados | `rm`, `shred`, `truncate`, `dd`, `mkfifo`, `split`, `unlink` |
-| Permissões / proprietário | `chmod`, `chown` |
-| Filesystem / disco | `mount`, `umount`, `mkfs`, `fdisk` |
-| Banco de dados destrutivo | `dropdb`, `mysql`, `psql` |
+| File/data destruction | `rm`, `shred`, `truncate`, `dd`, `mkfifo`, `split`, `unlink` |
+| Permissions / owner | `chmod`, `chown` |
+| Filesystem / disk | `mount`, `umount`, `mkfs`, `fdisk` |
+| Destructive database | `dropdb`, `mysql`, `psql` |
 | Infra / cloud | `terraform`, `docker`, `aws`, `kubectl` |
-| Exfiltração / transferência | `curl`, `wget`, `ftp`, `sftp`, `rsync`, `scp`, `nc`, `netcat`, `socat` |
+| Exfiltration / transfer | `curl`, `wget`, `ftp`, `sftp`, `rsync`, `scp`, `nc`, `netcat`, `socat` |
 | Recon / pentest | `nmap`, `nikto`, `ffuf`, `gobuster`, `nuclei`, `whatweb` |
-| Exploração / brute force | `sqlmap`, `msfconsole`, `msfvenom`, `hydra`, `john`, `hashcat` |
-| Privesc / persistência | `crontab`, `at`, `ssh-keygen`, `ssh-copy-id`, `pkexec`, `doas` |
+| Exploitation / brute force | `sqlmap`, `msfconsole`, `msfvenom`, `hydra`, `john`, `hashcat` |
+| Privesc / persistence | `crontab`, `at`, `ssh-keygen`, `ssh-copy-id`, `pkexec`, `doas` |
 
-> No **Linux**, o eBPF (BPF-LSM) aplica isso no **kernel**, com escopo pelo cgroup do agente (não afeta IDE/terminal), e ainda bloqueia **escrita** em prefixos protegidos (`/etc/`, `/usr/local/bin/`, `.nemesis/`, `.claude/`, `.devin/`, `.cursor/`) e impõe **allowlist de egress** de rede. As deny-lists de comando do pretool são **editáveis** pelo usuário (`.nemesis/denylist/`). Fonte: `ebpf-kernel/denylist-ebpf/`, `.nemesis/denylist/`.
+> On **Linux**, eBPF (BPF-LSM) enforces this in the **kernel**, scoped by the agent's cgroup (does not affect IDE/terminal), and also blocks **writes** to protected prefixes (`/etc/`, `/usr/local/bin/`, `.nemesis/`, `.claude/`, `.devin/`, `.cursor/`) and imposes a network **egress allowlist**. The pretool command deny-lists are **editable** by the user (`.nemesis/denylist/`). Source: `ebpf-kernel/denylist-ebpf/`, `.nemesis/denylist/`.
 
-### Defender, deny-list embutida de conteúdo (36 categorias, compiladas no binário)
+### Defender, embedded content deny-list (37 categories, compiled into the binary)
 
-Escaneia o **conteúdo** dos arquivos, cobrindo também macOS/Windows (onde não há eBPF). Recorte de categorias:
+Scans the **content** of files, also covering macOS/Windows (where there is no eBPF). Category slice:
 
-| Categoria | Alvo |
+| Category | Target |
 |-----------|------|
-| `destructive_commands` · `filesystem_manipulation` | comandos destrutivos de arquivo/disco em conteúdo |
-| `reverse_shells` · `reverse_shell_enhanced` | shell reversa (nc, socat, bash, python, php, perl, ruby, lua) |
-| `data_transfer_exfiltration` · `http_exfiltration_advanced` · `data_exfiltration_compound` | exfiltração via transferência/HTTP(S) e cadeias compostas (tar + nc, rsync) |
-| `credential_exfiltration_comment` · `pii_detection` | credenciais/PII vazando em código e comentários |
-| `persistence_mechanisms` · `shell_config_tampering` · `shell_hook_hijacking` | persistência em shell/git-hooks |
+| `destructive_commands` · `filesystem_manipulation` | destructive file/disk commands in content |
+| `reverse_shells` · `reverse_shell_enhanced` | reverse shell (nc, socat, bash, python, php, perl, ruby, lua) |
+| `data_transfer_exfiltration` · `http_exfiltration_advanced` · `data_exfiltration_compound` | exfiltration via transfer/HTTP(S) and compound chains (tar + nc, rsync) |
+| `credential_exfiltration_comment` · `pii_detection` | credentials/PII leaking in code and comments |
+| `persistence_mechanisms` · `shell_config_tampering` · `shell_hook_hijacking` | persistence in shell/git-hooks |
 | `supply_chain_registry` | registry hijack, typosquatting, dependency confusion |
-| `container_escape` · `kubernetes_container_escape` | breakout de container/Kubernetes |
-| `prompt_injection_advanced` · `prompt_injection_claude_hooks` · `false_authority_injection` | prompt injection e falsa autoridade |
-| `llm_template_injection` · `xss_unsanitized_html` | injeção em output de LLM / XSS |
-| `nemesis_evasion` · `model_abuse` | tentativa de desligar o Nemesis / jailbreak (DAN) |
-| `pentest_recon_tools` · `infrastructure_commands` · `windows_specific` | recon, infra de alto risco, comandos Windows hostis |
+| `container_escape` · `kubernetes_container_escape` | container/Kubernetes breakout |
+| `prompt_injection_advanced` · `prompt_injection_claude_hooks` · `false_authority_injection` | prompt injection and false authority |
+| `llm_template_injection` · `xss_unsanitized_html` | LLM output injection / XSS |
+| `nemesis_evasion` · `model_abuse` | attempt to turn off Nemesis / jailbreak (DAN) |
+| `pentest_recon_tools` · `infrastructure_commands` · `windows_specific` | recon, high-risk infra, hostile Windows commands |
 
-São **36 categorias / centenas de patterns** no total; acima vai um recorte. Fonte: `nemesis-defender/config/denylist-defender.json`.
+There are **37 categories / hundreds of patterns** in total; the above is a slice. Source: `nemesis-defender/config/denylist-defender.json`.
 
-### Defender, visitors AST (detecção de intenção semântica)
+### Defender, AST visitors (semantic intent detection)
 
-Análise semântica por travessia de árvore (tree-sitter). É **um método entre as camadas, não a unidade de cobertura** — uma fração do coeficiente. Há **15 arquivos de visitor, 14 despachados** (`manifest_abuse` é código morto, nunca chamado); fonte: `nemesis-defender/src/visitors/mod.rs` e `scanner/ast_scanner.rs`. Exemplos de visitors despachados:
+Semantic analysis by tree traversal (tree-sitter). It is **one method among the layers, not the unit of coverage** — a fraction of the coefficient. There are **15 visitor files, 14 dispatched** (`manifest_abuse` is dead code, never called); source: `nemesis-defender/src/visitors/mod.rs` and `scanner/ast_scanner.rs`. Examples of dispatched visitors:
 
-| Visitor (despachado) | Alvo |
+| Visitor (dispatched) | Target |
 |---------|------|
 | `decode_exec` | base64/hex/charCode → `eval`/`exec`/`spawn` (incl. `Function`-constructor, `globalThis["eval"]`) |
-| `exfil_chain` | cadeia fonte sensível → sink de rede (regra de 1ª classe) |
-| `taint_tracker` | data-flow fonte→sink via variáveis (JS/Python) |
-| `credential_harvest` | leitura de credenciais (SSH/AWS/`.env`/IMDS/shell history/wallets) + exfil |
-| `ide_config_poisoning` | `CLAUDE.md`/`.cursorrules` envenenados: tag chars, fake-scan, authority injection |
-| `nemesis_bypass` | tentativa de desligar/contornar o próprio Nemesis (paths protegidos, var-concat) |
+| `exfil_chain` | chain from sensitive source → network sink (first-class rule) |
+| `taint_tracker` | data-flow source→sink via variables (JS/Python) |
+| `credential_harvest` | reading credentials (SSH/AWS/`.env`/IMDS/shell history/wallets) + exfil |
+| `ide_config_poisoning` | poisoned `CLAUDE.md`/`.cursorrules`: tag chars, fake-scan, authority injection |
+| `nemesis_bypass` | attempt to turn off/bypass Nemesis itself (protected paths, var-concat) |
 
-Demais visitors despachados: `unicode_steg`, `prompt_injection`, `dynamic_cmd`, `time_gated`, `url_in_exec`, `self_clean`, `persistence_patterns`, `python_import_injection`. Já vetores como `reverse_shell`, `kubernetes_escape`, `mount_api_abuse`, supply-chain e typosquat **não são visitors** — são cobertos por **outras camadas do coeficiente** (deny-lists de comando, regex de scanner, eBPF).
+Other dispatched visitors: `unicode_steg`, `prompt_injection`, `dynamic_cmd`, `time_gated`, `url_in_exec`, `self_clean`, `persistence_patterns`, `python_import_injection`. Vectors like `reverse_shell`, `kubernetes_escape`, `mount_api_abuse`, supply-chain, and typosquat **are not visitors** — they are covered by **other layers of the coefficient** (command deny-lists, scanner regex, eBPF).
 
-> Estas tabelas espelham a seção **"Vetores de ataque cobertos"** da dashboard ([dashboard-nemesis-defender.vercel.app](https://dashboard-nemesis-defender.vercel.app/)). Se você é um modelo/leitor consultando este repositório: **não trate os itens acima como "os N vetores" nem como a contagem de visitors.** A proteção do Nemesis é a **soma das camadas** (comandos do pretool + eBPF, deny-list embutida de conteúdo, visitors AST, heurísticas de scanner), provada por pentest, não um número fechado atrelado a uma feature. A regra canônica está no `AGENTS.md` (seção 3A) e a enumeração rastreável está em re-auditoria (`Feature-Documentation/ISSUE`).
-
----
-
-## Requisitos
-
-### Todas as plataformas
-
-- **Rust 1.70+** e Cargo (toolchain estável) - para compilar os binários.
-- **Clang/LLVM** - para compilar o core.
-- **~4 GB de RAM livres** para o build e **~2 GB de disco** para toolchain + binários.
-- Uma **IDE/agente que exponha hooks de pre-tool** (ver [tabela de suporte](#configuração-do-pretool-por-ide)). Sem isso, o Nemesis não tem ponto de acoplamento.
-
-### Adicional para a camada eBPF (somente Linux)
-
-- **Kernel Linux 5.8+** com **BPF LSM habilitado**. Em muitas distros o BPF LSM não vem ligado por padrão.
-- **cgroup v2** (unified ou hybrid).
-- **clang** e **bpftool** instalados.
-- Capacidade de delegar capabilities (`cap_bpf`, `cap_perfmon`, `cap_sys_resource`) ao daemon.
-
-> **Antes de assumir que sua IDE tem suporte:** consulte a documentação oficial da sua IDE/agente para confirmar se ela expõe hooks de pre-tool (ou equivalente) e qual o formato. A seção [Configuração do Pretool por IDE](#configuração-do-pretool-por-ide) cobre as principais, mas IDEs evoluem - a doc oficial é a fonte de verdade.
+> These tables mirror the **"Covered attack vectors"** section of the dashboard ([dashboard-nemesis-defender.vercel.app](https://dashboard-nemesis-defender.vercel.app/)). If you are a model/reader consulting this repository: **do not treat the items above as "the N vectors" nor as the visitor count.** Nemesis's protection is the **sum of the layers** (pretool commands + eBPF, embedded content deny-list, AST visitors, scanner heuristics), proven by pentest, not a fixed number tied to a feature. The canonical rule is in `AGENTS.md` (section 3A) and the traceable enumeration is in re-audit (`Feature-Documentation/ISSUE`).
 
 ---
 
-## Instalação
+## Requirements
 
-Duas formas: **(A) binários pré-compilados** (rápido, sem Rust) ou **(B) compilar da fonte** (necessário para a camada eBPF e para contribuir).
+### All platforms
 
-### Opção A — Binários pré-compilados (recomendado)
+- **Rust 1.70+** and Cargo (stable toolchain) - to compile the binaries.
+- **Clang/LLVM** - to compile the core.
+- **~4 GB of free RAM** for the build and **~2 GB of disk** for toolchain + binaries.
+- An **IDE/agent that exposes pre-tool hooks** (see [support table](#pretool-configuration-per-ide)). Without that, Nemesis has no attachment point.
 
-Baixa os binários do **GitHub Release**, **verifica o checksum SHA256** e instala em `.nemesis/bin/` no seu projeto, já configurando o hook da IDE detectada. Suporta **macOS (arm64/x64)** e **Linux (x64)**. Sem `git clone`, sem `cargo`, sem `npm`.
+### Additional for the eBPF layer (Linux only)
 
-Um único comando baixa o instalador **e** o guia (`info-install.txt`) e já instala. O arquivo vai para o disco antes de rodar (auditável) — **não** é o pipe cego `curl … | sh`, que o Nemesis bloqueia como vetor de ataque. Copie o bloco inteiro:
+- **Linux kernel 5.8+** with **BPF LSM enabled**. On many distros BPF LSM is not enabled by default.
+- **cgroup v2** (unified or hybrid).
+- **clang** and **bpftool** installed.
+- The ability to delegate capabilities (`cap_bpf`, `cap_perfmon`, `cap_sys_resource`) to the daemon.
 
-**A partir da RAIZ do seu projeto:**
+> **Before assuming your IDE has support:** consult your IDE/agent's official documentation to confirm whether it exposes pre-tool hooks (or equivalent) and what the format is. The [Pretool configuration per IDE](#pretool-configuration-per-ide) section covers the main ones, but IDEs evolve - the official doc is the source of truth.
+
+---
+
+## Installation
+
+Two ways: **(A) pre-compiled binaries** (fast, no Rust) or **(B) build from source** (required for the eBPF layer and to contribute).
+
+### Option A — Pre-compiled binaries (recommended)
+
+Downloads the binaries from the **GitHub Release**, **verifies the SHA256 checksum**, and installs into `.nemesis/bin/` in your project, already configuring the hook for the detected IDE. Supports **macOS (arm64/x64)** and **Linux (x64)**. No `git clone`, no `cargo`, no `npm`.
+
+A single command downloads the installer **and** the guide (`info-install.txt`) and installs. The file goes to disk before running (auditable) — it is **not** the blind `curl … | sh` pipe, which Nemesis blocks as an attack vector. Copy the whole block:
+
+**From the ROOT of your project:**
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-install.sh \
      -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/info-install.txt \
   && bash nemesis-install.sh
 ```
 
-O `info-install.txt` fica na raiz do seu projeto com o passo a passo pós-install (doctor + pentest). O instalador faz **só o essencial** (baixar, verificar checksum, extrair, scaffold do hook) — **não roda validação nem sobe o daemon**, que é manual, no [mapa de instalação](#mapa-de-instalação-resumo) abaixo. Quer inspecionar antes de rodar? Baixe sem o `&& bash …` e leia com `less nemesis-install.sh`.
+The `info-install.txt` stays at the root of your project with the post-install step-by-step (doctor + pentest). The installer does **only the essential** (download, verify checksum, extract, scaffold the hook) — it **does not run validation nor start the daemon**, which is manual, in the [installation map](#installation-map-summary) below. Want to inspect before running? Download without the `&& bash …` and read with `less nemesis-install.sh`.
 
-O instalador detecta SO/arch, baixa o tarball da release, **confere o SHA256 antes de extrair** (aborta se não bater), instala os binários e as deny-lists, e **detecta a(s) IDE(s) presente(s) e escreve o hook no formato CORRETO de cada uma** (nome de arquivo + schema próprios), sem sobrescrever config existente:
+The installer detects OS/arch, downloads the release tarball, **checks the SHA256 before extracting** (aborts if it does not match), installs the binaries and the deny-lists, and **detects the IDE(s) present and writes the hook in each one's CORRECT format** (own file name + schema), without overwriting existing config:
 
-| IDE | Arquivo | Formato |
+| IDE | File | Format |
 |-----|---------|---------|
 | **Claude Code / OpenClaude** | `.claude/settings.json` · `.openclaude/settings.json` | `PreToolUse`/`PostToolUse` + `matcher` + `hooks[]` |
 | **OpenAI Codex** | `.codex/hooks.json` | `matcher: ".*"` + `timeout` |
 | **Cursor** (1.7+) | `.cursor/hooks.json` | `version:1`, `preToolUse`/`postToolUse` (camelCase) + `failClosed` |
-| **Devin** | `.devin/hooks.json` | eventos `pre_write_code`/`pre_run_command`/`pre_read_code`/`pre_mcp_tool_use` (+ `post_*`) |
-| **Gemini / Agents** | `.gemini/hooks.json` · `.agents/hooks.json` | objetos `nemesis-pretool-hook`/`nemesis-posttool-hook` com `enabled` |
-| **VS Code / GitHub Copilot** | `.github/hooks/nemesis-pretool-hook.json` (+ `.vscode/settings.json` aponta para ele) | caminho relativo `./.nemesis/bin/...` |
-| **Grok Build** (x.ai) | `.grok/hooks/nemesis-pretool-hook.json` | `PreToolUse`/`PostToolUse` + `matcher: ".*"` + `timeout` (schema Claude) |
+| **Devin** | `.devin/hooks.json` | events `pre_write_code`/`pre_run_command`/`pre_read_code`/`pre_mcp_tool_use` (+ `post_*`) |
+| **Gemini / Agents** | `.gemini/hooks.json` · `.agents/hooks.json` | objects `nemesis-pretool-hook`/`nemesis-posttool-hook` with `enabled` |
+| **VS Code / GitHub Copilot** | `.github/hooks/nemesis-pretool-hook.json` (+ `.vscode/settings.json` points to it) | relative path `./.nemesis/bin/...` |
+| **Grok Build** (x.ai) | `.grok/hooks/nemesis-pretool-hook.json` | `PreToolUse`/`PostToolUse` + `matcher: ".*"` + `timeout` (Claude schema) |
 
-Caminho absoluto para os binários (relativo no caso do GitHub/VS Code). Versão fixa: `NEMESIS_VERSION=v0.1.0 bash nemesis-install.sh`.
+Absolute path for the binaries (relative in the GitHub/VS Code case). Pinned version: `NEMESIS_VERSION=v0.1.0 bash nemesis-install.sh`.
 
-> A **camada eBPF (Linux)** NÃO vem nos binários: depende de `libbpf`/`clang` e de um objeto BPF compatível com o seu kernel. É **opt-in**, construída da fonte (Opção B). O core (pretool + Defender) protege em macOS e Linux sem ela.
+> The **eBPF layer (Linux)** does NOT come in the binaries: it depends on `libbpf`/`clang` and on a BPF object compatible with your kernel. It is **opt-in**, built from source (Option B). The core (pretool + Defender) protects on macOS and Linux without it.
 
-#### Mapa de instalação (resumo)
+#### Installation map (summary)
 
-Fluxo completo, **na ordem**, agnóstico de SO (macOS/Linux) — todos os comandos a partir da **raiz do seu projeto**:
+Complete flow, **in order**, OS-agnostic (macOS/Linux) — all commands from the **root of your project**:
 
-Cada passo é **um comando** para copiar inteiro:
+Each step is **one command** to copy whole:
 
-| # | Passo | Comando (copie inteiro) |
+| # | Step | Command (copy whole) |
 |---|-------|---------|
-| 1 | **Baixar e instalar** | `curl -fsSLO …/main/.nemesis/install/nemesis-install.sh -O …/main/.nemesis/install/info-install.txt && bash nemesis-install.sh` |
-| 2 | **Reiniciar a IDE** (hooks entram em vigor) | — |
-| 3 | **Diagnóstico** (siga as ações que ele indicar) | `.nemesis/bin/nemesis-doctor --quick` |
-| 4 | **Nível 1 — validação estática** (binário auto-detectado) | `bash .nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh` |
-| 5 | **Nível 2 — validação prática** (cole no agente) | conteúdo de `.nemesis/pentest-nemesis-control/nemesis-defender/nemesis-pentest-harness.md` |
+| 1 | **Download and install** | `curl -fsSLO …/main/.nemesis/install/nemesis-install.sh -O …/main/.nemesis/install/info-install.txt && bash nemesis-install.sh` |
+| 2 | **Restart the IDE** (hooks take effect) | — |
+| 3 | **Diagnostic** (follow the actions it indicates) | `.nemesis/bin/nemesis-doctor --quick` |
+| 4 | **Level 1 — static validation** (auto-detected binary) | `bash .nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh` |
+| 5 | **Level 2 — practical validation** (paste into the agent) | content of `.nemesis/pentest-nemesis-control/nemesis-defender/nemesis-pentest-harness.md` |
 
-O **doctor** (passo 4) imprime, em cada verificação que falha, a **ação exata** já no caminho do seu layout (ex.: se o **G6** indicar daemon parado, rode `.nemesis/bin/nemesis-defender --ensure-daemon` e rode o doctor de novo). O passo a passo detalhado está em **`info-install.txt`** (raiz) e em `.nemesis/pentest-nemesis-control/nemesis-defender/info.md`.
+The **doctor** (step 4) prints, on each check that fails, the **exact action** already in the path of your layout (e.g.: if **G6** indicates the daemon is stopped, run `.nemesis/bin/nemesis-defender --ensure-daemon` and run the doctor again). The detailed step-by-step is in **`info-install.txt`** (root) and in `.nemesis/pentest-nemesis-control/nemesis-defender/info.md`.
 
-### Opção B — Compilar da fonte
+### Option B — Build from source
 
-Necessário para a camada **eBPF** ou para **contribuir**.
+Required for the **eBPF** layer or to **contribute**.
 
 ```bash
-# Binários gerados em .nemesis/target/release/
+# Binaries generated in .nemesis/target/release/
 git clone https://github.com/feryamaha/Nemesis_Defender_v0.git
 cd Nemesis_Defender_v0/.nemesis
 cargo build --release --workspace
 ```
 
-A compilação leva alguns minutos e exige os ~4 GB de RAM mencionados nos requisitos. Ao final, confirme que os binários existem:
+The compilation takes a few minutes and requires the ~4 GB of RAM mentioned in the requirements. At the end, confirm that the binaries exist:
 
 ```bash
 ls -la .nemesis/target/release/ | grep nemesis
 ```
 
-### 2. Apontar os hooks da IDE para o binário
+### 2. Point the IDE hooks to the binary
 
-Este é o passo que efetivamente liga o Nemesis. Cada IDE tem seu formato - ver a próxima seção. O ponto comum: o hook de pre-tool precisa apontar para o **caminho absoluto** do binário do Nemesis no seu projeto.
+This is the step that effectively turns Nemesis on. Each IDE has its format - see the next section. The common point: the pre-tool hook must point to the **absolute path** of the Nemesis binary in your project.
 
-> **Caminho errado ou ausente = o Nemesis não roda.** A IDE simplesmente não invoca o hook, e você fica desprotegido sem perceber. Sempre confirme que o caminho no `command` aponta para o binário real (`nemesis-pretool-check-unix`) no seu projeto.
+> **Wrong or missing path = Nemesis does not run.** The IDE simply does not invoke the hook, and you are left unprotected without noticing. Always confirm that the path in `command` points to the real binary (`nemesis-pretool-check-unix`) in your project.
 
-> **Manual de operações unificado:** para instruções completas de compilação por módulo, configuração do eBPF, operação do daemon, pentest e checklist de instalação em nova máquina, consulte [`.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md`](.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md).
+> **Unified operations manual:** for complete build instructions per module, eBPF configuration, daemon operation, pentest, and a new-machine installation checklist, consult [`.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md`](.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md).
 
 ---
 
-## Desinstalação
+## Uninstallation
 
-Rode na **raiz do projeto**, no seu **terminal nativo**. O script reverte o `nemesis-install.sh`: para o daemon, desabilita o serviço eBPF (se você ativou, opt-in), remove os hooks de IDE criados pelo Nemesis e a pasta `.nemesis/`, e imprime um **checklist final** para você confirmar que não sobrou nada.
+Run at the **project root**, in your **native terminal**. The script reverts `nemesis-install.sh`: it stops the daemon, disables the eBPF service (if you activated it, opt-in), removes the IDE hooks created by Nemesis and the `.nemesis/` folder, and prints a **final checklist** for you to confirm nothing was left behind.
 
-**Self-contained** (funciona em qualquer instalação — baixa o script e roda, espelhando o install):
+**Self-contained** (works on any installation — it downloads the script and runs, mirroring the install):
 
-## Desinstalar com confirmação interativa:
+## Uninstall with interactive confirmation:
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
   && bash nemesis-uninstall.sh
 ```
 
-## Desinstalar sem confirmação interativa:
+## Uninstall without interactive confirmation:
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
   && NEMESIS_YES=1 bash nemesis-uninstall.sh
 ```
 
-O instalador também deixa uma cópia local; se ela existir, basta :
+The installer also leaves a local copy; if it exists, just run:
 ```bash
 bash .nemesis/install/nemesis-uninstall.sh.
 ```
 
-**O que é automático e o que é manual.** O script remove com segurança os arquivos de hook que são **só do Nemesis** (`.codex`/`.cursor`/`.devin`/`.gemini`/`.agents/hooks.json` e `.github/hooks/`). Os settings **compartilhados** (`.claude/settings.json`, `.openclaude/settings.json`, `.vscode/settings.json`) podem conter **configuração sua**, então ele **não os apaga** — apenas os **lista** para você tirar a entrada do Nemesis à mão (preservando o resto). É importante limpar isso: um hook órfão apontando para um binário que não existe mais faz a IDE/TUI reclamar a cada sessão.
+**What is automatic and what is manual.** The script safely removes the hook files that are **Nemesis-only** (`.codex`/`.cursor`/`.devin`/`.gemini`/`.agents/hooks.json` and `.github/hooks/`). The **shared** settings (`.claude/settings.json`, `.openclaude/settings.json`, `.vscode/settings.json`) may contain **your own configuration**, so it **does not delete them** — it only **lists** them for you to remove the Nemesis entry by hand (preserving the rest). Cleaning this up matters: an orphan hook pointing to a binary that no longer exists makes the IDE/TUI complain every session.
 
-O **checklist final** ainda te dá os comandos para confirmar que nada ficou rodando ou órfão:
+The **final checklist** also gives you the commands to confirm nothing is left running or orphaned:
 
-## procurar QUALQUER resquício de hook do Nemesis (ideal: nada):
+## look for ANY leftover of the Nemesis hook (ideal: nothing):
 
 ```bash
 grep -rIl 'nemesis-pretool\|nemesis-posttool\|\.nemesis/bin\|chat.hookFilesLocations' \
   .claude .openclaude .codex .cursor .devin .gemini .agents .github .vscode 2>/dev/null
 ```
-## para confirmar que o daemon parou (vazio = ok) e, se preciso, finalizar:
+## to confirm the daemon stopped (empty = ok) and, if needed, terminate:
 ```bash
 pgrep -fl nemesis-defender
 ```
-## para desativar o PID do nemesis-defender
+## to shut down the nemesis-defender PID
 ```bash
 pkill -f nemesis-defender
 ```
 
-## (Linux, só se ativou o eBPF opt-in) confirmar/parar o serviço de kernel:
+## (Linux, only if you activated the eBPF opt-in) confirm/stop the kernel service:
 ```bash
 systemctl is-active nemesis-ebpf
 ```
 
-## para desativar o ebpf
+## to disable eBPF
 ```bash
 sudo systemctl disable --now nemesis-ebpf
 ```
 
-Reinicie a IDE depois para ela parar de carregar os hooks e apague manualmente qualquer resíduo restante.
+Restart the IDE afterward so it stops loading the hooks and manually delete any remaining residue.
 
-> 💬 **Um pedido.** Se você desinstalar, me mande um email contando o **motivo** — feedback positivo ou negativo é muito valioso para o projeto. E se algo der errado na desinstalação, escreva também: **feryamaha@hotmail.com** (eu dou suporte).
+> 💬 **A request.** If you uninstall, send me an email telling me the **reason** — positive or negative feedback is very valuable to the project. And if something went wrong in the uninstall, write too: **feryamaha@hotmail.com** (I provide support).
 
 ---
 
 ## Nemesis Doctor
 
-O **Nemesis Doctor** é o diagnóstico automatizado de saúde do framework. Ele executa 7 verificações estruturadas e emite um veredito global (`SAUDAVEL`, `ATENCAO` ou `CRITICO`).
+The **Nemesis Doctor** is the automated framework health diagnostic. It runs 7 structured checks and issues a global verdict (`SAUDAVEL`, `ATENCAO` or `CRITICO`).
 
-### Como executar
+### How to run
 
 ```bash
 cd .nemesis && cargo build --release -p nemesis-doctor
 ./target/release/nemesis-doctor
 ```
 
-Modo rápido (pula compilação, testes e pentest):
+Quick mode (skips compilation, tests, and pentest):
 ```bash
 ./target/release/nemesis-doctor --quick
 ```
 
-### O que ele verifica
+### What it checks
 
-| Grupo | O que verifica |
+| Group | What it checks |
 |-------|----------------|
-| **G1** | Compilação (`cargo check --workspace`) — 0 erros, 0 warnings |
-| **G2** | Testes unitários (`cargo test --workspace`) — pass/fail |
-| **G3** | Inventário de binários em `target/release/` (11 esperados) |
-| **G4** | Scaffold da IDE — hooks pretool/posttool configurados |
-| **G5** | eBPF Kernel LSM (Linux) — BPF LSM ativo, capabilities, cgroup |
-| **G6** | Daemon `nemesis-defender` — PID vivo, inotify ativo |
-| **G7** | Pentest Red-Team — taxa de bloqueio contra a suíte estática (`run-pentest.sh`, módulos M1–M31; a suíte cresce a cada ciclo de hardening). Gate: **FAIL=0** (100% bloqueado, zero falso-positivo) |
+| **G1** | Compilation (`cargo check --workspace`) — 0 errors, 0 warnings |
+| **G2** | Unit tests (`cargo test --workspace`) — pass/fail |
+| **G3** | Binary inventory in `target/release/` (11 expected) |
+| **G4** | IDE scaffold — pretool/posttool hooks configured |
+| **G5** | eBPF Kernel LSM (Linux) — BPF LSM active, capabilities, cgroup |
+| **G6** | `nemesis-defender` daemon — PID alive, inotify active |
+| **G7** | Red-Team Pentest — block rate against the static suite (`run-pentest.sh`, modules M1–M31; the suite grows each hardening cycle). Gate: **FAIL=0** (100% blocked, zero false positives) |
 
-### Vereditos
+### Verdicts
 
-- **SAUDAVEL** — todos os grupos OK. Sistema pronto.
-- **ATENCAO** — um ou mais grupos com WARN (ex.: capabilities ausentes). Funciona, mas merece atenção.
-- **CRITICO** — erro bloqueante (compilação falhou, daemon morto, ou pentest **REPROVADO**: algum ataque passou ou houve falso-positivo). Corrija antes de confiar na proteção.
+- **SAUDAVEL** — all groups OK. System ready.
+- **ATENCAO** — one or more groups with WARN (e.g.: missing capabilities). Works, but deserves attention.
+- **CRITICO** — a blocking error (compilation failed, daemon dead, or pentest **FAILED**: some attack got through or there was a false positive). Fix before trusting the protection.
 
-> **Regra:** após qualquer recompilação que afete o `nemesis-ebpf-daemon`, **reaplique as capabilities** (`setcap`) — elas se perdem quando o inode do binário é recriado.
+> **Rule:** after any recompilation that affects the `nemesis-ebpf-daemon`, **reapply the capabilities** (`setcap`) — they are lost when the binary's inode is recreated.
 
 ---
 
-## Configuração do Pretool por IDE
+## Pretool configuration per IDE
 
-A biblioteca Rust (`nemesis-defender`) é agnóstica de IDE. O que muda entre IDEs é **onde** você declara o hook e **qual o formato** do payload. Sempre confirme na doc oficial da sua IDE.
+The Rust library (`nemesis-defender`) is IDE-agnostic. What changes between IDEs is **where** you declare the hook and **what format** the payload has. Always confirm in your IDE's official doc.
 
-### Suporte por IDE (verificado na documentação oficial)
+### IDE support (verified in official documentation)
 
-| IDE / Agente | Hook de pre-tool | Onde declarar |
+| IDE / Agent | Pre-tool hook | Where to declare |
 |--------------|------------------|---------------|
-| **Claude Code** | `PreToolUse` / `PostToolUse` | `.claude/settings.json` (projeto) ou `~/.claude/settings.json` (global) |
+| **Claude Code** | `PreToolUse` / `PostToolUse` | `.claude/settings.json` (project) or `~/.claude/settings.json` (global) |
 | **OpenAI Codex** | `PreToolUse` / `PostToolUse` | `.codex/hooks.json` |
 | **Cursor** (1.7+) | `preToolUse`, `postToolUse` | `.cursor/hooks.json` |
 | **GitHub Copilot** | `preToolUse` | `.github/hooks/` |
-| **VS Code** (agent, preview) | eventos de hook | `.github/hooks/` |
+| **VS Code** (agent, preview) | hook events | `.github/hooks/` |
 | **Devin / Devin** (Cognition) | `pre_write_code`, `pre_run_command`, `pre_read_code`, `pre_mcp_tool_use` (+ `post_*`) | `.devin/hooks.json` |
-| **Grok Build** (x.ai) | `PreToolUse` / `PostToolUse` | `.grok/hooks/*.json` (projeto) ou `~/.grok/hooks/*.json` (global) |
+| **Grok Build** (x.ai) | `PreToolUse` / `PostToolUse` | `.grok/hooks/*.json` (project) or `~/.grok/hooks/*.json` (global) |
 
-> **Regra de ouro do enforcement:** o bloqueio só acontece com **exit code 2**. Exit code 1 é tratado como erro não-bloqueante e a ação prossegue. Todo hook de segurança precisa terminar em exit 2 para barrar de fato.
+> **Golden rule of enforcement:** blocking only happens with **exit code 2**. Exit code 1 is treated as a non-blocking error and the action proceeds. Every security hook must end in exit 2 to actually block.
 
 ### Claude Code
 
-Edite `.claude/settings.json` (no projeto) ou `~/.claude/settings.json` (global). O hook de pre-tool aponta para o binário do Nemesis com caminho absoluto:
+Edit `.claude/settings.json` (in the project) or `~/.claude/settings.json` (global). The pre-tool hook points to the Nemesis binary with an absolute path:
 
 ```json
 {
@@ -423,13 +415,13 @@ Edite `.claude/settings.json` (no projeto) ou `~/.claude/settings.json` (global)
 }
 ```
 
-O hook recebe o contexto da ferramenta via **stdin como JSON** (campos como `tool_name`, `tool_input.command`, `tool_input.file_path`). O binário real do hook é `nemesis-pretool-check-unix` (e `nemesis-posttool-check-unix` para o pós). Ele lê esse JSON, valida contra as deny-lists, e retorna exit 2 para bloquear.
+The hook receives the tool context via **stdin as JSON** (fields like `tool_name`, `tool_input.command`, `tool_input.file_path`). The real hook binary is `nemesis-pretool-check-unix` (and `nemesis-posttool-check-unix` for the post). It reads that JSON, validates against the deny-lists, and returns exit 2 to block.
 
-> Use **caminhos absolutos** para os binários - caminhos relativos falham dependendo do diretório de trabalho da IDE. Hooks de projeto (`.claude/settings.json`) têm precedência sobre os globais.
+> Use **absolute paths** for the binaries - relative paths fail depending on the IDE's working directory. Project hooks (`.claude/settings.json`) take precedence over global ones.
 
 ### Cursor (1.7+)
 
-Configuração real em `.cursor/hooks.json`. O Cursor usa `preToolUse`/`postToolUse` com um `matcher` amplo e a flag `failClosed`:
+Real configuration in `.cursor/hooks.json`. Cursor uses `preToolUse`/`postToolUse` with a broad `matcher` and the `failClosed` flag:
 
 ```json
 {
@@ -455,7 +447,7 @@ Configuração real em `.cursor/hooks.json`. O Cursor usa `preToolUse`/`postTool
 
 ### GitHub Copilot / VS Code (agent)
 
-Configuração real em `.github/hooks/nemesis-pretool-hook.json` (caminho relativo ao projeto):
+Real configuration in `.github/hooks/nemesis-pretool-hook.json` (path relative to the project):
 
 ```json
 {
@@ -470,11 +462,11 @@ Configuração real em `.github/hooks/nemesis-pretool-hook.json` (caminho relati
 }
 ```
 
-**Atenção** (alerta da própria doc do VS Code): se o agente tem permissão para editar o script do hook, ele pode reescrevê-lo durante a execução. Mantenha os scripts de hook sob `absolute_block` (ver [Controle de paths](#controle-de-paths)).
+**Attention** (from VS Code's own doc warning): if the agent has permission to edit the hook script, it can rewrite it during execution. Keep the hook scripts under `absolute_block` (see [Path control](#path-control)).
 
 ### OpenAI Codex
 
-Configuração real em `.codex/hooks.json`, com `matcher` curinga e `timeout`:
+Real configuration in `.codex/hooks.json`, with a wildcard `matcher` and `timeout`:
 
 ```json
 {
@@ -499,11 +491,11 @@ Configuração real em `.codex/hooks.json`, com `matcher` curinga e `timeout`:
 }
 ```
 
-> **Atenção:** confirme que o caminho no `command` aponta para o diretório real do seu projeto. Um caminho errado faz o hook não rodar e o Codex fica desprotegido.
+> **Attention:** confirm the path in `command` points to your project's real directory. A wrong path makes the hook not run and Codex is left unprotected.
 
 ### Devin / Devin (Cognition)
 
-Onde o Nemesis nasceu nativamente. Configuração real em `.devin/hooks.json`, que usa eventos próprios (`pre_write_code`, `pre_run_command`, `pre_read_code`, `pre_mcp_tool_use`, e os `post_*` equivalentes):
+Where Nemesis was born natively. Real configuration in `.devin/hooks.json`, which uses its own events (`pre_write_code`, `pre_run_command`, `pre_read_code`, `pre_mcp_tool_use`, and the equivalent `post_*`):
 
 ```json
 {
@@ -527,296 +519,296 @@ Onde o Nemesis nasceu nativamente. Configuração real em `.devin/hooks.json`, q
 }
 ```
 
-Os eventos `post_run_command`, `post_read_code` e `post_mcp_tool_use` seguem o mesmo padrão do `post_write_code`.
+The events `post_run_command`, `post_read_code`, and `post_mcp_tool_use` follow the same pattern as `post_write_code`.
 
 ---
 
-## Configuração da camada eBPF (Linux)
+## eBPF layer configuration (Linux)
 
-Esta camada é **opcional** e específica de Linux. Ela é a rede de contenção mínima para comandos destrutivos caso o pretool seja desligado. Se você não usa Linux ou não precisa dessa camada extra, pule esta seção - o Nemesis funciona sem ela via pretool.
+This layer is **optional** and Linux-specific. It is the minimal containment net for destructive commands in case the pretool is turned off. If you do not use Linux or do not need this extra layer, skip this section - Nemesis works without it via the pretool.
 
-**Instruções completas de instalação e operação:** consulte [`.nemesis/ebpf-kernel/info.md`](.nemesis/ebpf-kernel/info.md)
+**Complete installation and operation instructions:** consult [`.nemesis/ebpf-kernel/info.md`](.nemesis/ebpf-kernel/info.md)
 
-### Pré-requisitos
+### Prerequisites
 
 - Linux kernel ≥ 5.7
-- BPF LSM ativo no boot (`cat /sys/kernel/security/lsm` deve conter `bpf`)
-- clang e bpftool instalados
-- Capacidade de delegar capabilities (`cap_bpf`, `cap_perfmon`, `cap_sys_resource`)
+- BPF LSM active at boot (`cat /sys/kernel/security/lsm` must contain `bpf`)
+- clang and bpftool installed
+- The ability to delegate capabilities (`cap_bpf`, `cap_perfmon`, `cap_sys_resource`)
 
-### Compilação
+### Compilation
 
 ```bash
 cargo build -p nemesis-ebpf-kernel
 ```
 
-**Nota sobre bloqueio de build:** Se o BPF LSM estiver ativo e bloqueando o build (erro "Operation not permitted" no `rm` do make), pare o daemon eBPF antes de compilar:
+**Note on build blocking:** If BPF LSM is active and blocking the build (error "Operation not permitted" on the `rm` in the make), stop the eBPF daemon before compiling:
 
 ```bash
-# Verificar se o daemon está rodando
+# Check whether the daemon is running
 ps aux | grep nemesis-ebpf-daemon
 
-# Parar o daemon
-sudo systemctl stop nemesis-ebpf  # se estiver como serviço
-# ou mate o processo manualmente
+# Stop the daemon
+sudo systemctl stop nemesis-ebpf  # if it is running as a service
+# or kill the process manually
 kill <PID_DO_DAEMON>
 
-# Tentar compilar novamente
+# Try to compile again
 cargo build -p nemesis-ebpf-kernel
 ```
 
-Se mesmo após parar o daemon o build falhar, o programa BPF LSM pode estar carregado no kernel. Nesse caso, reinicie o sistema para descarregá-lo, pois programas BPF não podem ser removidos dinamicamente.
+If even after stopping the daemon the build fails, the BPF LSM program may be loaded in the kernel. In that case, reboot the system to unload it, since BPF programs cannot be removed dynamically.
 
-### Delegar capabilities
+### Delegate capabilities
 
 ```bash
 sudo setcap cap_bpf,cap_perfmon,cap_sys_resource+eip \
   .nemesis/target/release/nemesis-ebpf-daemon
 ```
 
-### Iniciar o daemon
+### Start the daemon
 
 ```bash
 .nemesis/target/release/nemesis-ebpf-daemon --start
 ```
 
-O daemon cria/usa o cgroup `/sys/fs/cgroup/nemesis-agent`, carrega o programa BPF LSM e fica em modo epoll (consumo próximo de zero em idle). Apenas processos do agente movidos para esse cgroup são verificados - IDE, terminal e processos do sistema passam sem verificação.
+The daemon creates/uses the cgroup `/sys/fs/cgroup/nemesis-agent`, loads the BPF LSM program, and stays in epoll mode (near-zero consumption at idle). Only agent processes moved into that cgroup are checked - IDE, terminal, and system processes pass without checking.
 
-### Modo sandbox sem root (Landlock)
+### Rootless sandbox mode (Landlock)
 
-Se você não pode delegar capabilities, o daemon opera em modo degradado via Landlock, que protege apenas a árvore de processos do filho:
+If you cannot delegate capabilities, the daemon operates in degraded mode via Landlock, which protects only the child's process tree:
 
 ```bash
 .nemesis/target/release/nemesis-ebpf-daemon --sandbox
 ```
 
-### O que faz
+### What it does
 
-A camada eBPF opera no nível do kernel via BPF LSM (`bprm_check_security`), bloqueando execuções destrutivas (comandos em `denylist-ebpf/commands.toml`) apenas para processos dentro do cgroup `/sys/fs/cgroup/nemesis-agent`. Processos do IDE, terminal e sistema passam sem verificação.
+The eBPF layer operates at the kernel level via BPF LSM (`bprm_check_security`), blocking destructive executions (commands in `denylist-ebpf/commands.toml`) only for processes inside the cgroup `/sys/fs/cgroup/nemesis-agent`. IDE, terminal, and system processes pass without checking.
 
-### Arquivos de configuração
+### Configuration files
 
-- `denylist-ebpf/commands.toml` - Binários bloqueados por basename
-- `denylist-ebpf/paths.toml` - Paths de escrita bloqueados
-- `nemesis-ebpf.service` - Serviço systemd para ativação automática
-- `install-service.sh` - Script de instalação do serviço
-
----
-
-## Controle de paths
-
-Após a instalação, o que o agente pode tocar é definido em `denylist-folder-files.json`, sob controle **exclusivamente humano**, em três níveis:
-
-- **`absolute_block`** - bloqueio total (leitura + escrita + deleção). Inclui `.env`, `.ssh/id_rsa`, `.bashrc`/`.zshrc`, os settings/hooks de cada IDE (`.claude/`, `.cursor/`, `.devin/`) e o próprio `.nemesis/`.
-- **`write_block`** - leitura permitida, escrita/edição bloqueada. Inclui `package.json`, `next.config.js`, `eslint.config.mjs`, `.gitignore` e os logs.
-- **`allowed_exceptions`** - o scaffold liberado (ex.: `/src/`), onde o agente escreve e edita livremente.
-
-**Estes arquivos passam a ser responsabilidade de edição manual humana.** O agente de IA não os edita nem exclui. Comando destrutivo (deletar, sobrescrever fora do escopo, reset) permanece **sempre proibido para a IA**, independentemente de qualquer permissão de leitura/escrita.
+- `denylist-ebpf/commands.toml` - Binaries blocked by basename
+- `denylist-ebpf/paths.toml` - Blocked write paths
+- `nemesis-ebpf.service` - systemd service for automatic activation
+- `install-service.sh` - Service installation script
 
 ---
 
-## Uso no dia a dia
+## Path control
 
-Com os hooks configurados, o Nemesis opera de forma transparente: ele só se manifesta quando bloqueia algo. Comandos e escritas legítimas passam sem fricção.
+After installation, what the agent can touch is defined in `denylist-folder-files.json`, under **exclusively human** control, at three levels:
+
+- **`absolute_block`** - total block (read + write + delete). Includes `.env`, `.ssh/id_rsa`, `.bashrc`/`.zshrc`, each IDE's settings/hooks (`.claude/`, `.cursor/`, `.devin/`) and `.nemesis/` itself.
+- **`write_block`** - reading allowed, write/edit blocked. Includes `package.json`, `next.config.js`, `eslint.config.mjs`, `.gitignore` and the logs.
+- **`allowed_exceptions`** - the released scaffold (e.g.: `/src/`), where the agent writes and edits freely.
+
+**These files become the responsibility of manual human editing.** The AI agent does not edit or delete them. A destructive command (delete, overwrite outside scope, reset) remains **always forbidden to the AI**, regardless of any read/write permission.
+
+---
+
+## Day-to-day use
+
+With the hooks configured, Nemesis operates transparently: it only shows itself when it blocks something. Legitimate commands and writes pass without friction.
 
 ```bash
-# Escanear um arquivo manualmente
+# Scan a file manually
 nemesis-defender --scan /caminho/arquivo.rs
 
-# Iniciar / parar o daemon de filesystem
+# Start / stop the filesystem daemon
 nemesis-defender --ensure-daemon
 nemesis-defender --stop
 
-# Ver bloqueios recentes (ledger único de TODAS as camadas, JSONL)
+# See recent blocks (single ledger for ALL layers, JSONL)
 tail -20 .nemesis/logs/nemesis-violations.log | jq .
 
-# Telemetria local: total + por camada + por tipo + por dia
+# Local telemetry: total + per layer + per type + per day
 nemesis-defender --log-stats
 ```
 
-> **Registro 100% local.** Todo log e telemetria do Nemesis fica em `.nemesis/` dentro do seu próprio projeto. **Nada é enviado, exfiltrado ou telemetrado para fora** da sua máquina — não há servidor, coleta remota nem "phone home". Os bloqueios das camadas (pretool, posttool, nemesis-defender, eBPF) vão todos para um **ledger único** `.nemesis/logs/nemesis-violations.log`; o histórico antigo fica arquivado em `.nemesis/logs/log-legado/`. O estado de correlação comportamental (que o daemon usa para detecção multi-turn) fica em `.nemesis/runtime/session-events.jsonl` — também local.
+> **100% local logging.** Every Nemesis log and telemetry stays in `.nemesis/` inside your own project. **By default, nothing leaves your machine** — there is no remote collection nor "phone home" of commands, paths, or content. The only exception, **optional and opt-in**, is the publisher's anonymous install/uninstall ping (opaque UUID, without any machine or project data), which you can simply not activate. The layer blocks (pretool, posttool, nemesis-defender, eBPF) all go to a **single ledger** `.nemesis/logs/nemesis-violations.log`; the old history is archived in `.nemesis/logs/log-legado/`. The behavioral correlation state (which the daemon uses for multi-turn detection) stays in `.nemesis/runtime/session-events.jsonl` — also local.
 
-### Mensagens de bloqueio
+### Block messages
 
-Quando algo é barrado, o Nemesis emite uma de seis mensagens categorizadas, para que você (e o agente) saiba exatamente por quê:
+When something is barred, Nemesis emits one of six categorized messages, so that you (and the agent) know exactly why:
 
-| Categoria | Mensagem |
+| Category | Message |
 |-----------|----------|
-| Comando bloqueado | `NEMESIS SEC - COMANDO NAO PERMITIDO` |
-| Escrita em arquivo protegido | `NEMESIS SEC - ACESSO NEGADO - ARQUIVO PROTEGIDO` |
-| Leitura de arquivo protegido | `NEMESIS SEC - LEITURA NEGADA - ARQUIVO PROTEGIDO` |
-| Conteúdo malicioso | `NEMESIS SEC - CONTEUDO MALICIOSO DETECTADO` |
-| Escrita fora do escopo | `NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO` |
-| Violação de padrão de código | `NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!` |
+| Blocked command | `NEMESIS SEC - COMANDO NAO PERMITIDO` |
+| Write to a protected file | `NEMESIS SEC - ACESSO NEGADO - ARQUIVO PROTEGIDO` |
+| Read of a protected file | `NEMESIS SEC - LEITURA NEGADA - ARQUIVO PROTEGIDO` |
+| Malicious content | `NEMESIS SEC - CONTEUDO MALICIOSO DETECTADO` |
+| Write outside scope | `NEMESIS SEC - ESCRITA FORA DO ESCOPO PERMITIDO` |
+| Code pattern violation | `NEMESIS QUALITY - PADRAO DE CODIGO NAO PERMITIDO ANALISAR REGRAS!` |
 
-No terminal sob eBPF, o kernel emite a mensagem padrão do sistema (`Operação não permitida`) com exit code 126 - o registro padronizado fica no ledger `.nemesis/logs/nemesis-violations.log` (camada `ebpf-kernel`).
+In the terminal under eBPF, the kernel emits the system's default message (`Operação não permitida`) with exit code 126 - the standardized record stays in the ledger `.nemesis/logs/nemesis-violations.log` (`ebpf-kernel` layer).
 
 ---
 
-## Verificação e diagnóstico
+## Verification and diagnostics
 
 ```bash
-# Escanear o conteúdo de um arquivo manualmente (mesma engine do daemon/hook)
+# Scan a file's content manually (same engine as the daemon/hook)
 .nemesis/target/release/nemesis-defender --scan /caminho/arquivo.js
 
-# Diagnóstico da camada eBPF (Linux)
+# eBPF layer diagnostic (Linux)
 .nemesis/target/release/nemesis-ebpf-daemon --doctor
 .nemesis/target/release/nemesis-ebpf-daemon --print-status
 
-# Bloqueios da camada de kernel (eBPF) no ledger único
+# Kernel layer (eBPF) blocks in the single ledger
 grep '"layer":"ebpf-kernel"' .nemesis/logs/nemesis-violations.log
 ```
 
-**Nota:** O binário `nemesis-ebpf-daemon` precisa ser compilado com `cargo build -p nemesis-ebpf-kernel`. Se o BPF LSM estiver ativo e bloqueando o build, pare o daemon eBPF antes de compilar.
+**Note:** The `nemesis-ebpf-daemon` binary must be compiled with `cargo build -p nemesis-ebpf-kernel`. If BPF LSM is active and blocking the build, stop the eBPF daemon before compiling.
 
-Para confirmar que o pretool está realmente ativo, force um comando que deve ser bloqueado em um arquivo de teste descartável e verifique se aparece no log. Se nada acontecer, o hook provavelmente não está apontando para o caminho certo.
+To confirm the pretool is actually active, force a command that should be blocked on a disposable test file and check whether it appears in the log. If nothing happens, the hook is probably not pointing to the right path.
 
 ---
 
-## Relaxar ou customizar regras
+## Relaxing or customizing rules
 
-### O Nemesis foi calibrado para frontend
+### Nemesis is calibrated for frontend
 
-O detector foi calibrado contra a realidade **frontend** (Next.js / React / TypeScript), onde o falso-positivo (FP) fica **abaixo de ~1%**. Frontend praticamente não gera código "scriptado" (sudo, `sed -i`, exec dinâmico, manipulação de PATH); para essa stack, esses comandos são hostis e desnecessários, então bloqueá-los é correto.
+The detector was calibrated against **frontend** reality (Next.js / React / TypeScript), where the false positive (FP) stays **below ~1%**. Frontend practically does not generate "scripted" code (sudo, `sed -i`, dynamic exec, PATH manipulation); for that stack, those commands are hostile and unnecessary, so blocking them is correct.
 
-Stacks de **backend / DevSecOps** (e múltiplas linguagens) têm um coeficiente de FP **mais alto** — elas legitimamente usam comandos que para frontend seriam hostis. Isso é uma **limitação conhecida** do Nemesis e a razão de existir a allowlist (abaixo). Estimativa **por setor** (a partir de medição empírica em codebases open-source reais, com margem conservadora):
+**Backend / DevSecOps** stacks (and multiple languages) have a **higher** FP coefficient — they legitimately use commands that would be hostile for frontend. This is a **known limitation** of Nemesis and the reason the allowlist exists (below). Estimate **per sector** (from empirical measurement on real open-source codebases, with a conservative margin):
 
-| Setor | Stack típica | FP estimado |
+| Sector | Typical stack | Estimated FP |
 |---|---|---|
 | **Frontend** | Next.js / React / TypeScript | **< 1%** |
-| **Backend** | Python / Node / múltiplas linguagens | **~3–6%** |
-| **DevSecOps / IaC / Shell** | Ansible, installers, scripts, exec remoto | **a partir de ~7%** |
+| **Backend** | Python / Node / multiple languages | **~3–6%** |
+| **DevSecOps / IaC / Shell** | Ansible, installers, scripts, remote exec | **from ~7%** |
 
-São estimativas com margem de erro; o FP cresce quanto mais "scriptado" é o stack. Ferramentas intrinsecamente ofensivas (ex.: bibliotecas de exploit/shellcode) acendem por **design** — é o teto esperado, não fogo amigo, e confirma que a detecção real está viva.
+These are estimates with a margin of error; FP grows the more "scripted" the stack is. Intrinsically offensive tools (e.g.: exploit/shellcode libraries) light up by **design** — it is the expected ceiling, not friendly fire, and confirms that real detection is alive.
 
-> **Leitura:** FP baixo em frontend (e em Rust real); cresce em backend/devops/shell por usarem comandos intrínsecos à stack. Não é o detector "quebrando" — é a calibração frontend encontrando código legítimo de outra natureza. Esses ambientes devem **relaxar via allowlist**.
+> **Reading:** low FP in frontend (and in real Rust); it grows in backend/devops/shell because they use commands intrinsic to the stack. It is not the detector "breaking" — it is the frontend calibration meeting legitimate code of another nature. Those environments should **relax via the allowlist**.
 
-### A allowlist (única superfície editável)
+### The allowlist (the only editable surface)
 
-As deny-lists de **bloqueio** são **embutidas no binário** (tamper-proof) — não há arquivo no disco para editar, e isso é intencional: um agente não consegue enfraquecer o Nemesis editando regras. A **única** superfície que você edita após instalar é:
+The **blocking** deny-lists are **embedded in the binary** (tamper-proof) — there is no file on disk to edit, and this is intentional: an agent cannot weaken Nemesis by editing rules. The **only** surface you edit after installing is:
 
 ```
 .nemesis/denylist-customers/allowlist-customers.jsonc
 ```
 
-É um **override humano absoluto**: tudo que você listar passa, sobrescrevendo **qualquer** bloqueio (denylist de comando, defender, visitors) — no pretool e no daemon. Efeito imediato ao salvar (sem rebuild). É assim que backend/DevSecOps **relaxam** o Nemesis para a realidade da própria stack:
+It is an **absolute human override**: everything you list passes, overriding **any** block (command denylist, defender, visitors) — in the pretool and in the daemon. Immediate effect on save (no rebuild). This is how backend/DevSecOps **relax** Nemesis to their own stack's reality:
 
 ```jsonc
 {
-  // allow_commands: casa por SUBSTRING; allow_patterns: casa por REGEX (sem lookahead)
+  // allow_commands: matches by SUBSTRING; allow_patterns: matches by REGEX (no lookahead)
   "allow_commands": ["sudo systemctl restart nginx", "rm -rf ./dist"],
   "allow_patterns": ["^cp\\s+-r\\s+"]
 }
 ```
 
-> **Aviso de responsabilidade.** A allowlist é absoluta: se você liberar `rm -rf`, o Nemesis deixa de bloquear `rm -rf`. Você **devolve ao modelo o poder de decidir** sobre o que liberou — por sua conta e risco. O arquivo é editável **só por humano** (o agente nunca escreve nele — `absolute_block`); essa é a garantia que faz o override não ser auto-sabotagem. Edite no seu terminal nativo.
+> **Responsibility warning.** The allowlist is absolute: if you release `rm -rf`, Nemesis stops blocking `rm -rf`. You **return to the model the power to decide** about what you released — at your own risk. The file is editable **by a human only** (the agent never writes to it — `absolute_block`); that is the guarantee that keeps the override from being self-sabotage. Edit it in your native terminal.
 
-### Duas camadas, duas allowlists (importante para Linux)
+### Two layers, two allowlists (important for Linux)
 
-A `allowlist-customers.jsonc` relaxa o **pretool + o defender/daemon** — onde vivem os falsos-positivos de comando/conteúdo do agente. Vale em Linux e macOS (plataformas validadas); no Windows, best-effort (ver [Suporte por plataforma](#suporte-por-plataforma)).
+The `allowlist-customers.jsonc` relaxes the **pretool + the defender/daemon** — where the agent's command/content false positives live. It applies on Linux and macOS (validated platforms); on Windows, best-effort (see [Platform support](#platform-support)).
 
-A camada **eBPF** (kernel, Linux, opt-in) tem uma denylist **própria e separada** (`denylist-ebpf/commands.toml`) que a allowlist acima **não** controla. Em Linux, comandos como `rm`/`chmod` só **executam de fato** se você também os listar na allowlist do eBPF — assim você relaxa o kernel **sem editar a lista oficial**:
+The **eBPF** layer (kernel, Linux, opt-in) has its **own and separate** denylist (`denylist-ebpf/commands.toml`) that the allowlist above does **not** control. On Linux, commands like `rm`/`chmod` only **actually execute** if you also list them in the eBPF allowlist — this way you relax the kernel **without editing the official list**:
 
 ```
 .nemesis/denylist-customers/allowlist-ebpf.toml
 ```
 ```toml
-# nome EXATO do comando (basename do exec); por sua conta e risco
+# EXACT command name (basename of the exec); at your own risk
 allowed_commands = ["rm", "chmod", "tar"]
 ```
 
-O loader do eBPF **remove** esses comandos do bloqueio ao subir o daemon (recarrega ao reiniciar). Em macOS/Windows não há eBPF: a `allowlist-customers.jsonc` sozinha já libera. Os **visitors do Defender** continuam sendo código Rust (ampliá-los exige Rust).
+The eBPF loader **removes** those commands from blocking when starting the daemon (reloads on restart). On macOS/Windows there is no eBPF: the `allowlist-customers.jsonc` alone already releases. The **Defender visitors** remain Rust code (extending them requires Rust).
 
 ---
 
 
-## Solução de problemas
+## Troubleshooting
 
-| Sintoma | Causa provável | Ação |
+| Symptom | Probable cause | Action |
 |---------|----------------|------|
-| O Nemesis não bloqueia nada | Hook não aponta para o caminho absoluto certo | Revise o `settings.json`/`hooks.json` da IDE |
-| `enforcement_level` é `landlock` | BPF LSM não ativo ou sem capabilities | Refaça os passos 1-2 da [config eBPF](#configuração-da-camada-ebpf-linux) |
-| eBPF não bloqueia comando destrutivo | Processo do agente não está no cgroup | Mova o PID para `/sys/fs/cgroup/nemesis-agent/cgroup.procs` |
-| Build falha por falta de memória | Menos de ~4 GB de RAM livres | Libere memória ou compile com menos paralelismo |
+| Nemesis blocks nothing | Hook does not point to the right absolute path | Review the IDE's `settings.json`/`hooks.json` |
+| `enforcement_level` is `landlock` | BPF LSM not active or without capabilities | Redo steps 1-2 of the [eBPF config](#ebpf-layer-configuration-linux) |
+| eBPF does not block a destructive command | The agent's process is not in the cgroup | Move the PID to `/sys/fs/cgroup/nemesis-agent/cgroup.procs` |
+| Build fails due to lack of memory | Less than ~4 GB of free RAM | Free memory or compile with less parallelism |
 
 ---
 
-## Módulos pausados
+## Paused modules
 
-O Nemesis possui funcionalidades presentes no código mas atualmente inativas:
+Nemesis has features present in the code but currently inactive:
 
-**ast-linters** (`ast-linters/`). Camada de qualidade de código com visitors tree-sitter focados na stack frontend Next/React/TypeScript. Detecta anti-padrões como `any` explícito, hooks condicionais, CSS inline, promises não tratadas e segredos hardcoded. O módulo está **silenciado** — presente no código mas sem enforcement ativo.
+**ast-linters** (`ast-linters/`). Code quality layer with tree-sitter visitors focused on the frontend Next/React/TypeScript stack. Detects anti-patterns like explicit `any`, conditional hooks, inline CSS, unhandled promises, and hardcoded secrets. The module is **silenced** — present in the code but without active enforcement.
 
 ---
 
-## Estrutura do projeto
+## Project structure
 
-Layout base do repositório (pastas e arquivos-chave; `bin/`, `target/`, `runtime/` são gerados e **não** versionados):
+Base layout of the repository (folders and key files; `bin/`, `target/`, `runtime/` are generated and **not** versioned):
 
 ```text
 Nemesis_Defender_v0/
-├─ README.md  AGENTS.md  CLAUDE.md            # docs canônicos (AGENTS = agente mantenedor)
+├─ README.md  AGENTS.md  CLAUDE.md            # canonical docs (AGENTS = maintainer agent)
 ├─ SECURITY.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md  NOTICE  LICENSE
 ├─ .gitignore  config.yml  PULL_REQUEST_TEMPLATE.md
 │
-├─ .github/                                   # governança + CI/CD
+├─ .github/                                   # governance + CI/CD
 │  ├─ workflows/release.yml                   # build + attestation (SLSA) + release (draft)
 │  ├─ workflows/self-audit.yml               # gate: pentest + cargo audit + pin-check
-│  ├─ CODEOWNERS                              # revisão obrigatória nos paths trust-critical
+│  ├─ CODEOWNERS                              # mandatory review on trust-critical paths
 │  └─ ISSUE_TEMPLATE/  hooks/  settings.json
 │
-├─ .nemesis/                                  # núcleo: workspace Rust + runtime
-│  ├─ Cargo.toml  Cargo.lock                  # workspace (lockfile COMMITADO)
-│  ├─ nemesis-defender/                       # scanner "Iron Dome" (lib + daemon)
-│  │  ├─ src/                                 # visitors + 6 layers de scan + severidade
-│  │  ├─ config/denylist-defender.json        # segurança de conteúdo (EMBUTIDA no binário)
+├─ .nemesis/                                  # core: Rust workspace + runtime
+│  ├─ Cargo.toml  Cargo.lock                  # workspace (COMMITTED lockfile)
+│  ├─ nemesis-defender/                       # "Iron Dome" scanner (lib + daemon)
+│  │  ├─ src/                                 # visitors + 6 scan layers + severity
+│  │  ├─ config/denylist-defender.json        # content security (EMBEDDED in the binary)
 │  │  └─ tests/
-│  ├─ nemesis-doctor/                         # diagnóstico G1–G7 + NEMESIS-OPERATIONS.md
-│  ├─ ebpf-kernel/                            # camada de kernel (Linux, opt-in)
-│  │  ├─ src/                                 # loader, config, landlock (sandbox sem root)
-│  │  ├─ ebpf/  include/  denylist-ebpf/      # programa BPF + allowlists (egress/landlock)
+│  ├─ nemesis-doctor/                         # G1–G7 diagnostic + NEMESIS-OPERATIONS.md
+│  ├─ ebpf-kernel/                            # kernel layer (Linux, opt-in)
+│  │  ├─ src/                                 # loader, config, landlock (rootless sandbox)
+│  │  ├─ ebpf/  include/  denylist-ebpf/      # BPF program + allowlists (egress/landlock)
 │  │  └─ Makefile
-│  ├─ ast-linters/                            # qualidade de código (pausado)
-│  ├─ hooks/                                  # pretool/posttool (.rs) + fallback fail-closed
-│  ├─ denylist/                               # deny-lists EDITÁVEIS (comando/qualidade/pastas)
+│  ├─ ast-linters/                            # code quality (paused)
+│  ├─ hooks/                                  # pretool/posttool (.rs) + fail-closed fallback
+│  ├─ denylist/                               # EDITABLE deny-lists (command/quality/folders)
 │  ├─ install/                                # nemesis-install.sh + info-install.txt (curl)
-│  ├─ pentest-nemesis-control/                # suíte red-team (run-pentest.sh + cenários)
-│  ├─ forensics/                              # auditoria de conteúdo externo (scan-incoming.sh)
+│  ├─ pentest-nemesis-control/                # red-team suite (run-pentest.sh + scenarios)
+│  ├─ forensics/                              # external content audit (scan-incoming.sh)
 │  ├─ scripts/  lsp/                          # build/caps + LSP
-│  ├─ bin/ · target/                          # binários (distro · build da fonte) — gerados
-│  └─ runtime/ · quarantine/                  # PID/lock do daemon · arquivos quarentenados
+│  ├─ bin/ · target/                          # binaries (distro · build from source) — generated
+│  └─ runtime/ · quarantine/                  # daemon PID/lock · quarantined files
 │
-└─ .claude/ .devin/ .cursor/ .codex/ .gemini/ .agents/ .openclaude/   # scaffolds de hook por IDE
+└─ .claude/ .devin/ .cursor/ .codex/ .gemini/ .agents/ .openclaude/   # per-IDE hook scaffolds
 ```
 
 ---
 
-## Contribuição
+## Contributing
 
-Contribuições são bem-vindas - código, novos vetores de deny-list, e especialmente **relatos de bypass**. Veja [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Contributions are welcome - code, new deny-list vectors, and especially **bypass reports**. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-Para **manter o Nemesis** (em qualquer IDE/TUI), o ponto de partida é o [`AGENTS.md`](AGENTS.md) - o agente mantenedor canônico (invariantes de segurança, disciplina epistêmica, mapa do repositório, boas práticas de Rust) - e o manual de operação [`.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md`](.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md) (build, lifecycle de daemon/pretool/eBPF, logs, checklist).
+To **maintain Nemesis** (in any IDE/TUI), the starting point is [`AGENTS.md`](AGENTS.md) - the canonical maintainer agent (security invariants, epistemic discipline, repository map, Rust best practices) - and the operation manual [`.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md`](.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md) (build, daemon/pretool/eBPF lifecycle, logs, checklist).
 
-O projeto adota o **Developer Certificate of Origin (DCO)**: assine seus commits com `git commit -s`.
+The project adopts the **Developer Certificate of Origin (DCO)**: sign your commits with `git commit -s`.
 
-A camada eBPF, em particular, é um campo aberto: ela hoje cobre execução de binários destrutivos (execve). Estender para escrita não-execve (hooks `file_open`/`inode_unlink`), matching por inode em vez de basename, e seccomp no modo `--start` são melhorias mapeadas e disponíveis para quem quiser contribuir.
-
----
-
-## Segurança e disclosure
-
-Bypasses e vetores não cobertos são **esperados** e **bem-vindos**. Se você contornar qualquer camada, **não abra uma issue pública** - siga o [`SECURITY.md`](SECURITY.md) e reporte em privado para `feryamaha@hotmail.com`. Pesquisadores são creditados publicamente (salvo se preferirem anonimato).
+The eBPF layer, in particular, is an open field: today it covers execution of destructive binaries (execve). Extending to non-execve writes (`file_open`/`inode_unlink` hooks), matching by inode instead of basename, and seccomp in `--start` mode are mapped improvements available to anyone who wants to contribute.
 
 ---
 
-## Licença
+## Security and disclosure
 
-Distribuído sob a **GNU AGPL v3.0** (veja [`LICENSE`](LICENSE)). Você pode usar, estudar, modificar e redistribuir livremente - mas qualquer derivado ou serviço (inclusive SaaS) deve manter o código aberto sob a mesma licença.
-
-O copyright integral permanece com o autor, que oferece **licença comercial separada** (licenciamento dual) para uso sem as obrigações da AGPL. Contato: **feryamaha@hotmail.com**.
+Bypasses and uncovered vectors are **expected** and **welcome**. If you bypass any layer, **do not open a public issue** - follow [`SECURITY.md`](SECURITY.md) and report privately to `feryamaha@hotmail.com`. Researchers are credited publicly (unless they prefer anonymity).
 
 ---
 
-**Autor / mantenedor:** [@feryamaha](https://github.com/feryamaha)
+## License
 
-**Redes:** [GitHub](https://github.com/feryamaha) · [LinkedIn](https://www.linkedin.com/in/feryamaha) · [X (Twitter)](https://x.com/_feryamaha) · [Email](mailto:feryamaha@hotmail.com)
+Distributed under the **GNU AGPL v3.0** (see [`LICENSE`](LICENSE)). You may use, study, modify, and redistribute freely - but any derivative or service (including SaaS) must keep the code open under the same license.
+
+Full copyright remains with the author, who offers a **separate commercial license** (dual licensing) for use without the AGPL obligations. Contact: **feryamaha@hotmail.com**.
+
+---
+
+**Author / maintainer:** [@feryamaha](https://github.com/feryamaha)
+
+**Networks:** [GitHub](https://github.com/feryamaha) · [LinkedIn](https://www.linkedin.com/in/feryamaha) · [X (Twitter)](https://x.com/_feryamaha) · [Email](mailto:feryamaha@hotmail.com)

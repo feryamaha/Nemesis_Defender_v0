@@ -132,10 +132,10 @@ pub fn validate_semantic(content: &str, file_path: &str) -> Vec<SemanticViolatio
         if let Some(edit) = TreeEdit::from_diff(&previous_content, content) {
             let start = Instant::now();
             let result = parse_content_with_previous_tree(content, &previous_tree, &edit);
-            let duration = start.elapsed();
-            
+            let _duration = start.elapsed();
+
             #[cfg(debug_assertions)]
-            eprintln!("[AST-LINTERS DEBUG] Incremental parse: {:?} ({}ms)", file_path, duration.as_millis());
+            eprintln!("[AST-LINTERS DEBUG] Incremental parse: {:?} ({}ms)", file_path, _duration.as_millis());
             
             match result {
                 Ok(t) => t,
@@ -143,16 +143,16 @@ pub fn validate_semantic(content: &str, file_path: &str) -> Vec<SemanticViolatio
                     // Fallback para parse completo se incremental falhar
                     let start = Instant::now();
                     let result = parse_content(content, language);
-                    let duration = start.elapsed();
-                    
+                    let _duration = start.elapsed();
+
                     #[cfg(debug_assertions)]
-                    eprintln!("[AST-LINTERS DEBUG] Full parse (fallback): {:?} ({}ms)", file_path, duration.as_millis());
-                    
+                    eprintln!("[AST-LINTERS DEBUG] Full parse (fallback): {:?} ({}ms)", file_path, _duration.as_millis());
+
                     match result {
                         Ok(t) => t,
-                        Err(e) => {
+                        Err(_e) => {
                             #[cfg(debug_assertions)]
-                            eprintln!("[AST-LINTERS DEBUG] Parse failed for {}: {:?}", file_path, e);
+                            eprintln!("[AST-LINTERS DEBUG] Parse failed for {}: {:?}", file_path, _e);
                             return Vec::new();
                         }
                     }
@@ -162,16 +162,16 @@ pub fn validate_semantic(content: &str, file_path: &str) -> Vec<SemanticViolatio
             // Sem diff detectado, usa parse completo
             let start = Instant::now();
             let result = parse_content(content, language);
-            let duration = start.elapsed();
-            
+            let _duration = start.elapsed();
+
             #[cfg(debug_assertions)]
-            eprintln!("[AST-LINTERS DEBUG] Full parse: {:?} ({}ms)", file_path, duration.as_millis());
-            
+            eprintln!("[AST-LINTERS DEBUG] Full parse: {:?} ({}ms)", file_path, _duration.as_millis());
+
             match result {
                 Ok(t) => t,
-                Err(e) => {
+                Err(_e) => {
                     #[cfg(debug_assertions)]
-                    eprintln!("[AST-LINTERS DEBUG] Parse failed for {}: {:?}", file_path, e);
+                    eprintln!("[AST-LINTERS DEBUG] Parse failed for {}: {:?}", file_path, _e);
                     return Vec::new();
                 }
             }
@@ -180,16 +180,16 @@ pub fn validate_semantic(content: &str, file_path: &str) -> Vec<SemanticViolatio
         // Sem árvore anterior, usa parse completo
         let start = Instant::now();
         let result = parse_content(content, language);
-        let duration = start.elapsed();
-        
+        let _duration = start.elapsed();
+
         #[cfg(debug_assertions)]
-        eprintln!("[AST-LINTERS DEBUG] Full parse (no cache): {:?} ({}ms)", file_path, duration.as_millis());
-        
+        eprintln!("[AST-LINTERS DEBUG] Full parse (no cache): {:?} ({}ms)", file_path, _duration.as_millis());
+
         match result {
             Ok(t) => t,
-            Err(e) => {
+            Err(_e) => {
                 #[cfg(debug_assertions)]
-                eprintln!("[AST-LINTERS DEBUG] Parse failed for {}: {:?}", file_path, e);
+                eprintln!("[AST-LINTERS DEBUG] Parse failed for {}: {:?}", file_path, _e);
                 return Vec::new();
             }
         }

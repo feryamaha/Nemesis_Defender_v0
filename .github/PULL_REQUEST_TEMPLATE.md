@@ -1,47 +1,47 @@
-## Objetivo
-[1-4 linhas: o que foi feito e por que. Referencia a spec/plano.]
+## Objective
+[1-4 lines: what was done and why. Reference the spec/plan.]
 
-## Tipo de mudanca
-- [ ] Correcao de bug
-- [ ] Nova feature
-- [ ] Teste de regressao (cobrindo um bug/bypass ja corrigido)
-- [ ] Documentacao
-- [ ] Refatoracao / performance
+## Type of change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Regression test (covering an already-fixed bug/bypass)
+- [ ] Documentation
+- [ ] Refactor / performance
 
-## Arquivos Afetados
-- `caminho/do/arquivo.rs` [new|modified]
-- `caminho/do/outro/arquivo.rs` [modified]
+## Affected Files
+- `path/to/file.rs` [new|modified]
+- `path/to/other/file.rs` [modified]
 
-## Implementacoes Realizadas
+## Implementations Made
 
-### Arquivo: `caminho/do/arquivo.rs` (new|modified)
-- [O que foi criado/modificado em detalhe. Decisao tecnica. Padrao Rust seguido.]
+### File: `path/to/file.rs` (new|modified)
+- [What was created/modified in detail. Technical decision. Rust pattern followed.]
 
-### Arquivo: `caminho/do/outro/arquivo.rs` (modified)
-- [O que foi modificado. Decisao tecnica.]
+### File: `path/to/other/file.rs` (modified)
+- [What was modified. Technical decision.]
 
-## Criterios de Aceitacao
+## Acceptance Criteria
 - [x] `cargo check --workspace`: PASS
 - [x] `cargo test --workspace`: PASS
-- [x] Sem violacoes Nemesis
-- [x] Codigo Rust idiomatico
+- [x] No Nemesis violations
+- [x] Idiomatic Rust code
 
-## Beneficios
-[Reuso, desacoplamento, seguranca, performance, enforcebilidade]
+## Benefits
+[Reuse, decoupling, security, performance, enforceability]
 
-## Notas Adicionais
-[Contexto adicional se relevante]
+## Additional Notes
+[Additional context if relevant]
 
-> ⚠️ Se este PR está relacionado a uma **falha de segurança ou bypass explorável**, pare. Não descreva o exploit aqui — siga o [SECURITY.md](SECURITY.md) e reporte em privado primeiro.
+> ⚠️ If this PR is related to a **security flaw or exploitable bypass**, stop. Do not describe the exploit here — follow the [SECURITY.md](SECURITY.md) and report it privately first.
 
 ## CLI Table
 
 | Command | Result (OK/FAIL) | Observations |
 |---------|------------------|--------------|
-| `cargo check --workspace` | OK | Compilação válida |
-| `cargo test --workspace` | OK | Testes passam |
-| Pentest estático | OK | 224/224 PASS (100%) |
-| Pentest full live | OK | 74/74, 0 gaps, AUTOSSUFICIENTE |
+| `cargo check --workspace` | OK | Valid compilation |
+| `cargo test --workspace` | OK | Tests pass |
+| Static pentest | OK | 224/224 PASS (100%) |
+| Full live pentest | OK | 74/74, 0 gaps, SELF-SUFFICIENT |
 
 ## DCO
-Ao abrir este PR, confirmo que minha contribuição será licenciada sob a **GNU AGPL v3.0** (e concedo ao mantenedor o direito de licenciamento dual, conforme o CONTRIBUTING.md) e certifico a origem do código conforme o **Developer Certificate of Origin**.
+By opening this PR, I confirm that my contribution will be licensed under the **GNU AGPL v3.0** (and I grant the maintainer the right to dual licensing, as per the CONTRIBUTING.md) and I certify the origin of the code in accordance with the **Developer Certificate of Origin**.

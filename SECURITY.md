@@ -1,18 +1,18 @@
-# Política de Segurança (Security Policy)
+# Security Policy
 
-## Versões Suportadas
-O Nemesis está em desenvolvimento ativo. A versão principal atual recebe correções de segurança:
+## Supported Versions
+Nemesis is under active development. The current major version receives security fixes:
 
-| Versão | Suportada |
+| Version | Supported |
 | --- | --- |
-| 2.0.x | ✅ Sim |
+| 2.0.x | ✅ Yes |
 
-## Reportando uma Vulnerabilidade / Bypass
-Se você encontrar um bypass crítico nas camadas de enforcement ou uma falha de segurança no runtime do Nemesis, **por favor, não abra uma Issue pública.**
+## Reporting a Vulnerability / Bypass
+If you find a critical bypass in the enforcement layers or a security flaw in the Nemesis runtime, **please do not open a public Issue.**
 
-Envie um e-mail com os detalhes e o Proof of Concept (PoC) para: **feryamaha@hotmail.com**
+Send an email with the details and the Proof of Concept (PoC) to: **feryamaha@hotmail.com**
 
-Responderei em até 48 horas para coordenar a correção antes da divulgação pública (coordinated disclosure).
+I will respond within 48 hours to coordinate the fix before public disclosure (coordinated disclosure).
 
-## Reconhecimento
-Bypasses e vetores não cobertos são esperados e bem-vindos — são o ativo de validação mais valioso do projeto. Pesquisadores que reportarem vulnerabilidades de forma responsável serão creditados publicamente (salvo se preferirem anonimato), após a correção ser publicada.
+## Acknowledgment
+Bypasses and uncovered vectors are expected and welcome — they are the project's most valuable validation asset. Researchers who report vulnerabilities responsibly will be credited publicly (unless they prefer anonymity), after the fix is published.

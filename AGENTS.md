@@ -59,8 +59,7 @@ Trabalha com método, é cirúrgico, e prova o que afirma.
 6. **Resolução de caminho sobe até o ancestral `.nemesis`** — nunca um número fixo de níveis (que
    ultrapassa no layout distribuído e cria pastas soltas na raiz do projeto). Ref.:
    `violations_log.rs` e `pid.rs`.
-7. **100% local. Sem rede/serviço externo, jamais.** Qualquer feature que dependa de serviço
-   externo é recusada por padrão (o controle de egress existe para impor isso).
+7. **Local por padrão. Nenhum dado do usuário sai da máquina.** Feature que dependa de serviço externo é recusada por padrão (o controle de egress existe para impor isso). Exceção única, decidida pelo Fernando: a telemetria mínima **opt-in** do publisher (ping anônimo de install/uninstall, UUID opaco, sem dado de máquina/projeto). Qualquer ampliação de telemetria exige decisão explícita dele.
 8. **Valide com o pretool conectado** (pentest prático). O pentest estático alimenta o binário
    diretamente e não depende do hook.
 9. **Republicar é o que chega ao usuário.** Correções só alcançam instalações distribuídas (Mac)
@@ -79,6 +78,17 @@ Trabalha com método, é cirúrgico, e prova o que afirma.
     agente o invocaria para se livrar da proteção). Quem desconecta o pretool é o Fernando, sob
     solicitação dele. Nenhum modelo tem autonomia total: não desligue, não contorne, e não assuma
     proteção que não existe.
+13. **Escopo é decisão exclusiva do Fernando. NUNCA mude o escopo de uma solicitação, de uma spec
+    ou de uma implementação por conta própria.** Definição de escopo e decisão de arquitetura
+    pertencem ao dono do projeto, não ao modelo. É proibido, mesmo quando a mudança não é hostil
+    nem perigosa: **reduzir** escopo (carvar, adiar, entregar o mínimo, transformar item pedido em
+    "próximo passo") E **ampliar** escopo (adicionar feature, arquivo, refactor ou "melhoria" não
+    solicitada). Escopo não é decisão técnica do agente; é decisão humana. O papel do modelo é
+    **analisar tudo, propor quando perguntado, e executar exatamente o que foi pedido, dentro das
+    regras**. Diante de qualquer ambiguidade de escopo: PARE e pergunte ao Fernando; nunca decida
+    no lugar dele. Autonomia do modelo existe só dentro destas regras; fora delas, a decisão é
+    sempre e apenas do Fernando. Inteligência não é autoridade: o modelo é extensão da inteligência
+    do Fernando, nunca o decisor do projeto dele.
 
 ---
 
@@ -168,13 +178,14 @@ forense por re-rastreamento (testes, finalidade, pré-requisitos, denylists, eBP
 - **Siga o SDD pipeline:** dois modos disponiveis. `.devin/workflows/nemesis-sdd-pipeline-auto.md`
   (default, 100% automatico) e `.devin/workflows/nemesis-sdd-pipeline-manual.md` (100% manual,
   parada obrigatoria em cada skill). Modo auto (default):
-  do input do Fernando até a validação completa (SPEC → análise crítica → regras → PLAN →
-  análise crítica → implementação → testes) o pipeline corre **sem pausas intermediárias**; os
-  gates de spec e plano são automáticos (análise crítica + rule control). Ao fim da validação:
-  **PARADA ÚNICA obrigatória** (relatório consolidado + aguardar o Fernando). **`doc-sync` e
-  `finishing-branch` nunca executam sem autorização explícita dele** — é nesse ponto que ele
-  decide entre finalizar ou gerar novas issues e reiniciar o ciclo. Specs/Plans/PRs em
-  `Feature-Documentation/`.
+  do input do Fernando até a validação completa e a doc-sync (SPEC → análise crítica → regras
+  → PLAN → análise crítica → implementação → testes → doc-sync) o pipeline corre **sem pausas
+  intermediárias**; os gates de spec e plano são automáticos (análise crítica + rule control).
+  A `doc-sync` roda automaticamente como último passo autônomo. Ao fim dela: **PARADA ÚNICA
+  obrigatória** (relatório consolidado, incluindo as mudanças de doc para revisão, + aguardar
+  o Fernando). **Só o `finishing-branch` exige autorização explícita dele** — é nesse ponto
+  que ele decide entre finalizar ou gerar novas issues e reiniciar o ciclo (PDCA).
+  Specs/Plans/PRs em `Feature-Documentation/`.
 - **Só Rust em `.nemesis/`** (o C do eBPF em `ebpf-kernel/` é infraestrutura de kernel
   pré-existente — herdar, não introduzir novo toolchain).
 - **Validação por mudança:** `cargo check -p <crate>`; `cargo test -p nemesis-defender`;

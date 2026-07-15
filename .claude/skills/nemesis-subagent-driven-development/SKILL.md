@@ -20,6 +20,13 @@ qualidade de codigo.
 quality) = qualidade alta, iteracao rapida. Trabalho delegado se verifica de forma
 independente antes de integrar (lei F9); julgamento nao se delega.
 
+**Camadas de raciocinio (secao "Distribuicao de modelos" do workflow auto):** o orquestrador
+(modelo principal, camada MAIOR) nao implementa nem revisa — dispara implementadores na
+camada MEDIA e revisores na camada REVISOR, com o revisor em modelo DISTINTO do implementador
+da mesma tarefa. O mapeamento camada->modelo e declarado no pre-flight (Step 0) conforme os
+modelos disponiveis no harness; sem selecao de modelo disponivel, todos os subagentes rodam
+no modelo da sessao (fallback).
+
 **Execucao continua**: NAO pause para check-in entre tarefas. Execute TODAS as tarefas do
 plano sem parar. As unicas razoes para parar sao: BLOQUEADO que voce nao consegue resolver,
 ambiguidade que genuinamente impede progresso, ou todas as tarefas completadas.
@@ -41,25 +48,41 @@ conforme o perfil:
 Registrar a postura no rastreamento. Postura inesperada (ex.: working tree sujo com mudancas
 que nao sao suas, branch errada) = parar e reportar antes de tocar em qualquer arquivo.
 
+Declarar tambem o **mapeamento camada->modelo** do ciclo (ex.: "implementador=Opus,
+revisor=Sonnet" ou "fallback: modelo unico da sessao").
+
 ### Step 1: Carregar e Revisar Plano
 
 Ler o arquivo do plano. Revisar criticamente. Se ha preocupacoes, levanta-las ANTES de
 iniciar. Se nenhuma preocupacao, criar rastreamento de tarefas e prosseguir.
 
-### Step 2: Registrar Tarefas
+### Step 2: Registrar Tarefas e Derivar Waves
 
-Criar lista de rastreamento (pode ser texto ou interno):
+Criar lista de rastreamento e derivar as waves de execucao a partir do plano:
+
+- Uma tarefa entra na wave W somente quando TODAS as tarefas do seu DEPENDE_DE estao em
+  waves anteriores.
+- Tarefas na mesma wave devem ter conjuntos de arquivos DISJUNTOS (CREATE/MODIFY/TEST).
+  Intersecao de arquivos = waves sequenciais, mesmo sem DEPENDE_DE declarado (dois
+  implementadores no mesmo arquivo corrompem o trabalho um do outro).
+- Plano sem DEPENDE_DE (formato antigo) = uma tarefa por wave, execucao sequencial.
 
 ```
-[ ] TASK 1: [descricao]
-[ ] TASK 2: [descricao]
+[ ] WAVE 1: TASK 1, TASK 3   (sem dependencias, arquivos disjuntos)
+[ ] WAVE 2: TASK 2 (DEPENDE_DE: 1), TASK 4 (DEPENDE_DE: 3)
 ...
-[ ] TASK N: [descricao]
 ```
 
-### Step 3: Executar Tarefas (Continuo, sem Pausas)
+### Step 3: Executar Waves (Continuo, sem Pausas)
 
-Para CADA tarefa no plano:
+Para CADA wave, em ordem: disparar os implementadores de TODAS as tarefas da wave EM
+PARALELO (um subagente fresco por tarefa, camada MEDIA); coletar todos os resultados;
+disparar os revisores EM PARALELO (camada REVISOR, modelo distinto); a wave so fecha — e a
+proxima so abre — quando TODAS as tarefas dela estao PASS no two-stage review. FAIL em uma
+tarefa nao cancela as demais da wave: o follow-up dela roda enquanto as outras seguem o
+review, mas a proxima wave aguarda.
+
+Para CADA tarefa da wave:
 
 #### Phase 3a: Marcar como in_progress
 ```
@@ -179,9 +202,12 @@ Resultado: PRONTO PARA nemesis-tests (Skill 4.5) — invocar sem pausa
 
 ## Lembrar
 
-- Pre-flight de postura ANTES da primeira tarefa (F1)
+- Pre-flight de postura ANTES da primeira tarefa (F1), incluindo o mapeamento camada->modelo
 - Agente fresco por tarefa — contexto isolado, contrato de handoff completo (F9)
-- Revisor INDEPENDENTE roda a verificacao ele proprio — nao aceitar relato sem prova
+- Waves: paralelismo somente entre tarefas com arquivos disjuntos e sem dependencia; a
+  proxima wave so abre com TODAS as tarefas da atual em PASS
+- Revisor INDEPENDENTE (camada REVISOR, modelo distinto do implementador) roda a
+  verificacao ele proprio — nao aceitar relato sem prova
 - Execucao continua — NAO pause entre tarefas
 - PARE somente para blocadores irresoluveis
 - Nemesis enforcement valida codigo — confie nele, nunca o contorne

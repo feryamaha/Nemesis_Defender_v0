@@ -144,6 +144,49 @@ consolidado. O Fernando decide o proximo passo.
    de `nemesis-harness-integrity.md` precisa retornar ESPELHOS INTEGROS antes do finishing
    (Step 1.5 da Skill 5); deriva reconcilia-se via `nemesis-harness-sync`.
 
+8. **Distribuicao por camadas de raciocinio.** O pipeline e executado por um ORQUESTRADOR
+   (o modelo principal da sessao) que distribui fases a subagentes dedicados conforme a
+   secao "Distribuicao de modelos por camada de raciocinio" abaixo. Julgamento, gates,
+   PARADA UNICA e Trust Ledger NUNCA se delegam.
+
+## Distribuicao de modelos por camada de raciocinio (orquestracao de subagentes)
+
+A atribuicao de modelo e por CAMADA DE RACIOCINIO relativa, nunca por nome fixo de modelo:
+no inicio de cada ciclo o orquestrador identifica os modelos disponiveis no harness da IDE
+(ex.: parametro `model` da tool de subagentes no Claude Code) e mapeia as camadas relativas
+a si mesmo. Assim a regra sobrevive a mudanca de catalogo (ex.: topo Fable hoje, Opus depois).
+
+| Camada | Papel | Fases do pipeline | Regra de mapeamento |
+|---|---|---|---|
+| MAIOR | Investigacao, analise de estado atual, analise de causa, spec, analises criticas, plano, orquestracao | Skills 1, 0 (P1 e P2), 2, 3 + consolidacao e Trust Ledger | O modelo principal da sessao (o de maior raciocinio disponivel). NUNCA delegar estas fases. |
+| MEDIA | Executor fiel do plano (implementacao, segue spec+plano a risca) | Skill 4 — subagentes implementadores | Um degrau abaixo do orquestrador (ou o proprio, se nao houver degrau) |
+| REVISOR | Review independente, testes, build release, pentest, validacoes | Skill 4 — subagentes revisores; Skill 4.5 | Camada media-para-baixo; na Skill 4, obrigatoriamente modelo DISTINTO do implementador da mesma tarefa (reforca a independencia da lei F9) |
+| LEVE | doc-sync e preparacao do finishing | Skill 4.6; Skill 5 (preparacao do texto da PR) | O modelo mais leve disponivel que segue instrucoes com confiabilidade e menor custo |
+
+Exemplo de mapeamento (jul/2026, Claude Code): orquestrador Fable -> implementador Opus,
+revisor Sonnet, leve Haiku. Se o topo disponivel for Opus: implementador Sonnet, revisor
+Sonnet, leve Haiku. O orquestrador declara o mapeamento escolhido no pre-flight do ciclo.
+
+**Regras de orquestracao:**
+
+1. **O que NUNCA se delega:** os vereditos das analises criticas (Skill 0), os HARD-GATEs,
+   a PARADA UNICA, a escrita do Trust Ledger e o relatorio consolidado. Subagente prepara e
+   executa; o orquestrador confere, julga e apresenta.
+2. **Sincronizacao por dependencia (gate de fase):** um subagente so e disparado quando o
+   artefato de que ele depende existe e esta validado. Ordem inviolavel entre fases:
+   implementacao (4) -> validacao (4.5) -> doc-sync (4.6). doc-sync NUNCA dispara antes da
+   validacao PASS, porque os fixes autonomos da 4.5 mudam o git diff que a 4.6 reconcilia.
+3. **Paralelismo so DENTRO da Skill 4, por waves:** tarefas do plano sem dependencia
+   declarada (DEPENDE_DE) e com arquivos disjuntos executam em paralelo na mesma wave;
+   intersecao de arquivos ou dependencia = waves sequenciais. Procedimento na skill
+   `nemesis-subagent-driven-development`.
+4. **Contrato de handoff completo (lei F9):** todo subagente nasce sem memoria da conversa;
+   o disparo carrega o contrato integral (objetivo, arquivos exatos, invariantes,
+   o-que-nao-fazer, comando de verificacao, formato do resultado).
+5. **Fallback obrigatorio:** se o harness da IDE nao oferece selecao de modelo por
+   subagente, o pipeline executa com subagentes no modelo da sessao (comportamento
+   anterior). A distribuicao e otimizacao de custo/velocidade, nunca condicao para rodar.
+
 ## Entradas e Saidas
 
 | Fase | Entrada | Saida | Gate |

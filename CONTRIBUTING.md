@@ -1,26 +1,26 @@
-# Contribuindo para o Nemesis Defender
+# Contributing to Nemesis Defender
 
-Obrigado por se interessar em contribuir com o Nemesis Defender! Este é um projeto focado em segurança e governança determinística para desenvolvimento com IA. Para manter a robustez do software, seguimos diretrizes estritas de desenvolvimento.
+Thank you for your interest in contributing to Nemesis Defender! This is a project focused on deterministic security and governance for AI-assisted development. To maintain the robustness of the software, we follow strict development guidelines.
 
-## Configuração do Ambiente de Desenvolvimento
+## Development Environment Setup
 
-O Nemesis é escrito principalmente em Rust. Para começar, você precisará de:
+Nemesis is written primarily in Rust. To get started, you will need:
 
-* Rust (mínimo v1.70) e Cargo
-* Clang/LLVM (necessário para a compilação do core)
-* Ambiente Linux (caso queira modificar ou testar a Camada 3 de eBPF/LSM)
+* Rust (minimum v1.70) and Cargo
+* Clang/LLVM (required to compile the core)
+* Linux environment (if you want to modify or test the eBPF/LSM Layer 3)
 
-### Clonando e Buildando o Projeto
+### Cloning and Building the Project
 
-Para clonar e buildar, rode os comandos normais de clone do git e depois:
+To clone and build, run the normal git clone commands and then:
 
 ```bash
 cargo build --release --workspace
 ```
 
-## Como Rodar os Testes
+## How to Run the Tests
 
-Nenhuma alteração de código será aceita se quebrar a suíte de testes existente. Antes de abrir um Pull Request, execute:
+No code change will be accepted if it breaks the existing test suite. Before opening a Pull Request, run:
 
 ```bash
 cargo test --workspace
@@ -28,31 +28,31 @@ cargo fmt --all -- --check
 cargo clippy --workspace -- -D warnings
 ```
 
-## Padrões de Código
+## Code Standards
 
-* **Segurança em primeiro lugar:** código `unsafe` deve ser evitado ao máximo e precisa de justificativa explícita documentada em comentário.
-* **Agnóstico de IDE:** toda lógica nova adicionada à biblioteca `nemesis-defender` deve permanecer agnóstica de plataforma ou editor de código.
-* **Testes de regressão:** se você corrigiu um bug ou um bypass, inclua um caso de teste sintético que cubra esse cenário para evitar regressões futuras.
+* **Security first:** `unsafe` code must be avoided as much as possible and requires explicit justification documented in a comment.
+* **IDE-agnostic:** any new logic added to the `nemesis-defender` library must remain platform- and code-editor-agnostic.
+* **Regression tests:** if you fixed a bug or a bypass, include a synthetic test case that covers that scenario to prevent future regressions.
 
-## Processo de Pull Request (PR)
+## Pull Request (PR) Process
 
-1. Faça um fork do repositório e crie sua branch a partir da `main`.
-2. Garanta que todos os testes passaram localmente.
-3. Certifique-se de que sua alteração está documentada.
-4. Abra o PR com uma descrição clara do problema que você está resolvendo e do impacto na segurança/performance do framework.
+1. Fork the repository and create your branch from `main`.
+2. Ensure all tests pass locally.
+3. Make sure your change is documented.
+4. Open the PR with a clear description of the problem you are solving and the impact on the framework's security/performance.
 
-## Reporte de Falhas de Segurança
+## Reporting Security Vulnerabilities
 
-**Aviso importante:** se a sua contribuição for a descoberta de uma falha de segurança crítica ou um bypass explorável, **não abra um PR público**. Siga o processo descrito no arquivo [SECURITY.md](SECURITY.md).
+**Important notice:** if your contribution is the discovery of a critical security vulnerability or an exploitable bypass, **do not open a public PR**. Follow the process described in the [SECURITY.md](SECURITY.md) file.
 
-## Licença das Contribuições (DCO)
+## License of Contributions (DCO)
 
-Ao enviar uma contribuição para este projeto, você concorda que:
+By submitting a contribution to this project, you agree that:
 
-1. Sua contribuição será licenciada sob a mesma licença do projeto (**GNU AGPL v3.0**).
-2. Você certifica a origem do código que está enviando, conforme o **Developer Certificate of Origin (DCO)** — ou seja, declara ter o direito de submeter esse código sob a licença do projeto.
-3. Você concede ao autor/mantenedor o direito de também licenciar sua contribuição sob **licença comercial separada** (licenciamento dual). Isso é necessário porque o projeto mantém a opção de licenciamento comercial, e contribuições sob AGPL pura impediriam o mantenedor de relicenciar. Ao contribuir, você concorda com essa concessão.
+1. Your contribution will be licensed under the same license as the project (**GNU AGPL v3.0**).
+2. You certify the origin of the code you are submitting, in accordance with the **Developer Certificate of Origin (DCO)** — that is, you declare you have the right to submit this code under the project's license.
+3. You grant the author/maintainer the right to also license your contribution under a **separate commercial license** (dual licensing). This is necessary because the project retains the commercial licensing option, and contributions under pure AGPL would prevent the maintainer from relicensing. By contributing, you agree to this grant.
 
-Para certificar, adicione a linha `Signed-off-by: Seu Nome <seu@email.com>` ao final de cada commit (use `git commit -s` para fazer isso automaticamente).
+To certify, add the line `Signed-off-by: Your Name <your@email.com>` at the end of each commit (use `git commit -s` to do this automatically).
 
-Isso mantém a base de código legalmente limpa e garante que toda contribuição pode ser integrada e mantida sem ambiguidade de direitos.
+This keeps the codebase legally clean and ensures that every contribution can be integrated and maintained without ambiguity of rights.

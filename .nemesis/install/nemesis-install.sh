@@ -378,28 +378,35 @@ scaffold_ide() {  # $1 = nome
 IDES="claude|openclaude|codex|cursor|devin|gemini|agents|github|grok"
 detected=0
 
-if [ -n "${NEMESIS_IDE:-}" ]; then
-  # IDE(s) EXPLÍCITA(s) via env — cria o hook MESMO que a pasta ainda não exista.
-  # Ex.: NEMESIS_IDE=devin bash nemesis-install.sh   (ou lista: NEMESIS_IDE=devin,codex)
-  OLD_IFS="$IFS"; IFS=','
-  for ide in $NEMESIS_IDE; do
-    ide="$(printf '%s' "$ide" | tr 'A-Z' 'a-z' | tr -d '[:space:]')"
-    if [ -n "$ide" ] && scaffold_ide "$ide"; then detected=1; fi
+# Parser UNICO de lista de IDEs — usado pelo caminho env (NEMESIS_IDE) e pelo prompt.
+# Aceita separacao por virgula e/ou espaco, em qualquer caixa (ex.: "devin, grok",
+# "devin grok", "DEVIN,Codex"). Cada item valido vira scaffold (pasta + hook, preservando
+# config existente via guard); item desconhecido avisa e NAO impede os demais.
+scaffold_ide_list() {  # $1 = lista crua digitada/da env
+  _list="$(printf '%s' "$1" | tr 'A-Z' 'a-z' | tr ',' ' ')"
+  for _ide in $_list; do
+    [ -n "$_ide" ] || continue
+    if scaffold_ide "$_ide"; then detected=$((detected+1)); fi
   done
-  IFS="$OLD_IFS"
+}
+
+if [ -n "${NEMESIS_IDE:-}" ]; then
+  # IDE(s) EXPLICITA(s) via env — cria o hook MESMO que a pasta ainda nao exista.
+  # Ex.: NEMESIS_IDE=devin bash nemesis-install.sh   (ou lista: NEMESIS_IDE=devin,codex)
+  scaffold_ide_list "$NEMESIS_IDE"
 else
-  # SEM autodetecção: o usuário SEMPRE informa a IDE (arquitetura: não inferir).
+  # SEM autodeteccao: o usuario SEMPRE informa a(s) IDE(s) (arquitetura: nao inferir).
+  # O mesmo projeto pode ser aberto em varias IDEs/TUIs: informe TODAS de uma vez.
   if [ -t 0 ]; then
-    printf '[nemesis-install] Para qual IDE configurar o hook? (%s): ' "$IDES"
+    printf '[nemesis-install] Para quais IDEs configurar o hook? Uma ou mais, separadas por virgula ou espaco (%s): ' "$IDES"
     read -r choice || choice=""
-    choice="$(printf '%s' "$choice" | tr 'A-Z' 'a-z' | tr -d '[:space:]')"
-    if [ -n "$choice" ] && scaffold_ide "$choice"; then detected=1; fi
+    scaffold_ide_list "$choice"
   fi
 fi
 
 if [ "$detected" -eq 0 ]; then
   printf '\033[0;31m[nemesis-install] ERRO:\033[0m Instalação cancelada: recusa de dados para configuração do enforcement (IDE não informada).\n' >&2
-  say "Informe a IDE ao reinstalar: NEMESIS_IDE=<ide> bash nemesis-install.sh"
+  say "Informe a(s) IDE(s) ao reinstalar: NEMESIS_IDE=<ide1>,<ide2> bash nemesis-install.sh"
   say "IDEs suportadas: $IDES"
   exit 1
 fi

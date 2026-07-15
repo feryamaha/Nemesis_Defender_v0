@@ -21,8 +21,9 @@ guarda contra contexto obsoleto e alucinação).
 Processo: SDD pipeline em dois modos: `.devin/workflows/nemesis-sdd-pipeline-auto.md`
 (default, 100% automatico) e `.devin/workflows/nemesis-sdd-pipeline-manual.md` (100% manual,
 parada obrigatoria em cada skill). **Modo auto (default):** do input a validacao completa
-sem pausas intermediarias; ao final, PARADA UNICA obrigatoria (relatorio + aguardar o
-Fernando). `nemesis-doc-sync` e `nemesis-finishing-branch` so executam com autorizacao
-explicita dele, nunca automaticamente. Repositorio 100% Rust
+E a doc-sync, sem pausas intermediarias; ao final da `nemesis-doc-sync`, PARADA UNICA
+obrigatoria (relatorio + aguardar o Fernando). A `nemesis-doc-sync` roda automaticamente
+como ultimo passo autonomo (a revisao das mudancas de doc acontece na PARADA UNICA); so a
+`nemesis-finishing-branch` exige autorizacao explicita dele, nunca automatica. Repositorio 100% Rust
 (+ C do eBPF e shell scripts herdados, infra pré-existente: herdar, não introduzir toolchain
 novo).

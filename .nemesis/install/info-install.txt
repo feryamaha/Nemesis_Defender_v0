@@ -1,174 +1,269 @@
 ===============================================================================
  NEMESIS DEFENDER v0 — LEIA-ME DE INSTALACAO (passo a passo)
+ NEMESIS DEFENDER v0 — INSTALL README (step by step)
 ===============================================================================
 
-Este arquivo veio junto com o instalador (nemesis-install.sh). Ele te guia, na
-ordem certa, da instalacao ate a validacao na SUA maquina (macOS ou Linux).
-Os comandos sao agnosticos de sistema operacional e de layout dos binarios.
+PT: Este arquivo veio junto com o instalador (nemesis-install.sh). Ele te guia, na
+    ordem certa, da instalacao ate a validacao na SUA maquina (macOS ou Linux).
+    Os comandos sao agnosticos de sistema operacional e de layout dos binarios.
+EN: This file came bundled with the installer (nemesis-install.sh). It guides you,
+    in the right order, from installation to validation on YOUR machine (macOS or
+    Linux). The commands are agnostic to operating system and binary layout.
 
-Tempo total: poucos minutos. Faca todos os passos a partir da RAIZ do seu projeto.
+PT: Tempo total: poucos minutos. Faca todos os passos a partir da RAIZ do seu projeto.
+EN: Total time: a few minutes. Run every step from the ROOT of your project.
 
 -------------------------------------------------------------------------------
  PASSO 1 — Baixar e instalar (um comando, voce ja fez isto)
+ STEP 1 — Download and install (one command, you already did this)
 -------------------------------------------------------------------------------
-Um unico comando baixa o instalador E este leia-me e ja instala. O arquivo vai
-para o disco antes de rodar (auditavel) — NAO e o "pipe cego" curl | sh, que o
-Nemesis bloqueia como vetor de ataque. A partir da RAIZ do seu projeto:
+PT: Um unico comando baixa o instalador E este leia-me e ja instala. O arquivo vai
+    para o disco antes de rodar (auditavel) — NAO e o "pipe cego" curl | sh, que o
+    Nemesis bloqueia como vetor de ataque. A partir da RAIZ do seu projeto:
+EN: A single command downloads the installer AND this readme and installs right
+    away. The file lands on disk before running (auditable) — it is NOT the "blind
+    pipe" curl | sh, which Nemesis blocks as an attack vector. From the ROOT of
+    your project:
 
   curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-install.sh \
        -O      https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/info-install.txt \
     && bash nemesis-install.sh
 
-O instalador detecta SO/arquitetura, baixa o pacote da release, CONFERE o
-checksum SHA256 antes de extrair, instala os binarios em .nemesis/bin/ e escreve
-o hook no formato correto da IDE detectada. Ele faz SO o essencial: nao roda
-validacao nem sobe o daemon (isso e manual, nos passos abaixo).
+PT: O instalador detecta SO/arquitetura, baixa o pacote da release, CONFERE o
+    checksum SHA256 antes de extrair, instala os binarios em .nemesis/bin/ e escreve
+    o hook no formato correto da IDE detectada. Ele faz SO o essencial: nao roda
+    validacao nem sobe o daemon (isso e manual, nos passos abaixo).
+EN: The installer detects OS/architecture, downloads the release package, VERIFIES
+    the SHA256 checksum before extracting, installs the binaries in .nemesis/bin/
+    and writes the hook in the correct format for the detected IDE. It does ONLY the
+    essentials: it neither runs validation nor starts the daemon (that is manual, in
+    the steps below).
 
-(Quer inspecionar antes? Baixe sem o "&& bash ..." e leia: less nemesis-install.sh)
+PT: (Quer inspecionar antes? Baixe sem o "&& bash ..." e leia: less nemesis-install.sh)
+EN: (Want to inspect first? Download without the "&& bash ..." and read:
+    less nemesis-install.sh)
 
-Reinicie a sua IDE para os hooks entrarem em vigor.
+PT: Reinicie a sua IDE para os hooks entrarem em vigor.
+EN: Restart your IDE for the hooks to take effect.
 
 -------------------------------------------------------------------------------
  PASSO 2 — Diagnostico (nemesis-doctor)
+ STEP 2 — Diagnostics (nemesis-doctor)
 -------------------------------------------------------------------------------
-Confirme que binarios, scaffold do hook e daemon estao sãos:
+PT: Confirme que binarios, scaffold do hook e daemon estao sãos:
+EN: Confirm that binaries, the hook scaffold and the daemon are healthy:
 
   .nemesis/bin/nemesis-doctor --quick
 
-Como ler o resultado (verificacoes G1 a G7):
-  - Cada verificacao que falha mostra a ACAO EXATA para corrigir, ja no caminho
-    do seu layout. Siga a acao indicada e rode o doctor de novo.
-  - G3 (inventario de binarios): deve listar todos presentes em .nemesis/bin/.
-  - G4 (scaffold da IDE): deve confirmar "pretool configurado" para a sua IDE.
-    Se acusar ausencia, reinicie a IDE ou rode o install escolhendo a IDE:
-    NEMESIS_IDE=devin bash nemesis-install.sh
-  - G6 (daemon): logo apos instalar, o daemon ainda nao esta rodando (e esperado).
-    Rode a acao que o proprio doctor indica para subi-lo, por exemplo:
-        .nemesis/bin/nemesis-defender --ensure-daemon
-    e rode o doctor de novo: o G6 deve passar a OK.
-  - Veredito CRITICO significa que a protecao ainda nao esta completa. Resolva o
-    que o doctor apontar ANTES de seguir para os pentests.
+PT: Como ler o resultado (verificacoes G1 a G7):
+      - Cada verificacao que falha mostra a ACAO EXATA para corrigir, ja no caminho
+        do seu layout. Siga a acao indicada e rode o doctor de novo.
+      - G3 (inventario de binarios): deve listar todos presentes em .nemesis/bin/.
+      - G4 (scaffold da IDE): deve confirmar "pretool configurado" para a sua IDE.
+        Se acusar ausencia, reinicie a IDE ou rode o install escolhendo a(s) IDE(s).
+        O prompt aceita uma ou mais, separadas por virgula ou espaco; ou via env:
+        NEMESIS_IDE=devin,codex bash nemesis-install.sh
+      - G6 (daemon): logo apos instalar, o daemon ainda nao esta rodando (e esperado).
+        Rode a acao que o proprio doctor indica para subi-lo, por exemplo:
+            .nemesis/bin/nemesis-defender --ensure-daemon
+        e rode o doctor de novo: o G6 deve passar a OK.
+      - Veredito CRITICO significa que a protecao ainda nao esta completa. Resolva o
+        que o doctor apontar ANTES de seguir para os pentests.
+EN: How to read the result (checks G1 to G7):
+      - Each failing check shows the EXACT ACTION to fix it, already in the path of
+        your layout. Follow the indicated action and run the doctor again.
+      - G3 (binary inventory): should list all binaries present in .nemesis/bin/.
+      - G4 (IDE scaffold): should confirm "pretool configured" for your IDE. If it
+        reports it missing, restart the IDE or run the install choosing the IDE(s).
+        The prompt accepts one or more, separated by comma or space; or via env:
+        NEMESIS_IDE=devin,codex bash nemesis-install.sh
+      - G6 (daemon): right after installing, the daemon is not running yet (expected).
+        Run the action the doctor itself indicates to start it, for example:
+            .nemesis/bin/nemesis-defender --ensure-daemon
+        and run the doctor again: G6 should turn OK.
+      - A CRITICAL verdict means the protection is not complete yet. Resolve what
+        the doctor points out BEFORE moving on to the pentests.
 
 -------------------------------------------------------------------------------
  PASSO 3 — Validacao ESTATICA (Nivel 1)
+ STEP 3 — STATIC validation (Level 1)
 -------------------------------------------------------------------------------
-Confirma que a logica de bloqueio dos binarios esta intacta no seu SO. Nao
-executa nada de verdade. O script auto-detecta o binario (macOS ou Linux):
+PT: Confirma que a logica de bloqueio dos binarios esta intacta no seu SO. Nao
+    executa nada de verdade. O script auto-detecta o binario (macOS ou Linux):
+EN: Confirms that the binaries' blocking logic is intact on your OS. It does not
+    actually execute anything. The script auto-detects the binary (macOS or Linux):
 
   bash .nemesis/pentest-nemesis-control/nemesis-defender/run-pentest.sh
 
-Criterio de sucesso: FAIL=0. Requer "node" no PATH (usado so para montar o JSON
-de teste). Detalhes completos em:
+PT: Criterio de sucesso: FAIL=0. Requer "node" no PATH (usado so para montar o JSON
+    de teste). Detalhes completos em:
+EN: Success criterion: FAIL=0. Requires "node" in the PATH (used only to build the
+    test JSON). Full details in:
 
   .nemesis/pentest-nemesis-control/nemesis-defender/info.md
 
 -------------------------------------------------------------------------------
  PASSO 4 — Validacao PRATICA (Nivel 2)
+ STEP 4 — PRACTICAL validation (Level 2)
 -------------------------------------------------------------------------------
-Aqui voce ve o Nemesis bloqueando acoes reais de um agente de IA. Cole, no seu
-agente (na IDE ou no TUI), o conteudo do cenario de teste:
+PT: Aqui voce ve o Nemesis bloqueando acoes reais de um agente de IA. Cole, no seu
+    agente (na IDE ou no TUI), o conteudo do cenario de teste:
+EN: Here you see Nemesis blocking real actions of an AI agent. Paste, into your
+    agent (in the IDE or the TUI), the content of the test scenario:
 
   .nemesis/pentest-nemesis-control/nemesis-defender/pentest-final-amplificado-portal-dental.md
 
-Os alvos sao fake e nao-roteaveis; o objetivo e MEDIR o bloqueio. Sucesso =
-o Nemesis barra cada acao (exit 2), 100% bloqueado.
+PT: Os alvos sao fake e nao-roteaveis; o objetivo e MEDIR o bloqueio. Sucesso =
+    o Nemesis barra cada acao (exit 2), 100% bloqueado.
+EN: The targets are fake and non-routable; the goal is to MEASURE the blocking.
+    Success = Nemesis stops every action (exit 2), 100% blocked.
 
 -------------------------------------------------------------------------------
  PASSO 5 — RELAXAR para a sua stack (allowlist) — backend/DevSecOps
+ STEP 5 — RELAX for your stack (allowlist) — backend/DevSecOps
 -------------------------------------------------------------------------------
-O Nemesis foi calibrado para frontend (Next/React/TS), onde o falso-positivo e
-baixo. Backend e DevSecOps usam comandos intrinsecos (sudo, sed -i, rm de build,
-exec dinamico) que para frontend seriam hostis — entao podem precisar relaxar.
+PT: O Nemesis foi calibrado para frontend (Next/React/TS), onde o falso-positivo e
+    baixo. Backend e DevSecOps usam comandos intrinsecos (sudo, sed -i, rm de build,
+    exec dinamico) que para frontend seriam hostis — entao podem precisar relaxar.
+EN: Nemesis was calibrated for frontend (Next/React/TS), where the false-positive
+    rate is low. Backend and DevSecOps use intrinsic commands (sudo, sed -i, rm of
+    build, dynamic exec) that would be hostile for frontend — so they may need
+    relaxing.
 
-As regras de BLOQUEIO sao EMBUTIDAS no binario (tamper-proof): nao ha arquivo de
-denylist no disco para editar. A UNICA superficie editavel e a allowlist:
+PT: As regras de BLOQUEIO sao EMBUTIDAS no binario (tamper-proof): nao ha arquivo de
+    denylist no disco para editar. A UNICA superficie editavel e a allowlist:
+EN: The BLOCKING rules are EMBEDDED in the binary (tamper-proof): there is no
+    denylist file on disk to edit. The ONLY editable surface is the allowlist:
 
   .nemesis/denylist-customers/allowlist-customers.jsonc
 
-E um OVERRIDE HUMANO ABSOLUTO: tudo que voce listar passa, sobrescrevendo qualquer
-bloqueio, no pretool e no daemon. Efeito imediato ao salvar (sem rebuild). Edite
-SO voce, no terminal nativo (o agente nunca escreve nesse arquivo, e absolute_block).
-E por sua conta e risco. Exemplo:
+PT: E um OVERRIDE HUMANO ABSOLUTO: tudo que voce listar passa, sobrescrevendo qualquer
+    bloqueio, no pretool e no daemon. Efeito imediato ao salvar (sem rebuild). Edite
+    SO voce, no terminal nativo (o agente nunca escreve nesse arquivo, e absolute_block).
+    E por sua conta e risco. Exemplo:
+EN: It is an ABSOLUTE HUMAN OVERRIDE: everything you list passes, overriding any
+    block, in the pretool and the daemon. Immediate effect on save (no rebuild).
+    ONLY you edit it, in the native terminal (the agent never writes to this file,
+    it is absolute_block). It is at your own risk. Example:
 
   {
     // allow_commands: casa por SUBSTRING; allow_patterns: casa por REGEX
+    // allow_commands: matches by SUBSTRING; allow_patterns: matches by REGEX
     "allow_commands": ["sudo systemctl restart nginx", "rm -rf ./dist"],
     "allow_patterns": ["^cp\\s+-r\\s+"]
   }
 
-DUAS CAMADAS, DUAS ALLOWLISTS (importante p/ Linux):
-  - allowlist-customers.jsonc  -> relaxa o PRETOOL + o DEFENDER/daemon (onde vivem os
-    falsos-positivos de comando/conteudo do agente). Vale em macOS, Linux e Windows.
-  - allowlist-ebpf.toml        -> relaxa a camada eBPF (kernel, SO Linux, opt-in). A
-    denylist do kernel (commands.toml) e separada e NAO e controlada pela allowlist acima.
-    Em Linux, comandos como `rm`/`chmod` so executam de fato se voce tambem lista-los aqui:
+PT: DUAS CAMADAS, DUAS ALLOWLISTS (importante p/ Linux):
+      - allowlist-customers.jsonc  -> relaxa o PRETOOL + o DEFENDER/daemon (onde vivem os
+        falsos-positivos de comando/conteudo do agente). Vale em macOS, Linux e Windows.
+      - allowlist-ebpf.toml        -> relaxa a camada eBPF (kernel, SO Linux, opt-in). A
+        denylist do kernel (commands.toml) e separada e NAO e controlada pela allowlist acima.
+        Em Linux, comandos como `rm`/`chmod` so executam de fato se voce tambem lista-los aqui:
+EN: TWO LAYERS, TWO ALLOWLISTS (important for Linux):
+      - allowlist-customers.jsonc  -> relaxes the PRETOOL + the DEFENDER/daemon (where the
+        agent's command/content false-positives live). Applies on macOS, Linux and Windows.
+      - allowlist-ebpf.toml        -> relaxes the eBPF layer (kernel, Linux OS, opt-in). The
+        kernel denylist (commands.toml) is separate and is NOT controlled by the allowlist above.
+        On Linux, commands like `rm`/`chmod` only actually run if you also list them here:
 
       .nemesis/denylist-customers/allowlist-ebpf.toml
       allowed_commands = ["rm", "chmod", "tar"]   # nome EXATO do comando; por sua conta e risco
+                                                  # EXACT command name; at your own risk
 
-    (Em macOS/Windows nao ha eBPF: a allowlist-customers.jsonc sozinha ja libera.)
+PT: (Em macOS/Windows nao ha eBPF: a allowlist-customers.jsonc sozinha ja libera.)
+EN: (On macOS/Windows there is no eBPF: allowlist-customers.jsonc alone already frees it.)
 
 -------------------------------------------------------------------------------
  DESINSTALACAO
+ UNINSTALL
 -------------------------------------------------------------------------------
-Para remover o Nemesis deste projeto, rode na RAIZ, no terminal nativo.
+PT: Para remover o Nemesis deste projeto, rode na RAIZ, no terminal nativo.
+EN: To remove Nemesis from this project, run at the ROOT, in the native terminal.
 
-Self-contained (funciona em QUALQUER instalacao - baixa o script e roda):
+PT: Self-contained (funciona em QUALQUER instalacao - baixa o script e roda):
+EN: Self-contained (works on ANY installation - downloads the script and runs it):
 
   curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
     && bash nemesis-uninstall.sh
 
   # sem confirmacao interativa:
+  # without interactive confirmation:
   curl -fsSLO https://raw.githubusercontent.com/feryamaha/Nemesis_Defender_v0/main/.nemesis/install/nemesis-uninstall.sh \
     && NEMESIS_YES=1 bash nemesis-uninstall.sh
 
-O instalador tambem deixa uma copia local; se ela existir, basta:
+PT: O instalador tambem deixa uma copia local; se ela existir, basta:
+EN: The installer also leaves a local copy; if it exists, just run:
 
   bash .nemesis/install/nemesis-uninstall.sh
 
-O script para o daemon, desabilita o servico eBPF (se instalado, opt-in), remove
-os hooks de IDE que apontam para o Nemesis (e AVISA sobre os compartilhados, como
-.claude/settings.json e .vscode/settings.json, para voce tirar a entrada do
-Nemesis a mao preservando o resto) e remove a pasta .nemesis/ (binarios, daemon,
-SUA allowlist e logs). Git e seu: nada e commitado/removido do versionamento.
-Reinicie a IDE depois.
+PT: O script para o daemon, desabilita o servico eBPF (se instalado, opt-in), remove
+    os hooks de IDE que apontam para o Nemesis (e AVISA sobre os compartilhados, como
+    .claude/settings.json e .vscode/settings.json, para voce tirar a entrada do
+    Nemesis a mao preservando o resto) e remove a pasta .nemesis/ (binarios, daemon,
+    SUA allowlist e logs). Git e seu: nada e commitado/removido do versionamento.
+    Reinicie a IDE depois.
+EN: The script stops the daemon, disables the eBPF service (if installed, opt-in),
+    removes the IDE hooks that point to Nemesis (and WARNS about the shared ones, like
+    .claude/settings.json and .vscode/settings.json, so you remove the Nemesis entry
+    by hand while preserving the rest) and removes the .nemesis/ folder (binaries,
+    daemon, YOUR allowlist and logs). Git is yours: nothing is committed/removed from
+    version control. Restart the IDE afterwards.
 
 -------------------------------------------------------------------------------
  PASSO 6 — ARQUIVO QUARENTENADO?
+ STEP 6 — QUARANTINED FILE?
 -------------------------------------------------------------------------------
-Se o Nemesis mover um arquivo para quarentena (exit 2, "QUARENTENA PENDENTE"),
-ele nao deleta: preserva para revisao humana. Para recuperar:
+PT: Se o Nemesis mover um arquivo para quarentena (exit 2, "QUARENTENA PENDENTE"),
+    ele nao deleta: preserva para revisao humana. Para recuperar:
+EN: If Nemesis moves a file to quarantine (exit 2, "QUARENTENA PENDENTE"), it does
+    not delete it: it preserves it for human review. To recover:
 
-1. Liste os itens quarentenados:
+PT: 1. Liste os itens quarentenados:
+EN: 1. List the quarantined items:
 
      .nemesis/bin/nemesis-defender --quarantine list
 
-   Voce vera uma tabela com colunas ID, Origem, Severidade e Violacoes.
+PT:    Voce vera uma tabela com colunas ID, Origem, Severidade e Violacoes.
+EN:    You will see a table with columns ID, Origin, Severity and Violations.
 
-2. Inspecione o item pelo ID (use o ID da listagem, sem os colchetes):
+PT: 2. Inspecione o item pelo ID (use o ID da listagem, sem os colchetes):
+EN: 2. Inspect the item by ID (use the ID from the listing, without the brackets):
 
      .nemesis/bin/nemesis-defender --quarantine show <ID>
 
-3. Decida:
-   - Falso-positivo (volta ao lugar original):
+PT: 3. Decida:
+       - Falso-positivo (volta ao lugar original):
+EN: 3. Decide:
+       - False-positive (goes back to its original place):
 
        .nemesis/bin/nemesis-defender --quarantine restore <ID>
 
-   - Confirmado malicioso (expurgar definitivamente):
+PT:    - Confirmado malicioso (expurgar definitivamente):
+EN:    - Confirmed malicious (purge permanently):
 
        .nemesis/bin/nemesis-defender --quarantine purge <ID>
 
-Enquanto houver itens pendentes, o pretool bloqueia a sessao (exit 2).
-Resolva todos os itens pendentes para liberar a sessao.
+PT: Enquanto houver itens pendentes, o pretool bloqueia a sessao (exit 2).
+    Resolva todos os itens pendentes para liberar a sessao.
+EN: While there are pending items, the pretool blocks the session (exit 2).
+    Resolve all pending items to release the session.
 
 -------------------------------------------------------------------------------
  ENCONTROU UM PROBLEMA OU UM GAP?
+ FOUND A PROBLEM OR A GAP?
 -------------------------------------------------------------------------------
-Se algo que DEVERIA ser bloqueado passou, isso e um achado valioso. Por favor:
-  - Abra uma issue em:
-      https://github.com/feryamaha/Nemesis_Defender_v0/issues
-  - Ou entre em contato: feryamaha@hotmail.com
+PT: Se algo que DEVERIA ser bloqueado passou, isso e um achado valioso. Por favor:
+      - Abra uma issue em:
+          https://github.com/feryamaha/Nemesis_Defender_v0/issues
+      - Ou entre em contato: feryamaha@hotmail.com
+EN: If something that SHOULD have been blocked got through, that is a valuable
+    finding. Please:
+      - Open an issue at:
+          https://github.com/feryamaha/Nemesis_Defender_v0/issues
+      - Or get in touch: feryamaha@hotmail.com
 
-Nao desabilite o Nemesis para "fazer funcionar". Se um bloqueio legitimo te
-atrapalhar, RELAXE pela allowlist (PASSO 5) em vez de desligar a protecao.
+PT: Nao desabilite o Nemesis para "fazer funcionar". Se um bloqueio legitimo te
+    atrapalhar, RELAXE pela allowlist (PASSO 5) em vez de desligar a protecao.
+EN: Do not disable Nemesis to "make it work". If a legitimate block gets in your
+    way, RELAX via the allowlist (STEP 5) instead of turning off the protection.
 ===============================================================================

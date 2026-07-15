@@ -4,14 +4,15 @@ description: >
   Valida a implementacao apos a Skill 4: check + testes do perfil, rebuild (autorizado
   intrinsecamente pelo pipeline), e no motor: pentest estatico, capabilities eBPF,
   nemesis-doctor e pentest full. Fix autonomo de falhas com maximo de 2 tentativas por
-  falha, com reconciliacao de vereditos no Trust Ledger. Termina na PARADA UNICA do
-  pipeline (relatorio consolidado + aguardar Fernando).
+  falha, com reconciliacao de vereditos no Trust Ledger. Ao passar, invoca a
+  `nemesis-doc-sync` (4.6) automaticamente, sem pausa.
 ---
 
 # Nemesis Tests (Validacao Pos-Execucao)
 
-Executar bateria de testes apos implementacao (Skill 4). E a ultima fase autonoma do
-pipeline: ao final dela vem a PARADA UNICA (aguardar o Fernando).
+Executar bateria de testes apos implementacao (Skill 4). Ao passar, invoca a
+`nemesis-doc-sync` (4.6) automaticamente (sem pausa); a PARADA UNICA do pipeline acontece
+no FIM da doc-sync, nao aqui.
 
 > **Texto unico espelhado nos dois repos.** Os comandos por fase vem do perfil do repo
 > (`.devin/rules/nemesis-repo-profile.md`). As Fases 3, 5, 6 e 7 sao EXCLUSIVAS do perfil
@@ -161,14 +162,13 @@ sudo .nemesis/scripts/ensure-ebpf-caps.sh
    - Parte nova (se existir): todos os vetores novos bloqueados
    - FP-guards: nenhum falso-positivo introduzido
 
-### Fase 8: PARADA UNICA do pipeline (HARD-GATE humano)
+### Fase 8: Handoff automatico para doc-sync (Skill 4.6)
 
-- **Tudo passou**: (1) invocar `nemesis-trust-ledger-update` para registrar os vereditos do
-  ciclo e as reconciliacoes no Trust Ledger (lei F11); (2) emitir o relatorio consolidado da
-  PARADA UNICA (formato no workflow do SDD pipeline): spec, plano, git diff real, tabela de
-  validacao com saidas literais, decisoes tomadas, achados fora de escopo, secao Trust
-  Ledger. **AGUARDAR o Fernando.** NAO invocar doc-sync nem finishing automaticamente:
-  essas skills so executam com autorizacao explicita dele.
+- **Tudo passou**: anotar os vereditos do ciclo (Skill 0 P1/P2, rule-control, resultado
+  desta validacao, reconciliacoes) para a coleta do Trust Ledger, e **invocar
+  `nemesis-doc-sync` (4.6) SEM PAUSA**. A doc-sync e o ultimo passo autonomo do pipeline; a
+  gravacao do Trust Ledger e a PARADA UNICA obrigatoria acontecem no FIM dela (depois da
+  doc-sync, antes do finishing). NAO emitir a PARADA UNICA aqui, e NAO invocar finishing.
 - **Algo falhou e nao foi possivel fixar** (2 tentativas esgotadas): parada de emergencia,
   reportar com evidencia completa (a parada de emergencia tambem e registrada no ledger).
 
@@ -182,17 +182,17 @@ VALIDACAO POS-EXECUCAO (perfil: [motor|dashboard]):
   [PASS] Fase 5 (capabilities eBPF)           [só-motor, Linux]
   [PASS] Fase 6 (nemesis-doctor)              [só-motor]
   [PASS] Fase 7 (pentest full, pretool ativo) [só-motor]
-  [OK]   Trust Ledger atualizado (vereditos + reconciliacoes do ciclo)
 
-⛔ PARADA UNICA: relatorio consolidado emitido. Aguardando Fernando
-   (doc-sync e finishing so com autorizacao explicita).
+Validacao verde -> invocando nemesis-doc-sync (4.6) sem pausa.
+(Trust Ledger e PARADA UNICA acontecem no FIM da doc-sync.)
 ```
 
 ## Integracao
 
 **Skill anterior**: `nemesis-subagent-driven-development` (Skill 4)
-**Proximo passo**: PARADA UNICA (relatorio + aguardar Fernando). Depois, SOMENTE com
-autorizacao explicita dele: `nemesis-doc-sync` (4.6) e/ou `nemesis-finishing-branch` (5)
+**Proxima skill (automatica, sem pausa)**: `nemesis-doc-sync` (4.6), que roda o Trust Ledger
+e emite a PARADA UNICA no fim dela. O `nemesis-finishing-branch` (5) so executa com
+autorizacao explicita do Fernando na PARADA UNICA.
 
 ## Lembrar
 
