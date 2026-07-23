@@ -18,6 +18,11 @@ distro). Auto-auditoria antes de concluir. Regra canônica: `.devin/rules/nemesi
 ação, debugging por hipóteses, verificação antes de concluir, triagem de reversibilidade,
 guarda contra contexto obsoleto e alucinação).
 
+**Canon por módulo do motor:** `.devin/rules/nemesis-global-defender.md` — regra global (engine-only)
+que destila o que cada módulo do motor é, o que faz, como convergem no produto Nemesis, e o que
+pode/não pode na codebase. Leia antes de tocar em qualquer módulo. Fonte de verdade: o código em
+`.nemesis/` + a doc da dashboard irmã (`../Dashboard-Nemesis-Defender/src/data/docs/`).
+
 Processo: SDD pipeline em dois modos: `.devin/workflows/nemesis-sdd-pipeline-auto.md`
 (default, 100% automatico) e `.devin/workflows/nemesis-sdd-pipeline-manual.md` (100% manual,
 parada obrigatoria em cada skill). **Modo auto (default):** do input a validacao completa

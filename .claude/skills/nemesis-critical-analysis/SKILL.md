@@ -1,5 +1,5 @@
 ---
-name: Nemesis Critical Analysis
+name: nemesis-critical-analysis
 description: Aplica disciplina epistemica e analise critica em 2 pontos do SDD pipeline: antes de gravar a spec e antes de executar o plano. Garante que toda mudanca melhora o Nemesis sem regredir o que ja funciona, com evidencia empirica e sem bajulacao.
 ---
 

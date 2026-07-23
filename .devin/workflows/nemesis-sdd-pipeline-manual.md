@@ -129,6 +129,12 @@ explicita do Fernando. So avanca para a proxima skill apos receber "sim", "pode"
    de `nemesis-harness-integrity.md` precisa retornar ESPELHOS INTEGROS antes do finishing
    (Step 1.5 da Skill 5); deriva reconcilia-se via `nemesis-harness-sync`.
 
+8. **Roteamento por modulo (canon).** No pre-flight da Skill 4, o modelo deriva dos paths que a spec
+   vai tocar o(s) modulo(s) do perfil e consulta o *canon de modulo* correspondente (motor:
+   `.devin/rules/nemesis-global-defender.md` §4) para carregar contexto e guardas do modulo ANTES de
+   implementar; modulos-joia (motor: `hooks/`, `pentest-nemesis-control/`) recebem atencao reforcada.
+   A doc-sync (4.6) anexa o historico em `.devin/ledger/modules/<modulo>.md`. Perfil sem canon -> no-op.
+
 ## Entradas e Saidas
 
 | Skill | Entrada | Saida | Gate |

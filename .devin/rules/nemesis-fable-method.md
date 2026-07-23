@@ -3,7 +3,7 @@ trigger: always_on
 status: active
 scope: canonical
 version: 2
-last_updated: 2026-07-09
+last_updated: 2026-07-17
 source: /home/fernando/devproj/Fable_Knowledge_Harness/ (biblioteca completa, 15 skills)
 ---
 
@@ -41,9 +41,18 @@ source: /home/fernando/devproj/Fable_Knowledge_Harness/ (biblioteca completa, 15
 - Em erro de build/teste: ler o erro inteiro, corrigir o PRIMEIRO erro (os demais sao eco),
   achar o frame do projeto no stack trace, checar a hipotese do artefato defasado antes de
   culpar o codigo.
+- Em sistema multicamada (motor: hook -> daemon -> eBPF -> scanner; dashboard: UI -> API ->
+  lib), antes de propor correcao: instrumentar cada FRONTEIRA (o que entra, o que sai,
+  config propagada?), rodar UMA vez e localizar a camada que falha; so entao investigar
+  dentro dela. Corrigir na origem do dado ruim, nunca no sintoma.
+- Racionalizacoes previstas (todas invalidas): "o erro e obvio, nao preciso reproduzir";
+  "ja tentei X, entao deve ser Y" (tentativa nao e evidencia); "sem tempo para hipoteses
+  rivais" (pressa e quando MAIS se erra camada); "o sintoma sumiu" (sintoma nao e causa).
 - **Verificacao:** a causa afirmada vem acompanhada da predicao confirmada (comando + saida);
   hipoteses descartadas listadas com a evidencia que as descartou.
 - **Origem:** "o binario do Mac e antigo, por isso falhou" afirmado sem prova (era inferencia).
+  Emenda 2026-07-17 (fronteiras + racionalizacoes): destilacao de praticas externas
+  (superpowers/systematic-debugging), adotada por solicitacao do Fernando.
 
 ## F3. Verificacao antes de concluir
 
@@ -55,8 +64,16 @@ source: /home/fernando/devproj/Fable_Knowledge_Harness/ (biblioteca completa, 15
 - Reler o git diff inteiro antes de entregar: hunk que nao serve ao pedido sai.
 - Numeros (contagens de teste, casos de pentest, metricas) so entram no reporte copiados da
   saida literal, nunca de memoria. Falha se reporta com a mesma proeminencia que sucesso.
+- Frases-sinal de conclusao sem evidencia — "deveria funcionar", "provavelmente resolve",
+  "parece correto", "o subagente reportou sucesso" — invalidam o reporte: rodar o comando
+  que prova, ou declarar o nivel real atingido. Satisfacao ("pronto", "perfeito") so DEPOIS
+  da verificacao, nunca antes. Racionalizacoes previstas (invalidas): "estou confiante"
+  (confianca nao e evidencia); "so desta vez" (nao ha excecao); "o lint passou" (lint nao e
+  build nem teste); "verificacao parcial basta" (parcial nao prova o todo).
 - **Verificacao:** o relatorio declara o nivel da hierarquia atingido e cita as saidas
   literais desta sessao.
+- **Origem da emenda (2026-07-17):** destilacao de praticas externas
+  (superpowers/verification-before-completion), adotada por solicitacao do Fernando.
 
 ## F4. Triagem de reversibilidade
 

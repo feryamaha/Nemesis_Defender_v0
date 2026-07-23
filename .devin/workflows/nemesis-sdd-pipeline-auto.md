@@ -149,6 +149,14 @@ consolidado. O Fernando decide o proximo passo.
    secao "Distribuicao de modelos por camada de raciocinio" abaixo. Julgamento, gates,
    PARADA UNICA e Trust Ledger NUNCA se delegam.
 
+9. **Roteamento por modulo (pre-flight).** No pre-flight, antes de distribuir as fases, o
+   orquestrador deriva dos paths que a spec vai tocar o(s) modulo(s) do perfil do repo e carrega o
+   *canon de modulo* correspondente no contrato de handoff (motor:
+   `.devin/rules/nemesis-global-defender.md`; dashboard: o perfil proprio, se houver). Para
+   modulos-joia declarados no canon (motor: `hooks/`, `pentest-nemesis-control/`), o trabalho e
+   elevado a camada MAIOR. O roteamento injeta contexto e guardas do modulo; a escolha de modelo
+   continua sendo por camada de raciocinio (item 8), nunca por modulo.
+
 ## Distribuicao de modelos por camada de raciocinio (orquestracao de subagentes)
 
 A atribuicao de modelo e por CAMADA DE RACIOCINIO relativa, nunca por nome fixo de modelo:
@@ -186,6 +194,26 @@ Sonnet, leve Haiku. O orquestrador declara o mapeamento escolhido no pre-flight 
 5. **Fallback obrigatorio:** se o harness da IDE nao oferece selecao de modelo por
    subagente, o pipeline executa com subagentes no modelo da sessao (comportamento
    anterior). A distribuicao e otimizacao de custo/velocidade, nunca condicao para rodar.
+
+## Roteador de modulo (pre-flight, por perfil)
+
+O canon de modulo do perfil e a fonte unica do "o que cada modulo e/faz e o que pode/nao pode"
+(motor: `.devin/rules/nemesis-global-defender.md`). No pre-flight da Skill 4 o orquestrador:
+
+1. **Deriva o(s) modulo(s)** dos paths de FILES INVOLVED da spec (ex.: `.nemesis/hooks/` -> hooks;
+   `.nemesis/nemesis-defender/src/visitors/` -> visitors; `.nemesis/ebpf-kernel/` -> ebpf-kernel;
+   `.nemesis/pentest-nemesis-control/` -> pentest).
+2. **Carrega a secao do modulo** (do canon) e as guardas dele no contrato de handoff (lei F9), junto
+   com o comando de verificacao do perfil (`nemesis-repo-profile.md`).
+3. **Eleva modulos-joia a camada MAIOR:** se o modulo esta marcado como joia no canon (motor:
+   `hooks/`, `pentest-nemesis-control/`), a implementacao NAO desce para MEDIA — o orquestrador
+   (ou um subagente MAIOR dedicado) executa, pela criticidade.
+4. **Anota no ledger do modulo:** a doc-sync (Skill 4.6) anexa uma linha ao ledger do modulo tocado
+   em `.devin/ledger/modules/<modulo>.md` (append-only: manutencao/melhoria/problema), alem do Trust
+   Ledger do ciclo.
+
+Fallback: perfil sem canon de modulo -> roteamento vira no-op (comportamento anterior); a escolha
+de modelo por camada (item 8) segue valendo.
 
 ## Entradas e Saidas
 

@@ -45,7 +45,22 @@ se a evidencia e ambigua, o post-mortem diz isso.
   espelhado correspondente; regra de stack → o perfil do repo.
 - **Texto proposto:** a emenda exata (diff minimo), incluindo o campo **origem** (o
   incidente que a gerou; leis carregam a propria historia).
+- **Racionalizacao prevista:** a desculpa mais provavel que um agente usaria para contornar
+  a emenda ("so desta vez", "meu caso e obviamente diferente", "estou confiante") e a
+  contra-resposta que o texto da emenda incorpora. Emenda que nao resiste a propria
+  racionalizacao volta para reescrita antes do gate.
 - **Efeito colateral:** o que a emenda pode restringir de legitimo (analogo ao FP do motor).
+
+### Step 2.5: Teste de pressao da emenda (o RED ja existe; provar o GREEN)
+
+O incidente do post-mortem E o teste RED: a falha observada SEM a emenda. Antes do
+HARD-GATE, quando o cenario e reproduzivel a custo baixo (simulacao com subagente que
+recebe o mesmo contexto do incidente + a emenda proposta), rodar o cenario e anexar o
+desfecho literal a proposta (GREEN comprovado, ou emenda insuficiente — que volta para o
+Step 2). Cenario caro ou irreproduzivel: declarar isso explicitamente na proposta; o
+Fernando decide com essa informacao. Origem (2026-07-17): destilacao de praticas externas
+(superpowers/writing-skills — TDD aplicado a documentacao de processo), por solicitacao
+do Fernando.
 
 ### Step 3: HARD-GATE humano (inegociavel)
 
@@ -73,6 +88,8 @@ LEI: [violada F#/invariante N | ausente]
 ### Proposta de emenda
 Arquivo alvo: [path]
 Texto proposto: [diff minimo, com origem]
+Racionalizacao prevista: [desculpa + contra-resposta incorporada]
+Teste de pressao: [GREEN comprovado com evidencia | nao rodado: motivo declarado]
 Efeito colateral possivel: [...]
 
 ⛔ HARD-GATE: aguardando decisao do Fernando.

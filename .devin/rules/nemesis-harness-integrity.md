@@ -2,7 +2,7 @@
 trigger: always_on
 status: active
 scope: canonical
-last_updated: 2026-07-09
+last_updated: 2026-07-22
 ---
 
 # Nemesis: Integridade do Harness (manifest de espelhamento)
@@ -30,7 +30,7 @@ Qualquer linha de saída = **DERIVA** (ou item novo fora do manifest, que deve s
 # 1) Entre repos (rodar do diretório pai, que contém os dois repos)
 diff -rq Nemesis_Defender_v0/.devin Dashboard-Nemesis-Defender/.devin \
   -x context-file-handling.md -x nemesis-repo-profile.md \
-  -x prompt-refinement.md -x ledger -x specs -x plans -x issue -x ops -x hooks.json -x scripts
+  -x prompt-refinement.md -x nemesis-global-defender.md -x ledger -x specs -x plans -x issue -x ops -x hooks.json -x scripts
 
 # 2) Interno ao motor (rodar na raiz de Nemesis_Defender_v0)
 diff -rq .devin/skills .claude/skills -x SKILL-nemesis-defender.md -x disciplina-epistemica
@@ -48,8 +48,9 @@ espelhado, ou entra nas exceções no mesmo diff que o cria.
 
 ### Exceções per-repo POR DESIGN (nunca espelhar, nunca acusar deriva)
 
-- **Motor:** `.devin/rules/nemesis-repo-profile.md`, `.devin/hooks.json` (scaffold do
-  pretool, estado local da IDE). A `nemesis-fable-method.md` NÃO é exceção: é compartilhada
+- **Motor:** `.devin/rules/nemesis-repo-profile.md`, `.devin/rules/nemesis-global-defender.md`
+  (canon por módulo do motor; per-repo por design, não existe no dashboard), `.devin/hooks.json`
+  (scaffold do pretool, estado local da IDE). A `nemesis-fable-method.md` NÃO é exceção: é compartilhada
   (as skills espelhadas citam as leis F1..F12 nos dois repos; origem da correção: 2026-07-09,
   o livro de leis existia só no motor com referências quebradas no dashboard).
 - **Dashboard:** `.devin/rules/context-file-handling.md`, `.devin/rules/nemesis-repo-profile.md`,
@@ -71,6 +72,33 @@ O texto espelhado é ÚNICO: onde a diferença de stack importa, o texto referen
 repo** (`.devin/rules/nemesis-repo-profile.md`) ou traz os blocos de comando dos dois perfis,
 como os workflows já fazem. É proibido "adaptar" uma cópia editando-a localmente: isso recria
 a deriva que esta regra existe para impedir.
+
+## Lint estrutural de skills (procedimento, read-only)
+
+Mesma forma do verificador de espelhamento: comandos executados como tool calls, saída
+vazia = **PASS**. Roda nos mesmos gates do espelhamento. Checa a conformidade das skills
+com a spec de Agent Skills: `name` do frontmatter = nome do diretório (minúsculas-hífen),
+`description` presente, SKILL.md abaixo de 500 linhas (acima disso, extrair conteúdo pesado
+para arquivos de referência da própria skill — disclosure progressivo).
+
+```bash
+# 4) name do frontmatter == nome do diretório (exceção do manifest excluída)
+grep -H '^name:' .devin/skills/*/SKILL.md .claude/skills/*/SKILL.md \
+  | grep -v '/disciplina-epistemica/' \
+  | awk -F'[/:]' '{n=$NF; sub(/^ +/,"",n); if ($3 != n) print "NOME!=DIR: "$0}'
+
+# 5) SKILL.md dentro do teto de 500 linhas
+wc -l .devin/skills/*/SKILL.md .claude/skills/*/SKILL.md | awk '$1>=500 && $NF!="total"'
+
+# 6) frontmatter com description presente
+grep -L '^description:' .devin/skills/*/SKILL.md .claude/skills/*/SKILL.md
+```
+
+> **Origem (2026-07-17):** destilação de práticas externas (anthropics/skill-creator
+> `quick_validate` e marketingskills `validate-skills`), adaptada à forma
+> procedimento-em-markdown desta regra, por solicitação do Fernando. Na primeira execução
+> o lint já encontrou e corrigiu uma não-conformidade real (`nemesis-critical-analysis`
+> com `name` em maiúsculas/espaços nas cópias espelhadas).
 
 ## Quando o verificador RODA (gates)
 

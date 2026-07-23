@@ -118,10 +118,13 @@ reversibilidade, contexto obsoleto, anti-alucinação): `.devin/rules/nemesis-fa
 
 ## 3. Arquitetura
 
-- **4 camadas:** (a) pretool/posttool hooks — bloqueio no write/exec-time (exit 2); (b) daemon
-  nemesis-defender (Iron Dome) — observa o filesystem e, ao confirmar hostilidade, **move** o
-  arquivo para `.nemesis/quarantine/` (preserva, não deleta) e trava a sessão para revisão humana;
-  (c) eBPF BPF-LSM (Linux): controle de exec + allowlist de egress de rede; (d) fail-closed.
+- **3 camadas independentes** (fail-closed é POSTURA, não uma camada — ver
+  `.devin/rules/nemesis-global-defender.md` §2): (a) pretool/posttool hooks — bloqueio no
+  write/exec-time (exit 2); (b) daemon nemesis-defender (Iron Dome) — observa o filesystem e, ao
+  confirmar hostilidade, **move** o arquivo para `.nemesis/quarantine/` (preserva, não deleta) e
+  trava a sessão para revisão humana; (c) eBPF BPF-LSM (Linux, opt-in): controle de exec + allowlist
+  de egress de rede. As camadas (a) e (b) partilham o motor único `scan_content`; o fail-closed
+  permeia as três.
 - **Ledger único:** `.nemesis/logs/nemesis-violations.log`.
 - **Regras de segurança de conteúdo:** `denylist-defender.json` é **embutido no binário** (não
   editável, não fica no disco). As denylists de comando em `.nemesis/denylist/*.json` são
@@ -272,6 +275,10 @@ forense por re-rastreamento (testes, finalidade, pré-requisitos, denylists, eBP
 > **Operação completa** (build, lifecycle de daemon/pretool/eBPF, logs, checklist de nova máquina):
 > **`.nemesis/nemesis-doctor/NEMESIS-OPERATIONS.md`** — manual canônico. Comece por ele +
 > `.nemesis/target/release/nemesis-doctor`. O mapa abaixo é o "onde está o conteúdo que vou editar".
+>
+> **Canon por módulo** (o que cada módulo é/faz, como convergem, do/don't ao mexer):
+> **`.devin/rules/nemesis-global-defender.md`** — a regra global do motor. O mapa abaixo é o índice
+> rápido "onde editar"; a regra global é a explicação de cada peça.
 
 Workspace Cargo `nemesis` em `.nemesis/` (crates: `ast-linters`, `ebpf-kernel`, `nemesis-defender`,
 `nemesis-doctor` + pacote raiz `nemesis` que produz os bins de hook):

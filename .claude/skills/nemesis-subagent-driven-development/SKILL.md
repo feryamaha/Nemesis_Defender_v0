@@ -51,10 +51,17 @@ que nao sao suas, branch errada) = parar e reportar antes de tocar em qualquer a
 Declarar tambem o **mapeamento camada->modelo** do ciclo (ex.: "implementador=Opus,
 revisor=Sonnet" ou "fallback: modelo unico da sessao").
 
-### Step 1: Carregar e Revisar Plano
+### Step 1: Carregar e Revisar Plano (inclui pre-flight de coerencia)
 
-Ler o arquivo do plano. Revisar criticamente. Se ha preocupacoes, levanta-las ANTES de
-iniciar. Se nenhuma preocupacao, criar rastreamento de tarefas e prosseguir.
+Ler o arquivo do plano e escanear UMA vez por conflitos internos ANTES da primeira tarefa:
+- tarefas que se contradizem entre si, ou que contradizem invariantes/Global Constraints;
+- algo que o plano manda fazer e que a rubrica do two-stage review trataria como defeito.
+
+Conflito imaterial: resolver pelo criterio da analise critica (Skill 0), registrar a
+decisao em 1 linha para o relatorio. Conflito material (muda escopo ou resultado): PARADA
+DE EMERGENCIA com TODOS os conflitos num unico reporte em lote — nunca um interrupt por
+descoberta no meio da execucao. Scan limpo: prosseguir sem comentario e criar o
+rastreamento de tarefas.
 
 ### Step 2: Registrar Tarefas e Derivar Waves
 
@@ -102,9 +109,16 @@ INVARIANTES: [regras do perfil que se aplicam: linguagem, areas sensiveis, escop
 O QUE NAO FAZER: [nao tocar arquivos fora da lista; nao introduzir dependencia nova;
   nao executar git de escrita; nao "aproveitar e melhorar" nada adjacente]
 COMANDO DE VERIFICACAO: [comando por tarefa do perfil]
-FORMATO DO RESULTADO: [diff dos arquivos tocados + saida literal da verificacao]
+ECONOMIA (F9): [leitura direcionada primeiro — grep/outline antes de arquivo inteiro;
+  ler apenas o trecho necessario dos arquivos grandes]
+FORMATO DO RESULTADO: [diff dos arquivos tocados + saida literal da verificacao
+  + CONFIANCA/LACUNAS: o que NAO foi verificado e por que]
 PLANO ORIGINAL: [path do plano]
 ```
+
+Reporte de subagente (implementador ou revisor) sem evidencia citavel — diff real, saida
+literal, achado com arquivo:linha — e REJEITADO e re-disparado UMA vez com a lacuna
+apontada; na reincidencia, a tarefa vira FAIL.
 
 #### Phase 3c: Two-Stage Review INDEPENDENTE
 
@@ -124,11 +138,20 @@ implementador) antes de emitir o parecer.
 - Segue convencoes do codigo ao redor?
 - Comando de verificacao do perfil PASS (rodado pelo revisor)?
 - Nenhuma violacao das regras do perfil?
+- Dashboard, quando o diff toca componente/pagina/estilo: aplicar tambem a rubrica de
+  revisao UI do perfil (`nemesis-repo-profile.md` do dashboard).
+
+Todo achado do revisor cita a evidencia por arquivo:linha.
 
 #### Phase 3d: Resultado
 
 - **Se PASS**: Marcar [✅], prosseguir proxima tarefa (sem pause)
-- **Se FAIL**: [❌] Disparar follow-up subagent com contexto de erro, tentar ate 2 vezes
+- **Se FAIL**: [❌] Disparar follow-up subagent com o contexto de erro E os achados do
+  revisor, ate 2 tentativas. Contrato do follow-up (recepcao de review): VERIFICAR cada
+  achado contra o codigo antes de aplicar; achado improcedente NAO se aplica — reporta-se
+  de volta com a evidencia; proibido acatar por deferencia ("o revisor tem razao") sem
+  verificacao; achados ambiguos se esclarecem ANTES de aplicar qualquer um (achados podem
+  ser relacionados; entendimento parcial = correcao errada).
 - **Se BLOCKED**: [🚫] STOP, reportar a Fernando exatamente o que bloqueou
 
 ### Step 4: Procedimento de Bloqueio Nemesis
@@ -209,6 +232,8 @@ Resultado: PRONTO PARA nemesis-tests (Skill 4.5) — invocar sem pausa
 - Revisor INDEPENDENTE (camada REVISOR, modelo distinto do implementador) roda a
   verificacao ele proprio — nao aceitar relato sem prova
 - Execucao continua — NAO pause entre tarefas
+- Narracao entre tool calls: no maximo 1 linha curta de status — o registro vivo esta no
+  rastreamento e nas saidas literais (economia de tokens, F9); nada de resumo intermediario
 - PARE somente para blocadores irresoluveis
 - Nemesis enforcement valida codigo — confie nele, nunca o contorne
 - Responder SEMPRE em PT-BR
